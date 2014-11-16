@@ -1,0 +1,28 @@
+$headerHeight: 42px;
+
+.app-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(column);
+  @include justify-content(flex-start);
+}
+
+header {
+  padding: 0 14px;
+  h1 {
+    height: $headerHeight;
+    line-height: $headerHeight;
+    text-transform: uppercase;
+  }
+  @include flex(0 0 $headerHeight);
+}
+
+main {
+  @include flex(1);
+  background-color: rgba(0,255,255,0.2);
+}
