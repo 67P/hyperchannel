@@ -66,30 +66,43 @@ header {
 }
 
 nav#channels {
-  padding: 1.5em 1em;
+  padding: 1.5em 0;
+  a {
+    display: block;
+    padding: 0 1em;
+    height: 1.6em;
+    line-height: 1.6em;
+    &:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+  }
   > ul {
     list-style: none;
     > li {
-      margin-bottom: 2em;
+      margin-bottom: 1.6em;
       > ul {
-        padding: 0.5em 0 0 0;
+        padding: 0.6em 0 0 0;
         list-style: none;
-        li {
-          height: 1.5em;
-          line-height: 1.5em;
-        }
       }
     }
   }
 }
 
 section#user-list {
-  padding: 1.5em 1em;
+  padding: 1.5em 0;
+
   > ul {
     list-style: none;
     li {
-      height: 1.5em;
-      line-height: 1.5em;
+      a {
+        display: block;
+        padding: 0 1em;
+        height: 1.6em;
+        line-height: 1.6em;
+        &:hover {
+          background-color: rgba(255,255,255,0.2);
+        }
+      }
     }
   }
 }
