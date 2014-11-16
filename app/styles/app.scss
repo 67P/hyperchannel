@@ -36,11 +36,26 @@ a {
 }
 
 header {
-  padding: 0 14px;
-  h1 {
-    height: $headerHeight;
-    line-height: $headerHeight;
-    text-transform: uppercase;
+  #sitename {
+    padding: 0 1em;
+    h1 {
+      height: $headerHeight;
+      line-height: $headerHeight;
+      text-transform: uppercase;
+    }
+  }
+  #topbar {
+    padding: 0 1em;
+    h2#channel-name {
+      display: inline;
+      height: $headerHeight;
+      line-height: $headerHeight;
+      margin-right: 1em;
+    } 
+    p#channel-title {
+      display: inline;
+      font-style: italic;
+    }
   }
 }
 

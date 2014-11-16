@@ -11,9 +11,22 @@
 }
 
 header {
-  @include flex(0 0 $headerHeight);
-
-  background-color: rgba(255,255,255,0.2);
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(row);
+  @include justify-content(flex-start);
+  #sitename {
+    @include flex(0 0 $sidebarWidth);
+    background-color: rgba(255,255,0,0.2);
+  }
+  #topbar {
+    @include flex(1);
+    background-color: rgba(255,0,255,0.2);
+  }
+  #account {
+    @include flex(0 0 $sidebarWidth);
+    background-color: rgba(255,255,0,0.2);
+  }
 }
 
 main {
