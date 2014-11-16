@@ -1,4 +1,5 @@
 $headerHeight: 42px;
+$sidebarWidth: 160px;
 
 .app-container {
   position: absolute;
@@ -24,5 +25,23 @@ header {
 
 main {
   @include flex(1);
+
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(row);
+  @include justify-content(flex-start);
+}
+
+nav#channels {
+  @include flex(0 0 $sidebarWidth);
+  background-color: rgba(0,255,255,0.2);
+}
+
+section#content {
+  @include flex(1);
+}
+
+main > aside {
+  @include flex(0 0 $sidebarWidth);
   background-color: rgba(0,255,255,0.2);
 }

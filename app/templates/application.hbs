@@ -3,6 +3,42 @@
 </header>
 
 <main>
-  ohai
-  {{outlet}}
+  <nav id="channels">
+    <ul>
+      <li>
+        <h2>Enterprise</h2>
+        <ul>
+          <li><a href="#">#bridge</a></li>
+          <li><a href="#">#10forward</a></li>
+          <li><a href="#">#holodeck</a></li>
+        </ul>
+      </li>
+      <li>
+        <h2>Unhosted</h2>
+        <ul>
+          <li><a href="#">#unhosted</a></li>
+          <li><a href="#">#remotestorage</a></li>
+          <li><a href="#">#sockethub</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <section id="content">
+    {{outlet}}
+  </section>
+
+  <aside>
+    <section id="user-list">
+      <h2>#bridge</h2>
+      <ul>
+        <li><a href="#">bkero</a></li>
+        <li><a href="#">galfert</a></li>
+        <li><a href="#">gregkare</a></li>
+        <li><a href="#">janlelis</a></li>
+        <li><a href="#">raucao</a></li>
+        <li><a href="#">silverbucket</a></li>
+      </ul>
+    </section>
+  </aside>
 </main>
