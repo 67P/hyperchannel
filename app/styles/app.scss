@@ -8,6 +8,12 @@
 body {
   font-family: 'Open Sans';
   font-size: 14px;
+
+  color: #fff;
+
+  background-image: url('/img/bg.jpg');
+  background-repeat: none;
+  background-size: cover;
 }
 
 h1, h2, h3, h4, h5 {
@@ -15,3 +21,6 @@ h1, h2, h3, h4, h5 {
   font-size: 1em;
 }
 
+header {
+  background-color: rgba(255,255,255,0.2);
+}
