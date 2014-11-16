@@ -1,6 +1,3 @@
-$headerHeight: 42px;
-$sidebarWidth: 160px;
-
 .app-container {
   position: absolute;
   top: 0;
@@ -14,13 +11,9 @@ $sidebarWidth: 160px;
 }
 
 header {
-  padding: 0 14px;
-  h1 {
-    height: $headerHeight;
-    line-height: $headerHeight;
-    text-transform: uppercase;
-  }
   @include flex(0 0 $headerHeight);
+
+  background-color: rgba(255,255,255,0.2);
 }
 
 main {
@@ -30,18 +23,33 @@ main {
   @include align-items(stretch);
   @include flex-direction(row);
   @include justify-content(flex-start);
+
+  nav#channels {
+    @include flex(0 0 $sidebarWidth);
+    background-color: rgba(0,255,255,0.2);
+  }
+
+  section#content {
+    @include flex(1);
+
+    @include display(flex);
+    @include align-items(stretch);
+    @include flex-direction(column);
+    @include justify-content(flex-start);
+
+    section#channel-content {
+      @include flex(1);
+    }
+
+    footer {
+      @include flex(0 0 $headerHeight);
+      background-color: rgba(255,255,255,0.2);
+    }
+  }
+
+  > aside {
+    @include flex(0 0 $sidebarWidth);
+    background-color: rgba(0,255,255,0.2);
+  }
 }
 
-nav#channels {
-  @include flex(0 0 $sidebarWidth);
-  background-color: rgba(0,255,255,0.2);
-}
-
-section#content {
-  @include flex(1);
-}
-
-main > aside {
-  @include flex(0 0 $sidebarWidth);
-  background-color: rgba(0,255,255,0.2);
-}

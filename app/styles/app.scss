@@ -1,5 +1,8 @@
 @import "bourbon";
 
+$headerHeight: 42px;
+$sidebarWidth: 160px;
+
 * {
   margin: 0;
   padding: 0;
@@ -33,7 +36,12 @@ a {
 }
 
 header {
-  background-color: rgba(255,255,255,0.2);
+  padding: 0 14px;
+  h1 {
+    height: $headerHeight;
+    line-height: $headerHeight;
+    text-transform: uppercase;
+  }
 }
 
 nav#channels {
@@ -62,6 +70,26 @@ section#user-list {
     li {
       height: 1.5em;
       line-height: 1.5em;
+    }
+  }
+}
+
+section#content {
+  #channel-content {
+    padding: 1.5em 1em;
+  }
+
+  section#new-message {
+    padding: 0 14px;
+    color: #fff;
+    border-radius: 3px;
+    input[name=chat-message] {
+      width: 100%;
+      background: none;
+      border: none;
+      height: $headerHeight;
+      line-height: $headerHeight;
+      color: #fff;
     }
   }
 }
