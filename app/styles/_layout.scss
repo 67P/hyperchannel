@@ -23,9 +23,19 @@ header {
     @include flex(1);
     background-color: rgba(255,0,255,0.2);
   }
-  #account {
+  nav {
     @include flex(0 0 $sidebarWidth);
     background-color: rgba(255,255,0,0.2);
+    a {
+      display: inline-block;
+      @include size($headerHeight);
+      text-align: center;
+      line-height: $headerHeight;
+      text-decoration: none;
+      &:hover {
+        background-color: rgba(255,255,255,0.2);
+      }
+    }
   }
 }
 

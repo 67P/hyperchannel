@@ -1,7 +1,7 @@
 @import "bourbon";
 
 $headerHeight: 42px;
-$sidebarWidth: 160px;
+$sidebarWidth: 168px;
 
 * {
   margin: 0;
@@ -139,3 +139,4 @@ section#content {
 }
 
 @import "layout";
+@import "iconfont";
