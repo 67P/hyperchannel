@@ -77,6 +77,21 @@ section#user-list {
 section#content {
   #channel-content {
     padding: 1.5em 1em;
+    ul {
+      list-style: none;
+      li {
+        line-height: 1.5em;
+        .chat-message {
+          .username {
+            font-weight: bold;
+            margin-right: 0.2em;
+            &::after {
+              content: ':';
+            }
+          }
+        }
+      }
+    }
   }
 
   section#new-message {
