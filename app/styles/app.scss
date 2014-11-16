@@ -33,6 +33,7 @@ h1, h2, h3, h4, h5 {
 
 a {
   color: #fff;
+  text-decoration: none;
 }
 
 input, button {
@@ -86,7 +87,6 @@ section#user-list {
   padding: 1.5em 1em;
   > ul {
     list-style: none;
-    padding: 0.5em 0 0 0;
     li {
       height: 1.5em;
       line-height: 1.5em;
