@@ -8,7 +8,7 @@ export default Ember.Route.extend({
     this.sockethub.on('registered', function() {
       self.sockethub.set('irc', 'hyperchannel', {
         objectType: 'credentials',
-        nick: 'hyperchannelyoyoyo',
+        nick: 'hyperbasti',
         server: 'irc.freenode.net',
         channel: '#prague'
       }).then(function () {
@@ -30,7 +30,7 @@ export default Ember.Route.extend({
             platform: 'irc',
             verb: 'send',
             actor: { address: 'hyperchannel' },
-            object: { text: 'Hello from Hyperchnnel' },
+            object: { text: 'Hello from Hyperchannel' },
             target: [{address: '#prague'}]
           }).then(function() {
             console.log('sent message');
