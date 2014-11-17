@@ -1,0 +1,17 @@
+<section id="channel-content">
+<ul>
+  <li>
+    {{input value=ircSettings.nickname placeholder="nickname"}}
+  </li>
+  <li>
+    {{input value=ircSettings.server placeholder="irc.servername.org"}}
+  </li>
+  <li>
+    {{input value=ircSettings.channel placeholder="#channel"}}
+  </li>
+  <li>
+    <button {{action "save"}}>Save</button>
+  </li>
+</ul>
+</section>
+

@@ -2,49 +2,16 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
 
-  setupController: function() {
-    var self = this;
+  setupController: function(controller) {
+    var settings = JSON.parse(window.localStorage.getItem('hyperchannel:irc_settings'));
+    controller.set('ircSettings', Ember.Object.create(settings));
 
-    this.sockethub.on('registered', function() {
-      self.sockethub.set('irc', 'hyperchannel', {
-        objectType: 'credentials',
-        nick: 'hyperbasti',
-        server: 'irc.freenode.net',
-        channel: '#prague'
-      }).then(function () {
-        console.log('successfully set credentials for irc');
-
-        // self.sockethub.on('irc', 'message', function(m) {
-        //   console.log('irc message received: ', m);
-        // });
-
-        self.sockethub.sendObject({
-          platform: 'irc',
-          verb: 'join',
-          actor: { address: 'hyperchannel' },
-          object: {},
-          target: [{address: '#prague'}]
-        }).then(function() {
-          console.log('joined channel');
-          self.sockethub.sendObject({
-            platform: 'irc',
-            verb: 'send',
-            actor: { address: 'hyperchannel' },
-            object: { text: 'Hello from Hyperchannel' },
-            target: [{address: '#prague'}]
-          }).then(function() {
-            console.log('sent message');
-          }, function(err) {
-            console.log('error sending message', err);
-          });
-        }, function(err) {
-          console.log('error joining channel', err);
-        });
-
-      }, function (err) {
-        console.log('error setting credentials for irc :( ', err);
-      });
-    });
+    if (settings) {
+      console.log('loaded settings', settings);
+      controller.configureIRC();
+    } else {
+      this.transitionTo('settings');
+    }
   }
 
 });
