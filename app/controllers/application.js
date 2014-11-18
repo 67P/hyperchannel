@@ -46,6 +46,24 @@ export default Ember.Controller.extend({
       console.log('error joining channel', err);
       self.set('channelJoined', false);
     });
+  },
+
+  sendMessage: function(message) {
+    if (this.get('channelJoined')) {
+      return this.sockethub.sendObject({
+        platform: 'irc',
+        verb: 'send',
+        actor: { address: 'hyperchannel' },
+        object: { text: message },
+        target: [{address: this.get('ircSettings.channel')}]
+      }).then(function() {
+        console.log('sent message');
+      }, function(err) {
+        console.log('error sending message', err);
+      });
+    } else {
+      console.log('need to join channel first');
+    }
   }
 
 });
