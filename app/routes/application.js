@@ -31,7 +31,7 @@ export default Ember.Route.extend({
   spaceFixtures: function() {
     return {
       'Enterprise': ['#bridge', '#10forward', '#holodeck'],
-      'Unhosted'  : ['#unhosted', '#remotestorage', '#socketgrub']
+      'Unhosted'  : ['#unhosted', '#remotestorage', '#sockethub']
     };
   }.property()
 
