@@ -2,6 +2,10 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
 
+  spaces: [],
+
+  // TODO this all needs to go
+
   ircSettings: null,
   channelJoined: false,
 
@@ -9,11 +13,11 @@ export default Ember.Controller.extend({
     var self = this;
 
     if (!this.sockethub.registered) {
-      this.sockethub.on('registered', function() {
-        this.setIRCCredentials();
-      }.bind(this));
+      self.sockethub.on('registered', function() {
+        self.setIRCCredentials();
+      });
     } else {
-      this.setIRCCredentials();
+      self.setIRCCredentials();
     }
   },
 

@@ -19,22 +19,12 @@
 <main>
   <nav id="channels">
     <ul>
-      <li>
-        <h2><a href="#">Enterprise</a></h2>
-        <ul>
-          <li><a href="#">#bridge</a></li>
-          <li><a href="#">#10forward</a></li>
-          <li><a href="#">#holodeck</a></li>
-        </ul>
-      </li>
-      <li>
-        <h2><a href="#">Unhosted</a></h2>
-        <ul>
-          <li><a href="#">#unhosted</a></li>
-          <li><a href="#">#remotestorage</a></li>
-          <li><a href="#">#sockethub</a></li>
-        </ul>
-      </li>
+      {{#each space in spaces}}
+        <li>
+          <h2>{{link-to space.name}}</h2>
+          {{channel-list channels=space.channels}}
+        </li>
+      {{/each}}
     </ul>
   </nav>
 
