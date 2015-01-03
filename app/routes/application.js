@@ -20,7 +20,7 @@ export default Ember.Route.extend({
     var space;
 
     Object.keys(spaceFixtures).forEach(function(spaceName){
-      space = Space.create({name: spaceName});
+      space = Space.create({name: spaceName, channels: []});
       spaceFixtures[spaceName].forEach(function(channelName){
         space.get('channels').pushObject(Channel.create({name: channelName}));
       });

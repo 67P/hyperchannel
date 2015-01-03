@@ -4,6 +4,6 @@ export default Ember.Object.extend({
 
   name      : '',
   ircServer : {},
-  channels  : []
+  channels  : null,
 
 });
