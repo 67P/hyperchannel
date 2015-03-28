@@ -1,6 +1,4 @@
 import Ember from 'ember';
-import Space from 'hyperchannel/models/space';
-import Channel from 'hyperchannel/models/channel';
 
 export default Ember.Route.extend({
 
@@ -16,12 +14,12 @@ export default Ember.Route.extend({
     //   this.transitionTo('settings');
     // }
 
-    if (settings) {
-      console.log('loaded settings', settings);
-      controller.configureIRC();
-    } else {
-      this.transitionTo('settings');
-    }
+    // if (settings) {
+    //   console.log('loaded settings', settings);
+    //   controller.configureIRC();
+    // } else {
+    //   this.transitionTo('settings');
+    // }
 
     controller.instantiateSpaces();
   }
