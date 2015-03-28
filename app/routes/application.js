@@ -16,23 +16,14 @@ export default Ember.Route.extend({
     //   this.transitionTo('settings');
     // }
 
-    var spaceFixtures = this.get('spaceFixtures');
-    var space;
+    if (settings) {
+      console.log('loaded settings', settings);
+      controller.configureIRC();
+    } else {
+      this.transitionTo('settings');
+    }
 
-    Object.keys(spaceFixtures).forEach(function(spaceName){
-      space = Space.create({name: spaceName, channels: []});
-      spaceFixtures[spaceName].forEach(function(channelName){
-        space.get('channels').pushObject(Channel.create({name: channelName}));
-      });
-      controller.get('spaces').pushObject(space);
-    });
-  },
-
-  spaceFixtures: function() {
-    return {
-      'Enterprise': ['#bridge', '#10forward', '#holodeck'],
-      'Unhosted'  : ['#unhosted', '#remotestorage', '#sockethub']
-    };
-  }.property()
+    controller.instantiateSpaces();
+  }
 
 });

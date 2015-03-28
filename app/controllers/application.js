@@ -1,8 +1,47 @@
 import Ember from 'ember';
+import Space from 'hyperchannel/models/space';
+import Channel from 'hyperchannel/models/channel';
 
 export default Ember.Controller.extend({
 
-  spaces: [],
+  spaces: null,
+
+  instantiateSpaces: function() {
+    var spaceFixtures = this.get('spaceFixtures');
+    var space;
+
+    this.set('spaces', []);
+
+    Object.keys(spaceFixtures).forEach(function(spaceName){
+      space = Space.create({name: spaceName, channels: []});
+
+      this.get('spaces').pushObject(space);
+    }.bind(this));
+
+    this.get('spaces').forEach(function(space) {
+      this.addChannelsForSpace(space);
+    }.bind(this));
+  },
+
+  addChannelsForSpace: function(space) {
+    this.get('spaceFixtures')[space.get('name')].forEach(function(channelName){
+      space.get('channels').pushObject(Channel.create({name: channelName}));
+    });
+  },
+
+  spaceFixtures: function() {
+    return {
+      'Freenode'  : ['#kosmos', '#kosmos-dev', '#67p'],
+      'Enterprise': ['#bridge', '#10forward', '#holodeck']
+    };
+  }.property(),
+
+  userFixtures: function() {
+    return {
+      'Freenode'  : ['#kosmos', '#kosmos-dev', '#67p'],
+      'Enterprise': ['#bridge', '#10forward', '#holodeck']
+    };
+  }.property(),
 
   // TODO this all needs to go
 
