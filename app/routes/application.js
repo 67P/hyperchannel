@@ -21,7 +21,7 @@ export default Ember.Route.extend({
     //   this.transitionTo('settings');
     // }
 
-    controller.instantiateSpaces();
+    controller.loadFixtures();
   }
 
 });
