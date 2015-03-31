@@ -6,6 +6,11 @@ var Router = Ember.Router.extend({
 });
 
 Router.map(function() {
+  this.resource('space', {path: '/:id'}, function(){
+    this.resource('channel', {path: '/:slug'}, function() {
+    });
+  });
+
   this.route('settings');
 });
 
