@@ -18,14 +18,7 @@
 
 <main>
   <nav id="channels">
-    <ul>
-      {{#each space in spaces}}
-        <li>
-          <h2>{{#link-to "space" space}}{{space.name}}{{/link-to}}</h2>
-          {{channel-list channels=space.channels}}
-        </li>
-      {{/each}}
-    </ul>
+    {{channel-nav spaces=spaces}}
   </nav>
 
   {{outlet}}

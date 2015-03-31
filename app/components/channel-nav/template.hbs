@@ -1,0 +1,10 @@
+{{#each space in spaces}}
+  <li>
+    <h2>{{#link-to "space" space}}{{space.name}}{{/link-to}}</h2>
+    <ul>
+    {{#each channel in space.channels}}
+      <li>{{#link-to "space.channel" space channel}}{{channel.name}}{{/link-to}}</li>
+    {{/each}}
+    </ul>
+  </li>
+{{/each}}
