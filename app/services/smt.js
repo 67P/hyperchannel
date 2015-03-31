@@ -3,6 +3,7 @@ import Space   from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 // import User    from 'hyperchannel/models/channel';
 
+// TODO Use Ember.Service when upgrading to latest version
 export default Ember.Object.extend({
 
   spaces: null,
