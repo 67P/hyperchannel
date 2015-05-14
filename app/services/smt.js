@@ -27,17 +27,17 @@ export default Ember.Object.extend({
   },
 
   connectToIRCServer: function(space) {
-    this.sockethub.Activity.Object.create({
-      id: space.get('sockethubPersonId'),
-      objectType: "person",
+    this.sockethub.ActivityStreams.Object.create({
+      '@id': space.get('sockethubPersonId'),
+      '@type': "person",
       displayName: space.get('ircServer.nickname')
     });
 
     var credentials = {
       actor: space.get('sockethubPersonId'),
-      platform: 'irc',
+      context: 'irc',
       object: {
-        objectType: 'credentials',
+        '@type': 'credentials',
         nick: space.get('ircServer.nickname'),
         server: space.get('ircServer.hostname'),
         port: space.get('ircServer.port'),
@@ -53,7 +53,7 @@ export default Ember.Object.extend({
     this.sockethub.socket.on('completed', function(message) {
       console.log('SH completed', message);
 
-      if (message.verb === 'join') {
+      if (message['@type'] === 'join') {
         var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
         if (!Ember.isEmpty(space)) {
           var channel = space.get('channels').findBy('sockethubChannelId', message.target);
@@ -69,9 +69,9 @@ export default Ember.Object.extend({
       console.log('SH message', message);
 
       // user list for a channel
-      if (message.verb === 'observe' && message.object.objectType === 'attendance') {
+      if (message['@type'] === 'observe' && message.object['@type'] === 'attendance') {
         var space = this.get('spaces').findBy('ircServer.hostname',
-                                              message.actor.id.match(/irc:\/\/(.+)\//)[1]);
+                                              message.actor['@id'].match(/irc:\/\/(.+)\//)[1]);
         if (!Ember.isEmpty(space)) {
           var channel = space.get('channels').findBy('sockethubChannelId', message.target.id);
           if (!Ember.isEmpty(channel)) {
@@ -88,12 +88,12 @@ export default Ember.Object.extend({
 
   observeChannel: function(person, channelId) {
     var observeMsg = {
-      platform: 'irc',
-      verb: 'observe',
+      context: 'irc',
+      '@type': 'observe',
       actor: person,
       target: channelId,
       object: {
-        objectType: 'attendance'
+        '@type': 'attendance'
       }
     };
 
@@ -120,17 +120,18 @@ export default Ember.Object.extend({
   },
 
   joinChannel: function(space, channel) {
-    this.sockethub.Activity.Object.create({
-      objectType: "room",
-      id: channel.get('sockethubChannelId'),
+    this.sockethub.ActivityStreams.Object.create({
+      '@type': "room",
+      '@id': channel.get('sockethubChannelId'),
       displayName: channel.get('name')
     });
 
     var joinMsg = {
-      platform: 'irc',
-      verb: 'join',
+      context: 'irc',
+      '@type': 'join',
       actor: space.get('sockethubPersonId'),
-      target: channel.get('sockethubChannelId')
+      target: channel.get('sockethubChannelId'),
+      object: {}
     };
 
     console.log('joining channel:', joinMsg);
