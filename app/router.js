@@ -7,8 +7,7 @@ var Router = Ember.Router.extend({
 
 Router.map(function() {
   this.resource('space', {path: '/:id'}, function(){
-    this.route('channel', {path: '/:slug'}, function() {
-    });
+    this.route('channel', {path: '/:slug'});
   });
 
   this.route('settings');
