@@ -41,12 +41,9 @@
   </header>
   <section id="user-list" class="main">
     <ul>
-      <li><a href="#">bkero</a></li>
-      <li><a href="#">galfert</a></li>
-      <li><a href="#">gregkare</a></li>
-      <li><a href="#">janlelis</a></li>
-      <li><a href="#">raucao</a></li>
-      <li><a href="#">silverbucket</a></li>
+      {{#each username in model.userList}}
+        <li>{{link-to username}}</li>
+      {{/each}}
     </ul>
   </section>
 </aside>
