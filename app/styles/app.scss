@@ -65,8 +65,10 @@ header {
       }
     }
     li {
+      @include transition(opacity 0.2s linear);
       &.disconnected {
         opacity: 0.5;
+        @include transition(opacity 0.2s linear);
       }
     }
     > ul {
