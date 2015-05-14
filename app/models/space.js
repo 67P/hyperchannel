@@ -5,11 +5,11 @@ export default Ember.Object.extend({
   name      : '',
   ircServer : {
     hostname: 'irc.freenode.net',
-    port: 6679,
-    ssl: true,
+    port: 6667,
+    secure: false,
     username: null,
     password: null,
-    nickname: 'kosmos-dev',
+    nickname: null,
     nickServ: {
       password: null
     }
@@ -21,6 +21,10 @@ export default Ember.Object.extend({
     // This could be based on server type in the future. E.g. IRC would be
     // server URL, while Campfire would be another id.
     return this.get('name').toLowerCase();
-  }.property('name')
+  }.property('name'),
+
+  sockethubPersonId: function() {
+    return 'irc://%@@%@'.fmt(this.get('ircServer.nickname'), this.get('ircServer.hostname'));
+  }.property('ircServer.hostname', 'ircServer.nickname')
 
 });

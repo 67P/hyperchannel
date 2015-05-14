@@ -28,6 +28,20 @@ export default Ember.Route.extend({
 
       this.controller.get('model.messages').pushObject(message);
       this.controller.set('newMessage', '');
+
+      var job = {
+        platform: 'irc',
+        verb: 'send',
+        actor: this.modelFor('space').get('sockethubPersonId'),
+        target: this.controller.get('model.sockethubChannelId'),
+        object: {
+          objectType: 'message',
+          content: message.get('content')
+        }
+      }
+
+      console.log('sending message job', job);
+      this.sockethub.socket.emit('message', job);
     }
 
   }
