@@ -1,25 +1,15 @@
-<header>
-  <section id="sitename">
+<div id="global">
+  <header id="sitename">
     <h1>Kosmos</h1>
-  </section>
-  <section id="topbar">
-    <h2 id="channel-name">#bridge</h2>
-    <p id="channel-title">Welcome to Prague! This is a dumb title.</p>
-    <nav>
-      <a href="#"><i class="icon-megaphone"></i></a><a href="#"><i class="icon-mute"></i></a>
-    </nav>
-  </section>
-  <section id="topbar-right">
-    <nav>
-      {{#link-to 'index'}}<i class="icon-users"></i>{{/link-to}}<a href="#"><i class="icon-paperclip"></i></a>{{#link-to 'settings'}}<i class="icon-cog"></i>{{/link-to}}<a href="#"><i class="icon-resize-enlarge"></i></a>
-    </nav>
-  </section>
-</header>
+  </header>
 
-<main>
-  <nav id="channels">
-    {{channel-nav spaces=spaces}}
-  </nav>
+  <div class="main">
+    <nav id="channels">
+      {{channel-nav spaces=spaces}}
+    </nav>
+  </div>
+</div>
 
+<div id="channel">
   {{outlet}}
-</main>
+</div>

@@ -1,3 +1,22 @@
+@mixin app-column() {
+  @include display(flex);
+  @include align-items(stretch);
+  @include flex-direction(column);
+  @include justify-content(flex-start);
+
+  header {
+    @include flex(0 0 $headerHeight);
+    position: relative;
+  }
+  .main {
+    @include flex(1);
+  }
+  footer {
+    @include flex(0 0 $headerHeight);
+    position: relative;
+  }
+}
+
 .app-container {
   position: absolute;
   top: 0;
@@ -6,38 +25,50 @@
   right: 0;
   @include display(flex);
   @include align-items(stretch);
-  @include flex-direction(column);
+  @include flex-direction(row);
   @include justify-content(flex-start);
 }
 
-header {
+#global {
+  @include flex(0 0 $sidebarWidth);
+  @include app-column;
+
+  header {
+    &#sitename {
+      padding: 0 1em;
+      h1 {
+        height: $headerHeight;
+        line-height: $headerHeight;
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+div#channel {
+  @include flex(1);
+
   @include display(flex);
   @include align-items(stretch);
   @include flex-direction(row);
   @include justify-content(flex-start);
-  #sitename {
-    @include flex(0 0 $sidebarWidth);
-    background-color: rgba(255,255,0,0.2);
-  }
-  #topbar {
+
+  main {
     @include flex(1);
-    position: relative;
-    background-color: rgba(255,0,255,0.2);
+    @include app-column;
   }
-  #topbar-right {
+
+  aside {
     @include flex(0 0 $sidebarWidth);
-    nav {
-      a {
-        background-color: rgba(255,255,0,0.2);
-        &.active {
-          background-color: rgba(0,255,255,0.2);
-        }
-        &:hover {
-          background-color: rgba(255,255,255,0.3);
-        }
-      }
-    }
+    @include app-column;
   }
+}
+
+header {
+//   #topbar {
+//     @include flex(1);
+//     position: relative;
+//   }
   nav {
     position: absolute;
     top: 0;
@@ -54,41 +85,3 @@ header {
     }
   }
 }
-
-main {
-  @include flex(1);
-
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(row);
-  @include justify-content(flex-start);
-
-  nav#channels {
-    @include flex(0 0 $sidebarWidth);
-    background-color: rgba(0,255,255,0.2);
-  }
-
-  section#content {
-    @include flex(1);
-
-    @include display(flex);
-    @include align-items(stretch);
-    @include flex-direction(column);
-    @include justify-content(flex-start);
-
-    section#channel-content {
-      @include flex(1);
-    }
-
-    footer {
-      @include flex(0 0 $headerHeight);
-      background-color: rgba(255,255,255,0.2);
-    }
-  }
-
-  > aside {
-    @include flex(0 0 $sidebarWidth);
-    background-color: rgba(0,255,255,0.2);
-  }
-}
-

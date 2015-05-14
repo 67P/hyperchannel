@@ -42,114 +42,142 @@ input, button {
 }
 
 header {
-  #sitename {
-    padding: 0 1em;
-    h1 {
-      height: $headerHeight;
-      line-height: $headerHeight;
-      text-transform: uppercase;
-    }
-  }
-  #topbar {
-    padding: 0 1em;
-    h2#channel-name {
-      display: inline;
-      height: $headerHeight;
-      line-height: $headerHeight;
-      margin-right: 1em;
-    } 
-    p#channel-title {
-      display: inline;
-      font-style: italic;
-    }
+  &#sitename {
+    background-color: rgba(255,255,0,0.2);
   }
 }
 
-nav#channels {
-  padding: 1.5em 0;
-  a {
-    display: block;
-    padding: 0 1em;
-    height: 1.6em;
-    line-height: 1.6em;
-    &:hover {
-      background-color: rgba(255,255,255,0.2);
-    }
+
+#global {
+  .main {
+    background-color: rgba(0,255,255,0.2);
   }
-  > ul {
-    list-style: none;
-    > li {
-      margin-bottom: 1.6em;
-      > ul {
-        padding: 0.6em 0 0 0;
-        list-style: none;
+
+  nav#channels {
+    padding: 1.5em 0;
+    a {
+      display: block;
+      padding: 0 1em;
+      height: 1.6em;
+      line-height: 1.6em;
+      &:hover {
+        background-color: rgba(255,255,255,0.2);
       }
     }
-  }
-}
-
-section#user-list {
-  padding: 1.5em 0;
-
-  > ul {
-    list-style: none;
-    li {
-      a {
-        display: block;
-        padding: 0 1em;
-        height: 1.6em;
-        line-height: 1.6em;
-        &:hover {
-          background-color: rgba(255,255,255,0.2);
+    > ul {
+      list-style: none;
+      > li {
+        margin-bottom: 1.6em;
+        > ul {
+          padding: 0.6em 0 0 0;
+          list-style: none;
         }
       }
     }
   }
 }
 
-section#content {
-  #channel-content {
-    padding: 1.5em 1em;
-    ul {
-      list-style: none;
-      li {
-        line-height: 2em;
-        .chat-message {
-          .username {
-            margin-right: 0.2em;
-            height: 2em;
-            line-height: 2em;
-            font-weight: bold;
-            padding-left: 21px;
-            &::after {
-              content: ':';
+#channel {
+  main {
+    header {
+      padding: 0 1em;
+      background-color: rgba(255,0,255,0.2);
+      h2#channel-name {
+        display: inline;
+        height: $headerHeight;
+        line-height: $headerHeight;
+        margin-right: 1em;
+      }
+      p#channel-title {
+        display: inline;
+        font-style: italic;
+      }
+    }
+
+    #channel-content {
+      padding: 1.5em 1em;
+      ul {
+        list-style: none;
+        li {
+          line-height: 2em;
+          .chat-message {
+            .username {
+              margin-right: 0.2em;
+              height: 2em;
+              line-height: 2em;
+              font-weight: bold;
+              padding-left: 21px;
+              &::after {
+                content: ':';
+              }
+              &[data-username=raucao] {
+                background: url(/img/avatar-sk.png) 0 2px no-repeat;
+              }
+              &[data-username=silverbucket] {
+                background: url(/img/avatar-sb.png) 0 2px no-repeat;
+              }
             }
-            &[data-username=raucao] {
-              background: url(/img/avatar-sk.png) 0 2px no-repeat;
-            }
-            &[data-username=silverbucket] {
-              background: url(/img/avatar-sb.png) 0 2px no-repeat;
+          }
+        }
+      }
+    }
+    footer {
+      background-color: rgba(255,255,255,0.2);
+
+      section#new-message {
+        padding: 0 14px;
+        color: #fff;
+        border-radius: 3px;
+        input[name=chat-message] {
+          width: 100%;
+          background: none;
+          border: none;
+          height: $headerHeight;
+          line-height: $headerHeight;
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  aside {
+    header {
+      nav {
+        a {
+          background-color: rgba(255,255,0,0.2);
+          &.active {
+            background-color: rgba(0,255,255,0.2);
+          }
+          &:hover {
+            background-color: rgba(255,255,255,0.3);
+          }
+        }
+      }
+    }
+
+    section#user-list {
+      // TODO unify with other sidebar nav
+      background-color: rgba(0,255,255,0.2);
+      padding: 1.5em 0;
+
+      > ul {
+        list-style: none;
+        li {
+          a {
+            display: block;
+            padding: 0 1em;
+            height: 1.6em;
+            line-height: 1.6em;
+            &:hover {
+              background-color: rgba(255,255,255,0.2);
             }
           }
         }
       }
     }
   }
-
-  section#new-message {
-    padding: 0 14px;
-    color: #fff;
-    border-radius: 3px;
-    input[name=chat-message] {
-      width: 100%;
-      background: none;
-      border: none;
-      height: $headerHeight;
-      line-height: $headerHeight;
-      color: #fff;
-    }
-  }
 }
+
 
 @import "layout";
 @import "iconfont";

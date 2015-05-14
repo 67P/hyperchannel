@@ -1,0 +1,52 @@
+<main>
+  <header>
+    <h2 id="channel-name">{{model.name}}</h2>
+    <p id="channel-title">Welcome to Prague! This is a dumb title.</p>
+    <nav>
+      <a href="#"><i class="icon-megaphone"></i></a><a href="#"><i class="icon-mute"></i></a>
+    </nav>
+  </header>
+
+  <section id="channel-content" class="main">
+  <ul>
+    <li>
+      <div class="chat-message">
+        <span class="username" data-username="raucao">raucao</span>
+        <span class="message">ohai from prague</span>
+      </div>
+    </li>
+    <li>
+      <div class="chat-message user-raucao">
+        <span class="username" data-username="silverbucket">silverbucket</span>
+        <span class="message">you're already here?!</span>
+      </div>
+    </li>
+  </ul>
+  </section>
+
+  <footer>
+    <section id="new-message">
+      <form {{action "sendMessage" on="submit"}}>
+        {{input value=chatMessage placeholder="Type a message and hit enter" name="chat-message"}}
+      </form>
+    </section>
+  </footer>
+</main>
+
+<aside>
+  <header>
+    <nav>
+      {{#link-to 'index' class='active'}}<i class="icon-users"></i>{{/link-to}}<a href="#"><i class="icon-paperclip"></i></a>{{#link-to 'settings'}}<i class="icon-cog"></i>{{/link-to}}<a href="#"><i class="icon-resize-enlarge"></i></a>
+    </nav>
+  </header>
+  <section id="user-list" class="main">
+    <ul>
+      <li><a href="#">bkero</a></li>
+      <li><a href="#">galfert</a></li>
+      <li><a href="#">gregkare</a></li>
+      <li><a href="#">janlelis</a></li>
+      <li><a href="#">raucao</a></li>
+      <li><a href="#">silverbucket</a></li>
+    </ul>
+  </section>
+</aside>
