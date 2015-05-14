@@ -9,6 +9,14 @@ export default Ember.Route.extend({
                .findBy('slug', params.slug);
   },
 
+  setupController: function(controller, model) {
+    this._super(controller, model);
+
+    Ember.run.scheduleOnce('afterRender', function() {
+      Ember.$('input#message-field').focus();
+    });
+  },
+
   actions: {
 
     sendMessage: function() {
