@@ -7,4 +7,3 @@ export default Ember.Object.extend({
   account: null
 
 });
-
