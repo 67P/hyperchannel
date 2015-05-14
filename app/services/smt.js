@@ -30,7 +30,7 @@ export default Ember.Object.extend({
 
       var channel;
       this.get('spaceFixtures')[space.get('name')].forEach(function(fixture){
-        channel = Channel.create({name: fixture.name});
+        channel = Channel.create({name: fixture.name, messages: []});
         channel.set('userList', fixture.userList);
         space.get('channels').pushObject(channel);
       });
