@@ -3,7 +3,17 @@ import Ember from 'ember';
 export default Ember.Object.extend({
 
   name      : '',
-  ircServer : {},
+  ircServer : {
+    hostname: 'irc.freenode.net',
+    port: 6679,
+    ssl: true,
+    username: null,
+    password: null,
+    nickname: 'kosmos-dev',
+    nickServ: {
+      password: null
+    }
+  },
   channels  : null,
   users     : null,
 
