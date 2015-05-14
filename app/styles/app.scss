@@ -71,6 +71,12 @@ header {
         > ul {
           padding: 0.6em 0 0 0;
           list-style: none;
+
+          li {
+            a.active {
+              background-color: rgba(255,255,255,0.2);
+            }
+          }
         }
       }
     }
