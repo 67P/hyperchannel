@@ -1,22 +1,19 @@
 /* global SockethubClient */
+/* global io */
 
 // TODO move settings into config file
-// var sockethubClient = SockethubClient.connect({
-//   host: 'localhost',
-//   register: {
-//     secret: '1234567890'
-//   }
-// });
+var sockethub = new SockethubClient(io('localhost:10550', { path: '/sockethub' }));
 
 export default {
   name: 'sockethub',
 
   initialize: function(container) {
-    // container.register('sockethub:client', sockethubClient, {instantiate: false, singleton: true});
-    //
-    // container.injection('controller', 'sockethub', 'sockethub:client');
-    // container.injection('route',      'sockethub', 'sockethub:client');
-    // container.injection('component',  'sockethub', 'sockethub:client');
+    container.register('sockethub:client', sockethub, {instantiate: false, singleton: true});
+
+    container.injection('controller', 'sockethub', 'sockethub:client');
+    container.injection('route',      'sockethub', 'sockethub:client');
+    container.injection('component',  'sockethub', 'sockethub:client');
+    container.injection('service',    'sockethub', 'sockethub:client');
   }
 };
 
