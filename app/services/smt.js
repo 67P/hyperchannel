@@ -131,6 +131,7 @@ export default Ember.Object.extend({
       content: message.object.content
     });
 
+    // TODO should check for message and update sent status if exists
     if (message.actor.displayName !== space.get('ircServer.nickname')) {
       channel.get('messages').pushObject(channelMessage);
     }
