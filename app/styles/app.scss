@@ -109,6 +109,9 @@ header {
 
     #channel-content {
       padding: 1.5em 1em;
+      background-color: #fff;
+      color: #333;
+
       ul {
         list-style: none;
         li {
@@ -134,8 +137,10 @@ header {
         }
       }
     }
+
     footer {
-      background-color: rgba(255,255,255,0.2);
+      background-color: #efefef;
+      color: #333;
 
       section#new-message {
         padding: 0 14px;
@@ -147,7 +152,6 @@ header {
           border: none;
           height: $headerHeight;
           line-height: $headerHeight;
-          color: #fff;
         }
       }
     }
