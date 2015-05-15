@@ -113,7 +113,7 @@ export default Ember.Object.extend({
     if (!Ember.isEmpty(space)) {
       var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
       if (!Ember.isEmpty(channel)) {
-        channel.set('userList', message.object.members);
+        channel.set('userList', message.object.members.sort());
       }
     }
   },
