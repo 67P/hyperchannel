@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import Space   from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
+import Message from 'hyperchannel/models/message';
 // import User    from 'hyperchannel/models/channel';
 
 // TODO Use Ember.Service when upgrading to latest version
@@ -53,37 +54,84 @@ export default Ember.Object.extend({
     this.sockethub.socket.on('completed', function(message) {
       console.log('SH completed', message);
 
-      if (message['@type'] === 'join') {
-        var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
-        if (!Ember.isEmpty(space)) {
-          var channel = space.get('channels').findBy('sockethubChannelId', message.target);
-          if (!Ember.isEmpty(channel)) {
-            channel.set('connected', true);
-            // this.observeChannel(space.get('sockethubPersonId'), channel.get('sockethubChannelId'));
+
+      switch(message['@type']) {
+        case 'join':
+          if (message['@type'] === 'join') {
+            var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
+            if (!Ember.isEmpty(space)) {
+              var channel = space.get('channels').findBy('sockethubChannelId', message.target);
+              if (!Ember.isEmpty(channel)) {
+                channel.set('connected', true);
+                this.observeChannel(space.get('sockethubPersonId'), channel.get('sockethubChannelId'));
+              }
+            }
           }
-        }
+          break;
+        case 'observe':
+          if (message.object['@type'] === 'attendance') {
+            this.updateChannelUserList(message);
+          }
+          break;
       }
     }.bind(this));
 
     this.sockethub.socket.on('message', function(message) {
       console.log('SH message', message);
 
-      // user list for a channel
-      if (message['@type'] === 'observe' && message.object['@type'] === 'attendance') {
-        var space = this.get('spaces').findBy('ircServer.hostname',
-                                              message.actor['@id'].match(/irc:\/\/(.+)\//)[1]);
-        if (!Ember.isEmpty(space)) {
-          var channel = space.get('channels').findBy('sockethubChannelId', message.target.id);
-          if (!Ember.isEmpty(channel)) {
-            channel.set('users', message.object.members);
+      switch(message['@type']) {
+        case 'observe':
+          if (message.object['@type'] === 'attendance') {
+            this.updateChannelUserList(message);
           }
-        }
+          break;
+        case 'send':
+          if (message.object['@type'] === 'message') {
+            this.addMessageToChannel(message);
+          }
+          break;
       }
+
+      // user list for a channel
     }.bind(this));
 
     this.sockethub.socket.on('failure', function(message) {
       console.log('SH failure', message);
     });
+  },
+
+  updateChannelUserList: function(message) {
+    var hostname;
+    if (typeof message.actor === 'object') {
+      hostname = message.actor['@id'].match(/irc:\/\/(.+)\//)[1];
+    } else if (typeof message.actor === 'string') {
+      hostname = message.actor.match(/irc:\/\/.+\@(.+)/)[1];
+    }
+
+    var space = this.get('spaces').findBy('ircServer.hostname', hostname);
+
+    if (!Ember.isEmpty(space)) {
+      var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
+      if (!Ember.isEmpty(channel)) {
+        channel.set('userList', message.object.members);
+      }
+    }
+  },
+
+  addMessageToChannel: function(message) {
+    console.debug('actor', message.actor['@id']);
+
+    var space = this.get('spaces').findBy('ircServer.hostname',
+                message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1]);
+    var channel = space.get('channels').findBy('name', message.target.displayName);
+
+    var channelMessage = Message.create({
+      date: new Date(message.published),
+      nickname: message.actor.displayName,
+      content: message.object.content
+    });
+
+    channel.get('messages').pushObject(channelMessage);
   },
 
   observeChannel: function(person, channelId) {
@@ -113,7 +161,7 @@ export default Ember.Object.extend({
           messages: []
         });
         this.joinChannel(space, channel);
-        channel.set('userList', fixture.userList);
+        channel.set('userList', []);
         space.get('channels').pushObject(channel);
       }.bind(this));
     }.bind(this));
