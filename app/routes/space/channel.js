@@ -20,9 +20,11 @@ export default Ember.Route.extend({
   actions: {
 
     sendMessage: function() {
+      var space = this.modelFor('space');
+
       var message = Message.create({
         date: new Date(),
-        nickname: 'raucao',
+        nickname: space.get('ircServer.nickname'),
         content: this.controller.get('newMessage')
       });
 
@@ -32,7 +34,7 @@ export default Ember.Route.extend({
       var job = {
         context: 'irc',
         '@type': 'send',
-        actor: this.modelFor('space').get('sockethubPersonId'),
+        actor: space.get('sockethubPersonId'),
         target: this.controller.get('model.sockethubChannelId'),
         object: {
           '@type': 'message',

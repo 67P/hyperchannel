@@ -131,7 +131,9 @@ export default Ember.Object.extend({
       content: message.object.content
     });
 
-    channel.get('messages').pushObject(channelMessage);
+    if (message.actor.displayName !== space.get('ircServer.nickname')) {
+      channel.get('messages').pushObject(channelMessage);
+    }
   },
 
   observeChannel: function(person, channelId) {
@@ -197,7 +199,7 @@ export default Ember.Object.extend({
             secure: false,
             username: null,
             password: null,
-            nickname: 'kosmos-dev-123456789',
+            nickname: 'kosmos-12345',
             nickServ: {
               password: null
             }
