@@ -80,7 +80,11 @@ export default Ember.Route.extend({
     },
 
     partCommand: function(args) {
-
+      var space = this.modelFor('space');
+      var channelName = this.controller.get('model.name');
+      this.smt.removeChannel(space, channelName);
+      var lastChannel = space.get('channels.lastObject');
+      this.transitionTo('space.channel', space, lastChannel);
     },
 
     helpCommand: function(args) {

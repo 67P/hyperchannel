@@ -174,6 +174,13 @@ export default Ember.Object.extend({
     return channel;
   },
 
+  removeChannel: function(space, channelName) {
+    var channel = space.get('channels').findBy('name', channelName);
+    this.leaveChannel(space, channel);
+    space.get('channels').removeObject(channel);
+    return channel;
+  },
+
   joinChannel: function(space, channel) {
     this.sockethub.ActivityStreams.Object.create({
       '@type': "room",
@@ -190,6 +197,25 @@ export default Ember.Object.extend({
     };
 
     console.log('joining channel:', joinMsg);
+    this.sockethub.socket.emit('message', joinMsg);
+  },
+
+  leaveChannel: function(space, channel) {
+    this.sockethub.ActivityStreams.Object.create({
+      '@type': "room",
+      '@id': channel.get('sockethubChannelId'),
+      displayName: channel.get('name')
+    });
+
+    var joinMsg = {
+      context: 'irc',
+      '@type': 'leave',
+      actor: space.get('sockethubPersonId'),
+      target: channel.get('sockethubChannelId'),
+      object: {}
+    };
+
+    console.log('leaving channel:', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
