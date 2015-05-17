@@ -220,7 +220,6 @@ export default Ember.Object.extend({
   },
 
   spaceFixtures: function() {
-    const usernames = this.get('userFixtures').mapBy('username');
     const nickname = prompt("Choose a nickname");
 
     return {
@@ -254,12 +253,7 @@ export default Ember.Object.extend({
       //     nickServ: {
       //       password: null
       //     }
-      //   },
-      //   channels: [
-      //     { name: '#10forward', userList: usernames.concat(['ryker','gainan']) },
-      //     { name: '#bridge', userList: usernames.concat(['jlpicard']) },
-      //     { name: '#holodeck', userList: usernames.concat(['jordielaforge']) }
-      //   ]
+      //   }
       // },
     };
   }.property('userFixtures'),
