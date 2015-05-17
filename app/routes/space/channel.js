@@ -19,6 +19,14 @@ export default Ember.Route.extend({
 
   actions: {
 
+    processMessageOrCommand: function() {
+      if (this.controller.get('newMessage').substr(0, 1) === "/") {
+        this.send('executeCommand');
+      } else {
+        this.send('sendMessage');
+      }
+    },
+
     sendMessage: function() {
       var space = this.modelFor('space');
 
@@ -27,9 +35,6 @@ export default Ember.Route.extend({
         nickname: space.get('ircServer.nickname'),
         content: this.controller.get('newMessage')
       });
-
-      this.controller.get('model.messages').pushObject(message);
-      this.controller.set('newMessage', '');
 
       var job = {
         context: 'irc',
@@ -44,6 +49,51 @@ export default Ember.Route.extend({
 
       console.log('sending message job', job);
       this.sockethub.socket.emit('message', job);
+
+      this.controller.get('model.messages').pushObject(message);
+      this.controller.set('newMessage', null);
+    },
+
+    executeCommand: function() {
+      var availableCommands = [
+        "help",
+        "join",
+        "part",
+        "leave"
+      ];
+      var commandText = this.controller.get('newMessage').substr(1);
+      var commandSplitted = commandText.split(" ");
+      var command = commandSplitted[0];
+
+      if (availableCommands.contains(command)) {
+        this.send(command + 'Command', commandSplitted.slice(1));
+      } else {
+        console.log('error, unknown', commandText);
+      }
+
+      this.controller.set('newMessage', null);
+    },
+
+    joinCommand: function(args) {
+      var space = this.modelFor('space');
+      var channel = this.smt.createChannel(space, args[0]);
+      this.transitionTo('space.channel', space, channel);
+    },
+
+    partCommand: function() {
+      var space = this.modelFor('space');
+      var channelName = this.controller.get('model.name');
+      this.smt.removeChannel(space, channelName);
+      var lastChannel = space.get('channels.lastObject');
+      this.transitionTo('space.channel', space, lastChannel);
+    },
+
+    leaveCommand: function() {
+      this.send('partCommand');
+    },
+
+    helpCommand: function() {
+
     }
 
   }

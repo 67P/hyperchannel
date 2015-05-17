@@ -156,18 +156,29 @@ export default Ember.Object.extend({
     this.get('spaces').forEach(function(space) {
       space.set('channels', []);
 
-      var channel;
-      this.get('spaceFixtures')[space.get('name')].channels.forEach(function(fixture){
-        channel = Channel.create({
-          name: fixture.name,
-          sockethubChannelId: 'irc://%@/%@'.fmt(space.get('ircServer.hostname'), fixture.name),
-          messages: []
-        });
-        this.joinChannel(space, channel);
-        channel.set('userList', []);
-        space.get('channels').pushObject(channel);
+      this.get('spaceFixtures')[space.get('name')].channels.forEach(function(channelName){
+        this.createChannel(space, channelName);
       }.bind(this));
     }.bind(this));
+  },
+
+  createChannel: function(space, channelName) {
+    var channel = Channel.create({
+      name: channelName,
+      sockethubChannelId: 'irc://%@/%@'.fmt(space.get('ircServer.hostname'), channelName),
+      messages: []
+    });
+    this.joinChannel(space, channel);
+    channel.set('userList', []);
+    space.get('channels').pushObject(channel);
+    return channel;
+  },
+
+  removeChannel: function(space, channelName) {
+    var channel = space.get('channels').findBy('name', channelName);
+    this.leaveChannel(space, channel);
+    space.get('channels').removeObject(channel);
+    return channel;
   },
 
   joinChannel: function(space, channel) {
@@ -189,8 +200,28 @@ export default Ember.Object.extend({
     this.sockethub.socket.emit('message', joinMsg);
   },
 
+  leaveChannel: function(space, channel) {
+    this.sockethub.ActivityStreams.Object.create({
+      '@type': "room",
+      '@id': channel.get('sockethubChannelId'),
+      displayName: channel.get('name')
+    });
+
+    var joinMsg = {
+      context: 'irc',
+      '@type': 'leave',
+      actor: space.get('sockethubPersonId'),
+      target: channel.get('sockethubChannelId'),
+      object: {}
+    };
+
+    console.log('leaving channel:', joinMsg);
+    this.sockethub.socket.emit('message', joinMsg);
+  },
+
   spaceFixtures: function() {
-    var usernames = this.get('userFixtures').mapBy('username');
+    const usernames = this.get('userFixtures').mapBy('username');
+    const nickname = prompt("Choose a nickname");
 
     return {
       'Freenode': {
@@ -200,16 +231,16 @@ export default Ember.Object.extend({
             secure: false,
             username: null,
             password: null,
-            nickname: 'kosmos-12345',
+            nickname: nickname,
             nickServ: {
               password: null
             }
           },
           channels: [
-            { name: '#67p', userList: usernames.concat(['bacilla','gillisig']) },
-            { name: '#kosmos', userList: usernames.concat(['bacilla']) },
-            { name: '#kosmos-dev', userList: usernames.concat(['melvster','timbl']) },
-            { name: '#sockethub', userList: usernames.concat(['melvster']) }
+            '#67p',
+            '#kosmos',
+            '#kosmos-dev',
+            '#sockethub'
           ],
       },
       // 'Enterprise': {

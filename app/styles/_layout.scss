@@ -10,6 +10,7 @@
   }
   .main {
     @include flex(1);
+    overflow: auto;
   }
   footer {
     @include flex(0 0 $headerHeight);
