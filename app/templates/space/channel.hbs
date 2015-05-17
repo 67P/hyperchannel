@@ -31,7 +31,7 @@
 
     <footer>
       <section id="new-message">
-        <form {{action "sendMessage" on="submit"}}>
+        <form {{action "processMessageOrCommand" on="submit"}}>
           {{input value=newMessage placeholder="Type a message and hit enter" name="chat-message" id="message-field"}}
         </form>
       </section>
