@@ -20,8 +20,8 @@ export default Ember.Route.extend({
   actions: {
 
     processMessageOrCommand: function() {
-      if(this.controller.get('newMessage').substr(0, 1) === "/") {
-        this.send('executeCommand')
+      if (this.controller.get('newMessage').substr(0, 1) === "/") {
+        this.send('executeCommand');
       } else {
         this.send('sendMessage');
       }
@@ -58,16 +58,17 @@ export default Ember.Route.extend({
       var availableCommands = [
         "help",
         "join",
-        "part"
+        "part",
+        "leave"
       ];
-      var commandText = this.controller.get('newMessage').substr(1)
+      var commandText = this.controller.get('newMessage').substr(1);
       var commandSplitted = commandText.split(" ");
       var command = commandSplitted[0];
 
-      if(availableCommands.contains(command)) {
-        this.send(command + 'Command', commandSplitted.slice(1))
+      if (availableCommands.contains(command)) {
+        this.send(command + 'Command', commandSplitted.slice(1));
       } else {
-        console.log('error, unknown', commandText)
+        console.log('error, unknown', commandText);
       }
 
       this.controller.set('newMessage', null);
@@ -79,7 +80,7 @@ export default Ember.Route.extend({
       this.transitionTo('space.channel', space, channel);
     },
 
-    partCommand: function(args) {
+    partCommand: function() {
       var space = this.modelFor('space');
       var channelName = this.controller.get('model.name');
       this.smt.removeChannel(space, channelName);
@@ -87,7 +88,11 @@ export default Ember.Route.extend({
       this.transitionTo('space.channel', space, lastChannel);
     },
 
-    helpCommand: function(args) {
+    leaveCommand: function() {
+      this.send('partCommand');
+    },
+
+    helpCommand: function() {
 
     }
 
