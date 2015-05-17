@@ -220,7 +220,8 @@ export default Ember.Object.extend({
   },
 
   spaceFixtures: function() {
-    var usernames = this.get('userFixtures').mapBy('username');
+    const usernames = this.get('userFixtures').mapBy('username');
+    const nickname = prompt("Choose a nickname");
 
     return {
       'Freenode': {
@@ -230,7 +231,7 @@ export default Ember.Object.extend({
             secure: false,
             username: null,
             password: null,
-            nickname: 'kosmos-12345',
+            nickname: nickname,
             nickServ: {
               password: null
             }
