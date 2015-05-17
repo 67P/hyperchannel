@@ -156,18 +156,22 @@ export default Ember.Object.extend({
     this.get('spaces').forEach(function(space) {
       space.set('channels', []);
 
-      var channel;
-      this.get('spaceFixtures')[space.get('name')].channels.forEach(function(fixture){
-        channel = Channel.create({
-          name: fixture.name,
-          sockethubChannelId: 'irc://%@/%@'.fmt(space.get('ircServer.hostname'), fixture.name),
-          messages: []
-        });
-        this.joinChannel(space, channel);
-        channel.set('userList', []);
-        space.get('channels').pushObject(channel);
+      this.get('spaceFixtures')[space.get('name')].channels.forEach(function(channelName){
+        this.createChannel(space, channelName);
       }.bind(this));
     }.bind(this));
+  },
+
+  createChannel: function(space, channelName) {
+    var channel = Channel.create({
+      name: channelName,
+      sockethubChannelId: 'irc://%@/%@'.fmt(space.get('ircServer.hostname'), channelName),
+      messages: []
+    });
+    this.joinChannel(space, channel);
+    channel.set('userList', []);
+    space.get('channels').pushObject(channel);
+    return channel;
   },
 
   joinChannel: function(space, channel) {
@@ -206,10 +210,10 @@ export default Ember.Object.extend({
             }
           },
           channels: [
-            { name: '#67p', userList: usernames.concat(['bacilla','gillisig']) },
-            { name: '#kosmos', userList: usernames.concat(['bacilla']) },
-            { name: '#kosmos-dev', userList: usernames.concat(['melvster','timbl']) },
-            { name: '#sockethub', userList: usernames.concat(['melvster']) }
+            '#67p',
+            '#kosmos',
+            '#kosmos-dev',
+            '#sockethub'
           ],
       },
       // 'Enterprise': {

@@ -74,7 +74,9 @@ export default Ember.Route.extend({
     },
 
     joinCommand: function(args) {
-
+      var space = this.modelFor('space');
+      var channel = this.smt.createChannel(space, args[0]);
+      this.transitionTo('space.channel', space, channel);
     },
 
     partCommand: function(args) {
