@@ -36,22 +36,31 @@ export default Ember.Route.extend({
         content: this.controller.get('newMessage')
       });
 
+      this.send('transferMessage',
+         this.controller.get('model.sockethubChannelId'),
+         message.get('content')
+      );
+
+      this.controller.get('model.messages').pushObject(message);
+      this.controller.set('newMessage', null);
+    },
+
+    transferMessage: function(target, content) {
+      var space = this.modelFor('space');
+
       var job = {
         context: 'irc',
         '@type': 'send',
         actor: space.get('sockethubPersonId'),
-        target: this.controller.get('model.sockethubChannelId'),
+        target: target,
         object: {
           '@type': 'message',
-          content: message.get('content')
+          content: content
         }
       };
 
       console.log('sending message job', job);
       this.sockethub.socket.emit('message', job);
-
-      this.controller.get('model.messages').pushObject(message);
-      this.controller.set('newMessage', null);
     },
 
     executeCommand: function() {
@@ -59,6 +68,7 @@ export default Ember.Route.extend({
         "help",
         "join",
         "leave",
+        "msg",
         "part"
       ];
       var commandText = this.controller.get('newMessage').substr(1);
@@ -94,8 +104,13 @@ export default Ember.Route.extend({
 
     helpCommand: function() {
 
-    }
+    },
 
+    msgCommand: function(args) {
+      var space = this.modelFor('space');
+      var channel = this.smt.createUserChannel(space, args[0]);
+      // this.send('transferMessage', args[0], args[1]);
+    }
   }
 
 });

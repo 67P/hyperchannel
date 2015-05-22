@@ -123,7 +123,15 @@ export default Ember.Object.extend({
 
     var space = this.get('spaces').findBy('ircServer.hostname',
                 message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1]);
-    var channel = space.get('channels').findBy('name', message.target.displayName);
+    var nickname = space.get('ircServer.nickname');
+
+    if (nickname === message.target.displayName) {
+      var targetChannelName = message.actor.displayName;
+    } else {
+      var targetChannelName = message.target.displayName;
+    }
+
+    var channel = space.get('channels').findBy('name', targetChannelName);
 
     var channelMessage = Message.create({
       date: new Date(message.published),
@@ -132,7 +140,7 @@ export default Ember.Object.extend({
     });
 
     // TODO should check for message and update sent status if exists
-    if (message.actor.displayName !== space.get('ircServer.nickname')) {
+    if (message.actor.displayName !== nickname) {
       channel.get('messages').pushObject(channelMessage);
     }
   },
@@ -168,7 +176,19 @@ export default Ember.Object.extend({
       sockethubChannelId: 'irc://%@/%@'.fmt(space.get('ircServer.hostname'), channelName),
       messages: []
     });
-    this.joinChannel(space, channel);
+    this.joinChannel(space, channel, "room");
+    channel.set('userList', []);
+    space.get('channels').pushObject(channel);
+    return channel;
+  },
+
+  createUserChannel: function(space, userName) {
+    var channel = Channel.create({
+      name: userName,
+      sockethubChannelId: 'irc://%@/%@'.fmt(space.get('ircServer.hostname'), userName),
+      messages: []
+    });
+    this.joinChannel(space, channel, "person");
     channel.set('userList', []);
     space.get('channels').pushObject(channel);
     return channel;
@@ -181,9 +201,9 @@ export default Ember.Object.extend({
     return channel;
   },
 
-  joinChannel: function(space, channel) {
+  joinChannel: function(space, channel, type) {
     this.sockethub.ActivityStreams.Object.create({
-      '@type': "room",
+      '@type': type,
       '@id': channel.get('sockethubChannelId'),
       displayName: channel.get('name')
     });
