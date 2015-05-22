@@ -58,14 +58,14 @@ export default Ember.Route.extend({
       var availableCommands = [
         "help",
         "join",
-        "part",
-        "leave"
+        "leave",
+        "part"
       ];
       var commandText = this.controller.get('newMessage').substr(1);
       var commandSplitted = commandText.split(" ");
       var command = commandSplitted[0];
 
-      if (availableCommands.contains(command)) {
+      if (availableCommands.contains(command.toLowerCase())) {
         this.send(command + 'Command', commandSplitted.slice(1));
       } else {
         console.log('error, unknown', commandText);
