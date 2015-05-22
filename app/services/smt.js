@@ -132,6 +132,9 @@ export default Ember.Object.extend({
     }
 
     var channel = space.get('channels').findBy('name', targetChannelName);
+    if (!channel) {
+      channel = this.createChannel(space, targetChannelName);
+    }
 
     var channelMessage = Message.create({
       date: new Date(message.published),
