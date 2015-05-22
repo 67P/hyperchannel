@@ -4,9 +4,12 @@ import Message from 'hyperchannel/models/message';
 export default Ember.Route.extend({
 
   model: function(params) {
-    return this.modelFor('space')
-               .get('channels')
-               .findBy('slug', params.slug);
+    var space = this.modelFor('space');
+    var channel = space.get('channels').findBy('slug', params.slug);
+    if (!channel) {
+      channel = this.smt.createChannel(space, '#' + params.slug);
+    }
+    return channel;
   },
 
   setupController: function(controller, model) {
