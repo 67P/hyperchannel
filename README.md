@@ -1,4 +1,4 @@
-# Hyperchannel
+# Hyperchannel [![Build Status](https://magnum.travis-ci.com/67P/hyperchannel.svg?token=3qssKTdrRjDD9v1twH7s&branch=master)](https://magnum.travis-ci.com/67P/hyperchannel)
 
 This README outlines the details of collaborating on this Ember application.
 A short introduction of this app could easily go here.
