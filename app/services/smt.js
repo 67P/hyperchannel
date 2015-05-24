@@ -125,10 +125,11 @@ export default Ember.Object.extend({
                 message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1]);
     var nickname = space.get('ircServer.nickname');
 
+    var targetChannelName;
     if (nickname === message.target.displayName) {
-      var targetChannelName = message.actor.displayName;
+      targetChannelName = message.actor.displayName;
     } else {
-      var targetChannelName = message.target.displayName;
+      targetChannelName = message.target.displayName;
     }
 
     var channel = space.get('channels').findBy('name', targetChannelName);
