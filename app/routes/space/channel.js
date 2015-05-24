@@ -81,7 +81,7 @@ export default Ember.Route.extend({
       if (availableCommands.contains(command.toLowerCase())) {
         this.send(command + 'Command', commandSplitted.slice(1));
       } else {
-        console.log('error, unknown', commandText);
+        console.log('Unknown command', commandText);
       }
 
       this.controller.set('newMessage', null);
@@ -109,11 +109,11 @@ export default Ember.Route.extend({
 
     },
 
-    // msgCommand: function(args) {
-      // var space = this.modelFor('space');
-      // var channel = this.smt.createUserChannel(space, args[0]);
+    msgCommand: function(args) {
+      var space = this.modelFor('space');
+      this.smt.createUserChannel(space, args[0]);
       // this.send('transferMessage', args[0], args[1]);
-    // }
+    }
   }
 
 });
