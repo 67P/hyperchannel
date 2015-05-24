@@ -109,11 +109,11 @@ export default Ember.Route.extend({
 
     },
 
-    msgCommand: function(args) {
-      var space = this.modelFor('space');
-      var channel = this.smt.createUserChannel(space, args[0]);
+    // msgCommand: function(args) {
+      // var space = this.modelFor('space');
+      // var channel = this.smt.createUserChannel(space, args[0]);
       // this.send('transferMessage', args[0], args[1]);
-    }
+    // }
   }
 
 });
