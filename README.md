@@ -1,9 +1,18 @@
 [![Build Status](https://magnum.travis-ci.com/67P/hyperchannel.svg?token=3qssKTdrRjDD9v1twH7s&branch=master)](https://magnum.travis-ci.com/67P/hyperchannel)
 
-# Hyperchannel
+# Hyperchannel (pre-alpha!)
 
-This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+**Hyperchannel** is the unhosted client application of the
+[Kosmos](https://kosmos.org) project. It is based on
+[Ember.js](http://emberjs.com), connecting to IRC/XMPP/etc. via
+[Sockethub](http://sockethub.org) (WebSockets + ActivityStreams), and
+optionally syncing configuration and user data via
+[remoteStorage](https://remotestorage.io) (Webfinger + OAuth + CORS + REST).
+
+Hyperchannel is not yet ready for public use, but contributions are very
+welcome. If you know JavaScript, and ideally even have experience with
+Ember.js, it is easy to hack on any feature imaginable. Check the help-wanted
+tag in the issue to find things you could start implementing right away.
 
 ## Prerequisites
 
@@ -12,7 +21,6 @@ You will need the following things properly installed on your computer.
 * [Git](http://git-scm.com/)
 * [Node.js](http://nodejs.org/) (with NPM)
 * [Bower](http://bower.io/)
-* [Ember CLI](http://www.ember-cli.com/)
 * [PhantomJS](http://phantomjs.org/)
 
 ## Installation
@@ -21,11 +29,12 @@ You will need the following things properly installed on your computer.
 * change into the new directory
 * `npm install`
 * `bower install`
+* Make sure `./node_modules/.bin` is in your $PATH (before system-wide npm modules)
 
 ## Running / Development
 
 * `ember server`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
+* Visit the app at [http://localhost:4200](http://localhost:4200).
 
 ### Code Generators
 
@@ -37,16 +46,18 @@ not use moduleForModel, as we're not using Ember Data. See existing tests.
 ### Running Tests
 
 * `ember test`
-* `ember test --server`
+* `ember test --server` (will re-run on saving files)
 
 ### Building
+
+(Not yet used.)
 
 * `ember build` (development)
 * `ember build --environment production` (production)
 
 ### Deploying
 
-Specify what it takes to deploy your app.
+[TODO]
 
 ## Further Reading / Useful Links
 
