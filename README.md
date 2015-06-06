@@ -12,7 +12,8 @@ optionally syncing configuration and user data via
 Hyperchannel is not yet ready for public use, but contributions are very
 welcome. If you know JavaScript, and ideally even have experience with
 Ember.js, it is easy to hack on any feature imaginable. Check the help-wanted
-tag in the issue to find things you could start implementing right away.
+tag in the [GitHub issues](https://github.com/67P/hyperchannel/issues) to find
+things you could start implementing right away.
 
 ## Prerequisites
 
