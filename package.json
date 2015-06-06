@@ -33,6 +33,6 @@
     "ember-cli-qunit": "0.3.10",
     "ember-cli-uglify": "1.0.1",
     "ember-export-application-global": "^1.0.2",
-    "ember-cli-sockethub": "git@github.com:67P/ember-cli-sockethub.git#experimental_v1_0"
+    "ember-cli-sockethub": "git://github.com/67P/ember-cli-sockethub.git#experimental_v1_0"
   }
 }
