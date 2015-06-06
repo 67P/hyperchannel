@@ -1,4 +1,4 @@
-[![Build Status](https://magnum.travis-ci.com/67P/hyperchannel.svg?token=3qssKTdrRjDD9v1twH7s&branch=master)](https://magnum.travis-ci.com/67P/hyperchannel)
+[![Build Status](https://travis-ci.org/67P/hyperchannel.svg)](https://travis-ci.org/67P/hyperchannel)
 
 # Hyperchannel (pre-alpha!)
 
