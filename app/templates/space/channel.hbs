@@ -12,10 +12,7 @@
     <ul>
       {{#each message in model.messages}}
         <li>
-          <div class="chat-message">
-            <span class="username" data-username={{message.nickname}}>{{message.nickname}}</span>
-            <span class="message">{{message.content}}</span>
-          </div>
+          {{chat-message message=message}}
         </li>
       {{/each}}
       <!--
