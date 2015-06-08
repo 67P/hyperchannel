@@ -14,10 +14,6 @@ export default Ember.TextField.extend({
     }
   },
 
-  click: function() {
-    console.debug('click');
-  },
-
   _insertAtCaret: function(myValue) {
     let el = this.$().get(0);
 
@@ -28,7 +24,6 @@ export default Ember.TextField.extend({
       el.focus();
     }
     else if (el.selectionStart || el.selectionStart === '0') {
-      console.debug('ohai');
       const startPos = el.selectionStart;
       const endPos = el.selectionEnd;
       const scrollTop = el.scrollTop;
