@@ -21,7 +21,7 @@ You will need the following things properly installed on your computer.
 
 * [Git](http://git-scm.com/)
 * [Node.js](http://nodejs.org/) (with NPM)
-* [Bower](http://bower.io/)
+* [Sockethub](http://sockethub.org/)
 * [PhantomJS](http://phantomjs.org/)
 
 ## Installation
