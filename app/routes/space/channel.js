@@ -72,7 +72,8 @@ export default Ember.Route.extend({
         "join",
         "leave",
         "msg",
-        "part"
+        "part",
+        "topic"
       ];
       var commandText = this.controller.get('newMessage').substr(1);
       var commandSplitted = commandText.split(" ");
@@ -113,6 +114,14 @@ export default Ember.Route.extend({
       var space = this.modelFor('space');
       this.smt.createUserChannel(space, args[0]);
       // this.send('transferMessage', args[0], args[1]);
+    },
+
+    topicCommand: function(args) {
+      var space = this.modelFor('space');
+      var channel = this.controller.get('model');
+      var topic = args.join(' ');
+
+      this.smt.changeTopic(space, channel, topic);
     }
   }
 

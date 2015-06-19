@@ -266,6 +266,21 @@ export default Ember.Object.extend({
     this.sockethub.socket.emit('message', joinMsg);
   },
 
+  changeTopic: function(space, channel, topic) {
+    var topicMsg = {
+      context: 'irc',
+      '@type': 'update',
+      actor: space.get('sockethubPersonId'),
+      target: channel.get('sockethubChannelId'),
+      object: {
+        '@type': 'topic',
+        topic: topic
+      }
+    };
+
+    this.sockethub.socket.emit('message', topicMsg);
+  },
+
   spaceFixtures: function() {
     const nickname = prompt("Choose a nickname");
 
