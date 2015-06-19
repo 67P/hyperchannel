@@ -318,7 +318,7 @@ export default Ember.Object.extend({
       //   }
       // },
     };
-  }.property('userFixtures'),
+  }.property(),
 
   userFixtures: function() {
     return [
