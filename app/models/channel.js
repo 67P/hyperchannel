@@ -7,6 +7,7 @@ export default Ember.Object.extend({
   messages: null,
   connected: false,
   sockethubChannelId: null,
+  topic: null,
 
   slug: function() {
     // This could be based on server type in the future. E.g. IRC would be
