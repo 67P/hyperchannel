@@ -34,6 +34,7 @@ export default Ember.Route.extend({
       var space = this.modelFor('space');
 
       var message = Message.create({
+        type: 'message-chat',
         date: new Date(),
         nickname: space.get('ircServer.nickname'),
         content: this.controller.get('newMessage')

@@ -12,7 +12,7 @@
     <ul>
       {{#each message in model.messages}}
         <li>
-          {{chat-message message=message}}
+          {{component message.type message=message}}
         </li>
       {{/each}}
       <!--

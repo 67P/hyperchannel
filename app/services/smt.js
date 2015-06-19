@@ -135,9 +135,21 @@ export default Ember.Object.extend({
 
     if (!Ember.isEmpty(space)) {
       var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
-      if (!Ember.isEmpty(channel)) {
-        channel.set('topic', message.object.topic);
+
+      if (Ember.isEmpty(channel)) {
+        channel = this.createChannel(space, message.target['@id']);
       }
+
+      channel.set('topic', message.object.topic);
+
+      var notification = Message.create({
+        type: 'notification-topic-change',
+        date: new Date(message.published),
+        nickname: message.actor.displayName,
+        content: message.object.topic
+      });
+
+      channel.get('messages').pushObject(notification);
     }
   },
 
@@ -161,6 +173,7 @@ export default Ember.Object.extend({
     }
 
     var channelMessage = Message.create({
+      type: 'message-chat',
       date: new Date(message.published),
       nickname: message.actor.displayName,
       content: message.object.content
