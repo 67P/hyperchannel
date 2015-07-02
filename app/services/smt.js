@@ -85,6 +85,12 @@ export default Ember.Object.extend({
             this.updateChannelUserList(message);
           }
           break;
+        case 'join':
+          this.addUserToChannelUserList(message);
+          break;
+        case 'leave':
+          this.removeUserFromChannelUserList(message);
+          break;
         case 'send':
           if (message.object['@type'] === 'message') {
             this.addMessageToChannel(message);
@@ -106,19 +112,44 @@ export default Ember.Object.extend({
   },
 
   updateChannelUserList: function(message) {
-    var hostname;
-    if (typeof message.actor === 'object') {
-      hostname = message.actor['@id'].match(/irc:\/\/(.+)\//)[1];
-    } else if (typeof message.actor === 'string') {
-      hostname = message.actor.match(/irc:\/\/.+\@(.+)/)[1];
+    var channel = this.getChannelByMessage(message);
+    if(channel) {
+      channel.set('userList', message.object.members.sort());
     }
+  },
+
+  addUserToChannelUserList: function(message) {
+    var channel = this.getChannelByMessage(message);
+    if(channel) {
+      var userList = channel.get('userList');
+      userList.pushObject(message.actor.displayName);
+    }
+  },
+
+  removeUserFromChannelUserList: function(message) {
+    var channel = this.getChannelByMessage(message);
+    if(channel) {
+      var userList = channel.get('userList');
+      userList.removeObject(message.actor.displayName);
+    }
+  },
+
+  getChannelByMessage: function(message) {
+    var addressWithHostname, hostname;
+    if (typeof message.actor === 'object') {
+      addressWithHostname = message.actor['@id']
+    } else if (typeof message.actor === 'string') {
+      addressWithHostname = message.actor;
+    }
+
+    hostname = addressWithHostname.match(/irc:\/\/(?:.+@)?(.+?)(?:\/|$)/)[1];
 
     var space = this.get('spaces').findBy('ircServer.hostname', hostname);
 
     if (!Ember.isEmpty(space)) {
       var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
       if (!Ember.isEmpty(channel)) {
-        channel.set('userList', message.object.members.sort());
+        return channel;
       }
     }
   },
