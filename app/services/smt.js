@@ -173,7 +173,7 @@ export default Ember.Object.extend({
 
       channel.set('topic', message.object.topic);
 
-      var notification = Message.create({
+      Message.create({
         type: 'notification-topic-change',
         date: new Date(message.published),
         nickname: message.actor.displayName,
@@ -181,6 +181,12 @@ export default Ember.Object.extend({
       });
 
       channel.get('messages').pushObject(notification);
+
+      Notification.requestPermission(function(){
+        var notification = new Notification(channel.name, {
+          body: "New Topic: " + message.object.topic
+        });
+      });
     }
   },
 
