@@ -295,7 +295,12 @@ export default Ember.Object.extend({
   },
 
   spaceFixtures: function() {
-    const nickname = prompt("Choose a nickname");
+    var nickname = localStorage.getItem('hyperchannel-nickname');
+    if(!nickname) {
+      var nickname = prompt("Choose a Nickname");
+      localStorage.setItem('hyperchannel-nickname', nickname);
+    }
+
 
     return {
       'Freenode': {
