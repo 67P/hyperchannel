@@ -1,3 +1,4 @@
+/* global RemoteStorage */
 import Ember from 'ember';
 import Space   from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
@@ -20,11 +21,11 @@ export default Ember.Object.extend({
     this.set('spaces', []);
 
     var spaceFixtures = this.get('spaceFixtures');
-    Object.keys(spaceFixtures).forEach(function(spaceName){
+    Object.keys(spaceFixtures).forEach((spaceName) => {
       var space = Space.create({name: spaceName, ircServer: spaceFixtures[spaceName].ircServer});
       this.connectToIRCServer(space);
       this.get('spaces').pushObject(space);
-    }.bind(this));
+    });
   },
 
   connectToIRCServer: function(space) {
@@ -46,12 +47,12 @@ export default Ember.Object.extend({
       }
     };
 
-    console.log('connecting to irc', credentials);
+    RemoteStorage.log('[messages-irc] connecting to irc', credentials);
     this.sockethub.socket.emit('credentials', credentials);
   },
 
   setupListeners: function() {
-    this.sockethub.socket.on('completed', function(message) {
+    this.sockethub.socket.on('completed', (message) => {
       console.log('SH completed', message);
 
 
@@ -74,9 +75,9 @@ export default Ember.Object.extend({
           }
           break;
       }
-    }.bind(this));
+    });
 
-    this.sockethub.socket.on('message', function(message) {
+    this.sockethub.socket.on('message', (message) => {
       console.log('SH message', message);
 
       switch(message['@type']) {
@@ -104,7 +105,7 @@ export default Ember.Object.extend({
       }
 
       // user list for a channel
-    }.bind(this));
+    });
 
     this.sockethub.socket.on('failure', function(message) {
       console.log('SH failure', message);
@@ -112,23 +113,23 @@ export default Ember.Object.extend({
   },
 
   updateChannelUserList: function(message) {
-    var channel = this.getChannelByMessage(message);
-    if(channel) {
+    const channel = this.getChannelByMessage(message);
+    if (channel) {
       channel.set('userList', message.object.members.sort());
     }
   },
 
   addUserToChannelUserList: function(message) {
-    var channel = this.getChannelByMessage(message);
-    if(channel) {
+    const channel = this.getChannelByMessage(message);
+    if (channel) {
       var userList = channel.get('userList');
       userList.pushObject(message.actor.displayName);
     }
   },
 
   removeUserFromChannelUserList: function(message) {
-    var channel = this.getChannelByMessage(message);
-    if(channel) {
+    const channel = this.getChannelByMessage(message);
+    if (channel) {
       var userList = channel.get('userList');
       userList.removeObject(message.actor.displayName);
     }
@@ -137,7 +138,7 @@ export default Ember.Object.extend({
   getChannelByMessage: function(message) {
     var addressWithHostname, hostname;
     if (typeof message.actor === 'object') {
-      addressWithHostname = message.actor['@id']
+      addressWithHostname = message.actor['@id'];
     } else if (typeof message.actor === 'string') {
       addressWithHostname = message.actor;
     }
@@ -232,13 +233,13 @@ export default Ember.Object.extend({
   },
 
   instantiateChannels: function() {
-    this.get('spaces').forEach(function(space) {
+    this.get('spaces').forEach((space) => {
       space.set('channels', []);
 
-      this.get('spaceFixtures')[space.get('name')].channels.forEach(function(channelName){
+      this.get('spaceFixtures')[space.get('name')].channels.forEach((channelName) => {
         this.createChannel(space, channelName);
-      }.bind(this));
-    }.bind(this));
+      });
+    });
   },
 
   createChannel: function(space, channelName) {
@@ -327,11 +328,10 @@ export default Ember.Object.extend({
 
   spaceFixtures: function() {
     var nickname = localStorage.getItem('hyperchannel-nickname');
-    if(!nickname) {
-      var nickname = prompt("Choose a Nickname");
+    if (!nickname) {
+      nickname = prompt("Choose a Nickname");
       localStorage.setItem('hyperchannel-nickname', nickname);
     }
-
 
     return {
       'Freenode': {
