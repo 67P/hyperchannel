@@ -1,4 +1,3 @@
-/* global RemoteStorage */
 import Ember from 'ember';
 import Space   from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
@@ -47,13 +46,13 @@ export default Ember.Object.extend({
       }
     };
 
-    RemoteStorage.log('[messages-irc] connecting to irc', credentials);
+    Ember.Logger.debug('connecting to irc', credentials);
     this.sockethub.socket.emit('credentials', credentials);
   },
 
   setupListeners: function() {
     this.sockethub.socket.on('completed', (message) => {
-      console.log('SH completed', message);
+      Ember.Logger.debug('SH completed', message);
 
 
       switch(message['@type']) {
@@ -78,7 +77,7 @@ export default Ember.Object.extend({
     });
 
     this.sockethub.socket.on('message', (message) => {
-      console.log('SH message', message);
+      Ember.Logger.debug('SH message', message);
 
       switch(message['@type']) {
         case 'observe':
@@ -108,7 +107,7 @@ export default Ember.Object.extend({
     });
 
     this.sockethub.socket.on('failure', function(message) {
-      console.log('SH failure', message);
+      Ember.Logger.error('SH failure', message);
     });
   },
 
@@ -186,8 +185,6 @@ export default Ember.Object.extend({
   },
 
   addMessageToChannel: function(message) {
-    console.debug('actor', message.actor['@id']);
-
     var space = this.get('spaces').findBy('ircServer.hostname',
                 message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1]);
     var nickname = space.get('ircServer.nickname');
@@ -228,7 +225,7 @@ export default Ember.Object.extend({
       }
     };
 
-    console.log('asking for attendance list', observeMsg);
+    Ember.Logger.debug('asking for attendance list', observeMsg);
     this.sockethub.socket.emit('message', observeMsg);
   },
 
@@ -288,7 +285,7 @@ export default Ember.Object.extend({
       object: {}
     };
 
-    console.log('joining channel:', joinMsg);
+    Ember.Logger.debug('joining channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
@@ -307,7 +304,7 @@ export default Ember.Object.extend({
       object: {}
     };
 
-    console.log('leaving channel:', joinMsg);
+    Ember.Logger.debug('leaving channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
