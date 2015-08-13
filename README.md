@@ -32,6 +32,12 @@ You will need the following things properly installed on your computer.
 * `bower install`
 * Make sure `./node_modules/.bin` is in your $PATH (before system-wide npm modules)
 
+### Libsass Bindings
+
+You might need to manually execute:
+
+    node node_modules/broccoli-sass/node_modules/node-sass/scripts/install.js
+
 ## Running / Development
 
 * `ember server`
