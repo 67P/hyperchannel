@@ -180,10 +180,10 @@ export default Ember.Object.extend({
         content: message.object.topic
       });
 
-      channel.get('messages').pushObject(notification);
+      // channel.get('messages').pushObject(notification);
 
       Notification.requestPermission(function(){
-        var notification = new Notification(channel.name, {
+        new Notification(channel.name, {
           body: "New Topic: " + message.object.topic
         });
       });
