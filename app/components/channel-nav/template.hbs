@@ -1,9 +1,9 @@
-{{#each space in spaces}}
+{{#each spaces as |space|}}
   <li>
     <h2>{{#link-to "space" space}}{{space.name}}{{/link-to}}</h2>
     <ul>
-    {{#each channel in space.channels}}
-      <li {{bind-attr class="channel.connected:connected:disconnected"}}>
+    {{#each space.channels as |channel|}}
+      <li class="{{if channel.connected "connected" "disconnected"}}">
         {{#if channel.isUserChannel}}
           {{#link-to "space.userChannel" space channel}}{{channel.name}}{{/link-to}}
         {{else}}

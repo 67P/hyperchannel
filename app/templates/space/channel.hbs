@@ -10,7 +10,7 @@
 
     <section id="channel-content" class="main">
     <ul>
-      {{#each message in model.messages}}
+      {{#each model.messages as |message|}}
         <li>
           {{component message.type message=message}}
         </li>
@@ -47,7 +47,7 @@
     </header>
     <section id="user-list" class="main">
       <ul>
-        {{#each username in model.userList}}
+        {{#each model.userList as |username|}}
           <li>{{#link-to 'space.userChannel' username}}{{username}}{{/link-to}}</li>
         {{/each}}
       </ul>
