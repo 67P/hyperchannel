@@ -5,8 +5,7 @@ import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
 // import User    from 'hyperchannel/models/channel';
 
-// TODO Use Ember.Service when upgrading to latest version
-export default Ember.Object.extend({
+export default Ember.Service.extend({
 
   spaces: null,
   // users:  null,
