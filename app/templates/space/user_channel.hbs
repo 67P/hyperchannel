@@ -45,12 +45,5 @@
         {{#link-to 'index' class='active'}}<i class="icon-users"></i>{{/link-to}}<a href="#"><i class="icon-paperclip"></i></a>{{#link-to 'settings'}}<i class="icon-cog"></i>{{/link-to}}<a href="#"><i class="icon-resize-enlarge"></i></a>
       </nav>
     </header>
-    <section id="user-list" class="main">
-      <ul>
-        {{#each username in model.userList}}
-          <li>{{#link-to 'space.userChannel' username}}{{username}}{{/link-to}}</li>
-        {{/each}}
-      </ul>
-    </section>
   </aside>
 </div>

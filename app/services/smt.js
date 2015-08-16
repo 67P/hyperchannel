@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import Space   from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
+import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
 // import User    from 'hyperchannel/models/channel';
 
@@ -258,7 +259,7 @@ export default Ember.Object.extend({
   },
 
   createUserChannel: function(space, userName) {
-    var channel = Channel.create({
+    var channel = UserChannel.create({
       name: userName,
       sockethubChannelId: 'irc://%@/%@'.fmt(space.get('ircServer.hostname'), userName),
       messages: []

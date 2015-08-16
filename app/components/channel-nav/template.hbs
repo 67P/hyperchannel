@@ -3,7 +3,13 @@
     <h2>{{#link-to "space" space}}{{space.name}}{{/link-to}}</h2>
     <ul>
     {{#each channel in space.channels}}
-      <li {{bind-attr class="channel.connected:connected:disconnected"}}>{{#link-to "space.channel" space channel}}{{channel.name}}{{/link-to}}</li>
+      <li {{bind-attr class="channel.connected:connected:disconnected"}}>
+        {{#if channel.isUserChannel}}
+          {{#link-to "space.userChannel" space channel}}{{channel.name}}{{/link-to}}
+        {{else}}
+          {{#link-to "space.channel" space channel}}{{channel.name}}{{/link-to}}
+        {{/if}}
+      </li>
     {{/each}}
     </ul>
   </li>
