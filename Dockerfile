@@ -1,14 +1,23 @@
-FROM nodesource/node:trusty
+FROM nodesource/trusty:4.6
 MAINTAINER Ben Kero <ben.kero@gmail.com>
 
-ADD package.json /tmp/package.json
 RUN apt-get update && apt-get install -y git-core
-RUN cd /tmp && npm install
-RUN mkdir -p /hyperchannel && cp -a /tmp/node_modules /hyperchannel/
+
+# The Docker image now sets NODE_ENV="production". All our dependencies are
+# devDependencies
+ENV NODE_ENV development
+
+RUN mkdir /hyperchannel
 WORKDIR /hyperchannel
+
 RUN npm install -g bower
-ADD . /hyperchannel
-RUN cd /hyperchannel && bower install --allow-root
+
+COPY package.json bower.json ./
+
+RUN npm install && bower install --allow-root
+
+# COPY node_modules bower_components ./
+COPY . ./
 
 EXPOSE 4200
-CMD ["/hyperchannel/node_modules/.bin/ember", "serve"]
+CMD ["npm", "start"]
