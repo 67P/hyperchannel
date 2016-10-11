@@ -1,7 +1,7 @@
 {
   "name": "hyperchannel",
   "version": "0.0.0",
-  "description": "Small description for hyperchannel goes here",
+  "description": "Kosmos Web Client",
   "private": true,
   "directories": {
     "doc": "doc",
