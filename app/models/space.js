@@ -24,7 +24,7 @@ export default Ember.Object.extend({
   }.property('name'),
 
   sockethubPersonId: function() {
-    return 'irc://%@@%@'.fmt(this.get('ircServer.nickname'), this.get('ircServer.hostname'));
+    return `irc://${this.get('ircServer.nickname')}@${this.get('ircServer.hostname')}`;
   }.property('ircServer.hostname', 'ircServer.nickname')
 
 });

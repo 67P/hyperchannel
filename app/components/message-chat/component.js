@@ -12,7 +12,7 @@ export default Ember.Component.extend({
                      .replace(/\"color-(\d)\"/g,'"color-0$1"')
                      .replace(/\u000f/, '</span>');
 
-    return new Ember.Handlebars.SafeString(out);
+    return new Ember.String.htmlSafe(out);
   }.property('message.content')
 
 });

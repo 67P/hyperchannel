@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
 
-  needs: ['application'],
-  ircSettingsBinding: 'controllers.application.ircSettings'
+  application: Ember.inject.controller(),
+  ircSettings: Ember.computed.alias('application.ircSettings')
 
 });

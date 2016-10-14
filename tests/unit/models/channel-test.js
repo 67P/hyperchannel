@@ -1,12 +1,9 @@
 import { moduleFor, test } from 'ember-qunit';
 
-moduleFor('model:channel', 'Unit | Model | Channel', {
-  // Specify the other units that are required for this test.
-});
+moduleFor('model:channel', 'Unit | Model | channel');
 
 test('it exists', function(assert) {
-  var model = this.subject();
-
+  let model = this.subject();
   assert.ok(!!model);
 });
 
