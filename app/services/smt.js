@@ -1,9 +1,9 @@
 import Ember from 'ember';
-import Space   from 'hyperchannel/models/space';
+import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
-// import User    from 'hyperchannel/models/channel';
+// import User from 'hyperchannel/models/channel';
 
 export default Ember.Service.extend({
 
@@ -53,7 +53,6 @@ export default Ember.Service.extend({
   setupListeners: function() {
     this.sockethub.socket.on('completed', (message) => {
       Ember.Logger.debug('SH completed', message);
-
 
       switch(message['@type']) {
         case 'join':
@@ -248,7 +247,7 @@ export default Ember.Service.extend({
   createChannel: function(space, channelName) {
     var channel = Channel.create({
       name: channelName,
-      sockethubChannelId: 'irc://%@/%@'.fmt(space.get('ircServer.hostname'), channelName),
+      sockethubChannelId: `irc://${space.get('ircServer.hostname')}/${channelName}`,
       messages: []
     });
     this.joinChannel(space, channel, "room");
@@ -260,7 +259,7 @@ export default Ember.Service.extend({
   createUserChannel: function(space, userName) {
     var channel = UserChannel.create({
       name: userName,
-      sockethubChannelId: 'irc://%@/%@'.fmt(space.get('ircServer.hostname'), userName),
+      sockethubChannelId: `irc://${space.get('ircServer.hostname')}/${userName}`,
       messages: []
     });
     this.joinChannel(space, channel, "person");
@@ -386,3 +385,4 @@ export default Ember.Service.extend({
   }.property(),
 
 });
+
