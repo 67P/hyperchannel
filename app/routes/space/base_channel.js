@@ -17,6 +17,9 @@ export default Ember.Route.extend({
 
     Ember.run.scheduleOnce('afterRender', function() {
       Ember.$('input#message-field').focus();
+      Ember.$('#channel-content').animate({
+        scrollTop: Ember.$('#channel-content ul').height()
+      }, '500');
     });
   },
 
