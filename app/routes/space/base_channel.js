@@ -25,22 +25,14 @@ export default Ember.Route.extend({
 
   actions: {
 
-    processMessageOrCommand: function() {
-      if (this.controller.get('newMessage').substr(0, 1) === "/") {
-        this.send('executeCommand');
-      } else {
-        this.send('sendMessage');
-      }
-    },
-
-    sendMessage: function() {
+    sendMessage: function(newMessage) {
       var space = this.modelFor('space');
 
       var message = Message.create({
         type: 'message-chat',
         date: new Date(),
         nickname: space.get('ircServer.nickname'),
-        content: this.controller.get('newMessage')
+        content: newMessage
       });
 
       this.send('transferMessage',
@@ -70,7 +62,7 @@ export default Ember.Route.extend({
       this.sockethub.socket.emit('message', job);
     },
 
-    executeCommand: function() {
+    executeCommand: function(newMessage) {
       var availableCommands = [
         "help",
         "join",
@@ -79,7 +71,7 @@ export default Ember.Route.extend({
         "part",
         "topic"
       ];
-      var commandText = this.controller.get('newMessage').substr(1);
+      var commandText = newMessage.substr(1);
       var commandSplitted = commandText.split(" ");
       var command = commandSplitted[0];
 
