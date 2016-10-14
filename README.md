@@ -29,8 +29,6 @@ You will need the following things properly installed on your computer.
 * `git clone <repository-url>` this repository
 * change into the new directory
 * `npm install`
-* `bower install`
-* Make sure `./node_modules/.bin` is in your $PATH (before system-wide npm modules)
 
 ### Libsass Bindings
 
@@ -40,7 +38,7 @@ You might need to manually execute:
 
 ## Running / Development
 
-* `ember server`
+* `npm start`
 * Visit the app at [http://localhost:4200](http://localhost:4200).
 
 ### Code Generators
@@ -52,15 +50,15 @@ not use moduleForModel, as we're not using Ember Data. See existing tests.
 
 ### Running Tests
 
-* `ember test`
-* `ember test --server` (will re-run on saving files)
+* `npm test`
+* `npm test -- --server` (will re-run on saving files)
 
 ### Building
 
 (Not yet used.)
 
-* `ember build` (development)
-* `ember build --environment production` (production)
+* `npm build` (development)
+* `npm build --environment production` (production)
 
 ### Deploying
 
