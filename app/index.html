@@ -7,23 +7,24 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {{content-for 'head'}}
+    {{content-for "head"}}
 
-    <link rel="stylesheet" href="assets/vendor.css">
-    <link rel="stylesheet" href="assets/hyperchannel.css">
+    <link rel="stylesheet" href="{{rootURL}}assets/vendor.css">
+    <link rel="stylesheet" href="{{rootURL}}assets/hyperchannel.css">
 
-    {{content-for 'head-footer'}}
+    {{content-for "head-footer"}}
   </head>
   <body>
-    {{content-for 'body'}}
+    {{content-for "body"}}
 
     <!-- TODO these sockethub dependencies should be loaded via ember-cli-sockethub instead -->
     <script src="http://localhost:10550/activity-streams.js"></script>
     <script src="http://localhost:10550/sockethub/socket.io.js"></script>
+    <script src="http://localhost:10550/sockethub-client.js"></script>
 
-    <script src="assets/vendor.js"></script>
-    <script src="assets/hyperchannel.js"></script>
+    <script src="{{rootURL}}assets/vendor.js"></script>
+    <script src="{{rootURL}}assets/hyperchannel.js"></script>
 
-    {{content-for 'body-footer'}}
+    {{content-for "body-footer"}}
   </body>
 </html>

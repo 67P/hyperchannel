@@ -1,12 +1,13 @@
 import Ember from 'ember';
 import config from './config/environment';
 
-var Router = Ember.Router.extend({
-  location: config.locationType
+const Router = Ember.Router.extend({
+  location: config.locationType,
+  rootURL: config.rootURL
 });
 
 Router.map(function() {
-  this.resource('space', {path: '/:id'}, function(){
+  this.route('space', {path: '/:id'}, function() {
     this.route('channel', {path: '/channel/:slug'});
     this.route('userChannel', {path: '/user/:slug'});
   });

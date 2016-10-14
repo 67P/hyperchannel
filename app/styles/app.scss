@@ -6,7 +6,7 @@ $sidebarWidth: 168px;
 * {
   margin: 0;
   padding: 0;
-  @include box-sizing(border-box);
+  box-sizing: border-box;
 }
 
 *:hover, *:active, *:focus {

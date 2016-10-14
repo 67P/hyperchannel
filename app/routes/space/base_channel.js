@@ -80,7 +80,7 @@ export default Ember.Route.extend({
       var commandSplitted = commandText.split(" ");
       var command = commandSplitted[0];
 
-      if (availableCommands.contains(command.toLowerCase())) {
+      if (availableCommands.includes(command.toLowerCase())) {
         this.send(command + 'Command', commandSplitted.slice(1));
       } else {
         console.log('Unknown command', commandText);
