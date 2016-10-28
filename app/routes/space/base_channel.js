@@ -2,6 +2,8 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
 
+  smt: Ember.inject.service(),
+
   model: function(params) {
     var space = this.modelFor('space');
     var channel = space.get('channels').findBy('slug', params.slug);
