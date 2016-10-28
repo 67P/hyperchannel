@@ -22,9 +22,9 @@ export default Ember.Component.extend({
 
     processMessageOrCommand: function() {
       if (this.get('newMessage').substr(0, 1) === "/") {
-        this.sendAction('onCommand', this.get('newMessage'));
+        this.attrs.onCommand(this.get('newMessage'));
       } else {
-        this.sendAction('onMessage', this.get('newMessage'));
+        this.attrs.onMessage(this.get('newMessage'));
       }
     }
 
