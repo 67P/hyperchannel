@@ -138,6 +138,18 @@ header {
               }
             }
           }
+          .chat-me-message {
+            .username {
+              margin-right: 0;
+              font-style: italic;
+              &::after {
+                content: '';
+              }
+            }
+            .message {
+              font-style: italic;
+            }
+          }
         }
       }
     }
