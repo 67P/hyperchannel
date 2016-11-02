@@ -50,6 +50,22 @@ export default Ember.Service.extend({
     this.sockethub.socket.emit('credentials', credentials);
   },
 
+  transferMessage: function(space, target, content) {
+    let job = {
+      context: 'irc',
+      '@type': 'send',
+      actor: space.get('sockethubPersonId'),
+      target: target,
+      object: {
+        '@type': 'message',
+        content: content
+      }
+    };
+
+    console.log('sending message job', job);
+    this.sockethub.socket.emit('message', job);
+  },
+
   setupListeners: function() {
     this.sockethub.socket.on('completed', (message) => {
       Ember.Logger.debug('SH completed', message);
