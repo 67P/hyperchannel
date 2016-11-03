@@ -31,6 +31,7 @@ export default Ember.Controller.extend({
         "help",
         "join",
         "leave",
+        "me",
         "msg",
         "part",
         "topic"
@@ -66,6 +67,25 @@ export default Ember.Controller.extend({
     },
 
     helpCommand: function() {
+    },
+
+    meCommand: function(args) {
+      let newMessage = args.join(' ');
+
+      let message = Message.create({
+        type: 'message-chat-me',
+        date: new Date(),
+        nickname: this.get('space.model.ircServer.nickname'),
+        content: newMessage
+      });
+
+      this.get('smt').transferMeMessage(
+        this.get('space.model'),
+        this.get('model.sockethubChannelId'),
+        message.get('content')
+      );
+
+      this.get('model.messages').pushObject(message);
     },
 
     msgCommand: function(args) {

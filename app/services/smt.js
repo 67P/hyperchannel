@@ -66,6 +66,22 @@ export default Ember.Service.extend({
     this.sockethub.socket.emit('message', job);
   },
 
+  transferMeMessage: function(space, target, content) {
+    let job = {
+      context: 'irc',
+      '@type': 'send',
+      actor: space.get('sockethubPersonId'),
+      target: target,
+      object: {
+        '@type': 'me',
+        content: content
+      }
+    };
+
+    console.log('sending message job', job);
+    this.sockethub.socket.emit('message', job);
+  },
+
   setupListeners: function() {
     this.sockethub.socket.on('completed', (message) => {
       Ember.Logger.debug('SH completed', message);
@@ -107,8 +123,11 @@ export default Ember.Service.extend({
           this.removeUserFromChannelUserList(message);
           break;
         case 'send':
-          if (message.object['@type'] === 'message') {
-            this.addMessageToChannel(message);
+          switch(message.object['@type']) {
+            case 'message':
+            case 'me':
+              this.addMessageToChannel(message);
+              break;
           }
           break;
         case 'update':
@@ -222,8 +241,15 @@ export default Ember.Service.extend({
       channel = this.createChannel(space, targetChannelName);
     }
 
+    let messageType;
+    if (message.object['@type'] === 'me') {
+      messageType = 'message-chat-me';
+    } else {
+      messageType = 'message-chat';
+    }
+
     var channelMessage = Message.create({
-      type: 'message-chat',
+      type: messageType,
       date: new Date(message.published),
       nickname: message.actor.displayName,
       content: message.object.content
