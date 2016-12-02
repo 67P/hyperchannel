@@ -25,6 +25,9 @@ export default Ember.Object.extend({
 
   sockethubPersonId: function() {
     return `irc://${this.get('ircServer.nickname')}@${this.get('ircServer.hostname')}`;
-  }.property('ircServer.hostname', 'ircServer.nickname')
+  }.property('ircServer.hostname', 'ircServer.nickname'),
+
+  channelSorting: ['name'],
+  sortedChannels: Ember.computed.sort('channels', 'channelSorting')
 
 });
