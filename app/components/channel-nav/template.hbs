@@ -2,7 +2,7 @@
   <li>
     <h2>{{#link-to "space" space}}{{space.name}}{{/link-to}}</h2>
     <ul>
-    {{#each space.channels as |channel|}}
+    {{#each space.sortedChannels as |channel|}}
       <li class="{{if channel.connected "connected" "disconnected"}}">
         {{#if channel.isUserChannel}}
           {{#link-to "space.userChannel" space channel}}{{channel.name}}{{/link-to}}
