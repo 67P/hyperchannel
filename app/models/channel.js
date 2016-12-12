@@ -23,8 +23,8 @@ export default Ember.Object.extend({
       });
       return new Ember.String.htmlSafe(topic);
     } else {
-      return "";
+      return '';
     }
-  }.property('message'),
+  }.property('topic')
 
 });
