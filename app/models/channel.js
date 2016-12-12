@@ -15,4 +15,16 @@ export default Ember.Object.extend({
     return this.get('name').replace(/#/g,'');
   }.property('name'),
 
+  formattedTopic: function() {
+    if (this.get('topic') !== null) {
+      let topic = linkifyStr(this.get('topic'), {
+        defaultProtocol: 'https',
+        linkAttributes: { rel: 'nofollow' }
+      });
+      return new Ember.String.htmlSafe(topic);
+    } else {
+      return '';
+    }
+  }.property('topic')
+
 });

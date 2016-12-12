@@ -4,6 +4,7 @@
     "bourbon": "^4.2.7",
     "ember": "~2.8.0",
     "ember-cli-shims": "0.1.1",
-    "remotestorage": "~0.13.0"
+    "remotestorage": "~0.13.0",
+    "linkifyjs": "~2.1.3"
   }
 }
