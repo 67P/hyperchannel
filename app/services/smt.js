@@ -399,8 +399,10 @@ export default Ember.Service.extend({
           },
           channels: [
             '#67p',
+            '#hackerbeach',
             '#kosmos',
             '#kosmos-dev',
+            '#kosmos-random',
             '#sockethub'
           ],
       },
