@@ -1,5 +1,15 @@
 import Ember from 'ember';
 
+function scrollToBottom() {
+  Ember.$('#channel-content').animate({
+    scrollTop: Ember.$('#channel-content ul').height()
+  }, '500');
+}
+
+function focusMessageInput() {
+  Ember.$('input#message-field').focus();
+}
+
 export default Ember.Component.extend({
 
   elementId: 'channel',
@@ -30,13 +40,3 @@ export default Ember.Component.extend({
 
   }
 });
-
-function scrollToBottom() {
-  Ember.$('#channel-content').animate({
-    scrollTop: Ember.$('#channel-content ul').height()
-  }, '500');
-}
-
-function focusMessageInput() {
-  Ember.$('input#message-field').focus();
-}
