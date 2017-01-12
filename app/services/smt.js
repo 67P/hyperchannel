@@ -216,6 +216,8 @@ export default Ember.Service.extend({
 
       // channel.get('messages').pushObject(notification);
 
+      // TODO only send when topic actually changed (and not after joining
+      // channels)
       Notification.requestPermission(function(){
         new Notification(channel.name, {
           body: "New Topic: " + message.object.topic
