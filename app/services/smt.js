@@ -260,6 +260,11 @@ export default Ember.Service.extend({
     // TODO should check for message and update sent status if exists
     if (message.actor.displayName !== nickname) {
       channel.get('messages').pushObject(channelMessage);
+
+      if (!channel.get('visible')) {
+        channel.set('unreadMessages', true);
+        // TODO set unread mentions
+      }
     }
   },
 

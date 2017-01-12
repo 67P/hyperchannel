@@ -8,6 +8,9 @@ export default Ember.Object.extend({
   connected: false,
   sockethubChannelId: null,
   topic: null,
+  unreadMessages: false,
+  unreadMentions: false,
+  visible: false, // Current/active channel
 
   slug: function() {
     // This could be based on server type in the future. E.g. IRC would be
@@ -25,6 +28,13 @@ export default Ember.Object.extend({
     } else {
       return '';
     }
-  }.property('topic')
+  }.property('topic'),
+
+  unreadMessagesClass: function() {
+    if (this.get('visible') || !this.get('unreadMessages')) {
+      return null;
+    }
+    return this.get('unreadMentions') ? 'unread-mentions' : 'unread-messages';
+  }.property('visible', 'unreadMessages', 'unreadMentions')
 
 });
