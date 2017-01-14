@@ -263,7 +263,9 @@ export default Ember.Service.extend({
 
       if (!channel.get('visible')) {
         channel.set('unreadMessages', true);
-        // TODO set unread mentions
+        if (message.object.content.match(nickname)) {
+          channel.set('unreadMentions', true);
+        }
       }
     }
   },
