@@ -207,12 +207,12 @@ export default Ember.Service.extend({
 
       channel.set('topic', message.object.topic);
 
-      Message.create({
-        type: 'notification-topic-change',
-        date: new Date(message.published),
-        nickname: message.actor.displayName,
-        content: message.object.topic
-      });
+      // let notification = Message.create({
+      //   type: 'notification-topic-change',
+      //   date: new Date(message.published),
+      //   nickname: message.actor.displayName,
+      //   content: message.object.topic
+      // });
 
       // channel.get('messages').pushObject(notification);
 
