@@ -13,11 +13,19 @@
     "test": "ember test",
     "postinstall": "bower install"
   },
-  "repository": "",
+  "repository": "https://github.com/67P/hyperchannel",
   "engines": {
     "node": ">= 5.0.0"
   },
-  "author": "67P",
+  "author": "Kosmos Community",
+  "contributors": [
+    "Garret Alfert <alfert@wevelop.de>",
+    "Sebastian Kippe <sebastian@kip.pe>",
+    "Jan Lelis <mail@janlelis.de>",
+    "Grégory Karékinian <greg@karekinian.com>",
+    "Nick Jennings <nick@silverbucket.net>",
+    "Ben Kero <ben.kero@gmail.com>"
+  ],
   "license": "MPL",
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.2",
