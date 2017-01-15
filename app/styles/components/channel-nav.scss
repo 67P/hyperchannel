@@ -1,0 +1,18 @@
+nav#channels {
+
+  ul {
+    li {
+      &.unread-messages {
+        a {
+          color: lightblue;
+        }
+      }
+      &.unread-mentions {
+        a {
+          color: yellow;
+        }
+      }
+    }
+  }
+
+}

@@ -207,15 +207,17 @@ export default Ember.Service.extend({
 
       channel.set('topic', message.object.topic);
 
-      Message.create({
-        type: 'notification-topic-change',
-        date: new Date(message.published),
-        nickname: message.actor.displayName,
-        content: message.object.topic
-      });
+      // let notification = Message.create({
+      //   type: 'notification-topic-change',
+      //   date: new Date(message.published),
+      //   nickname: message.actor.displayName,
+      //   content: message.object.topic
+      // });
 
       // channel.get('messages').pushObject(notification);
 
+      // TODO only send when topic actually changed (and not after joining
+      // channels)
       Notification.requestPermission(function(){
         new Notification(channel.name, {
           body: "New Topic: " + message.object.topic
@@ -258,6 +260,13 @@ export default Ember.Service.extend({
     // TODO should check for message and update sent status if exists
     if (message.actor.displayName !== nickname) {
       channel.get('messages').pushObject(channelMessage);
+
+      if (!channel.get('visible')) {
+        channel.set('unreadMessages', true);
+        if (message.object.content.match(nickname)) {
+          channel.set('unreadMentions', true);
+        }
+      }
     }
   },
 
@@ -392,8 +401,10 @@ export default Ember.Service.extend({
           },
           channels: [
             '#67p',
+            '#hackerbeach',
             '#kosmos',
             '#kosmos-dev',
+            '#kosmos-random',
             '#sockethub'
           ],
       },
