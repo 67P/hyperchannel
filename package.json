@@ -15,7 +15,7 @@
   },
   "repository": "",
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 5.0.0"
   },
   "author": "67P",
   "license": "MPL",
