@@ -12,7 +12,7 @@ test('#formattedContent turns full URLs into links', function(assert) {
   assert.equal(component.get('formattedContent').toString(), 'visit <a href="https://kosmos.org" class="linkified" target="_blank" rel="nofollow">https://kosmos.org</a> for more info');
 });
 
-test('#formattedContent ignores URLs without protocol', function(assert) {
+test('#formattedContent does not turn domain names into links', function(assert) {
   let component = this.subject({
     message: { content: 'visit kosmos.org for more info' }
   });
