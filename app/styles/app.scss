@@ -141,6 +141,11 @@ header {
                 background: url(/img/avatar-ga.jpeg) 0 2px no-repeat;
               }
             }
+
+            a {
+              text-decoration: underline;
+              color: #339;
+            }
           }
           .chat-me-message {
             .username {
