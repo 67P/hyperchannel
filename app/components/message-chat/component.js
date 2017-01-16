@@ -13,8 +13,12 @@ export default Ember.Component.extend({
                      .replace(/\u000f/, '</span>');
 
     out = linkifyStr(out, {
-      defaultProtocol: 'https',
-      linkAttributes: { rel: 'nofollow' }
+      linkAttributes: { rel: 'nofollow' },
+      validate: {
+        url: function (value) {
+          return /^(http)s?:\/\//.test(value);
+        }
+      }
     });
 
     return Ember.String.htmlSafe(out);
