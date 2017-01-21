@@ -8,10 +8,13 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "ember build",
     "start": "ember server",
     "test": "ember test",
-    "postinstall": "bower install"
+    "postinstall": "bower install",
+    "build": "ember build",
+    "build-prod": "ember build --environment production",
+    "update-version-file": "bash scripts/update-version-file.sh",
+    "deploy": "npm run build-prod && npm run update-version-file && bash scripts/deploy.sh"
   },
   "repository": "https://github.com/67P/hyperchannel",
   "engines": {
