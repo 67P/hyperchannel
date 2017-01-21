@@ -31,9 +31,6 @@
 }
 
 #global {
-  @include flex(0 0 $sidebarWidth);
-  @include app-column;
-
   header {
     &#sitename {
       padding: 0 1em;
@@ -46,6 +43,26 @@
   }
 }
 
+@media screen and (min-width: 900px) {
+  #global {
+    @include flex(0 0 $sidebarWidth);
+    @include app-column;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  #global {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 168px;
+    transform: translate3d(-168px, 0, 0);
+    transition: transform 0.5s;
+    z-index: 10000;
+  }
+}
+
 div#channel {
   @include flex(1);
 
@@ -53,6 +70,9 @@ div#channel {
   @include align-items(stretch);
   @include flex-direction(row);
   @include justify-content(flex-start);
+
+  transform: none;
+  transition: transform 0.5s;
 
   main {
     @include flex(1);
@@ -62,6 +82,25 @@ div#channel {
   aside {
     @include flex(0 0 $sidebarWidth);
     @include app-column;
+  }
+}
+
+.app-container.global-open {
+  #global {
+    transform: none;
+    transition: transform 0.5s;
+  }
+  div#channel {
+    transform: translate3d(168px, 0, 0);
+    transition: transform 0.5s;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  div#channel {
+    aside {
+      display: none;
+    }
   }
 }
 
