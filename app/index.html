@@ -17,10 +17,7 @@
   <body>
     {{content-for "body"}}
 
-    <!-- TODO these sockethub dependencies should be loaded via ember-cli-sockethub instead -->
-    <script src="http://localhost:10550/activity-streams.js"></script>
-    <script src="http://localhost:10550/sockethub/socket.io.js"></script>
-    <script src="http://localhost:10550/sockethub-client.js"></script>
+    {{content-for "sockethub-assets"}}
 
     <script src="{{rootURL}}assets/vendor.js"></script>
     <script src="{{rootURL}}assets/hyperchannel.js"></script>
