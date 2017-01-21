@@ -13,6 +13,8 @@ module.exports = function(environment) {
       }
     },
 
+    sockethubURL: 'localhost:10550',
+
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
@@ -39,7 +41,8 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-
+    // TODO move to user-editable config
+    ENV.sockethubURL = 'https://sockethub.kosmos.org:10550';
   }
 
   return ENV;

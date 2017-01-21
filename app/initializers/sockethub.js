@@ -1,8 +1,9 @@
 /* global SockethubClient */
 /* global io */
+import config from 'hyperchannel/config/environment';
 
 // TODO move settings into config file
-var sockethub = new SockethubClient(io('localhost:10550', { path: '/sockethub' }));
+var sockethub = new SockethubClient(io(config.sockethubURL, { path: '/sockethub' }));
 
 export default {
   name: 'sockethub',

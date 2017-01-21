@@ -3,8 +3,22 @@
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
+
+  var inlineContent = {};
+
+  if (process.env.EMBER_ENV.match(/^(staging|production)$/)) {
+    inlineContent['sockethub-assets'] = 'vendor/sh-assets-remote.html';
+  } else {
+    inlineContent['sockethub-assets'] = 'vendor/sh-assets-local.html';
+  }
+
   var app = new EmberApp(defaults, {
-    // Add options here
+    fingerprint: { enabled: false },
+    inlineContent: inlineContent,
+    sourcemaps: { // enabled sourcemaps for all environments (e.g. for sentry integration)
+      enabled: true,
+      extensions: ['js']
+    },
     sassOptions: {
       includePaths: [
         'bower_components/bourbon/app/assets/stylesheets'
