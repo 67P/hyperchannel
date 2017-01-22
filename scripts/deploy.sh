@@ -16,5 +16,5 @@ git commit -m "Build production from $short_rev"
 git push 5apps build-production:master
 # Push build branch to collab repo
 git push origin build-production:build-production
-# Go back to master branch
-git checkout master
+# Go back to previous branch
+git checkout -
