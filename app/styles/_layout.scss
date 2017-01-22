@@ -59,7 +59,7 @@
     left: 0;
     width: 168px;
     transform: translate3d(-168px, 0, 0);
-    transition: transform 0.5s;
+    transition: transform 0.4s;
     z-index: 10000;
   }
 }
@@ -73,7 +73,7 @@ div#channel {
   @include justify-content(flex-start);
 
   transform: none;
-  transition: transform 0.5s;
+  transition: transform 0.4s;
 
   main {
     @include flex(1);
@@ -89,11 +89,11 @@ div#channel {
 .app-container.global-menu-open {
   #global {
     transform: none;
-    transition: transform 0.5s;
+    transition: transform 0.4s;
   }
   div#channel {
     transform: translate3d(168px, 0, 0);
-    transition: transform 0.5s;
+    transition: transform 0.4s;
   }
 }
 
