@@ -30,12 +30,16 @@ export default Ember.Component.extend({
 
   actions: {
 
-    processMessageOrCommand: function() {
+    processMessageOrCommand() {
       if (this.get('newMessage').substr(0, 1) === "/") {
         this.attrs.onCommand(this.get('newMessage'));
       } else {
         this.attrs.onMessage(this.get('newMessage'));
       }
+    },
+
+    menu(which, what) {
+      this.sendAction("menu", which, what);
     }
 
   }

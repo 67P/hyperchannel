@@ -5,18 +5,16 @@ export default Ember.Component.extend(RecognizerMixin, {
 
   tagName: 'div',
   classNames: ['app-container'],
-  classNameBindings: ['showMenu:global-open'],
-
-  showMenu: false,
+  classNameBindings: ['showGlobalMenu:global-menu-open', 'showChannelMenu:channel-menu-open'],
 
   recognizers: 'swipeleft swiperight',
 
   swipeLeft() {
-    this.set('showMenu', false);
+    this.set('showGlobalMenu', false);
   },
 
   swipeRight() {
-    this.set('showMenu', true);
+    this.set('showGlobalMenu', true);
   }
 
 });
