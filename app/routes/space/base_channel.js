@@ -53,7 +53,7 @@ export default Ember.Route.extend({
       channel.set('unreadMessages', false);
       channel.set('unreadMentions', false);
 
-      setTimeout(() => this.send('menu', 'global', 'hide'), 500);
+      Ember.run.later(this, () => this.send('menu', 'global', 'hide'), 500);
     }
 
   }
