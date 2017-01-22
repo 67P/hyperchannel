@@ -99,6 +99,13 @@ div#channel {
 
 @media screen and (max-width: 900px) {
   div#channel {
+    main {
+      header {
+        p#channel-title {
+          display: none;
+        }
+      }
+    }
     aside {
       display: none;
     }
