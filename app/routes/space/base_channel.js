@@ -39,6 +39,8 @@ export default Ember.Route.extend({
       // Mark unread messages as read
       channel.set('unreadMessages', false);
       channel.set('unreadMentions', false);
+
+      setTimeout(() => this.send('menu', 'global', 'hide'), 500);
     }
 
   }
