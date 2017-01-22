@@ -23,7 +23,12 @@ body {
 
   background-image: url('/img/bg.jpg');
   background-repeat: none;
-  background-size: cover;
+}
+
+@media screen and (min-width: 900px) {
+  body {
+    background-size: cover;
+  }
 }
 
 h1, h2, h3, h4, h5 {
