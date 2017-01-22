@@ -1,5 +1,20 @@
 import Ember from 'ember';
 
+function scrollToBottom() {
+  Ember.$('#channel-content').animate({
+    scrollTop: Ember.$('#channel-content ul').height()
+  }, '500');
+}
+
+function focusMessageInput() {
+  if (window.innerWidth > 900) {
+    console.debug('innerWidth', window.innerWidth);
+    Ember.$('input#message-field').focus();
+  } else {
+    // Don't auto-focus on small screens
+  }
+}
+
 export default Ember.Route.extend({
 
   smt: Ember.inject.service(),
@@ -19,10 +34,8 @@ export default Ember.Route.extend({
     this._super(controller, model);
 
     Ember.run.scheduleOnce('afterRender', function() {
-      Ember.$('input#message-field').focus();
-      Ember.$('#channel-content').animate({
-        scrollTop: Ember.$('#channel-content ul').height()
-      }, '500');
+      focusMessageInput();
+      scrollToBottom();
     });
   },
 

@@ -6,23 +6,11 @@ function scrollToBottom() {
   }, '500');
 }
 
-function focusMessageInput() {
-  Ember.$('input#message-field').focus();
-}
-
 export default Ember.Component.extend({
 
   elementId: 'channel',
   newMessage: '',
   channel: null,
-
-  scrollToBottom: function() {
-    Ember.run.scheduleOnce('afterRender', scrollToBottom);
-  }.on('didInsertElement'),
-
-  focusMessageInput: function() {
-    Ember.run.scheduleOnce('afterRender', focusMessageInput);
-  }.on('didInsertElement'),
 
   messagesUpdated: Ember.observer('channel.messages.[]', function() {
     Ember.run.scheduleOnce('afterRender', scrollToBottom);
