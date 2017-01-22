@@ -28,3 +28,11 @@ test('#formattedContent escapes HTML', function(assert) {
   assert.equal(component.get('formattedContent').toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
 });
 
+test('#formattedContent converts color codes', function(assert) {
+  var component = this.subject({
+    message: { content: 'put some \u000313color\u000f into your life' }
+  });
+
+  assert.equal(component.get('formattedContent').toString(), 'put some <span class="color-13">color</span> into your life');
+});
+
