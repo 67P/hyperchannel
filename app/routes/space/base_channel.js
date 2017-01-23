@@ -25,7 +25,7 @@ function focusMessageInput() {
   }
 }
 
-export default Ember.Route.extend({
+export default Route.extend({
   smt: service(),
   userSettings: storageFor('user-settings'),
 
