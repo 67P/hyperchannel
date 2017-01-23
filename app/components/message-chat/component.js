@@ -11,7 +11,7 @@ export default Ember.Component.extend({
 
 
     // Images
-    if (content.match(/^(http)s?:\/\/.*(gif|png|jpg|jpeg)$/)) {
+    if (content.match(/^(http)s?:\/\/.*(gif|png|jpg|jpeg)$/i)) {
       out = `<br><a href="${content}" target="_blank" rel="nofollow">` +
             `<img src="${content}" class="from-image-url" alt="${content}">` +
             `</a>`;
