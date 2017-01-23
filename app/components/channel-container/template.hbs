@@ -8,21 +8,13 @@
   </header>
 
   <section id="channel-content" class="main">
-  <ul>
-    {{#each channel.messages as |message|}}
-      <li>
-        {{component message.type message=message}}
-      </li>
-    {{/each}}
-    <!--
-    <li>
-      <div class="chat-message user-raucao">
-        <span class="username" data-username="silverbucket">silverbucket</span>
-        <span class="message">you're already here?!</span>
-      </div>
-    </li>
-    -->
-  </ul>
+    <ul>
+      {{#each channel.messages as |message|}}
+        <li>
+          {{component message.type message=message}}
+        </li>
+      {{/each}}
+    </ul>
   </section>
 
   <footer>
