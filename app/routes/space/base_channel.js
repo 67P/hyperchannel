@@ -1,4 +1,14 @@
 import Ember from 'ember';
+import { storageFor } from 'ember-local-storage';
+
+const {
+  Route,
+  get,
+  set,
+  inject: {
+    service
+  }
+} = Ember;
 
 function scrollToBottom() {
   Ember.$('#channel-content').animate({
@@ -15,9 +25,9 @@ function focusMessageInput() {
   }
 }
 
-export default Ember.Route.extend({
-
-  smt: Ember.inject.service(),
+export default Route.extend({
+  smt: service(),
+  userSettings: storageFor('user-settings'),
 
   model(params) {
     var space = this.modelFor('space');
@@ -44,6 +54,9 @@ export default Ember.Route.extend({
     didTransition() {
       let space = this.modelFor('space');
       let channel = this.controller.get('model');
+
+      set(this, 'userSettings.currentSpace', get(space, 'id'));
+      set(this, 'userSettings.currentChannel', get(channel, 'slug'));
 
       // Mark channel as active/visible
       space.get('channels').setEach('visible', false);
