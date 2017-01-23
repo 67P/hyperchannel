@@ -3,9 +3,12 @@ import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
-// import User from 'hyperchannel/models/channel';
+import config from 'hyperchannel/config/environment';
+import moment from 'moment';
 
 export default Ember.Service.extend({
+
+  ajax: Ember.inject.service(),
 
   spaces: null,
   // users:  null,
@@ -304,7 +307,43 @@ export default Ember.Service.extend({
     this.joinChannel(space, channel, "room");
     channel.set('userList', []);
     space.get('channels').pushObject(channel);
+
+    this.loadArchiveMessages(space, channel);
+
     return channel;
+  },
+
+  loadArchiveMessages(space, channel) {
+    let nickname = space.get('ircServer.nickname');
+    let today = moment.utc();
+    let logsUrl = `${config.publicLogsUrl}/${space.get('name').toLowerCase()}/channels/${channel.get('slug')}/`;
+        logsUrl += today.format('YYYY/MM/DD');
+
+    this.get('ajax').request(logsUrl, {
+      type: 'GET',
+      dataType: 'json'
+    }).then(archive => {
+      Ember.get(archive, 'today.messages').forEach((message) => {
+        console.log('message', message);
+        let channelMessage = Message.create({
+          type: 'message-chat',
+          date: new Date(message.timestamp),
+          nickname: message.from,
+          content: message.text
+        });
+
+        channel.get('messages').pushObject(channelMessage);
+
+        if (!channel.get('visible')) {
+          channel.set('unreadMessages', true);
+          if (message.object.content.match(nickname)) {
+            channel.set('unreadMentions', true);
+          }
+        }
+      });
+    }, error => {
+      console.log(error);
+    });
   },
 
   createUserChannel: function(space, userName) {
