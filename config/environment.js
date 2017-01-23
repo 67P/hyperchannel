@@ -18,7 +18,9 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-    }
+    },
+
+    publicLogsUrl: 'https://storage.5apps.com/kosmos/public/chat-messages'
   };
 
   if (environment === 'development') {

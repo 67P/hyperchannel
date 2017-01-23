@@ -1,19 +1,7 @@
-import Ember from 'ember';
+import BaseChannel from 'hyperchannel/models/base_channel';
 
-export default Ember.Object.extend({
+export default BaseChannel.extend({
 
-  name: '',
-  userList: null,
-  messages: null,
-  connected: false,
-  sockethubChannelId: null,
-  topic: null,
-  isUserChannel: true,
-
-  slug: function() {
-    // This could be based on server type in the future. E.g. IRC would be
-    // server URL, while Campfire would be another id.
-    return this.get('name').replace(/#/g,'');
-  }.property('name'),
+  isUserChannel: true
 
 });

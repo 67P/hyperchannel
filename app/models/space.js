@@ -23,11 +23,17 @@ export default Ember.Object.extend({
     return this.get('name').toLowerCase();
   }.property('name'),
 
+  userNickname: Ember.computed.alias('ircServer.nickname'),
+
   sockethubPersonId: function() {
     return `irc://${this.get('ircServer.nickname')}@${this.get('ircServer.hostname')}`;
   }.property('ircServer.hostname', 'ircServer.nickname'),
 
   channelSorting: ['name'],
-  sortedChannels: Ember.computed.sort('channels', 'channelSorting')
+  sortedChannels: Ember.computed.sort('channels', 'channelSorting'),
+
+  addChannel(channel) {
+    this.get('channels').pushObject(channel);
+  }
 
 });

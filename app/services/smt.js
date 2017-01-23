@@ -3,9 +3,12 @@ import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
-// import User from 'hyperchannel/models/channel';
+import config from 'hyperchannel/config/environment';
+import moment from 'moment';
 
 export default Ember.Service.extend({
+
+  ajax: Ember.inject.service(),
 
   spaces: null,
   // users:  null,
@@ -155,16 +158,14 @@ export default Ember.Service.extend({
   addUserToChannelUserList: function(message) {
     const channel = this.getChannelByMessage(message);
     if (channel) {
-      var userList = channel.get('userList');
-      userList.pushObject(message.actor.displayName);
+      channel.addUser(message.actor.displaName);
     }
   },
 
   removeUserFromChannelUserList: function(message) {
     const channel = this.getChannelByMessage(message);
     if (channel) {
-      var userList = channel.get('userList');
-      userList.removeObject(message.actor.displayName);
+      channel.removeUser(message.actor.displayName);
     }
   },
 
@@ -229,7 +230,7 @@ export default Ember.Service.extend({
   addMessageToChannel: function(message) {
     var space = this.get('spaces').findBy('ircServer.hostname',
                 message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1]);
-    var nickname = space.get('ircServer.nickname');
+    var nickname = space.get('userNickname');
 
     var targetChannelName;
     if (nickname === message.target.displayName) {
@@ -259,14 +260,7 @@ export default Ember.Service.extend({
 
     // TODO should check for message and update sent status if exists
     if (message.actor.displayName !== nickname) {
-      channel.get('messages').pushObject(channelMessage);
-
-      if (!channel.get('visible')) {
-        channel.set('unreadMessages', true);
-        if (message.object.content.match(nickname)) {
-          channel.set('unreadMentions', true);
-        }
-      }
+      channel.addMessage(channelMessage);
     }
   },
 
@@ -297,25 +291,54 @@ export default Ember.Service.extend({
 
   createChannel: function(space, channelName) {
     var channel = Channel.create({
+      space: space,
       name: channelName,
       sockethubChannelId: `irc://${space.get('ircServer.hostname')}/${channelName}`,
-      messages: []
+      messages: [],
+      userList: []
     });
     this.joinChannel(space, channel, "room");
-    channel.set('userList', []);
-    space.get('channels').pushObject(channel);
+    space.addChannel(channel);
+
+    this.loadArchiveMessages(space, channel);
+
     return channel;
+  },
+
+  loadArchiveMessages(space, channel) {
+    let today = moment.utc();
+    let logsUrl = `${config.publicLogsUrl}/${space.get('name').toLowerCase()}/channels/${channel.get('slug')}/`;
+        logsUrl += today.format('YYYY/MM/DD');
+
+    this.get('ajax').request(logsUrl, {
+      type: 'GET',
+      dataType: 'json'
+    }).then(archive => {
+      Ember.get(archive, 'today.messages').forEach((message) => {
+        console.log('message', message);
+        let channelMessage = Message.create({
+          type: 'message-chat',
+          date: new Date(message.timestamp),
+          nickname: message.from,
+          content: message.text
+        });
+
+        channel.addMessage(channelMessage);
+      });
+    }, error => {
+      console.log(error);
+    });
   },
 
   createUserChannel: function(space, userName) {
     var channel = UserChannel.create({
       name: userName,
       sockethubChannelId: `irc://${space.get('ircServer.hostname')}/${userName}`,
-      messages: []
+      messages: [],
+      userList: []
     });
     this.joinChannel(space, channel, "person");
-    channel.set('userList', []);
-    space.get('channels').pushObject(channel);
+    space.addChannel(channel);
     return channel;
   },
 
