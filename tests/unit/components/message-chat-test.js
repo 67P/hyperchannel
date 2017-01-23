@@ -36,3 +36,10 @@ test('#formattedContent converts color codes', function(assert) {
   assert.equal(component.get('formattedContent').toString(), 'put some <span class="color-13">color</span> into your life');
 });
 
+test('#formattedContent renders images from image URLs', function(assert) {
+  var component = this.subject({
+    message: { content: 'https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif' }
+  });
+
+  assert.equal(component.get('formattedContent').toString(), '<br><a href="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif" target="_blank" rel="nofollow"><img src="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif" class="from-image-url" alt="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif"></a>');
+});
