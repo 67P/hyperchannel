@@ -190,23 +190,34 @@ export default Ember.Service.extend({
   },
 
   updateChannelTopic: function(message) {
-    var hostname;
+    let hostname;
     if (typeof message.target === 'object') {
       hostname = message.target['@id'].match(/irc:\/\/(.+)\//)[1];
     } else if (typeof message.actor === 'string') {
       hostname = message.actor.match(/irc:\/\/.+\@(.+)/)[1];
     }
 
-    var space = this.get('spaces').findBy('ircServer.hostname', hostname);
+    let space = this.get('spaces').findBy('ircServer.hostname', hostname);
 
     if (!Ember.isEmpty(space)) {
-      var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
+      let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
 
       if (Ember.isEmpty(channel)) {
         channel = this.createChannel(space, message.target['@id']);
       }
 
-      channel.set('topic', message.object.topic);
+      let currentTopic = channel.get('topic');
+      let newTopic = message.object.topic;
+
+      channel.set('topic', newTopic);
+
+      if (Ember.isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.get('visible')) {
+        Notification.requestPermission(function(){
+          new Notification(channel.name, {
+            body: `New Topic: ${newTopic}`
+          });
+        });
+      }
 
       // let notification = Message.create({
       //   type: 'notification-topic-change',
@@ -217,13 +228,6 @@ export default Ember.Service.extend({
 
       // channel.get('messages').pushObject(notification);
 
-      // TODO only send when topic actually changed (and not after joining
-      // channels)
-      Notification.requestPermission(function(){
-        new Notification(channel.name, {
-          body: "New Topic: " + message.object.topic
-        });
-      });
     }
   },
 
