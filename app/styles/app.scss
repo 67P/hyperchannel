@@ -125,12 +125,11 @@ header {
         list-style: none;
         margin-bottom: 1.5rem;
         li {
-          line-height: 2em;
+          line-height: 1.5em;
+          margin-bottom: 0.75em;
           .chat-message {
             .username {
               margin-right: 0.2em;
-              height: 2em;
-              line-height: 2em;
               font-weight: bold;
               &::after {
                 content: ':';
