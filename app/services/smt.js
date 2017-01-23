@@ -9,6 +9,7 @@ import moment from 'moment';
 export default Ember.Service.extend({
 
   ajax: Ember.inject.service(),
+  logger: Ember.inject.service(),
 
   spaces: null,
   // users:  null,
@@ -49,7 +50,7 @@ export default Ember.Service.extend({
       }
     };
 
-    Ember.Logger.debug('connecting to irc', credentials);
+    this.get('logger').log('connection', 'connecting to irc', credentials);
     this.sockethub.socket.emit('credentials', credentials);
   },
 
@@ -65,7 +66,7 @@ export default Ember.Service.extend({
       }
     };
 
-    console.log('sending message job', job);
+    this.get('logger').log('send', 'sending message job', job);
     this.sockethub.socket.emit('message', job);
   },
 
@@ -81,7 +82,7 @@ export default Ember.Service.extend({
       }
     };
 
-    console.log('sending message job', job);
+    this.get('logger').log('send', 'sending message job', job);
     this.sockethub.socket.emit('message', job);
   },
 
@@ -319,7 +320,8 @@ export default Ember.Service.extend({
       dataType: 'json'
     }).then(archive => {
       Ember.get(archive, 'today.messages').forEach((message) => {
-        console.log('message', message);
+        this.get('logger').log('message', message);
+
         let channelMessage = Message.create({
           type: 'message-chat',
           date: new Date(message.timestamp),
@@ -330,7 +332,7 @@ export default Ember.Service.extend({
         channel.addMessage(channelMessage);
       });
     }, error => {
-      console.log(error);
+      this.get('logger').log('error', error);
     });
   },
 
@@ -368,7 +370,7 @@ export default Ember.Service.extend({
       object: {}
     };
 
-    Ember.Logger.debug('joining channel', joinMsg);
+    this.get('logger').log('join', 'joining channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
@@ -387,7 +389,7 @@ export default Ember.Service.extend({
       object: {}
     };
 
-    Ember.Logger.debug('leaving channel', joinMsg);
+    this.get('logger').log('leave', 'leaving channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 

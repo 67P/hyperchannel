@@ -1,11 +1,26 @@
 import Ember from 'ember';
 
-export default Ember.Route.extend({
+const {
+  Route,
+  get,
+  inject: {
+    service
+  }
+} = Ember;
 
-  smt: Ember.inject.service(),
+export default Route.extend({
+  logger: service(),
+  smt: service(),
 
-  model: function() {
-    this.get('smt').loadFixtures();
+  beforeModel() {
+    // See a list of allowed types in logger.js
+    // Add or remove all your log types here:
+    // get(this, 'logger').addToLogs('message');
+    // get(this, 'logger').removeFromLogs('join');
+  },
+
+  model() {
+    get(this, 'smt').loadFixtures();
   },
 
   actions: {
