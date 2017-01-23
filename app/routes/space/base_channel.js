@@ -1,4 +1,14 @@
 import Ember from 'ember';
+import { storageFor } from 'ember-local-storage';
+
+const {
+  Route,
+  get,
+  set,
+  inject: {
+    service
+  }
+} = Ember;
 
 const {
   Route,
@@ -28,6 +38,7 @@ function focusMessageInput() {
 
 export default Route.extend({
   smt: service(),
+  userSettings: storageFor('user-settings'),
 
   model(params) {
     let space = this.modelFor('space');
@@ -54,6 +65,9 @@ export default Route.extend({
     didTransition() {
       let space = this.modelFor('space');
       let channel = this.controller.get('model');
+
+      set(this, 'userSettings.currentSpace', get(space, 'id'));
+      set(this, 'userSettings.currentChannel', get(channel, 'slug'));
 
       // Mark channel as active/visible
       space.get('channels').setEach('visible', false);
