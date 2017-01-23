@@ -1,24 +1,9 @@
 import Ember from 'ember';
+import BaseChannel from 'hyperchannel/models/base_channel';
 
-export default Ember.Object.extend({
+export default BaseChannel.extend({
 
-  name: '',
-  userList: null,
-  messages: null,
-  connected: false,
-  sockethubChannelId: null,
-  topic: null,
-  unreadMessages: false,
-  unreadMentions: false,
-  visible: false, // Current/active channel
-
-  slug: function() {
-    // This could be based on server type in the future. E.g. IRC would be
-    // server URL, while Campfire would be another id.
-    return this.get('name').replace(/#/g,'');
-  }.property('name'),
-
-  formattedTopic: function() {
+  formattedTopic: Ember.computed('topic', function() {
     if (this.get('topic') !== null) {
       let topic = linkifyStr(this.get('topic'), {
         defaultProtocol: 'https',
@@ -28,13 +13,6 @@ export default Ember.Object.extend({
     } else {
       return '';
     }
-  }.property('topic'),
-
-  unreadMessagesClass: function() {
-    if (this.get('visible') || !this.get('unreadMessages')) {
-      return null;
-    }
-    return this.get('unreadMentions') ? 'unread-mentions' : 'unread-messages';
-  }.property('visible', 'unreadMessages', 'unreadMentions')
+  })
 
 });
