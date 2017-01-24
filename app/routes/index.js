@@ -1,17 +1,16 @@
 import Ember from 'ember';
-import { storageFor } from 'ember-local-storage';
+import { storageFor as localStorageFor } from 'ember-local-storage';
 
 const {
-  Route,
-  get
+  Route
 } = Ember;
 
 export default Route.extend({
-  userSettings: storageFor('user-settings'),
+  userSettings: localStorageFor('user-settings'),
 
   beforeModel() {
-    let currentSpace = get(this, 'userSettings.currentSpace');
-    let currentChannel = get(this, 'userSettings.currentChannel');
+    let currentSpace = this.get('userSettings.currentSpace');
+    let currentChannel = this.get('userSettings.currentChannel');
 
     if (currentSpace && currentChannel) {
       this.transitionTo('space.channel', currentSpace, currentChannel);
