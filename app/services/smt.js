@@ -5,12 +5,10 @@ import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
 import config from 'hyperchannel/config/environment';
 import moment from 'moment';
-import { storageFor } from 'ember-local-storage';
+import { storageFor as localStorageFor } from 'ember-local-storage';
 
 const {
   Service,
-  get,
-  set,
   computed,
   inject: {
     service
@@ -18,7 +16,7 @@ const {
 } = Ember;
 
 export default Service.extend({
-  userSettings: storageFor('user-settings'),
+  userSettings: localStorageFor('user-settings'),
   ajax: service(),
 
   spaces: null,
@@ -419,18 +417,11 @@ export default Service.extend({
 
   spaceFixtures: computed(function() {
     // TODO: Save in remoteStorage
-    let nickname = localStorage.getItem('hyperchannel-nickname') ||
-      get(this, 'userSettings.nickname');
-
-    // Make it backward compatible
-    if (!get(this, 'userSettings.nickname') && nickname) {
-      set(this, 'userSettings.nickname', nickname);
-      localStorage.removeItem('hyperchannel-nickname');
-    }
+    let nickname = this.get('userSettings.nickname');
 
     if (!nickname) {
-      nickname = prompt("Choose a Nickname");
-      set(this, 'userSettings.nickname', nickname);
+      nickname = prompt("Choose a nickname");
+      this.set('userSettings.nickname', nickname);
     }
 
     return {
