@@ -5,13 +5,6 @@ const {
   Route,
   inject: {
     service
-  }
-} = Ember;
-
-const {
-  Route,
-  inject: {
-    service
   },
   run: {
     later,
