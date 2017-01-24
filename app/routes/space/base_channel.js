@@ -20,7 +20,6 @@ function scrollToBottom() {
 
 function focusMessageInput() {
   if (window.innerWidth > 900) {
-    console.debug('innerWidth', window.innerWidth);
     Ember.$('input#message-field').focus();
   } else {
     // Don't auto-focus on small screens
