@@ -1,5 +1,16 @@
 import Ember from 'ember';
 
+const {
+  Route,
+  inject: {
+    service
+  },
+  run: {
+    later,
+    scheduleOnce
+  }
+} = Ember;
+
 function scrollToBottom() {
   Ember.$('#channel-content').animate({
     scrollTop: Ember.$('#channel-content ul').height()
@@ -15,13 +26,12 @@ function focusMessageInput() {
   }
 }
 
-export default Ember.Route.extend({
-
-  smt: Ember.inject.service(),
+export default Route.extend({
+  smt: service(),
 
   model(params) {
-    var space = this.modelFor('space');
-    var channel = space.get('channels').findBy('slug', params.slug);
+    let space = this.modelFor('space');
+    let channel = space.get('channels').findBy('slug', params.slug);
 
     if (!channel) {
       channel = this.createChannelOrUserChannel(space, params.slug);
@@ -33,7 +43,7 @@ export default Ember.Route.extend({
   setupController(controller, model) {
     this._super(controller, model);
 
-    Ember.run.scheduleOnce('afterRender', function() {
+    scheduleOnce('afterRender', function() {
       focusMessageInput();
       scrollToBottom();
     });
@@ -53,7 +63,7 @@ export default Ember.Route.extend({
       channel.set('unreadMessages', false);
       channel.set('unreadMentions', false);
 
-      Ember.run.later(this, () => this.send('menu', 'global', 'hide'), 500);
+      later(this, () => this.send('menu', 'global', 'hide'), 500);
     }
 
   }
