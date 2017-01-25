@@ -26,9 +26,10 @@ You will need the following things properly installed on your computer.
 
 ## Installation
 
-* `git clone <repository-url>` this repository
+* `git clone git@github.com:67P/hyperchannel.git` this repository
 * change into the new directory
 * `npm install`
+* https://github.com/sockethub/sockethub/wiki/Installing-Sockethub
 
 ### Libsass Bindings
 

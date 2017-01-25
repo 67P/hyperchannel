@@ -5,22 +5,30 @@ import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
 import config from 'hyperchannel/config/environment';
 import moment from 'moment';
+import { storageFor as localStorageFor } from 'ember-local-storage';
 
-export default Ember.Service.extend({
+const {
+  Service,
+  computed,
+  inject: {
+    service
+  }
+} = Ember;
 
-  ajax: Ember.inject.service(),
-  logger: Ember.inject.service(),
+export default Service.extend({
+  userSettings: localStorageFor('user-settings'),
+  ajax: service(),
 
   spaces: null,
   // users:  null,
 
-  loadFixtures: function() {
+  loadFixtures() {
     this.setupListeners();
     this.instantiateSpaces();
     this.instantiateChannels();
   },
 
-  instantiateSpaces: function() {
+  instantiateSpaces() {
     this.set('spaces', []);
 
     var spaceFixtures = this.get('spaceFixtures');
@@ -31,7 +39,7 @@ export default Ember.Service.extend({
     });
   },
 
-  connectToIRCServer: function(space) {
+  connectToIRCServer(space) {
     this.sockethub.ActivityStreams.Object.create({
       '@id': space.get('sockethubPersonId'),
       '@type': "person",
@@ -54,7 +62,7 @@ export default Ember.Service.extend({
     this.sockethub.socket.emit('credentials', credentials);
   },
 
-  transferMessage: function(space, target, content) {
+  transferMessage(space, target, content) {
     let job = {
       context: 'irc',
       '@type': 'send',
@@ -70,7 +78,7 @@ export default Ember.Service.extend({
     this.sockethub.socket.emit('message', job);
   },
 
-  transferMeMessage: function(space, target, content) {
+  transferMeMessage(space, target, content) {
     let job = {
       context: 'irc',
       '@type': 'send',
@@ -86,7 +94,7 @@ export default Ember.Service.extend({
     this.sockethub.socket.emit('message', job);
   },
 
-  setupListeners: function() {
+  setupListeners() {
     this.sockethub.socket.on('completed', (message) => {
       Ember.Logger.debug('SH completed', message);
 
@@ -149,28 +157,28 @@ export default Ember.Service.extend({
     });
   },
 
-  updateChannelUserList: function(message) {
+  updateChannelUserList(message) {
     const channel = this.getChannelByMessage(message);
     if (channel) {
       channel.set('userList', message.object.members.sort());
     }
   },
 
-  addUserToChannelUserList: function(message) {
+  addUserToChannelUserList(message) {
     const channel = this.getChannelByMessage(message);
     if (channel) {
       channel.addUser(message.actor.displaName);
     }
   },
 
-  removeUserFromChannelUserList: function(message) {
+  removeUserFromChannelUserList(message) {
     const channel = this.getChannelByMessage(message);
     if (channel) {
       channel.removeUser(message.actor.displayName);
     }
   },
 
-  getChannelByMessage: function(message) {
+  getChannelByMessage(message) {
     var addressWithHostname, hostname;
     if (typeof message.actor === 'object') {
       addressWithHostname = message.actor['@id'];
@@ -190,7 +198,7 @@ export default Ember.Service.extend({
     }
   },
 
-  updateChannelTopic: function(message) {
+  updateChannelTopic(message) {
     let hostname;
     if (typeof message.target === 'object') {
       hostname = message.target['@id'].match(/irc:\/\/(.+)\//)[1];
@@ -408,11 +416,13 @@ export default Ember.Service.extend({
     this.sockethub.socket.emit('message', topicMsg);
   },
 
-  spaceFixtures: function() {
-    var nickname = localStorage.getItem('hyperchannel-nickname');
+  spaceFixtures: computed(function() {
+    // TODO: Save in remoteStorage
+    let nickname = this.get('userSettings.nickname');
+
     if (!nickname) {
-      nickname = prompt("Choose a Nickname");
-      localStorage.setItem('hyperchannel-nickname', nickname);
+      nickname = prompt("Choose a nickname");
+      this.set('userSettings.nickname', nickname);
     }
 
     return {
@@ -451,7 +461,7 @@ export default Ember.Service.extend({
       //   }
       // },
     };
-  }.property(),
+  }),
 
   userFixtures: function() {
     return [

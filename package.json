@@ -55,10 +55,10 @@
     "ember-getowner-polyfill": "1.1.1",
     "ember-hammertime": "1.0.0",
     "ember-load-initializers": "^0.5.1",
+    "ember-local-storage": "1.3.4",
     "ember-moment": "7.3.0",
     "ember-resolver": "^2.0.3",
     "ember-route-action-helper": "2.0.2",
-    "ember-welcome-page": "^1.0.1",
     "loader.js": "^4.0.1"
   }
 }

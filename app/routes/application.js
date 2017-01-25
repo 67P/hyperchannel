@@ -2,7 +2,6 @@ import Ember from 'ember';
 
 const {
   Route,
-  get,
   inject: {
     service
   }
@@ -20,7 +19,7 @@ export default Route.extend({
   },
 
   model() {
-    get(this, 'smt').loadFixtures();
+    this.get('smt').loadFixtures();
   },
 
   actions: {

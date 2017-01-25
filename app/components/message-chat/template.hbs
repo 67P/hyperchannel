@@ -1,2 +1,11 @@
-<span class="username" data-username={{message.nickname}}>{{message.nickname}}</span>
-<span class="message">{{formattedContent}}</span>
+<span class="chat-message__username" data-username={{message.nickname}}>
+  {{message.nickname}}:
+</span>
+
+<span class="chat-message__date">
+  {{moment-format message.date 'HH:mm'}}
+</span>
+
+<span class="chat-message__message">
+  {{formattedContent}}
+</span>

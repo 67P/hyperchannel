@@ -1,14 +1,19 @@
 import Ember from 'ember';
 
-export default Ember.Component.extend({
+const {
+  computed,
+  String: {
+    htmlSafe
+  }
+} = Ember;
 
+export default Ember.Component.extend({
   tagName: 'div',
   classNames: ['chat-message'],
 
-  formattedContent: function() {
+  formattedContent: computed('message.content', function() {
     const content = this.get('message.content');
     let out;
-
 
     // Images
     if (content.match(/^(http)s?:\/\/.*(gif|png|jpg|jpeg)$/i)) {
@@ -33,7 +38,6 @@ export default Ember.Component.extend({
              .replace(/\"color-(\d)\"/g,'"color-0$1"')
              .replace(/\u000f/, '</span>');
 
-    return Ember.String.htmlSafe(out);
-  }.property('message.content')
-
+    return htmlSafe(out);
+  })
 });
