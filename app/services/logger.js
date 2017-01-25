@@ -1,8 +1,7 @@
 import Ember from 'ember';
 
 const {
-  Service,
-  get
+  Service
 } = Ember;
 
 export default Service.extend({
@@ -24,25 +23,20 @@ export default Service.extend({
   ],
 
   log(type) {
-    if (!get(this, 'allowedTypes').includes(type)) {
+    if (!this.get('allowedTypes').includes(type)) {
       throw new Error(`You specified a unknown type: "${type}".`);
     }
 
-    if (get(this, 'showLogsFor').includes(type)) {
-      console.log.apply(null, arguments);
+    if (this.get('showLogsFor').includes(type)) {
+      Ember.Logger.debug.apply(null, arguments);
     }
   },
 
   addToLogs(type) {
-    get(this, 'showLogsFor').push(type);
+    this.get('showLogsFor').push(type);
   },
 
   removeFromLogs(type) {
-    let types = get(this, 'showLogsFor');
-    let index = types.indexOf(type);
-
-    if (index > -1) {
-        types.splice(index, 1);
-    }
+    this.get('showLogsFor').removeObject(type);
   }
 });

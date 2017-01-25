@@ -14,8 +14,8 @@ export default Route.extend({
   beforeModel() {
     // See a list of allowed types in logger.js
     // Add or remove all your log types here:
-    // get(this, 'logger').addToLogs('message');
-    // get(this, 'logger').removeFromLogs('join');
+    // this.get('logger').addToLogs('message');
+    // this.get('logger').removeFromLogs('join');
   },
 
   model() {

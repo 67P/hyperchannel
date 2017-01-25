@@ -18,6 +18,7 @@ const {
 export default Service.extend({
   userSettings: localStorageFor('user-settings'),
   ajax: service(),
+  logger: service(),
 
   spaces: null,
   // users:  null,
@@ -58,7 +59,7 @@ export default Service.extend({
       }
     };
 
-    this.get('logger').log('connection', 'connecting to irc', credentials);
+    this.log('connection', 'connecting to irc', credentials);
     this.sockethub.socket.emit('credentials', credentials);
   },
 
@@ -74,7 +75,7 @@ export default Service.extend({
       }
     };
 
-    this.get('logger').log('send', 'sending message job', job);
+    this.log('send', 'sending message job', job);
     this.sockethub.socket.emit('message', job);
   },
 
@@ -90,7 +91,7 @@ export default Service.extend({
       }
     };
 
-    this.get('logger').log('send', 'sending message job', job);
+    this.log('send', 'sending message job', job);
     this.sockethub.socket.emit('message', job);
   },
 
@@ -328,7 +329,7 @@ export default Service.extend({
       dataType: 'json'
     }).then(archive => {
       Ember.get(archive, 'today.messages').forEach((message) => {
-        this.get('logger').log('message', message);
+        this.log('message', message);
 
         let channelMessage = Message.create({
           type: 'message-chat',
@@ -340,7 +341,7 @@ export default Service.extend({
         channel.addMessage(channelMessage);
       });
     }, error => {
-      this.get('logger').log('error', error);
+      this.log('error', error);
     });
   },
 
@@ -378,7 +379,7 @@ export default Service.extend({
       object: {}
     };
 
-    this.get('logger').log('join', 'joining channel', joinMsg);
+    this.log('join', 'joining channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
@@ -397,7 +398,7 @@ export default Service.extend({
       object: {}
     };
 
-    this.get('logger').log('leave', 'leaving channel', joinMsg);
+    this.log('leave', 'leaving channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
@@ -476,5 +477,9 @@ export default Service.extend({
     ];
   }.property(),
 
+  // Utility function
+  log() {
+    this.get('logger').log(...arguments);
+  }
 });
 
