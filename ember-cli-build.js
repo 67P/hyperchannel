@@ -41,6 +41,7 @@ module.exports = function(defaults) {
 
   app.import('bower_components/linkifyjs/linkify.min.js');
   app.import('bower_components/linkifyjs/linkify-string.min.js');
+  app.import('bower_components/inobounce/inobounce.js');
 
   return app.toTree();
 };
