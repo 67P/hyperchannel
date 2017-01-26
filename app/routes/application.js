@@ -12,6 +12,7 @@ export default Route.extend({
   smt: service(),
 
   beforeModel() {
+    this._super(...arguments);
     // See a list of allowed types in logger.js
     // Add or remove all your log types here:
     // this.get('logger').addToLogs('message');
