@@ -1,17 +1,32 @@
-<section id="channel-content">
-<ul>
-  <li>
-    {{input value=ircSettings.nickname placeholder="nickname"}}
-  </li>
-  <li>
-    {{input value=ircSettings.server placeholder="irc.servername.org"}}
-  </li>
-  <li>
-    {{input value=ircSettings.channel placeholder="#channel"}}
-  </li>
-  <li>
-    <button {{action "save"}}>Save</button>
-  </li>
-</ul>
-</section>
+<section id="settings">
+  <div class="content">
 
+    <h2>Spaces</h2>
+
+    {{#each model.spaces as |space|}}
+      <h3>{{space.name}}</h3>
+      <button {{action "removeSpace" space}}>delete</button>
+      <hr>
+    {{/each}}
+
+    <h3>Add new space</h3>
+    <form {{action "addSpace"}} name="add-space">
+      <p>
+        {{input value=newSpace.name required="required" placeholder="Freenode"}}
+      </p>
+      <p>
+        {{input value=newSpace.server.hostname required="required" placeholder="irc.servername.org"}}
+      </p>
+      <p>
+        {{input value=newSpace.server.port required="required" placeholder="6667"}}
+      </p>
+      <p>
+        {{input value=newSpace.server.nickname required="required" placeholder="nickname"}}
+      </p>
+      <p>
+        <input type="submit" value="Save">
+      </p>
+    </form>
+
+  </div>
+</section>
