@@ -20,9 +20,10 @@ test('is enabled by default', function(assert) {
 });
 
 test('does log activeTypes', function(assert) {
-  assert.expect(1);
+  assert.expect(2);
 
   Ember.Logger.debug = function() {
+    assert.equal(arguments[0], '[error]');
     assert.ok(true);
   };
 

@@ -32,7 +32,9 @@ export default Service.extend({
     }
 
     if (this.get('activeTypes').includes(type) && this.get('enabled')) {
-      Ember.Logger.debug.apply(null, arguments);
+      var params = Array.prototype.slice.call(arguments);
+      params[0] = `[${params[0]}]`;
+      Ember.Logger.debug.apply(null, params);
     }
   },
 
