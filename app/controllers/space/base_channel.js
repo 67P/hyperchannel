@@ -6,6 +6,7 @@ export default Ember.Controller.extend({
   newMessage: null,
   space: Ember.inject.controller(),
   smt: Ember.inject.service(),
+  storage: Ember.inject.service('remotestorage'),
 
   actions: {
     sendMessage: function(newMessage) {
@@ -50,14 +51,19 @@ export default Ember.Controller.extend({
     },
 
     joinCommand: function(args) {
+      let space = this.get('space.model');
       let channel = this.get('smt').createChannel(this.get('space.model'), args[0]);
-      this.transitionToRoute('space.channel', this.get('space.model'), channel);
+      space.get('channelList').pushObject(channel.get('name'));
+      this.get('storage').saveSpace(space);
+      this.transitionToRoute('space.channel', space, channel);
     },
 
     partCommand: function() {
       let space = this.get('space.model');
       let channelName = this.get('model.name');
       this.get('smt').removeChannel(space, channelName);
+      space.get('channelList').removeObject(channelName);
+      this.get('storage').saveSpace(space);
       let lastChannel = space.get('channels.lastObject');
       this.transitionToRoute('space.channel', space, lastChannel);
     },

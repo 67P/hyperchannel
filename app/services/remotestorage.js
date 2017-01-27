@@ -47,6 +47,11 @@ export default Ember.Service.extend({
 
         return Space.create(params);
       });
+  },
+
+  saveSpace(space) {
+    this.get('rs').kosmos.spaces.store(space.serialize())
+      .then(() => Ember.Logger.debug('[remotestorage]', `saved space ${space.get('name')} in RS`));
   }
 
 });

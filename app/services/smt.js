@@ -328,9 +328,9 @@ export default Service.extend({
       messages: [],
       userList: []
     });
+
     this.joinChannel(space, channel, "room");
     space.get('channels').pushObject(channel);
-
     this.loadArchiveMessages(space, channel);
 
     return channel;
@@ -369,15 +369,23 @@ export default Service.extend({
       messages: [],
       userList: []
     });
+
     this.joinChannel(space, channel, "person");
-    space.addChannel(channel);
+    space.get('channels').pushObject(channel);
+
     return channel;
   },
 
   removeChannel: function(space, channelName) {
     var channel = space.get('channels').findBy('name', channelName);
     this.leaveChannel(space, channel);
+
     space.get('channels').removeObject(channel);
+
+    // Update persisted channel list
+    this.get('storage.rs').kosmos.spaces.store(space.serialize())
+      .then(() => this.log('leave', 'stored space', space.get('name')));
+
     return channel;
   },
 
