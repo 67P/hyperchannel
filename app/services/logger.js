@@ -5,6 +5,8 @@ const {
 } = Ember;
 
 export default Service.extend({
+  enabled: true,
+
   allowedTypes: [
     'connection',
     'error',
@@ -14,7 +16,7 @@ export default Service.extend({
     'send'
   ],
 
-  showLogsFor: [
+  activeTypes: [
     'connection',
     'error',
     'join',
@@ -27,16 +29,24 @@ export default Service.extend({
       throw new Error(`You specified a unknown type: "${type}".`);
     }
 
-    if (this.get('showLogsFor').includes(type)) {
+    if (this.get('activeTypes').includes(type) && this.get('enabled')) {
       Ember.Logger.debug.apply(null, arguments);
     }
   },
 
-  addToLogs(type) {
-    this.get('showLogsFor').push(type);
+  add(type) {
+    this.get('activeTypes').addObject(type);
   },
 
-  removeFromLogs(type) {
-    this.get('showLogsFor').removeObject(type);
+  remove(type) {
+    this.get('activeTypes').removeObject(type);
+  },
+
+  disable() {
+    this.set('enabled', false);
+  },
+
+  enable() {
+    this.set('enabled', true);
   }
 });
