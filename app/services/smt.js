@@ -34,7 +34,11 @@ export default Service.extend({
 
     var spaceFixtures = this.get('spaceFixtures');
     Object.keys(spaceFixtures).forEach((spaceName) => {
-      var space = Space.create({name: spaceName, ircServer: spaceFixtures[spaceName].ircServer});
+      var space = Space.create({
+        name: spaceName,
+        protocol: 'irc',
+        server: spaceFixtures[spaceName].server
+      });
       this.connectToIRCServer(space);
       this.get('spaces').pushObject(space);
     });
@@ -44,7 +48,7 @@ export default Service.extend({
     this.sockethub.ActivityStreams.Object.create({
       '@id': space.get('sockethubPersonId'),
       '@type': "person",
-      displayName: space.get('ircServer.nickname')
+      displayName: space.get('server.nickname')
     });
 
     var credentials = {
@@ -52,10 +56,10 @@ export default Service.extend({
       context: 'irc',
       object: {
         '@type': 'credentials',
-        nick: space.get('ircServer.nickname'),
-        server: space.get('ircServer.hostname'),
-        port: space.get('ircServer.port'),
-        secure: space.get('ircServer.secure')
+        nick: space.get('server.nickname'),
+        server: space.get('server.hostname'),
+        port: space.get('server.port'),
+        secure: space.get('server.secure')
       }
     };
 
@@ -189,7 +193,7 @@ export default Service.extend({
 
     hostname = addressWithHostname.match(/irc:\/\/(?:.+@)?(.+?)(?:\/|$)/)[1];
 
-    var space = this.get('spaces').findBy('ircServer.hostname', hostname);
+    var space = this.get('spaces').findBy('server.hostname', hostname);
 
     if (!Ember.isEmpty(space)) {
       var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
@@ -207,7 +211,7 @@ export default Service.extend({
       hostname = message.actor.match(/irc:\/\/.+\@(.+)/)[1];
     }
 
-    let space = this.get('spaces').findBy('ircServer.hostname', hostname);
+    let space = this.get('spaces').findBy('server.hostname', hostname);
 
     if (!Ember.isEmpty(space)) {
       let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
@@ -242,7 +246,7 @@ export default Service.extend({
   },
 
   addMessageToChannel: function(message) {
-    var space = this.get('spaces').findBy('ircServer.hostname',
+    var space = this.get('spaces').findBy('server.hostname',
                 message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1]);
     var nickname = space.get('userNickname');
 
@@ -289,7 +293,7 @@ export default Service.extend({
       }
     };
 
-    Ember.Logger.debug('asking for attendance list', observeMsg);
+    // Ember.Logger.debug('asking for attendance list', observeMsg);
     this.sockethub.socket.emit('message', observeMsg);
   },
 
@@ -307,7 +311,7 @@ export default Service.extend({
     var channel = Channel.create({
       space: space,
       name: channelName,
-      sockethubChannelId: `irc://${space.get('ircServer.hostname')}/${channelName}`,
+      sockethubChannelId: `irc://${space.get('server.hostname')}/${channelName}`,
       messages: [],
       userList: []
     });
@@ -348,7 +352,7 @@ export default Service.extend({
   createUserChannel: function(space, userName) {
     var channel = UserChannel.create({
       name: userName,
-      sockethubChannelId: `irc://${space.get('ircServer.hostname')}/${userName}`,
+      sockethubChannelId: `irc://${space.get('server.hostname')}/${userName}`,
       messages: [],
       userList: []
     });
@@ -428,7 +432,7 @@ export default Service.extend({
 
     return {
       'Freenode': {
-          ircServer : {
+          server : {
             hostname: 'irc.freenode.net',
             port: 6667,
             secure: false,
@@ -440,7 +444,6 @@ export default Service.extend({
             }
           },
           channels: [
-            '#67p',
             '#hackerbeach',
             '#kosmos',
             '#kosmos-dev',
@@ -449,7 +452,7 @@ export default Service.extend({
           ],
       },
       // 'Enterprise': {
-      //   ircServer : {
+      //   server : {
       //     hostname: 'irc.kosmos.net',
       //     port: 6667,
       //     secure: false,
