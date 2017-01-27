@@ -15,8 +15,9 @@ export default Ember.Object.extend({
       password: null
     }
   },
-  channels  : null,
-  users     : null,
+  channels   : null, // Channel instances
+  channelList: [],   // Bookmarked channel names
+  users      : null,
 
   id: function() {
     // This could be based on server type in the future. E.g. IRC would be
@@ -33,15 +34,6 @@ export default Ember.Object.extend({
   channelSorting: ['name'],
   sortedChannels: Ember.computed.sort('channels', 'channelSorting'),
 
-  addChannel(channel) {
-    this.get('channels').pushObject(channel);
-  },
-
-  channelNames: function() {
-    if (Ember.isEmpty(this.get('channels'))) { return []; }
-    return this.get('channels').mapBy('channelName');
-  }.property('channels.[]'),
-
   serialize() {
     return {
       id: this.get('id'),
@@ -52,7 +44,7 @@ export default Ember.Object.extend({
         port: parseInt(this.get('server.port')),
         nickname: this.get('server.nickname'),
       },
-      channels: this.get('channelNames')
+      channels: this.get('channelList')
     };
   },
 
