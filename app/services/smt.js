@@ -97,7 +97,7 @@ export default Service.extend({
 
   setupListeners() {
     this.sockethub.socket.on('completed', (message) => {
-      Ember.Logger.debug('SH completed', message);
+      this.log('sh_completed', message);
 
       switch(message['@type']) {
         case 'join':
@@ -121,7 +121,7 @@ export default Service.extend({
     });
 
     this.sockethub.socket.on('message', (message) => {
-      Ember.Logger.debug('SH message', message);
+      this.log('message', 'SH message', message);
 
       switch(message['@type']) {
         case 'observe':
