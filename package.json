@@ -61,6 +61,6 @@
     "ember-route-action-helper": "2.0.2",
     "loader.js": "^4.0.1",
     "remotestoragejs": "remotestorage/remotestorage.js#feature/949-noglobal",
-    "remotestorage-module-kosmos": "/home/basti/src/remotestorage/modules/remotestorage-module-kosmos"
+    "remotestorage-module-kosmos": "67P/remotestorage-module-kosmos"
   }
 }
