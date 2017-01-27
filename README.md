@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/67P/hyperchannel.svg)](https://travis-ci.org/67P/hyperchannel)
+[![Build Status](https://travis-ci.org/67P/hyperchannel.svg?branch=master)](https://travis-ci.org/67P/hyperchannel)
 
 # Hyperchannel (pre-alpha!)
 
