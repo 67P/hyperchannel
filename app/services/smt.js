@@ -18,6 +18,7 @@ const {
 export default Service.extend({
   userSettings: localStorageFor('user-settings'),
   ajax: service(),
+  logger: service(),
 
   spaces: null,
   // users:  null,
@@ -58,7 +59,7 @@ export default Service.extend({
       }
     };
 
-    Ember.Logger.debug('connecting to irc', credentials);
+    this.log('connection', 'connecting to irc', credentials);
     this.sockethub.socket.emit('credentials', credentials);
   },
 
@@ -74,7 +75,7 @@ export default Service.extend({
       }
     };
 
-    console.log('sending message job', job);
+    this.log('send', 'sending message job', job);
     this.sockethub.socket.emit('message', job);
   },
 
@@ -90,13 +91,13 @@ export default Service.extend({
       }
     };
 
-    console.log('sending message job', job);
+    this.log('send', 'sending message job', job);
     this.sockethub.socket.emit('message', job);
   },
 
   setupListeners() {
     this.sockethub.socket.on('completed', (message) => {
-      Ember.Logger.debug('SH completed', message);
+      this.log('sh_completed', message);
 
       switch(message['@type']) {
         case 'join':
@@ -120,7 +121,7 @@ export default Service.extend({
     });
 
     this.sockethub.socket.on('message', (message) => {
-      Ember.Logger.debug('SH message', message);
+      this.log('message', 'SH message', message);
 
       switch(message['@type']) {
         case 'observe':
@@ -328,7 +329,8 @@ export default Service.extend({
       dataType: 'json'
     }).then(archive => {
       Ember.get(archive, 'today.messages').forEach((message) => {
-        console.log('message', message);
+        this.log('message', message);
+
         let channelMessage = Message.create({
           type: 'message-chat',
           date: new Date(message.timestamp),
@@ -339,7 +341,7 @@ export default Service.extend({
         channel.addMessage(channelMessage);
       });
     }, error => {
-      console.log(error);
+      this.log('error', error);
     });
   },
 
@@ -377,7 +379,7 @@ export default Service.extend({
       object: {}
     };
 
-    Ember.Logger.debug('joining channel', joinMsg);
+    this.log('join', 'joining channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
@@ -396,7 +398,7 @@ export default Service.extend({
       object: {}
     };
 
-    Ember.Logger.debug('leaving channel', joinMsg);
+    this.log('leave', 'leaving channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
@@ -475,5 +477,9 @@ export default Service.extend({
     ];
   }.property(),
 
+  // Utility function
+  log() {
+    this.get('logger').log(...arguments);
+  }
 });
 

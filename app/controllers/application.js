@@ -1,9 +1,18 @@
 import Ember   from 'ember';
 
-export default Ember.Controller.extend({
+const {
+  Controller,
+  computed: {
+    alias
+  },
+  inject: {
+    service
+  }
+} = Ember;
 
-  smt: Ember.inject.service(),
-  spaces: Ember.computed.alias('smt.spaces'),
+export default Controller.extend({
+  smt: service(),
+  spaces: alias('smt.spaces'),
 
   showGlobalMenu: false,
   showChannelMenu: false
