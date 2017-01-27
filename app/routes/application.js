@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import { storageFor as localStorageFor } from 'ember-local-storage';
 
 const {
   Route,
@@ -10,6 +11,7 @@ const {
 export default Route.extend({
   logger: service(),
   smt: service(),
+  userSettings: localStorageFor('user-settings'),
 
   beforeModel() {
     this._super(...arguments);
@@ -22,7 +24,17 @@ export default Route.extend({
   },
 
   model() {
-    this.get('smt').loadFixtures();
+    this.get('smt').setupListeners();
+    return this.get('smt').instantiateSpacesAndChannels();
+  },
+
+  afterModel() {
+    let currentSpace = this.get('userSettings.currentSpace') || 'freenode';
+    let currentChannel = this.get('userSettings.currentChannel') || '#kosmos';
+
+    if (currentSpace && currentChannel) {
+      this.transitionTo('space.channel', currentSpace, currentChannel);
+    }
   },
 
   actions: {

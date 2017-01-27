@@ -43,7 +43,7 @@ export default Ember.Route.extend({
         .then((/*d*/) => {
             this.modelFor('settings').spaces.pushObject(newSpace);
           }, e => {
-            console.log('error saving in RS', e, params);
+            Ember.Logger.error('error saving in RS', params, e);
           }
         );
     },
@@ -54,8 +54,7 @@ export default Ember.Route.extend({
         .then((/*d*/) => {
             this.modelFor('settings').spaces.removeObject(space);
           }, e => {
-            Ember.Logger.debug('error deleting from RS', space);
-            console.error(e);
+            Ember.Logger.error('error deleting from RS', space, e);
           }
         );
     }
