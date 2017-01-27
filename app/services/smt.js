@@ -9,7 +9,6 @@ import { storageFor as localStorageFor } from 'ember-local-storage';
 
 const {
   Service,
-  computed,
   inject: {
     service
   }
@@ -18,28 +17,42 @@ const {
 export default Service.extend({
   userSettings: localStorageFor('user-settings'),
   ajax: service(),
+  storage: service('remotestorage'),
 
   spaces: null,
-  // users:  null,
 
-  loadFixtures() {
-    this.setupListeners();
-    this.instantiateSpaces();
-    this.instantiateChannels();
-  },
-
-  instantiateSpaces() {
+  instantiateSpacesAndChannels() {
     this.set('spaces', []);
+    let rs = this.get('storage.rs');
 
-    var spaceFixtures = this.get('spaceFixtures');
-    Object.keys(spaceFixtures).forEach((spaceName) => {
-      var space = Space.create({
-        name: spaceName,
-        protocol: 'irc',
-        server: spaceFixtures[spaceName].server
+    return new Ember.RSVP.Promise((resolve, reject) => {
+      rs.kosmos.spaces.getAll().then(spaceData => {
+        if (Ember.isEmpty(Object.keys(spaceData))) {
+          Ember.Logger.debug('No space data found in RS. Adding default space...');
+          this.get('storage').addDefaultSpace().then((space) => {
+            this.connectToIRCServer(space);
+            this.get('spaces').pushObject(space);
+            this.instantiateChannels();
+            resolve();
+          });
+        } else {
+          Object.keys(spaceData).forEach((id) => {
+            let space = Space.create({
+              name: spaceData[id].name,
+              protocol: spaceData[id].protocol,
+              server: spaceData[id].server,
+              channelList: spaceData[id].channels
+            });
+            this.connectToIRCServer(space);
+            this.get('spaces').pushObject(space);
+          });
+          this.instantiateChannels();
+          resolve();
+        }
+      }, e => {
+        this.log('error', 'couldn\'d load spaces from RS', e);
+        reject();
       });
-      this.connectToIRCServer(space);
-      this.get('spaces').pushObject(space);
     });
   },
 
@@ -62,7 +75,7 @@ export default Service.extend({
       }
     };
 
-    // Ember.Logger.debug('connecting to irc', credentials);
+    Ember.Logger.debug('connecting to irc', credentials);
     this.sockethub.socket.emit('credentials', credentials);
   },
 
@@ -78,7 +91,7 @@ export default Service.extend({
       }
     };
 
-    // console.log('sending message job', job);
+    console.log('sending message job', job);
     this.sockethub.socket.emit('message', job);
   },
 
@@ -94,13 +107,13 @@ export default Service.extend({
       }
     };
 
-    // console.log('sending message job', job);
+    console.log('sending message job', job);
     this.sockethub.socket.emit('message', job);
   },
 
   setupListeners() {
     this.sockethub.socket.on('completed', (message) => {
-      // Ember.Logger.debug('SH completed', message);
+      Ember.Logger.debug('SH completed', message);
 
       switch(message['@type']) {
         case 'join':
@@ -124,7 +137,7 @@ export default Service.extend({
     });
 
     this.sockethub.socket.on('message', (message) => {
-      // Ember.Logger.debug('SH message', message);
+      Ember.Logger.debug('SH message', message);
 
       switch(message['@type']) {
         case 'observe':
@@ -292,7 +305,7 @@ export default Service.extend({
       }
     };
 
-    // Ember.Logger.debug('asking for attendance list', observeMsg);
+    Ember.Logger.debug('asking for attendance list', observeMsg);
     this.sockethub.socket.emit('message', observeMsg);
   },
 
@@ -300,7 +313,7 @@ export default Service.extend({
     this.get('spaces').forEach((space) => {
       space.set('channels', []);
 
-      this.get('spaceFixtures')[space.get('name')].channels.forEach((channelName) => {
+      space.get('channelList').forEach((channelName) => {
         this.createChannel(space, channelName);
       });
     });
@@ -315,7 +328,7 @@ export default Service.extend({
       userList: []
     });
     this.joinChannel(space, channel, "room");
-    space.addChannel(channel);
+    space.get('channels').pushObject(channel);
 
     this.loadArchiveMessages(space, channel);
 
@@ -332,7 +345,7 @@ export default Service.extend({
       dataType: 'json'
     }).then(archive => {
       Ember.get(archive, 'today.messages').forEach((message) => {
-        // console.log('message', message);
+        console.log('message', message);
         let channelMessage = Message.create({
           type: 'message-chat',
           date: new Date(message.timestamp),
@@ -343,7 +356,7 @@ export default Service.extend({
         channel.addMessage(channelMessage);
       });
     }, error => {
-      // console.log(error);
+      console.log(error);
     });
   },
 
@@ -381,7 +394,7 @@ export default Service.extend({
       object: {}
     };
 
-    // Ember.Logger.debug('joining channel', joinMsg);
+    Ember.Logger.debug('joining channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
@@ -400,7 +413,7 @@ export default Service.extend({
       object: {}
     };
 
-    // Ember.Logger.debug('leaving channel', joinMsg);
+    Ember.Logger.debug('leaving channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
@@ -417,66 +430,7 @@ export default Service.extend({
     };
 
     this.sockethub.socket.emit('message', topicMsg);
-  },
-
-  spaceFixtures: computed(function() {
-    // TODO: Save in remoteStorage
-    let nickname = this.get('userSettings.nickname');
-
-    if (!nickname) {
-      nickname = prompt("Choose a nickname");
-      this.set('userSettings.nickname', nickname);
-    }
-
-    return {
-      'Freenode': {
-          server : {
-            hostname: 'irc.freenode.net',
-            port: 6667,
-            secure: false,
-            username: null,
-            password: null,
-            nickname: nickname,
-            nickServ: {
-              password: null
-            }
-          },
-          channels: [
-            '#hackerbeach',
-            '#kosmos',
-            '#kosmos-dev',
-            '#kosmos-random',
-            '#sockethub'
-          ],
-      },
-      // 'Enterprise': {
-      //   server : {
-      //     hostname: 'irc.kosmos.net',
-      //     port: 6667,
-      //     secure: false,
-      //     username: null,
-      //     password: null,
-      //     nickname: 'kosmos-enterprise-dev',
-      //     nickServ: {
-      //       password: null
-      //     }
-      //   }
-      // },
-    };
-  }),
-
-  userFixtures: function() {
-    return [
-      { username: 'bkero' },
-      { username: 'derbumi' },
-      { username: 'galfert' },
-      { username: 'gregkare' },
-      { username: 'jaaan' },
-      { username: 'LSA232' },
-      { username: 'raucao' },
-      { username: 'slvrbckt' }
-    ];
-  }.property(),
+  }
 
 });
 

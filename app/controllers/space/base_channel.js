@@ -43,7 +43,7 @@ export default Ember.Controller.extend({
       if (availableCommands.includes(command.toLowerCase())) {
         this.send(command + 'Command', commandSplitted.slice(1));
       } else {
-        console.log('Unknown command', commandText);
+        Ember.Logger.warn('[channel]', 'Unknown command', commandText);
       }
 
       this.set('newMessage', null);

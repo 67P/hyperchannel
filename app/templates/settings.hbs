@@ -3,7 +3,6 @@
 
     <h2>Spaces</h2>
 
-    {{log spaces}}
     {{#each model.spaces as |space|}}
       <h3>{{space.name}}</h3>
       <button {{action "removeSpace" space}}>delete</button>
@@ -11,22 +10,23 @@
     {{/each}}
 
     <h3>Add new space</h3>
-    <p>
-      {{input value=newSpace.name required placeholder="Freenode"}}
-    </p>
-    <p>
-      {{input value=newSpace.server.hostname required placeholder="irc.servername.org"}}
-    </p>
-    <p>
-      {{input value=newSpace.server.port required placeholder="6667"}}
-    </p>
-    <p>
-      {{input value=newSpace.server.nickname required placeholder="nickname"}}
-    </p>
-    <p>
-      <button {{action "addSpace"}}>Save</button>
-    </p>
-
+    <form {{action "addSpace"}} name="add-space">
+      <p>
+        {{input value=newSpace.name required="required" placeholder="Freenode"}}
+      </p>
+      <p>
+        {{input value=newSpace.server.hostname required="required" placeholder="irc.servername.org"}}
+      </p>
+      <p>
+        {{input value=newSpace.server.port required="required" placeholder="6667"}}
+      </p>
+      <p>
+        {{input value=newSpace.server.nickname required="required" placeholder="nickname"}}
+      </p>
+      <p>
+        <input type="submit" value="Save">
+      </p>
+    </form>
 
   </div>
 </section>
