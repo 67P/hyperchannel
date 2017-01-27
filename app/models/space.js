@@ -2,9 +2,10 @@ import Ember from 'ember';
 
 export default Ember.Object.extend({
 
-  name      : '',
-  ircServer : {
-    hostname: 'irc.freenode.net',
+  name      : null,
+  protocol  : 'IRC',
+  server : {
+    hostname: null,
     port: 6667,
     secure: false,
     username: null,
@@ -23,17 +24,36 @@ export default Ember.Object.extend({
     return this.get('name').toLowerCase();
   }.property('name'),
 
-  userNickname: Ember.computed.alias('ircServer.nickname'),
+  userNickname: Ember.computed.alias('server.nickname'),
 
   sockethubPersonId: function() {
-    return `irc://${this.get('ircServer.nickname')}@${this.get('ircServer.hostname')}`;
-  }.property('ircServer.hostname', 'ircServer.nickname'),
+    return `irc://${this.get('server.nickname')}@${this.get('server.hostname')}`;
+  }.property('server.hostname', 'server.nickname'),
 
   channelSorting: ['name'],
   sortedChannels: Ember.computed.sort('channels', 'channelSorting'),
 
   addChannel(channel) {
     this.get('channels').pushObject(channel);
-  }
+  },
+
+  channelNames: function() {
+    if (Ember.isEmpty(this.get('channels'))) { return []; }
+    return this.get('channels').mapBy('channelName');
+  }.property('channels.[]'),
+
+  serialize() {
+    return {
+      id: this.get('id'),
+      name: this.get('name'),
+      protocol: this.get('protocol'),
+      server: {
+        hostname: this.get('server.hostname'),
+        port: parseInt(this.get('server.port')),
+        nickname: this.get('server.nickname'),
+      },
+      channels: this.get('channelNames')
+    };
+  },
 
 });

@@ -33,7 +33,11 @@ export default Service.extend({
 
     var spaceFixtures = this.get('spaceFixtures');
     Object.keys(spaceFixtures).forEach((spaceName) => {
-      var space = Space.create({name: spaceName, ircServer: spaceFixtures[spaceName].ircServer});
+      var space = Space.create({
+        name: spaceName,
+        protocol: 'irc',
+        server: spaceFixtures[spaceName].server
+      });
       this.connectToIRCServer(space);
       this.get('spaces').pushObject(space);
     });
@@ -43,7 +47,7 @@ export default Service.extend({
     this.sockethub.ActivityStreams.Object.create({
       '@id': space.get('sockethubPersonId'),
       '@type': "person",
-      displayName: space.get('ircServer.nickname')
+      displayName: space.get('server.nickname')
     });
 
     var credentials = {
@@ -51,14 +55,14 @@ export default Service.extend({
       context: 'irc',
       object: {
         '@type': 'credentials',
-        nick: space.get('ircServer.nickname'),
-        server: space.get('ircServer.hostname'),
-        port: space.get('ircServer.port'),
-        secure: space.get('ircServer.secure')
+        nick: space.get('server.nickname'),
+        server: space.get('server.hostname'),
+        port: space.get('server.port'),
+        secure: space.get('server.secure')
       }
     };
 
-    Ember.Logger.debug('connecting to irc', credentials);
+    // Ember.Logger.debug('connecting to irc', credentials);
     this.sockethub.socket.emit('credentials', credentials);
   },
 
@@ -74,7 +78,7 @@ export default Service.extend({
       }
     };
 
-    console.log('sending message job', job);
+    // console.log('sending message job', job);
     this.sockethub.socket.emit('message', job);
   },
 
@@ -90,13 +94,13 @@ export default Service.extend({
       }
     };
 
-    console.log('sending message job', job);
+    // console.log('sending message job', job);
     this.sockethub.socket.emit('message', job);
   },
 
   setupListeners() {
     this.sockethub.socket.on('completed', (message) => {
-      Ember.Logger.debug('SH completed', message);
+      // Ember.Logger.debug('SH completed', message);
 
       switch(message['@type']) {
         case 'join':
@@ -120,7 +124,7 @@ export default Service.extend({
     });
 
     this.sockethub.socket.on('message', (message) => {
-      Ember.Logger.debug('SH message', message);
+      // Ember.Logger.debug('SH message', message);
 
       switch(message['@type']) {
         case 'observe':
@@ -188,7 +192,7 @@ export default Service.extend({
 
     hostname = addressWithHostname.match(/irc:\/\/(?:.+@)?(.+?)(?:\/|$)/)[1];
 
-    var space = this.get('spaces').findBy('ircServer.hostname', hostname);
+    var space = this.get('spaces').findBy('server.hostname', hostname);
 
     if (!Ember.isEmpty(space)) {
       var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
@@ -206,7 +210,7 @@ export default Service.extend({
       hostname = message.actor.match(/irc:\/\/.+\@(.+)/)[1];
     }
 
-    let space = this.get('spaces').findBy('ircServer.hostname', hostname);
+    let space = this.get('spaces').findBy('server.hostname', hostname);
 
     if (!Ember.isEmpty(space)) {
       let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
@@ -241,7 +245,7 @@ export default Service.extend({
   },
 
   addMessageToChannel: function(message) {
-    var space = this.get('spaces').findBy('ircServer.hostname',
+    var space = this.get('spaces').findBy('server.hostname',
                 message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1]);
     var nickname = space.get('userNickname');
 
@@ -288,7 +292,7 @@ export default Service.extend({
       }
     };
 
-    Ember.Logger.debug('asking for attendance list', observeMsg);
+    // Ember.Logger.debug('asking for attendance list', observeMsg);
     this.sockethub.socket.emit('message', observeMsg);
   },
 
@@ -306,7 +310,7 @@ export default Service.extend({
     var channel = Channel.create({
       space: space,
       name: channelName,
-      sockethubChannelId: `irc://${space.get('ircServer.hostname')}/${channelName}`,
+      sockethubChannelId: `irc://${space.get('server.hostname')}/${channelName}`,
       messages: [],
       userList: []
     });
@@ -328,7 +332,7 @@ export default Service.extend({
       dataType: 'json'
     }).then(archive => {
       Ember.get(archive, 'today.messages').forEach((message) => {
-        console.log('message', message);
+        // console.log('message', message);
         let channelMessage = Message.create({
           type: 'message-chat',
           date: new Date(message.timestamp),
@@ -339,14 +343,14 @@ export default Service.extend({
         channel.addMessage(channelMessage);
       });
     }, error => {
-      console.log(error);
+      // console.log(error);
     });
   },
 
   createUserChannel: function(space, userName) {
     var channel = UserChannel.create({
       name: userName,
-      sockethubChannelId: `irc://${space.get('ircServer.hostname')}/${userName}`,
+      sockethubChannelId: `irc://${space.get('server.hostname')}/${userName}`,
       messages: [],
       userList: []
     });
@@ -377,7 +381,7 @@ export default Service.extend({
       object: {}
     };
 
-    Ember.Logger.debug('joining channel', joinMsg);
+    // Ember.Logger.debug('joining channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
@@ -396,7 +400,7 @@ export default Service.extend({
       object: {}
     };
 
-    Ember.Logger.debug('leaving channel', joinMsg);
+    // Ember.Logger.debug('leaving channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
   },
 
@@ -426,7 +430,7 @@ export default Service.extend({
 
     return {
       'Freenode': {
-          ircServer : {
+          server : {
             hostname: 'irc.freenode.net',
             port: 6667,
             secure: false,
@@ -438,7 +442,6 @@ export default Service.extend({
             }
           },
           channels: [
-            '#67p',
             '#hackerbeach',
             '#kosmos',
             '#kosmos-dev',
@@ -447,7 +450,7 @@ export default Service.extend({
           ],
       },
       // 'Enterprise': {
-      //   ircServer : {
+      //   server : {
       //     hostname: 'irc.kosmos.net',
       //     port: 6667,
       //     secure: false,

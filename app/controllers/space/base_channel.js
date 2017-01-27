@@ -12,7 +12,7 @@ export default Ember.Controller.extend({
       let message = Message.create({
         type: 'message-chat',
         date: new Date(),
-        nickname: this.get('space.model.ircServer.nickname'),
+        nickname: this.get('space.model.server.nickname'),
         content: newMessage
       });
 
@@ -75,7 +75,7 @@ export default Ember.Controller.extend({
       let message = Message.create({
         type: 'message-chat-me',
         date: new Date(),
-        nickname: this.get('space.model.ircServer.nickname'),
+        nickname: this.get('space.model.server.nickname'),
         content: newMessage
       });
 

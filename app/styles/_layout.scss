@@ -92,6 +92,11 @@ div#channel {
   }
 }
 
+section#settings {
+  @include flex(1);
+  overflow: auto;
+}
+
 .app-container.global-menu-open {
   #global {
     transform: none;
