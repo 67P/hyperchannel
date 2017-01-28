@@ -19,11 +19,6 @@ export default Ember.Object.extend({
   channelList: null, // Bookmarked channel names
   users      : null,
 
-  init() {
-    this._super(...arguments);
-    this.set('channelList', []);
-  },
-
   id: function() {
     // This could be based on server type in the future. E.g. IRC would be
     // server URL, while Campfire would be another id.
