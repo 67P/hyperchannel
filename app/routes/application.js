@@ -43,6 +43,12 @@ export default Route.extend({
       }
     },
 
+    openNewChannel(spaceId) {
+      let channelName = window.prompt('Join channel');
+      channelName = channelName.replace(/^#/, '');
+      this.transitionTo('space.channel', spaceId, channelName);
+    }
+
   }
 
 });
