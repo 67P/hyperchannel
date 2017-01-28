@@ -45,7 +45,7 @@ export default Ember.Object.extend({
         secure: this.get('server.secure'),
         nickname: this.get('server.nickname'),
       },
-      channels: this.get('channelList')
+      channels: this.get('channelList') || []
     };
   },
 
