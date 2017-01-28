@@ -13,8 +13,10 @@ export default Ember.Service.extend({
     let rs =  new RemoteStorage(/* {logging: true} */);
     rs.access.claim('kosmos', 'rw');
     rs.caching.enable('/kosmos/');
+
+    this.set('rsInstance', rs);
     return rs;
-  }.property('rs'),
+  }.property('rsInstance'),
 
   addDefaultSpace() {
     let nickname = prompt("Choose a nickname");
