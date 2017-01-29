@@ -12,7 +12,7 @@
         </li>
       {{/each}}
       <li>
-        <a {{action "joinChannel" space}} class="join-channel">+</a>
+        <a {{action (action joinChannel space.id)}} class="join-channel">+</a>
       </li>
     </ul>
   </li>
