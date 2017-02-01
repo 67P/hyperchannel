@@ -13,7 +13,7 @@ module.exports = function(environment) {
       }
     },
 
-    sockethubURL: 'localhost:10550',
+    sockethubURL: 'http://localhost:10550',
 
     APP: {
       // Here you can pass flags/options to your application instance
@@ -46,6 +46,34 @@ module.exports = function(environment) {
     // TODO move to user-editable config
     ENV.sockethubURL = 'https://sockethub.kosmos.org:10550';
   }
+
+  //
+  // Service Worker
+  //
+  ENV.serviceWorker = {
+    enabled: true,
+    debug: true,
+    // precacheURLs: [
+    // ],
+    networkFirstURLs: [
+      /activity\-streams\.js/,
+      /socket\.io\.js/,
+      /sockethub\-client\.js/
+    ],
+    excludePaths: [/test.*/, 'robots.txt', 'crossdomain.xml'],
+    // fallback: [
+    //   '/online.html /offline.html'
+    // ],
+    includeRegistration: true,
+    // serviceWorkerFile: "service-worker.js",
+    // skipWaiting: true,
+    // swIncludeFiles: [
+    //   'bower_components/pouchdb/dist/pouchdb.js'
+    // ],
+    swEnvironment: {
+      sockethubURL: ENV.sockethubURL
+    }
+  };
 
   return ENV;
 };
