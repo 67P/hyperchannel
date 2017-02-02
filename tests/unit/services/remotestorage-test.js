@@ -5,8 +5,9 @@ moduleFor('service:remotestorage', 'Unit | Service | remotestorage', {
   // needs: ['service:foo']
 });
 
-// Replace this with your real tests.
-test('it exists', function(assert) {
+test('#rs returns a remoteStorage instance', function(assert) {
   let service = this.subject();
-  assert.ok(service);
+  let remoteStorage = service.get('rs');
+
+  assert.equal(typeof remoteStorage.scope, 'function');
 });
