@@ -6,13 +6,14 @@ export default Ember.Controller.extend({
   newMessage: null,
   space: Ember.inject.controller(),
   smt: Ember.inject.service(),
+  storage: Ember.inject.service('remotestorage'),
 
   actions: {
     sendMessage: function(newMessage) {
       let message = Message.create({
         type: 'message-chat',
         date: new Date(),
-        nickname: this.get('space.model.ircServer.nickname'),
+        nickname: this.get('space.model.server.nickname'),
         content: newMessage
       });
 
@@ -43,21 +44,26 @@ export default Ember.Controller.extend({
       if (availableCommands.includes(command.toLowerCase())) {
         this.send(command + 'Command', commandSplitted.slice(1));
       } else {
-        console.log('Unknown command', commandText);
+        Ember.Logger.warn('[channel]', 'Unknown command', commandText);
       }
 
       this.set('newMessage', null);
     },
 
     joinCommand: function(args) {
-      let channel = this.get('smt').createChannel(this.get('space.model'), args[0]);
-      this.transitionToRoute('space.channel', this.get('space.model'), channel);
+      let space = this.get('space.model');
+      let channel = this.get('smt').createChannel(space, args[0]);
+      space.get('channelList').pushObject(channel.get('name'));
+      this.get('storage').saveSpace(space);
+      this.transitionToRoute('space.channel', space, channel);
     },
 
     partCommand: function() {
       let space = this.get('space.model');
       let channelName = this.get('model.name');
       this.get('smt').removeChannel(space, channelName);
+      space.get('channelList').removeObject(channelName);
+      this.get('storage').saveSpace(space);
       let lastChannel = space.get('channels.lastObject');
       this.transitionToRoute('space.channel', space, lastChannel);
     },
@@ -75,7 +81,7 @@ export default Ember.Controller.extend({
       let message = Message.create({
         type: 'message-chat-me',
         date: new Date(),
-        nickname: this.get('space.model.ircServer.nickname'),
+        nickname: this.get('space.model.server.nickname'),
         content: newMessage
       });
 

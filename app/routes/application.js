@@ -22,7 +22,8 @@ export default Route.extend({
   },
 
   model() {
-    this.get('smt').loadFixtures();
+    this.get('smt').setupListeners();
+    return this.get('smt').instantiateSpacesAndChannels();
   },
 
   actions: {

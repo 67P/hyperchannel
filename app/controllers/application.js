@@ -1,4 +1,4 @@
-import Ember   from 'ember';
+import Ember from 'ember';
 
 const {
   Controller,
@@ -11,6 +11,7 @@ const {
 } = Ember;
 
 export default Controller.extend({
+
   smt: service(),
   spaces: alias('smt.spaces'),
 
@@ -18,4 +19,3 @@ export default Controller.extend({
   showChannelMenu: false
 
 });
-
