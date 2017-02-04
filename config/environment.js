@@ -13,7 +13,7 @@ module.exports = function(environment) {
       }
     },
 
-    sockethubURL: 'localhost:10550',
+    sockethubURL: 'http://localhost:10550',
 
     APP: {
       // Here you can pass flags/options to your application instance
@@ -23,7 +23,37 @@ module.exports = function(environment) {
     publicLogsUrl: 'https://storage.5apps.com/kosmos/public/chat-messages'
   };
 
+  //
+  // Service Worker
+  //
+  ENV.serviceWorker = {
+    enabled: false,
+    includeRegistration: false,
+    debug: true,
+    // precacheURLs: [
+    // ],
+    networkFirstURLs: [
+      /activity\-streams\.js/,
+      /socket\.io\.js/,
+      /sockethub\-client\.js/
+    ],
+    excludePaths: [/test.*/, 'robots.txt', 'crossdomain.xml'],
+    // fallback: [
+    //   '/online.html /offline.html'
+    // ],
+    // serviceWorkerFile: "service-worker.js",
+    // skipWaiting: true,
+    // swIncludeFiles: [
+    //   'bower_components/pouchdb/dist/pouchdb.js'
+    // ],
+    // swEnvironment: {
+    // }
+  };
+
   if (environment === 'development') {
+    // ENV.serviceWorker.enabled = true;
+    // ENV.serviceWorker.includeRegistration = true;
+    // ENV.serviceWorker.debug = true;
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
@@ -43,8 +73,10 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    // TODO move to user-editable config
     ENV.sockethubURL = 'https://sockethub.kosmos.org:10550';
+
+    ENV.serviceWorker.enabled = true;
+    ENV.serviceWorker.includeRegistration = true;
   }
 
   return ENV;

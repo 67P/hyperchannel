@@ -32,6 +32,7 @@
   "license": "MPL",
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.2",
+    "broccoli-serviceworker": "0.1.4",
     "ember-ajax": "^2.0.1",
     "ember-browserify": "^1.1.13",
     "ember-cli": "2.8.0",
