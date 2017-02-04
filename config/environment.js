@@ -29,7 +29,7 @@ module.exports = function(environment) {
   ENV.serviceWorker = {
     enabled: false,
     includeRegistration: false,
-    debug: false,
+    debug: true,
     // precacheURLs: [
     // ],
     networkFirstURLs: [
