@@ -26,6 +26,10 @@ export default Ember.Object.extend({
     return this.get('unreadMentions') ? 'unread-mentions' : 'unread-messages';
   }),
 
+  sortedMessages: Ember.computed('messages.@each.date', function() {
+    return this.get('messages').sortBy('date');
+  }),
+
   addMessage(message) {
     this.get('messages').pushObject(message);
 

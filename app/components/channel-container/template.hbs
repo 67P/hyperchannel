@@ -7,9 +7,13 @@
     </nav>
   </header>
 
+  {{#if showPreviousMessagesButton}}
+    <button {{action "loadPreviousMessages"}}>Load previous messages</button>
+  {{/if}}
+
   <section id="channel-content" class="main">
     <ul>
-      {{#each channel.messages as |message|}}
+      {{#each channel.sortedMessages as |message|}}
         <li>
           {{component message.type message=message}}
         </li>

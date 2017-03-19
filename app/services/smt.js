@@ -11,7 +11,12 @@ const {
   Service,
   inject: {
     service
-  }
+  },
+  RSVP,
+  isEmpty,
+  isPresent,
+  Logger,
+  get
 } = Ember;
 
 export default Service.extend({
@@ -26,10 +31,10 @@ export default Service.extend({
     this.set('spaces', []);
     let rs = this.get('storage.rs');
 
-    return new Ember.RSVP.Promise((resolve, reject) => {
+    return new RSVP.Promise((resolve, reject) => {
       rs.kosmos.spaces.getAll().then(spaceData => {
-        if (Ember.isEmpty(Object.keys(spaceData))) {
-          Ember.Logger.debug('No space data found in RS. Adding default space...');
+        if (isEmpty(Object.keys(spaceData))) {
+          Logger.debug('No space data found in RS. Adding default space...');
           this.get('storage').addDefaultSpace().then((space) => {
             this.connectToIRCServer(space);
             this.get('spaces').pushObject(space);
@@ -120,9 +125,9 @@ export default Service.extend({
         case 'join':
           if (message['@type'] === 'join') {
             var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
-            if (!Ember.isEmpty(space)) {
+            if (!isEmpty(space)) {
               var channel = space.get('channels').findBy('sockethubChannelId', message.target);
-              if (!Ember.isEmpty(channel)) {
+              if (!isEmpty(channel)) {
                 channel.set('connected', true);
                 this.observeChannel(space.get('sockethubPersonId'), channel.get('sockethubChannelId'));
               }
@@ -171,7 +176,7 @@ export default Service.extend({
     });
 
     this.sockethub.socket.on('failure', function(message) {
-      Ember.Logger.error('SH failure', message);
+      Logger.error('SH failure', message);
     });
   },
 
@@ -208,9 +213,9 @@ export default Service.extend({
 
     var space = this.get('spaces').findBy('server.hostname', hostname);
 
-    if (!Ember.isEmpty(space)) {
+    if (!isEmpty(space)) {
       var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
-      if (!Ember.isEmpty(channel)) {
+      if (!isEmpty(channel)) {
         return channel;
       }
     }
@@ -226,10 +231,10 @@ export default Service.extend({
 
     let space = this.get('spaces').findBy('server.hostname', hostname);
 
-    if (!Ember.isEmpty(space)) {
+    if (!isEmpty(space)) {
       let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
 
-      if (Ember.isEmpty(channel)) {
+      if (isEmpty(channel)) {
         channel = this.createChannel(space, message.target['@id']);
       }
 
@@ -238,7 +243,7 @@ export default Service.extend({
 
       channel.set('topic', newTopic);
 
-      if (Ember.isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.get('visible')) {
+      if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.get('visible')) {
         Notification.requestPermission(function(){
           new Notification(channel.name, {
             body: `New Topic: ${newTopic}`
@@ -306,7 +311,7 @@ export default Service.extend({
       }
     };
 
-    Ember.Logger.debug('asking for attendance list', observeMsg);
+    Logger.debug('asking for attendance list', observeMsg);
     this.sockethub.socket.emit('message', observeMsg);
   },
 
@@ -336,16 +341,16 @@ export default Service.extend({
     return channel;
   },
 
-  loadArchiveMessages(space, channel) {
-    let today = moment.utc();
+  loadArchiveMessages(space, channel, date) {
+    let day = moment(date).utc();
     let logsUrl = `${config.publicLogsUrl}/${space.get('name').toLowerCase()}/channels/${channel.get('slug')}/`;
-        logsUrl += today.format('YYYY/MM/DD');
+        logsUrl += day.format('YYYY/MM/DD');
 
-    this.get('ajax').request(logsUrl, {
+    return this.get('ajax').request(logsUrl, {
       type: 'GET',
       dataType: 'json'
     }).then(archive => {
-      Ember.get(archive, 'today.messages').forEach((message) => {
+      get(archive, 'today.messages').forEach((message) => {
         this.log('message', message);
 
         let channelMessage = Message.create({
@@ -357,6 +362,8 @@ export default Service.extend({
 
         channel.addMessage(channelMessage);
       });
+      let previous = get(archive, 'today.previous');
+      channel.set('previousLogsDate', previous.replace(/\//g, '-'));
     }, error => {
       this.log('error', error);
     });
