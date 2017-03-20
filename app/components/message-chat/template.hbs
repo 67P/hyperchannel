@@ -2,9 +2,9 @@
   {{message.nickname}}:
 </span>
 
-<span class="chat-message__date">
+<time class="chat-message__date" datetime={{datetime}} title={{dateTitle}}>
   {{moment-format message.date 'HH:mm'}}
-</span>
+</time>
 
 <span class="chat-message__message">
   {{formattedContent}}
