@@ -32,8 +32,12 @@ export default Component.extend({
     }
   }),
 
-  hasPreviousMessages: computed('channel.previousLogsDate', function() {
-    return isPresent(this.get('channel.previousLogsDate'));
+  logsAvailable: computed('smt.loggedChannels.[]', 'channel.name', function() {
+    let loggedChannel = this.get('smt.loggedChannels').find((channelName) => {
+      return channelName === this.get('channel.name');
+    });
+
+    return isPresent(loggedChannel);
   }),
 
   actions: {
@@ -47,7 +51,7 @@ export default Component.extend({
     },
 
     menu(which, what) {
-      this.sendAction("menu", which, what);
+      this.sendAction('menu', which, what);
     },
 
     loadPreviousMessages() {

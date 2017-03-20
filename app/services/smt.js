@@ -27,6 +27,11 @@ export default Service.extend({
 
   spaces: null,
 
+  loggedChannels: [
+    '#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',
+    '#unhosted','#sockethub','#opensourcedesign','#openknot','#emberjs'
+  ],
+
   instantiateSpacesAndChannels() {
     this.set('spaces', []);
     let rs = this.get('storage.rs');
@@ -344,9 +349,9 @@ export default Service.extend({
 
     let maximumSearchDepth;
     if (channel.get('previousLogsDate')) {
-      maximumSearchDepth = moment(channel.get('previousLogsDate')).subtract(10, 'days');
+      maximumSearchDepth = moment(channel.get('previousLogsDate')).subtract(14, 'days');
     } else {
-      maximumSearchDepth = moment().subtract(10, 'days');
+      maximumSearchDepth = moment().subtract(14, 'days');
     }
 
     if (day.isBefore(maximumSearchDepth)) {

@@ -7,7 +7,9 @@
     </nav>
   </header>
 
-  <button {{action "loadPreviousMessages"}}>Load previous messages</button>
+  {{#if logsAvailable}}
+    <button {{action "loadPreviousMessages"}}>Load previous messages</button>
+  {{/if}}
 
   <section id="channel-content" class="main">
     <ul>
@@ -15,6 +17,10 @@
         <li>
           {{component message.type message=message}}
         </li>
+      {{else}}
+        {{#if logsAvailable}}
+          <li class="no-messages">There are no messages for today yet.</li>
+        {{/if}}
       {{/each}}
     </ul>
   </section>

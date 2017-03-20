@@ -206,6 +206,11 @@ header {
   }
 }
 
+.no-messages {
+  margin-top: 10px;
+  color: #aaa;
+}
+
 @import "layout";
 @import "iconfont";
 @import "components/channel-nav";
