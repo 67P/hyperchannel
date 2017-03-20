@@ -329,9 +329,7 @@ export default Service.extend({
     var channel = Channel.create({
       space: space,
       name: channelName,
-      sockethubChannelId: `irc://${space.get('server.hostname')}/${channelName}`,
-      messages: [],
-      userList: []
+      sockethubChannelId: `irc://${space.get('server.hostname')}/${channelName}`
     });
 
     this.joinChannel(space, channel, "room");
@@ -372,9 +370,7 @@ export default Service.extend({
   createUserChannel: function(space, userName) {
     var channel = UserChannel.create({
       name: userName,
-      sockethubChannelId: `irc://${space.get('server.hostname')}/${userName}`,
-      messages: [],
-      userList: []
+      sockethubChannelId: `irc://${space.get('server.hostname')}/${userName}`
     });
 
     this.joinChannel(space, channel, "person");
