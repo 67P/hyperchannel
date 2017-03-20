@@ -33,5 +33,5 @@ test('#headline is a date for all other days', function(assert) {
     })
   });
 
-  assert.equal(component.get('headline'), '2017/02/25');
+  assert.equal(Date.parse(component.get('headline')), Date.parse('2017-02-25'));
 });
