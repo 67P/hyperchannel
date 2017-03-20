@@ -32,7 +32,7 @@ export default Component.extend({
     }
   }),
 
-  showPreviousMessagesButton: computed('channel.previousLogsDate', function() {
+  hasPreviousMessages: computed('channel.previousLogsDate', function() {
     return isPresent(this.get('channel.previousLogsDate'));
   }),
 
@@ -57,7 +57,9 @@ export default Component.extend({
           this.get('channel.space'),
           this.get('channel'),
           this.get('channel.previousLogsDate')
-        ).finally(() => {
+        ).catch(() => {
+          // TODO what to do here?
+        }).finally(() => {
           this.set('scrollingDisabled', false);
         });
       }

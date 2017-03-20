@@ -334,9 +334,24 @@ export default Service.extend({
 
     this.joinChannel(space, channel, "room");
     space.get('channels').pushObject(channel);
-    this.loadArchiveMessages(space, channel);
+    this.loadLastMessages(space, channel);
 
     return channel;
+  },
+
+  loadLastMessages(space, channel, day) {
+    if (!day) {
+      day = moment().utc();
+    }
+
+    if (day.isBefore(moment().subtract(10, 'days'))) {
+      return;
+    }
+
+    this.loadArchiveMessages(space, channel, day.format('YYYY-MM-DD')).catch(() => {
+      day.subtract(1, 'day');
+      this.loadLastMessages(space, channel, day);
+    });
   },
 
   loadArchiveMessages(space, channel, date) {
@@ -362,8 +377,9 @@ export default Service.extend({
       });
       let previous = get(archive, 'today.previous');
       channel.set('previousLogsDate', previous.replace(/\//g, '-'));
-    }, error => {
+    }).catch(error => {
       this.log('error', error);
+      throw(error);
     });
   },
 
