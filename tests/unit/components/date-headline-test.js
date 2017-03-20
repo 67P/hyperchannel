@@ -33,5 +33,8 @@ test('#headline is a date for all other days', function(assert) {
     })
   });
 
-  assert.equal(Date.parse(component.get('headline')), Date.parse('2017-02-25'));
+  // only check for existence of year and day
+  // overall format of the date is local specific
+  assert.ok(component.get('headline').match(/2017/));
+  assert.ok(component.get('headline').match(/25/));
 });
