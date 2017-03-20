@@ -334,23 +334,29 @@ export default Service.extend({
 
     this.joinChannel(space, channel, "room");
     space.get('channels').pushObject(channel);
-    this.loadLastMessages(space, channel);
+    this.loadArchiveMessages(space, channel).catch(() => {});
 
     return channel;
   },
 
-  loadLastMessages(space, channel, day) {
-    if (!day) {
-      day = moment().utc();
+  loadLastMessages(space, channel, date) {
+    let day = date ? moment(date) : moment();
+
+    let maximumSearchDepth;
+    if (channel.get('previousLogsDate')) {
+      maximumSearchDepth = moment(channel.get('previousLogsDate')).subtract(10, 'days');
+    } else {
+      maximumSearchDepth = moment().subtract(10, 'days');
     }
 
-    if (day.isBefore(moment().subtract(10, 'days'))) {
+    if (day.isBefore(maximumSearchDepth)) {
+      channel.set('previousLogsDate', day.format('YYYY-MM-DD'));
       return;
     }
 
-    this.loadArchiveMessages(space, channel, day.format('YYYY-MM-DD')).catch(() => {
+    return this.loadArchiveMessages(space, channel, day.format('YYYY-MM-DD')).catch(() => {
       day.subtract(1, 'day');
-      this.loadLastMessages(space, channel, day);
+      return this.loadLastMessages(space, channel, day);
     });
   },
 

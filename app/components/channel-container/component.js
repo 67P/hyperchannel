@@ -51,18 +51,16 @@ export default Component.extend({
     },
 
     loadPreviousMessages() {
-      if (this.get('channel.previousLogsDate')) {
-        this.set('scrollingDisabled', true);
-        this.get('smt').loadArchiveMessages(
-          this.get('channel.space'),
-          this.get('channel'),
-          this.get('channel.previousLogsDate')
-        ).catch(() => {
-          // TODO what to do here?
-        }).finally(() => {
-          this.set('scrollingDisabled', false);
-        });
-      }
+      this.set('scrollingDisabled', true);
+      this.get('smt').loadLastMessages(
+        this.get('channel.space'),
+        this.get('channel'),
+        this.get('channel.previousLogsDate')
+      ).catch(() => {
+        // TODO what to do here?
+      }).finally(() => {
+        this.set('scrollingDisabled', false);
+      });
     }
 
   }
