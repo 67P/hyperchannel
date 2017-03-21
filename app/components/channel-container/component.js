@@ -1,19 +1,33 @@
 import Ember from 'ember';
 
+const {
+  Component,
+  observer,
+  run,
+  inject: {
+    service
+  }
+} = Ember;
+
 function scrollToBottom() {
   Ember.$('#channel-content').animate({
     scrollTop: Ember.$('#channel-content ul').height()
   }, '500');
 }
 
-export default Ember.Component.extend({
+export default Component.extend({
 
   elementId: 'channel',
   newMessage: '',
   channel: null,
+  scrollingDisabled: false,
 
-  messagesUpdated: Ember.observer('channel.messages.[]', function() {
-    Ember.run.scheduleOnce('afterRender', scrollToBottom);
+  smt: service(),
+
+  messagesUpdated: observer('channel.messages.[]', function() {
+    if (!this.get('scrollingDisabled')) {
+      run.scheduleOnce('afterRender', scrollToBottom);
+    }
   }),
 
   actions: {
@@ -27,7 +41,20 @@ export default Ember.Component.extend({
     },
 
     menu(which, what) {
-      this.sendAction("menu", which, what);
+      this.sendAction('menu', which, what);
+    },
+
+    loadPreviousMessages() {
+      this.set('scrollingDisabled', true);
+      this.get('smt').loadLastMessages(
+        this.get('channel.space'),
+        this.get('channel'),
+        this.get('channel.previousLogsDate')
+      ).catch(() => {
+        // TODO what to do here?
+      }).finally(() => {
+        this.set('scrollingDisabled', false);
+      });
     }
 
   }

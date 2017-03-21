@@ -8,11 +8,23 @@
   </header>
 
   <section id="channel-content" class="main">
+    {{#if channel.isLogged}}
+      <a {{action "loadPreviousMessages"}} class="load-previous">
+        Load previous messages
+      </a>
+    {{/if}}
+
     <ul>
-      {{#each channel.messages as |message|}}
+      {{#each channel.sortedMessages as |message|}}
         <li>
           {{component message.type message=message}}
         </li>
+      {{else}}
+        {{#if channel.isLogged}}
+          <li class="no-messages">No recent messages to display.</li>
+        {{else}}
+          <li class="no-messages">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank">Learn more</a></li>
+        {{/if}}
       {{/each}}
     </ul>
   </section>

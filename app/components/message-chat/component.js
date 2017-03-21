@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import moment from 'moment';
 
 const {
   computed,
@@ -10,6 +11,16 @@ const {
 export default Ember.Component.extend({
   tagName: 'div',
   classNames: ['chat-message'],
+
+  message: null,
+
+  datetime: computed('message.date', function() {
+    return moment(this.get('message.date')).format('YYYY-MM-DD[T]HH:mm');
+  }),
+
+  dateTitle: computed('message.date', function() {
+    return moment(this.get('message.date')).format('YYYY-MM-DD [at] HH:mm');
+  }),
 
   formattedContent: computed('message.content', function() {
     const content = this.get('message.content');

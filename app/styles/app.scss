@@ -15,12 +15,13 @@ $sidebarWidth: 168px;
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
+html, body {
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
+}
 
+body {
   color: #fff;
-
   background-image: url('/img/bg.jpg');
   background-repeat: none;
 }
@@ -33,7 +34,7 @@ body {
 
 h1, h2, h3, h4, h5 {
   font-weight: normal;
-  font-size: 1em;
+  font-size: 1rem;
 }
 
 a {
@@ -43,7 +44,7 @@ a {
 
 input, button {
   font-family: 'Open Sans', sans-serif;
-  font-size: 14px;
+  font-size: 1rem;
 }
 
 header {
@@ -120,34 +121,6 @@ header {
       }
     }
 
-    #channel-content {
-      padding: 1.5em 1em;
-      background-color: #fff;
-      color: #333;
-
-      ul {
-        list-style: none;
-        margin-bottom: 1.5rem;
-        li {
-          line-height: 1.5em;
-          margin-bottom: 0.75em;
-
-          .chat-me-message {
-            .username {
-              margin-right: 0;
-              font-style: italic;
-              &::after {
-                content: '';
-              }
-            }
-            .message {
-              font-style: italic;
-            }
-          }
-        }
-      }
-    }
-
     footer {
       background-color: #efefef;
       color: #333;
@@ -205,9 +178,15 @@ header {
   }
 }
 
+.no-messages {
+  margin-top: 10px;
+  color: #aaa;
+}
 
 @import "layout";
 @import "iconfont";
 @import "components/channel-nav";
+@import "components/channel-container";
 @import "components/message-chat";
+@import "components/date-headline";
 @import "components/notification-topic-change";

@@ -7,12 +7,6 @@ test('it exists', function(assert) {
   assert.ok(!!model);
 });
 
-test('#slug', function(assert) {
-  var model = this.subject();
-  model.set('name', '#kosmos-dev');
-
-  assert.ok(model.get('slug') === 'kosmos-dev');
-});
 
 //
 // formattedTopic
@@ -32,40 +26,3 @@ test('#formattedTopic escapes HTML', function(assert) {
   assert.equal(channel.get('formattedTopic').toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
 });
 
-//
-// unreadMessagesClass
-//
-
-test('#unreadMessagesClass is null when channel is visible', function(assert) {
-  var channel = this.subject();
-  channel.set('unreadMessages', true);
-  channel.set('visible', true);
-
-  assert.equal(channel.get('unreadMessagesClass'), null);
-});
-
-test('#unreadMessagesClass is null when channel has no unread messages', function(assert) {
-  var channel = this.subject();
-  channel.set('unreadMessages', false);
-  channel.set('visible', false);
-
-  assert.equal(channel.get('unreadMessagesClass'), null);
-});
-
-test('#unreadMessagesClass is correct for unread messages', function(assert) {
-  var channel = this.subject();
-  channel.set('unreadMessages', true);
-  channel.set('unreadMentions', false);
-  channel.set('visible', false);
-
-  assert.equal(channel.get('unreadMessagesClass'), 'unread-messages');
-});
-
-test('#unreadMessagesClass is correct for unread mentions', function(assert) {
-  var channel = this.subject();
-  channel.set('unreadMessages', true);
-  channel.set('unreadMentions', true);
-  channel.set('visible', false);
-
-  assert.equal(channel.get('unreadMessagesClass'), 'unread-mentions');
-});
