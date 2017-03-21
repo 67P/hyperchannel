@@ -334,19 +334,20 @@ export default Service.extend({
 
     this.joinChannel(space, channel, "room");
     space.get('channels').pushObject(channel);
-    this.loadArchiveMessages(space, channel).catch(() => {});
+
+    this.loadLastMessages(space, channel, moment(), 2).catch(() => {});
 
     return channel;
   },
 
-  loadLastMessages(space, channel, date) {
+  loadLastMessages(space, channel, date, maximumDays = 14) {
     let day = date ? moment(date) : moment();
 
     let maximumSearchDepth;
     if (channel.get('previousLogsDate')) {
-      maximumSearchDepth = moment(channel.get('previousLogsDate')).subtract(14, 'days');
+      maximumSearchDepth = moment(channel.get('previousLogsDate')).subtract(maximumDays, 'days');
     } else {
-      maximumSearchDepth = moment().subtract(14, 'days');
+      maximumSearchDepth = moment().subtract(maximumDays, 'days');
     }
 
     if (day.isBefore(maximumSearchDepth)) {
