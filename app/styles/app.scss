@@ -121,34 +121,6 @@ header {
       }
     }
 
-    #channel-content {
-      padding: 0 1rem 1.5rem 1rem;
-      background-color: #fff;
-      color: #333;
-
-      ul {
-        list-style: none;
-        margin-bottom: 1.5rem;
-        li {
-          line-height: 1.5em;
-          margin-bottom: 0.75em;
-
-          .chat-me-message {
-            .username {
-              margin-right: 0;
-              font-style: italic;
-              &::after {
-                content: '';
-              }
-            }
-            .message {
-              font-style: italic;
-            }
-          }
-        }
-      }
-    }
-
     footer {
       background-color: #efefef;
       color: #333;
@@ -214,6 +186,7 @@ header {
 @import "layout";
 @import "iconfont";
 @import "components/channel-nav";
+@import "components/channel-container";
 @import "components/message-chat";
 @import "components/date-headline";
 @import "components/notification-topic-change";
