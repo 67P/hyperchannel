@@ -3,7 +3,6 @@ import Ember from 'ember';
 const {
   Component,
   observer,
-  computed,
   run,
   inject: {
     service
