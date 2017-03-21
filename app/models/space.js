@@ -1,5 +1,9 @@
 import Ember from 'ember';
 
+const {
+  computed
+} = Ember;
+
 export default Ember.Object.extend({
 
   name      : null,
@@ -19,20 +23,29 @@ export default Ember.Object.extend({
   channelList: null, // Bookmarked channel names
   users      : null,
 
+  loggedChannels: computed('name', 'protocol', function() {
+    if (this.get('name') === 'Freenode' && this.get('protocol') === 'IRC') {
+      return ['#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',
+              '#unhosted','#sockethub','#opensourcedesign','#openknot','#emberjs'];
+    } else {
+      return [];
+    }
+  }),
+
   id: function() {
     // This could be based on server type in the future. E.g. IRC would be
     // server URL, while Campfire would be another id.
     return this.get('name').toLowerCase();
   }.property('name'),
 
-  userNickname: Ember.computed.alias('server.nickname'),
+  userNickname: computed.alias('server.nickname'),
 
   sockethubPersonId: function() {
     return `irc://${this.get('server.nickname')}@${this.get('server.hostname')}`;
   }.property('server.hostname', 'server.nickname'),
 
   channelSorting: ['name'],
-  sortedChannels: Ember.computed.sort('channels', 'channelSorting'),
+  sortedChannels: computed.sort('channels', 'channelSorting'),
 
   serialize() {
     return {

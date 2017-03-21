@@ -1,5 +1,6 @@
 import { moduleFor, test } from 'ember-qunit';
 import Message from 'hyperchannel/models/message';
+import Space from 'hyperchannel/models/space';
 import moment from 'moment';
 
 moduleFor('model:base-channel', 'Unit | Model | base-channel');
@@ -105,4 +106,26 @@ test('#addDateHeadline does not add a date-headline when one exists already', fu
   );
 
   assert.equal(channel.get('sortedMessages').length, 1);
+});
+
+//
+// isLogged
+//
+
+test('#isLogged returns true when channel is logged', function(assert) {
+  let channel = this.subject({
+    space: Space.create({ name: 'Freenode' }),
+    name: '#kosmos'
+  });
+
+  assert.ok(channel.get('isLogged'));
+});
+
+test('#isLogged returns false when channel is not logged', function(assert) {
+  let channel = this.subject({
+    space: Space.create({ name: 'Freenode' }),
+    name: '#some-random-chan'
+  });
+
+  assert.notOk(channel.get('isLogged'));
 });

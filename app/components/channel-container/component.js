@@ -7,8 +7,7 @@ const {
   run,
   inject: {
     service
-  },
-  isPresent,
+  }
 } = Ember;
 
 function scrollToBottom() {
@@ -23,6 +22,7 @@ export default Component.extend({
   newMessage: '',
   channel: null,
   scrollingDisabled: false,
+  logsAvailable: computed.alias('channel.isLogged'),
 
   smt: service(),
 
@@ -30,14 +30,6 @@ export default Component.extend({
     if (!this.get('scrollingDisabled')) {
       run.scheduleOnce('afterRender', scrollToBottom);
     }
-  }),
-
-  logsAvailable: computed('smt.loggedChannels.[]', 'channel.name', function() {
-    let loggedChannel = this.get('smt.loggedChannels').find((channelName) => {
-      return channelName === this.get('channel.name');
-    });
-
-    return isPresent(loggedChannel);
   }),
 
   actions: {

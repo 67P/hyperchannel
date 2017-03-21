@@ -3,7 +3,8 @@ import Message from 'hyperchannel/models/message';
 import moment from 'moment';
 
 const {
-  computed
+  computed,
+  isPresent
 } = Ember;
 
 export default Ember.Object.extend({
@@ -25,6 +26,14 @@ export default Ember.Object.extend({
     this.set('messages', []);
     this.set('userList', []);
   },
+
+  isLogged: computed('space.loggedChannels.[]', 'name', function() {
+    let loggedChannel = this.get('space.loggedChannels').find((channelName) => {
+      return channelName === this.get('name');
+    });
+
+    return isPresent(loggedChannel);
+  }),
 
   slug: computed('name', function() {
     // This could be based on server type in the future. E.g. IRC would be

@@ -27,11 +27,6 @@ export default Service.extend({
 
   spaces: null,
 
-  loggedChannels: [
-    '#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',
-    '#unhosted','#sockethub','#opensourcedesign','#openknot','#emberjs'
-  ],
-
   instantiateSpacesAndChannels() {
     this.set('spaces', []);
     let rs = this.get('storage.rs');
