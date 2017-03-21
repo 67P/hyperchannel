@@ -5,14 +5,16 @@
     background-color: #fff;
     color: #333;
 
-    a.load-previous {
-      display: block;
-      text-decoration: underline;
+    a {
       color: #aaa;
-      padding-top: 1rem;
-      font-size: 12px;
+      text-decoration: underline;
       &:hover {
         color: #333;
+      }
+      &.load-previous {
+        display: block;
+        padding-top: 1rem;
+        font-size: 12px;
       }
     }
 

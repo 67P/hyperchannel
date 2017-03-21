@@ -22,7 +22,6 @@ export default Component.extend({
   newMessage: '',
   channel: null,
   scrollingDisabled: false,
-  logsAvailable: computed.alias('channel.isLogged'),
 
   smt: service(),
 
