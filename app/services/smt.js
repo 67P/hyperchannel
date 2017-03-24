@@ -335,7 +335,9 @@ export default Service.extend({
     this.joinChannel(space, channel, "room");
     space.get('channels').pushObject(channel);
 
-    this.loadLastMessages(space, channel, moment(), 2).catch(() => {});
+    if (channel.get('isLogged')) {
+      this.loadLastMessages(space, channel, moment(), 2).catch(() => {});
+    }
 
     return channel;
   },
