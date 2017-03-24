@@ -20,8 +20,15 @@ export default Ember.Object.extend({
     }
   },
   channels   : null, // Channel instances
-  channelList: null, // Bookmarked channel names
-  users      : null,
+
+  init() {
+    this._super(...arguments);
+    this.set('channels', []);
+  },
+
+  channelNames: computed('channels.@each.name', function() {
+    return this.get('channels').mapBy('name');
+  }),
 
   loggedChannels: computed('name', 'protocol', function() {
     if (this.get('name') === 'Freenode' && this.get('protocol') === 'IRC') {
@@ -58,7 +65,7 @@ export default Ember.Object.extend({
         secure: this.get('server.secure'),
         nickname: this.get('server.nickname'),
       },
-      channels: this.get('channelList') || []
+      channels: this.get('channelNames') || []
     };
   },
 

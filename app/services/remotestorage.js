@@ -44,10 +44,10 @@ export default Ember.Service.extend({
       .then(() => {
         Ember.Logger.debug('[remotestorage]', 'created/stored default space');
 
-        params.channelList = params.channels;
+        let channels = params.channels;
         delete params.channels;
 
-        return Space.create(params);
+        return { space: Space.create(params), channels: channels };
       });
   },
 

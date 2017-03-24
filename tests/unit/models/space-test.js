@@ -32,3 +32,15 @@ test('#loggedChannels returns empty list when space is not Freenode', function(a
 
   assert.equal(space.get('loggedChannels').length, 0);
 });
+
+test('#channelNames returns names of the channels', function(assert) {
+  let space = this.subject();
+
+  space.set('channels', [
+    Channel.create({ name: '#kosmos' }),
+    Channel.create({ name: '#kosmos-dev' }),
+    Channel.create({ name: '#remotestorage' }),
+  ]);
+
+  assert.deepEqual(space.get('channelNames'), ['#kosmos', '#kosmos-dev', '#remotestorage']);
+});
