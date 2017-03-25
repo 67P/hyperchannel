@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
+import config from 'hyperchannel/config/environment';
 
 export default Ember.Route.extend({
 
@@ -24,7 +25,8 @@ export default Ember.Route.extend({
 
     return Ember.RSVP.hash({
       // TODO use space models
-      spaces: spaces
+      spaces: spaces,
+      spacePresets: config.spacePresets
     });
   },
 

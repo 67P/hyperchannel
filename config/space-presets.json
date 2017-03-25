@@ -1,0 +1,38 @@
+[
+  {
+    "id": "freenode",
+    "name": "Freenode",
+    "description": "The main network for free and open source software communities",
+    "website": "https://freenode.net/",
+    "protocol": "IRC",
+    "server": {
+      "hostname": "irc.freenode.net",
+      "secure": true,
+      "port": 7000
+    }
+  },
+  {
+    "id": "moznet",
+    "name": "Mozilla",
+    "description": "Mozilla's public IRC network",
+    "website": "https://wiki.mozilla.org/IRC",
+    "protocol": "IRC",
+    "server": {
+      "hostname": "irc.mozilla.org",
+      "secure": true,
+      "port": 6697
+    }
+  },
+  {
+    "id": "gimpnet",
+    "name": "GIMPnet",
+    "description": "Home of the GNOME desktop project",
+    "website": "https://wiki.gnome.org/Community/GettingInTouch/IRC",
+    "protocol": "IRC",
+    "server": {
+      "hostname": "irc.gnome.org",
+      "secure": true,
+      "port": 6697
+    }
+  }
+]

@@ -9,6 +9,14 @@
       <hr>
     {{/each}}
 
+    <h2>Presets</h2>
+
+    {{#each model.spacePresets as |spacePreset|}}
+      <h3>{{spacePreset.name}}</h3>
+      <button {{action "addSpaceFromPreset" spacePreset}}>add</button>
+      <hr>
+    {{/each}}
+
     <h3>Add new space</h3>
     <form {{action "addSpace" on="submit"}} name="add-space">
       <p>

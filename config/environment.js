@@ -1,4 +1,6 @@
 /* jshint node: true */
+const fs = require('fs');
+let spacePresets = JSON.parse(fs.readFileSync('config/space-presets.json'));
 
 module.exports = function(environment) {
   var ENV = {
@@ -12,15 +14,13 @@ module.exports = function(environment) {
         // e.g. 'with-controller': true
       }
     },
-
-    sockethubURL: 'http://localhost:10550',
-
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
     },
-
-    publicLogsUrl: 'https://storage.5apps.com/kosmos/public/chat-messages'
+    sockethubURL: 'http://localhost:10550',
+    publicLogsUrl: 'https://storage.5apps.com/kosmos/public/chat-messages',
+    spacePresets: spacePresets
   };
 
   //
