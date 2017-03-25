@@ -10,7 +10,7 @@
     {{/each}}
 
     <h3>Add new space</h3>
-    <form {{action "addSpace"}} name="add-space">
+    <form {{action "addSpace" on="submit"}} name="add-space">
       <p>
         {{input value=newSpace.name required="required" placeholder="Freenode"}}
       </p>
@@ -19,6 +19,10 @@
       </p>
       <p>
         {{input value=newSpace.server.port required="required" placeholder="6667"}}
+      </p>
+      <p>
+        {{input type="checkbox" checked=newSpace.server.secure id="tls-enabled"}}
+        <label for="tls-enabled">Secure (TLS)</label>
       </p>
       <p>
         {{input value=newSpace.server.nickname required="required" placeholder="nickname"}}
