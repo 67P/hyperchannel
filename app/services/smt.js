@@ -330,8 +330,6 @@ export default Service.extend({
     this.joinChannel(space, channel, "room");
     space.get('channels').pushObject(channel);
 
-    this.get('storage').saveSpace(space);
-
     if (channel.get('isLogged')) {
       this.loadLastMessages(space, channel, moment(), 2).catch(() => {});
     }
