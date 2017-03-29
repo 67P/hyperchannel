@@ -28,14 +28,14 @@ export default Ember.Component.extend({
 
     // Images
     if (content.match(/^(http)s?:\/\/.*(gif|png|jpg|jpeg)$/i)) {
-      out = `<br><a href="${content}" target="_blank" rel="nofollow noopener noreferrer">` +
+      out = `<br><a href="${content}" target="_blank" rel="nofollow noopener">` +
             `<img src="${content}" class="from-image-url" alt="${content}">` +
             `</a>`;
     }
     // Other links
     else {
       out = linkifyStr(content, {
-        linkAttributes: { rel: 'nofollow noopener noreferrer' },
+        linkAttributes: { rel: 'nofollow noopener' },
         validate: {
           url: function (value) {
             return /^(http)s?:\/\//.test(value);
