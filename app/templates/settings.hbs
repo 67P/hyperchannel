@@ -1,7 +1,8 @@
 <section id="settings">
-  <div class="content">
+  <h2>Settings</h2>
 
-    <h2>Spaces</h2>
+  <div class="content">
+    <h3>Spaces</h3>
 
     {{#each model.spaces as |space|}}
       <h3>{{space.name}}</h3>
@@ -9,7 +10,7 @@
       <hr>
     {{/each}}
 
-    <h2>Presets</h2>
+    <h3>Presets</h3>
 
     {{#each model.spacePresets as |spacePreset|}}
       <h3>{{spacePreset.name}}</h3>
