@@ -52,6 +52,7 @@ export default Ember.Controller.extend({
     joinCommand: function(args) {
       let space = this.get('space.model');
       let channel = this.get('smt').createChannel(space, args[0]);
+      this.get('storage').saveSpace(space);
       this.transitionToRoute('space.channel', space, channel);
     },
 

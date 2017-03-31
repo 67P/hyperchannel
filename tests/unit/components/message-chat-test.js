@@ -9,7 +9,7 @@ test('#formattedContent turns full URLs into links', function(assert) {
     message: { content: 'visit https://kosmos.org for more info' }
   });
 
-  assert.equal(component.get('formattedContent').toString(), 'visit <a href="https://kosmos.org" class="linkified" target="_blank" rel="nofollow">https://kosmos.org</a> for more info');
+  assert.equal(component.get('formattedContent').toString(), 'visit <a href="https://kosmos.org" class="linkified" target="_blank" rel="nofollow noopener">https://kosmos.org</a> for more info');
 });
 
 test('#formattedContent does not turn domain names into links', function(assert) {
@@ -41,5 +41,5 @@ test('#formattedContent renders images from image URLs', function(assert) {
     message: { content: 'https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif' }
   });
 
-  assert.equal(component.get('formattedContent').toString(), '<br><a href="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif" target="_blank" rel="nofollow"><img src="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif" class="from-image-url" alt="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif"></a>');
+  assert.equal(component.get('formattedContent').toString(), '<br><a href="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif" target="_blank" rel="nofollow noopener"><img src="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif" class="from-image-url" alt="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif"></a>');
 });
