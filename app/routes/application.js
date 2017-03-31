@@ -4,12 +4,14 @@ const {
   Route,
   inject: {
     service
-  }
+  },
+  isEmpty
 } = Ember;
 
 export default Route.extend({
   logger: service(),
   smt: service(),
+  storage: service('remotestorage'),
 
   beforeModel() {
     this._super(...arguments);
@@ -44,10 +46,19 @@ export default Route.extend({
       }
     },
 
-    openNewChannel(spaceId) {
+    openNewChannel(space) {
       let channelName = window.prompt('Join channel');
-      channelName = channelName.replace(/^#/, '');
-      this.transitionTo('space.channel', spaceId, channelName);
+
+      if (isEmpty(channelName)) {
+        return;
+      }
+
+      if (!channelName.match(/^#/)) {
+        channelName = `#${channelName}`;
+      }
+      let channel = this.get('smt').createChannel(space, channelName);
+      this.get('storage').saveSpace(space);
+      this.transitionTo('space.channel', space, channel);
     }
 
   }

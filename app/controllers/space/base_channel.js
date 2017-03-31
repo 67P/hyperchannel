@@ -53,7 +53,6 @@ export default Ember.Controller.extend({
     joinCommand: function(args) {
       let space = this.get('space.model');
       let channel = this.get('smt').createChannel(space, args[0]);
-      space.get('channelList').pushObject(channel.get('name'));
       this.get('storage').saveSpace(space);
       this.transitionToRoute('space.channel', space, channel);
     },
@@ -62,8 +61,6 @@ export default Ember.Controller.extend({
       let space = this.get('space.model');
       let channelName = this.get('model.name');
       this.get('smt').removeChannel(space, channelName);
-      space.get('channelList').removeObject(channelName);
-      this.get('storage').saveSpace(space);
       let lastChannel = space.get('channels.lastObject');
       this.transitionToRoute('space.channel', space, lastChannel);
     },

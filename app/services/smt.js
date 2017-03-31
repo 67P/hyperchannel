@@ -35,10 +35,10 @@ export default Service.extend({
       rs.kosmos.spaces.getAll().then(spaceData => {
         if (isEmpty(Object.keys(spaceData))) {
           Logger.debug('No space data found in RS. Adding default space...');
-          this.get('storage').addDefaultSpace().then((space) => {
-            this.connectToIRCServer(space);
-            this.get('spaces').pushObject(space);
-            this.instantiateChannels();
+          this.get('storage').addDefaultSpace().then((data) => {
+            this.connectToIRCServer(data.space);
+            this.get('spaces').pushObject(data.space);
+            this.instantiateChannels(data.space, data.channels);
             resolve();
           });
         } else {
@@ -46,13 +46,12 @@ export default Service.extend({
             let space = Space.create({
               name: spaceData[id].name,
               protocol: spaceData[id].protocol,
-              server: spaceData[id].server,
-              channelList: spaceData[id].channels
+              server: spaceData[id].server
             });
             this.connectToIRCServer(space);
             this.get('spaces').pushObject(space);
+            this.instantiateChannels(space, spaceData[id].channels);
           });
-          this.instantiateChannels();
           resolve();
         }
       }, e => {
@@ -315,13 +314,9 @@ export default Service.extend({
     this.sockethub.socket.emit('message', observeMsg);
   },
 
-  instantiateChannels: function() {
-    this.get('spaces').forEach((space) => {
-      space.set('channels', []);
-
-      space.get('channelList').forEach((channelName) => {
-        this.createChannel(space, channelName);
-      });
+  instantiateChannels: function(space, channels) {
+    channels.forEach((channelName) => {
+      this.createChannel(space, channelName);
     });
   },
 
@@ -410,9 +405,7 @@ export default Service.extend({
 
     space.get('channels').removeObject(channel);
 
-    // Update persisted channel list
-    this.get('storage.rs').kosmos.spaces.store(space.serialize())
-      .then(() => this.log('leave', 'stored space', space.get('name')));
+    this.get('storage').saveSpace(space);
 
     return channel;
   },
