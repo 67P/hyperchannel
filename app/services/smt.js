@@ -331,30 +331,28 @@ export default Service.extend({
     space.get('channels').pushObject(channel);
 
     if (channel.get('isLogged')) {
-      this.loadLastMessages(space, channel, moment(), 2).catch(() => {});
+      this.loadLastMessages(space, channel, moment.utc(), 2).catch(() => {});
     }
 
     return channel;
   },
 
   loadLastMessages(space, channel, date, maximumDays = 14) {
-    let day = date ? moment(date).utc() : moment().utc();
-
     let searchUntilDate;
     if (channel.get('searchedPreviousLogsUntilDate')) {
-      searchUntilDate = moment(channel.get('searchedPreviousLogsUntilDate')).utc().subtract(maximumDays, 'days');
+      searchUntilDate = moment(channel.get('searchedPreviousLogsUntilDate')).subtract(maximumDays, 'days');
     } else {
-      searchUntilDate = moment().utc().subtract(maximumDays, 'days');
+      searchUntilDate = moment.utc().subtract(maximumDays, 'days');
     }
 
-    if (day.isBefore(searchUntilDate)) {
-      channel.set('searchedPreviousLogsUntilDate', day.format('YYYY-MM-DD'));
+    if (date.isBefore(searchUntilDate, 'day')) {
+      channel.set('searchedPreviousLogsUntilDate', date);
       return;
     }
 
-    return this.loadArchiveMessages(space, channel, day).catch(() => {
-      day.subtract(1, 'day');
-      return this.loadLastMessages(space, channel, day);
+    return this.loadArchiveMessages(space, channel, date).catch(() => {
+      // didn't find any archive for this day, restart searching for the previous day
+      return this.loadLastMessages(space, channel, date.subtract(1, 'day'));
     });
   },
 
@@ -379,7 +377,7 @@ export default Service.extend({
         channel.addMessage(channelMessage);
       });
       let previous = get(archive, 'today.previous');
-      channel.set('searchedPreviousLogsUntilDate', previous.replace(/\//g, '-'));
+      channel.set('searchedPreviousLogsUntilDate', moment.utc(previous.replace(/\//g, '-')));
     }).catch(error => {
       this.log('error', error);
       throw(error);
