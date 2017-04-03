@@ -3,7 +3,7 @@ import BaseChannel from 'hyperchannel/models/base_channel';
 
 export default BaseChannel.extend({
 
-  previousLogsDate: null,
+  searchedPreviousLogsUntilDate: null,
 
   formattedTopic: Ember.computed('topic', function() {
     if (this.get('topic') !== null) {
