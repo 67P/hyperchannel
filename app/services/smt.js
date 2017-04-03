@@ -331,37 +331,34 @@ export default Service.extend({
     space.get('channels').pushObject(channel);
 
     if (channel.get('isLogged')) {
-      this.loadLastMessages(space, channel, moment(), 2).catch(() => {});
+      this.loadLastMessages(space, channel, moment.utc(), 2).catch(() => {});
     }
 
     return channel;
   },
 
   loadLastMessages(space, channel, date, maximumDays = 14) {
-    let day = date ? moment(date) : moment();
-
-    let maximumSearchDepth;
-    if (channel.get('previousLogsDate')) {
-      maximumSearchDepth = moment(channel.get('previousLogsDate')).subtract(maximumDays, 'days');
+    let searchUntilDate;
+    if (channel.get('searchedPreviousLogsUntilDate')) {
+      searchUntilDate = moment(channel.get('searchedPreviousLogsUntilDate')).subtract(maximumDays, 'days');
     } else {
-      maximumSearchDepth = moment().subtract(maximumDays, 'days');
+      searchUntilDate = moment.utc().subtract(maximumDays, 'days');
     }
 
-    if (day.isBefore(maximumSearchDepth)) {
-      channel.set('previousLogsDate', day.format('YYYY-MM-DD'));
+    if (date.isBefore(searchUntilDate, 'day')) {
+      channel.set('searchedPreviousLogsUntilDate', date);
       return;
     }
 
-    return this.loadArchiveMessages(space, channel, day.format('YYYY-MM-DD')).catch(() => {
-      day.subtract(1, 'day');
-      return this.loadLastMessages(space, channel, day);
+    return this.loadArchiveMessages(space, channel, date).catch(() => {
+      // didn't find any archive for this day, restart searching for the previous day
+      return this.loadLastMessages(space, channel, date.subtract(1, 'day'));
     });
   },
 
   loadArchiveMessages(space, channel, date) {
-    let day = moment(date).utc();
     let logsUrl = `${config.publicLogsUrl}/${space.get('name').toLowerCase()}/channels/${channel.get('slug')}/`;
-        logsUrl += day.format('YYYY/MM/DD');
+        logsUrl += date.format('YYYY/MM/DD');
 
     return this.get('ajax').request(logsUrl, {
       type: 'GET',
@@ -380,7 +377,7 @@ export default Service.extend({
         channel.addMessage(channelMessage);
       });
       let previous = get(archive, 'today.previous');
-      channel.set('previousLogsDate', previous.replace(/\//g, '-'));
+      channel.set('searchedPreviousLogsUntilDate', moment.utc(previous.replace(/\//g, '-')));
     }).catch(error => {
       this.log('error', error);
       throw(error);
