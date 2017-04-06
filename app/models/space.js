@@ -33,7 +33,8 @@ export default Ember.Object.extend({
   loggedChannels: computed('name', 'protocol', function() {
     if (this.get('name') === 'Freenode' && this.get('protocol') === 'IRC') {
       return ['#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',
-              '#unhosted','#sockethub','#opensourcedesign','#openknot','#emberjs'];
+              '#unhosted','#sockethub','#opensourcedesign','#openknot','#emberjs',
+              '#indieweb', '#mastodon'];
     } else {
       return [];
     }
