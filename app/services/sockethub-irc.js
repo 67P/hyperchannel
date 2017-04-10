@@ -17,6 +17,15 @@ export default Ember.Service.extend({
   logger: service(),
   coms: service(),
 
+  /**
+   * @public
+   * @method connect
+   *
+   * - Creates an ActivityStreams person object for
+   *   future use
+   * - Emits credentials for future IRC server messages,
+   *   like e.g. `join`
+   */
   connect(space) {
     this.sockethub.ActivityStreams.Object.create({
       '@id': space.get('sockethubPersonId'),
