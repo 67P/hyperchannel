@@ -49,7 +49,7 @@ export default Component.extend({
       this.get('smt').loadLastMessages(
         this.get('channel.space'),
         this.get('channel'),
-        this.get('channel.previousLogsDate')
+        this.get('channel.searchedPreviousLogsUntilDate')
       ).catch(() => {
         // TODO what to do here?
       }).finally(() => {
