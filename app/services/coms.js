@@ -20,11 +20,19 @@ const {
 } = Ember;
 
 export default Service.extend({
-  userSettings: localStorageFor('user-settings'),
+
+  // Utils
   ajax: service(),
   logger: service(),
+  // Data storage
+  userSettings: localStorageFor('user-settings'),
   storage: service('remotestorage'),
+  // Message transport
+  irc: service('sockethub-irc'),
 
+  /**
+   * A collection of all space model instances
+   */
   spaces: null,
 
   instantiateSpacesAndChannels() {
@@ -36,7 +44,7 @@ export default Service.extend({
         if (isEmpty(Object.keys(spaceData))) {
           Logger.debug('No space data found in RS. Adding default space...');
           this.get('storage').addDefaultSpace().then((data) => {
-            this.connectToIRCServer(data.space);
+            this.connectServer(data.space);
             this.get('spaces').pushObject(data.space);
             this.instantiateChannels(data.space, data.channels);
             resolve();
@@ -48,7 +56,7 @@ export default Service.extend({
               protocol: spaceData[id].protocol,
               server: spaceData[id].server
             });
-            this.connectToIRCServer(space);
+            this.connectServer(space);
             this.get('spaces').pushObject(space);
             this.instantiateChannels(space, spaceData[id].channels);
           });
@@ -61,27 +69,21 @@ export default Service.extend({
     });
   },
 
-  connectToIRCServer(space) {
-    this.sockethub.ActivityStreams.Object.create({
-      '@id': space.get('sockethubPersonId'),
-      '@type': "person",
-      displayName: space.get('server.nickname')
-    });
-
-    var credentials = {
-      actor: space.get('sockethubPersonId'),
-      context: 'irc',
-      object: {
-        '@type': 'credentials',
-        nick: space.get('server.nickname'),
-        server: space.get('server.hostname'),
-        port: space.get('server.port'),
-        secure: space.get('server.secure')
-      }
-    };
-
-    this.log('connection', 'connecting to irc', credentials);
-    this.sockethub.socket.emit('credentials', credentials);
+  /**
+   * @public
+   *
+   * Invokes the connect function on the appropriate transport service
+   */
+  connectServer(space) {
+    switch (space.get('protocol')) {
+      case 'IRC':
+        this.get('irc').connect(space);
+        break;
+      // case 'XMPP':
+        // TODO implement XMPP service
+        // this.get('xmpp').connect(space);
+        // break;
+    }
   },
 
   transferMessage(space, target, content) {
@@ -469,7 +471,7 @@ export default Service.extend({
 
   /**
    * @protected
-   * @desc Utility function for easier logging
+   * Utility function for easier logging
    */
   log() {
     this.get('logger').log(...arguments);

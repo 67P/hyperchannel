@@ -15,7 +15,8 @@ export default Service.extend({
     'message',
     'send',
     'sh_completed',
-    'sh_failure'
+    'sh_failure',
+    'irc'
   ],
 
   activeTypes: [
@@ -25,7 +26,8 @@ export default Service.extend({
     'leave',
     'send',
     'sh_completed',
-    'sh_failure'
+    'sh_failure',
+    'irc'
   ],
 
   log(type) {
