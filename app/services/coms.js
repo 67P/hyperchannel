@@ -349,7 +349,7 @@ export default Service.extend({
       let previous = get(archive, 'today.previous');
       channel.set('searchedPreviousLogsUntilDate', moment.utc(previous.replace(/\//g, '-')));
     }).catch(error => {
-      this.log('error', error);
+      this.log('ajax-error', 'couldn\'t load archive document', error);
       throw(error);
     });
   },

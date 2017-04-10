@@ -16,7 +16,8 @@ export default Service.extend({
     'send',
     'sh_completed',
     'sh_failure',
-    'irc'
+    'irc',
+    'ajax-error'
   ],
 
   activeTypes: [
