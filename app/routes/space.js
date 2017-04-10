@@ -2,10 +2,10 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
 
-  smt: Ember.inject.service(),
+  coms: Ember.inject.service(),
 
   model: function(params) {
-    return this.get('smt').get('spaces')
+    return this.get('coms').get('spaces')
                           .findBy('id', params.id);
   }
 

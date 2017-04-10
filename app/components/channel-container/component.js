@@ -22,7 +22,7 @@ export default Component.extend({
   channel: null,
   scrollingDisabled: false,
 
-  smt: service(),
+  coms: service(),
 
   messagesUpdated: observer('channel.messages.[]', function() {
     if (!this.get('scrollingDisabled')) {
@@ -46,7 +46,7 @@ export default Component.extend({
 
     loadPreviousMessages() {
       this.set('scrollingDisabled', true);
-      this.get('smt').loadLastMessages(
+      this.get('coms').loadLastMessages(
         this.get('channel.space'),
         this.get('channel'),
         this.get('channel.searchedPreviousLogsUntilDate')

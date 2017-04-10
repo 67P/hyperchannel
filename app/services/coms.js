@@ -174,9 +174,7 @@ export default Service.extend({
       // user list for a channel
     });
 
-    this.sockethub.socket.on('failure', function(message) {
-      Logger.error('SH failure', message);
-    });
+    this.sockethub.socket.on('failure', this.handleSockethubFailure.bind(this));
   },
 
   updateChannelUserList(message) {
@@ -462,7 +460,17 @@ export default Service.extend({
     this.sockethub.socket.emit('message', topicMsg);
   },
 
-  // Utility function
+  /**
+   * @protected
+   */
+  handleSockethubFailure(message) {
+    this.log('sh_failure', message);
+  },
+
+  /**
+   * @protected
+   * @desc Utility function for easier logging
+   */
   log() {
     this.get('logger').log(...arguments);
   }

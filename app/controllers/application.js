@@ -12,8 +12,8 @@ const {
 
 export default Controller.extend({
 
-  smt: service(),
-  spaces: alias('smt.spaces'),
+  coms: service(),
+  spaces: alias('coms.spaces'),
 
   showGlobalMenu: false,
   showChannelMenu: false
