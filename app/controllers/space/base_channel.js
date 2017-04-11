@@ -6,6 +6,7 @@ export default Ember.Controller.extend({
   newMessage: null,
   space: Ember.inject.controller(),
   coms: Ember.inject.service(),
+  storage: Ember.inject.service('remotestorage'),
 
   actions: {
     sendMessage: function(newMessage) {
