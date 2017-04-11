@@ -19,6 +19,11 @@ const {
   get
 } = Ember;
 
+/**
+ * This service provides the central command interface for communicating with
+ * chat servers/networks
+ * @module hyperchannel/services/coms
+ */
 export default Service.extend({
 
   // Utils
@@ -31,17 +36,15 @@ export default Service.extend({
   irc: service('sockethub-irc'),
 
   /**
-   * @type array
-   *
    * A collection of all space model instances
+   * @type {Space[]}
    */
   spaces: null,
 
   /**
-   * @public
-   *
    * This is called from the application route on app startup. Sets up all
    * listeners for incoming Sockethub messages.
+   * @public
    */
   setupListeners() {
     this.sockethub.socket.on('completed', this.handleSockethubCompleted.bind(this));
@@ -50,10 +53,9 @@ export default Service.extend({
   },
 
   /**
-   * @public
-   *
    * This is called from the application route on app startup. Instantiates,
    * connects, and joins all either configured/saved or default spaces/channels
+   * @public
    */
   instantiateSpacesAndChannels() {
     this.set('spaces', []);
@@ -90,9 +92,8 @@ export default Service.extend({
   },
 
   /**
-   * @public
-   *
    * Invokes the connect function on the appropriate transport service
+   * @public
    */
   connectServer(space) {
     switch (space.get('protocol')) {
@@ -107,9 +108,11 @@ export default Service.extend({
   },
 
   /**
-   * @public
-   *
    * Invokes the channel-join function on the appropriate transport service
+   * @param {Space} space
+   * @param {Channel} channel
+   * @param {string} type - Type of channel. Can be "room" or "person"
+   * @public
    */
   joinChannel: function(space, channel, type) {
     switch (space.get('protocol')) {
@@ -120,9 +123,8 @@ export default Service.extend({
   },
 
   /**
-   * @public
-   *
    * Invokes the send-message function on the appropriate transport service
+   * @public
    */
   transferMessage(space, target, content) {
     switch (space.get('protocol')) {
@@ -133,9 +135,8 @@ export default Service.extend({
   },
 
   /**
-   * @public
-   *
    * Invokes the send-action-message function on the appropriate transport service
+   * @public
    */
   transferMeMessage(space, target, content) {
     switch (space.get('protocol')) {
@@ -410,14 +411,12 @@ export default Service.extend({
   },
 
   /**
-   * @private
-   *
    * Handles incoming Sockethub messages:
-   *
-   *     - Attendance list for channel
-   *     - Another user joined or left a channel
-   *     - Received a channel message (normal or me/action)
-   *     - A channel topic was updated
+   * - Attendance list for channel
+   * - Another user joined or left a channel
+   * - Received a channel message (normal or me/action)
+   * - A channel topic was updated
+   * @private
    */
   handleSockethubMessage(message) {
     this.log('message', 'SH message', message);
@@ -451,18 +450,16 @@ export default Service.extend({
   },
 
   /**
-   * @private
-   *
    * Handles incoming Sockethub errors/failures
+   * @private
    */
   handleSockethubFailure(message) {
     this.log('sh_failure', message);
   },
 
   /**
-   * @private
-   *
    * Utility function for easier logging
+   * @private
    */
   log() {
     this.get('logger').log(...arguments);

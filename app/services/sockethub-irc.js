@@ -1,9 +1,3 @@
-/**
- * @module sockethub-irc
- *
- * This service provides helpers for SocketHub IRC communications
- */
-
 import Ember from 'ember';
 
 const {
@@ -12,19 +6,21 @@ const {
   }
 } = Ember;
 
+/**
+ * This service provides helpers for SocketHub IRC communications
+ * @module hyperchannel/services/sockethub-irc
+ */
 export default Ember.Service.extend({
 
   logger: service(),
   coms: service(),
 
   /**
-   * @public
-   * @method connect
-   *
    * - Creates an ActivityStreams person object for
    *   future use
    * - Emits credentials for future IRC server messages,
    *   like e.g. `join`
+   * @public
    */
   connect(space) {
     this.sockethub.ActivityStreams.Object.create({
@@ -50,8 +46,8 @@ export default Ember.Service.extend({
   },
 
   /**
+   * Join a channel/room
    * @public
-   * @method join
    */
   join: function(space, channel, type) {
     this.sockethub.ActivityStreams.Object.create({
@@ -73,8 +69,8 @@ export default Ember.Service.extend({
   },
 
   /**
+   * Send a chat message to a channel
    * @public
-   * @method transferMessage
    */
   transferMessage(space, target, content) {
     let job = {
@@ -93,8 +89,8 @@ export default Ember.Service.extend({
   },
 
   /**
+   * Send an action chat message to a channel
    * @public
-   * @method transferMeMessage
    */
   transferMeMessage(space, target, content) {
     let job = {
@@ -113,8 +109,8 @@ export default Ember.Service.extend({
   },
 
   /**
+   * Leave a channel
    * @public
-   * @method leaveChannel
    */
   leave(space, channel) {
     this.sockethub.ActivityStreams.Object.create({
@@ -137,8 +133,8 @@ export default Ember.Service.extend({
 
 
   /**
+   * Send a channel topic change
    * @public
-   * @method changeTopic
    */
   changeTopic: function(space, channel, topic) {
     var topicMsg = {
@@ -156,8 +152,8 @@ export default Ember.Service.extend({
   },
 
   /**
+   * Ask for a channel's attendance list (users currently joined)
    * @public
-   * @method observeChannel
    */
   observeChannel: function(person, channelId) {
     var observeMsg = {
@@ -175,8 +171,8 @@ export default Ember.Service.extend({
   },
 
   /**
-   * @protected
    * Utility function for easier logging
+   * @protected
    */
   log() {
     this.get('logger').log(...arguments);
