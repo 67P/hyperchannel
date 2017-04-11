@@ -292,6 +292,7 @@ export default Service.extend({
     var channel = Channel.create({
       space: space,
       name: channelName,
+      // TODO use IRC module
       sockethubChannelId: `irc://${space.get('server.hostname')}/${channelName}`
     });
 
@@ -357,7 +358,9 @@ export default Service.extend({
 
   createUserChannel: function(space, userName) {
     var channel = UserChannel.create({
+      space: space,
       name: userName,
+      // TODO use IRC module
       sockethubChannelId: `irc://${space.get('server.hostname')}/${userName}`
     });
 
