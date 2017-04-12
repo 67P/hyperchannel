@@ -14,7 +14,10 @@ export default Service.extend({
     'leave',
     'message',
     'send',
-    'sh_completed'
+    'sh_completed',
+    'sh_failure',
+    'irc',
+    'ajax-error'
   ],
 
   activeTypes: [
@@ -23,7 +26,9 @@ export default Service.extend({
     'join',
     'leave',
     'send',
-    'sh_completed'
+    'sh_completed',
+    'sh_failure',
+    'irc'
   ],
 
   log(type) {

@@ -27,7 +27,7 @@ function focusMessageInput() {
 }
 
 export default Route.extend({
-  smt: service(),
+  coms: service(),
   userSettings: localStorageFor('user-settings'),
 
   model(params) {

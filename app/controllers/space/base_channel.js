@@ -5,7 +5,7 @@ export default Ember.Controller.extend({
 
   newMessage: null,
   space: Ember.inject.controller(),
-  smt: Ember.inject.service(),
+  coms: Ember.inject.service(),
   storage: Ember.inject.service('remotestorage'),
 
   actions: {
@@ -17,7 +17,7 @@ export default Ember.Controller.extend({
         content: newMessage
       });
 
-      this.get('smt').transferMessage(
+      this.get('coms').transferMessage(
         this.get('space.model'),
         this.get('model.sockethubChannelId'),
         message.get('content')
@@ -52,7 +52,7 @@ export default Ember.Controller.extend({
 
     joinCommand: function(args) {
       let space = this.get('space.model');
-      let channel = this.get('smt').createChannel(space, args[0]);
+      let channel = this.get('coms').createChannel(space, args[0]);
       this.get('storage').saveSpace(space);
       this.transitionToRoute('space.channel', space, channel);
     },
@@ -60,7 +60,7 @@ export default Ember.Controller.extend({
     partCommand: function() {
       let space = this.get('space.model');
       let channelName = this.get('model.name');
-      this.get('smt').removeChannel(space, channelName);
+      this.get('coms').removeChannel(space, channelName);
       let lastChannel = space.get('channels.lastObject');
       this.transitionToRoute('space.channel', space, lastChannel);
     },
@@ -82,7 +82,7 @@ export default Ember.Controller.extend({
         content: newMessage
       });
 
-      this.get('smt').transferMeMessage(
+      this.get('coms').transferMeMessage(
         this.get('space.model'),
         this.get('model.sockethubChannelId'),
         message.get('content')
@@ -93,17 +93,17 @@ export default Ember.Controller.extend({
 
     msgCommand: function(args) {
       let username = args.shift();
-      this.get('smt').createUserChannel(this.get('space.model'), username);
+      this.get('coms').createUserChannel(this.get('space.model'), username);
       // TODO fix this, sockethub sends a failure event with error
       // "TypeError: Cannot read property 'indexOf' of undefined"
-      // this.get('smt').transferMessage(this.get('space.model'), username, args.join(' '));
+      // this.get('coms').transferMessage(this.get('space.model'), username, args.join(' '));
     },
 
     topicCommand: function(args) {
       let channel = this.get('model');
       let topic = args.join(' ');
 
-      this.get('smt').changeTopic(this.get('space.model'), channel, topic);
+      this.get('coms').changeTopic(this.get('space.model'), channel, topic);
     }
   }
 

@@ -10,7 +10,7 @@ const {
 
 export default Route.extend({
   logger: service(),
-  smt: service(),
+  coms: service(),
   storage: service('remotestorage'),
 
   beforeModel() {
@@ -24,8 +24,8 @@ export default Route.extend({
   },
 
   model() {
-    this.get('smt').setupListeners();
-    return this.get('smt').instantiateSpacesAndChannels();
+    this.get('coms').setupListeners();
+    return this.get('coms').instantiateSpacesAndChannels();
   },
 
   actions: {
@@ -56,7 +56,7 @@ export default Route.extend({
       if (!channelName.match(/^#/)) {
         channelName = `#${channelName}`;
       }
-      let channel = this.get('smt').createChannel(space, channelName);
+      let channel = this.get('coms').createChannel(space, channelName);
       this.get('storage').saveSpace(space);
       this.transitionTo('space.channel', space, channel);
     }
