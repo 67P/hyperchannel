@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/67P/hyperchannel.svg?branch=master)](https://travis-ci.org/67P/hyperchannel)
-[![devDependency Status](https://img.shields.io/david/dev/67P/hyperchannel.svg?style=flat)](https://david-dm.org/remotestorage/remotestorage.js#info=devDependencies)
-[![Code Climate](https://img.shields.io/codeclimate/github/67P/hyperchannel.svg?style=flat)](https://codeclimate.com/github/remotestorage/remotestorage.js)
+[![devDependency Status](https://david-dm.org/67P/hyperchannel/dev-status.svg)](https://david-dm.org/67P/hyperchannel#info=devDependencies)
+[![Code Climate](https://img.shields.io/codeclimate/github/67P/hyperchannel.svg?style=flat)](https://codeclimate.com/github/67P/hyperchannel)
 
 # Hyperchannel (pre-alpha!)
 
