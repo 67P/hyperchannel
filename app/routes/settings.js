@@ -24,9 +24,8 @@ export default Ember.Route.extend({
     );
 
     return Ember.RSVP.hash({
-      // TODO use space models
       spaces: spaces,
-      spacePresets: config.spacePresets
+      spacePresets: config.spacePresets.map((preset) => Space.create(preset))
     });
   },
 

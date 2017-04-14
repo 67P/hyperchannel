@@ -1,0 +1,25 @@
+<h1>Space Setting</h1>
+
+<form {{action "save" on="submit"}} name="add-space">
+  <p>
+    {{input value=space.name required="required" placeholder="Freenode"}}
+  </p>
+  <p>
+    {{input value=space.server.hostname required="required" placeholder="irc.servername.org"}}
+  </p>
+  <p>
+    {{input value=space.server.port required="required" placeholder="6667"}}
+  </p>
+  <p>
+    {{input type="checkbox" checked=space.server.secure id="tls-enabled"}}
+    <label for="tls-enabled">Secure (TLS)</label>
+  </p>
+  <p>
+    {{input value=space.server.nickname required="required" placeholder="nickname"}}
+  </p>
+  <p>
+    <input type="submit" value="Save">
+  </p>
+</form>
+
+<button {{action "cancel"}}>Cancel</button>
