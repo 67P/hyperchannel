@@ -11,3 +11,8 @@ engines:
     checks:
       TODO:
         enabled: false
+ratings:
+  paths:
+    - "app/**/*"
+exclude_paths:
+  - "tests/**/*"
