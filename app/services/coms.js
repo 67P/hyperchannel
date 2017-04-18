@@ -66,8 +66,7 @@ export default Service.extend({
         if (isEmpty(Object.keys(spaceData))) {
           Logger.debug('No space data found in RS. Adding default space...');
           this.get('storage').addDefaultSpace().then((data) => {
-            this.connectServer(data.space);
-            this.get('spaces').pushObject(data.space);
+            this.connectAndAddSpace(data.space);
             this.instantiateChannels(data.space, data.channels);
             resolve();
           });
@@ -78,8 +77,7 @@ export default Service.extend({
               protocol: spaceData[id].protocol,
               server: spaceData[id].server
             });
-            this.connectServer(space);
-            this.get('spaces').pushObject(space);
+            this.connectAndAddSpace(space);
             this.instantiateChannels(space, spaceData[id].channels);
           });
           resolve();
@@ -105,6 +103,11 @@ export default Service.extend({
         // this.get('xmpp').connect(space);
         // break;
     }
+  },
+
+  connectAndAddSpace(space) {
+    this.connectServer(space);
+    this.get('spaces').pushObject(space);
   },
 
   /**

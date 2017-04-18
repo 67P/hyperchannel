@@ -43,3 +43,12 @@
 
   </div>
 </section>
+
+{{#if showSpaceSettingModal}}
+  {{to-elsewhere named="modal"
+                 send=(hash body=(component "space-setting-modal"
+                                            settings=selectedSpacePreset
+                                            onSave=(action "saveSpace")
+                                            onCancel=(action (mut selectedSpacePreset) null))
+                            onOutsideClick=(action (mut selectedSpacePreset) null))}}
+{{/if}}
