@@ -51,7 +51,6 @@ function buildMessageObject(space, target, content, type='message') {
 export default Ember.Service.extend({
 
   logger: service(),
-  coms: service(),
 
   /**
    * - Creates an ActivityStreams person object for
