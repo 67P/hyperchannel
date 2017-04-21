@@ -37,7 +37,7 @@ module.exports = function(environment) {
       /socket\.io\.js/,
       /sockethub\-client\.js/
     ],
-    excludePaths: [/test.*/, 'robots.txt', 'crossdomain.xml'],
+    excludePaths: [/test.*/, 'robots.txt', 'crossdomain.xml']
     // fallback: [
     //   '/online.html /offline.html'
     // ],

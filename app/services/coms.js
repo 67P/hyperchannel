@@ -229,7 +229,7 @@ export default Service.extend({
       channel.set('topic', newTopic);
 
       if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.get('visible')) {
-        Notification.requestPermission(function(){
+        Notification.requestPermission(function() {
           new Notification(channel.name, {
             body: `New Topic: ${newTopic}`
           });

@@ -19,7 +19,7 @@ export default Ember.Service.extend({
   }.property('rsInstance'),
 
   addDefaultSpace() {
-    let nickname = prompt("Choose a nickname");
+    let nickname = window.prompt("Choose a nickname");
 
     let params = {
       id: 'freenode',
@@ -29,7 +29,7 @@ export default Ember.Service.extend({
         hostname: 'irc.freenode.net',
         secure: true,
         port: 7000,
-        nickname: nickname,
+        nickname: nickname
       },
       channels: [
         '#hackerbeach',
