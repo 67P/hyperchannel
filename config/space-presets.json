@@ -34,5 +34,17 @@
       "secure": true,
       "port": 6697
     }
+  },
+  {
+    "id": "xmpp-localhost",
+    "name": "XMPP localhost",
+    "description": "Local XMPP server for development",
+    "website": null,
+    "protocol": "XMPP",
+    "server": {
+      "hostname": "localhost",
+      "secure": false,
+      "port": 5222
+    }
   }
 ]

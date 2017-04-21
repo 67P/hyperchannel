@@ -13,7 +13,6 @@ const {
 export default Ember.Service.extend({
 
   logger: service(),
-  coms: service(),
 
   /**
    * - Creates an ActivityStreams person object for
