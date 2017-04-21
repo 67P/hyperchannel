@@ -8,14 +8,18 @@ export default Ember.Controller.extend({
   coms: Ember.inject.service(),
   storage: Ember.inject.service('remotestorage'),
 
+  createMessage(message, type) {
+    return Message.create({
+      type: type,
+      date: new Date(),
+      nickname: this.get('space.model.server.nickname'),
+      content: message
+    });
+  },
+
   actions: {
     sendMessage: function(newMessage) {
-      let message = Message.create({
-        type: 'message-chat',
-        date: new Date(),
-        nickname: this.get('space.model.server.nickname'),
-        content: newMessage
-      });
+      let message = this.createMessage(newMessage, 'message-chat');
 
       this.get('coms').transferMessage(
         this.get('space.model'),
@@ -75,12 +79,7 @@ export default Ember.Controller.extend({
     meCommand: function(args) {
       let newMessage = args.join(' ');
 
-      let message = Message.create({
-        type: 'message-chat-me',
-        date: new Date(),
-        nickname: this.get('space.model.server.nickname'),
-        content: newMessage
-      });
+      let message = this.createMessage(newMessage, 'message-chat-me');
 
       this.get('coms').transferMeMessage(
         this.get('space.model'),

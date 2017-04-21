@@ -54,6 +54,12 @@ export default Ember.Service.extend({
   saveSpace(space) {
     return this.get('rs').kosmos.spaces.store(space.serialize())
       .then(() => Ember.Logger.debug('[remotestorage]', `saved space ${space.get('name')} in RS`));
+  },
+
+  removeSpace(space) {
+    // TODO this is buggy in the current rs.js beta branch
+    return this.get('rs').kosmos.spaces.remove(space.get('id'))
+      .then(() => Ember.Logger.debug('[remotestorage]', `removed space ${space.get('name')} from RS`));
   }
 
 });

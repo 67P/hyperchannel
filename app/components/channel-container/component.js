@@ -3,7 +3,9 @@ import Ember from 'ember';
 const {
   Component,
   observer,
-  run,
+  run: {
+    scheduleOnce
+  },
   inject: {
     service
   }
@@ -26,9 +28,15 @@ export default Component.extend({
 
   messagesUpdated: observer('channel.messages.[]', function() {
     if (!this.get('scrollingDisabled')) {
-      run.scheduleOnce('afterRender', scrollToBottom);
+      scheduleOnce('afterRender', scrollToBottom);
     }
   }),
+
+  didInsertElement() {
+    this._super(...arguments);
+
+    scheduleOnce('afterRender', scrollToBottom);
+  },
 
   actions: {
 
