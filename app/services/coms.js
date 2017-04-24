@@ -33,7 +33,8 @@ export default Service.extend({
   userSettings: localStorageFor('user-settings'),
   storage: service('remotestorage'),
   // Message transport
-  irc: service('sockethub-irc'),
+  irc:  service('sockethub-irc'),
+  xmpp: service('sockethub-xmpp'),
 
   /**
    * A collection of all space model instances
@@ -98,10 +99,9 @@ export default Service.extend({
       case 'IRC':
         this.get('irc').connect(space);
         break;
-      // case 'XMPP':
-        // TODO implement XMPP service
-        // this.get('xmpp').connect(space);
-        // break;
+      case 'XMPP':
+        this.get('xmpp').connect(space);
+        break;
     }
   },
 
