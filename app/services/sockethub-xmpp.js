@@ -19,14 +19,16 @@ export default Ember.Service.extend({
    * @public
    */
   connect(space) {
+    let actor = space.get('sockethubPersonId');
+
     this.sockethub.ActivityStreams.Object.create({
-      '@id': space.get('sockethubPersonId'),
+      '@id': actor,
       '@type': "person",
       displayName: space.get('server.nickname'),
     });
 
-    let job = {
-      actor: space.get('sockethubPersonId'),
+    let credentialsJob = {
+      actor: actor,
       context: 'xmpp',
       object: {
         '@type': 'credentials',
@@ -34,13 +36,19 @@ export default Ember.Service.extend({
         password: space.get('server.password'),
         server: space.get('server.hostname'),
         port: space.get('server.port'),
-        // secure: space.get('server.secure'),
-        resource: 'laptop'
+        resource: 'hyperchannel'
       }
     };
 
-    this.log('xmpp', 'connecting to XMPP server', job);
-    this.sockethub.socket.emit('connect', job);
+    let connectJob = {
+      '@type': 'connect',
+      context: 'xmpp',
+      actor: actor
+    };
+
+    this.log('xmpp', 'connecting to XMPP server...');
+    this.sockethub.socket.emit('credentials', credentialsJob);
+    this.sockethub.socket.emit('message', connectJob);
   },
 
   /**
