@@ -46,5 +46,17 @@
       "secure": false,
       "port": 5222
     }
+  },
+  {
+    "id": "5apps",
+    "name": "XMPP 5apps",
+    "description": "5apps XMPP server",
+    "website": "https://5apps.com",
+    "protocol": "XMPP",
+    "server": {
+      "hostname": "xmpp.5apps.com",
+      "secure": true,
+      "port": 5223
+    }
   }
 ]
