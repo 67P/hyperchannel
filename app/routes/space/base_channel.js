@@ -12,12 +12,6 @@ const {
   }
 } = Ember;
 
-function scrollToBottom() {
-  Ember.$('#channel-content').animate({
-    scrollTop: Ember.$('#channel-content ul').height()
-  }, '500');
-}
-
 function focusMessageInput() {
   if (window.innerWidth > 900) {
     Ember.$('input#message-field').focus();
@@ -46,7 +40,6 @@ export default Route.extend({
 
     scheduleOnce('afterRender', function() {
       focusMessageInput();
-      scrollToBottom();
     });
   },
 

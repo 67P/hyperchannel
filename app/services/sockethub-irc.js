@@ -6,6 +6,44 @@ const {
   }
 } = Ember;
 
+
+/**
+ * Build an activity object for sending to Sockethub
+ *
+ * @param space {Space} space model the activity belongs to
+ * @param details {Object} the activity details
+ * @returns {Object} the activity object
+ * @private
+ */
+function buildActivityObject(space, details) {
+  let baseObject = {
+    context: 'irc',
+    actor: space.get('sockethubPersonId')
+  };
+
+  return Ember.$.extend({}, baseObject, details);
+}
+
+/**
+ * Build a message object
+ *
+ * @param space {Space} space model instance
+ * @param target {String} where to send the message to (channelId)
+ * @param content {String} the message itself
+ * @param type {String} can be either 'message' or 'me'
+ * @returns {Object} the activity object
+ */
+function buildMessageObject(space, target, content, type='message') {
+  return buildActivityObject(space, {
+    '@type': 'send',
+    target: target,
+    object: {
+      '@type': type,
+      content: content
+    }
+  });
+}
+
 /**
  * This service provides helpers for SocketHub IRC communications
  * @module hyperchannel/services/sockethub-irc
@@ -29,9 +67,7 @@ export default Ember.Service.extend({
       displayName: space.get('server.nickname')
     });
 
-    var credentials = {
-      actor: space.get('sockethubPersonId'),
-      context: 'irc',
+    let credentials = buildActivityObject(space, {
       object: {
         '@type': 'credentials',
         nick: space.get('server.nickname'),
@@ -39,7 +75,7 @@ export default Ember.Service.extend({
         port: space.get('server.port'),
         secure: space.get('server.secure')
       }
-    };
+    });
 
     this.log('irc', 'connecting to IRC network', credentials);
     this.sockethub.socket.emit('credentials', credentials);
@@ -56,13 +92,11 @@ export default Ember.Service.extend({
       displayName: channel.get('name')
     });
 
-    var joinMsg = {
-      context: 'irc',
+    let joinMsg = buildActivityObject(space, {
       '@type': 'join',
-      actor: space.get('sockethubPersonId'),
       target: channel.get('sockethubChannelId'),
       object: {}
-    };
+    });
 
     this.log('irc', 'joining channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
@@ -73,19 +107,10 @@ export default Ember.Service.extend({
    * @public
    */
   transferMessage(space, target, content) {
-    let job = {
-      context: 'irc',
-      '@type': 'send',
-      actor: space.get('sockethubPersonId'),
-      target: target,
-      object: {
-        '@type': 'message',
-        content: content
-      }
-    };
+    let message = buildMessageObject(space, target, content);
 
-    this.log('send', 'sending message job', job);
-    this.sockethub.socket.emit('message', job);
+    this.log('send', 'sending message job', message);
+    this.sockethub.socket.emit('message', message);
   },
 
   /**
@@ -93,19 +118,10 @@ export default Ember.Service.extend({
    * @public
    */
   transferMeMessage(space, target, content) {
-    let job = {
-      context: 'irc',
-      '@type': 'send',
-      actor: space.get('sockethubPersonId'),
-      target: target,
-      object: {
-        '@type': 'me',
-        content: content
-      }
-    };
+    let message = buildMessageObject(space, target, content, 'me');
 
-    this.log('send', 'sending message job', job);
-    this.sockethub.socket.emit('message', job);
+    this.log('send', 'sending message job', message);
+    this.sockethub.socket.emit('message', message);
   },
 
   /**
@@ -113,22 +129,22 @@ export default Ember.Service.extend({
    * @public
    */
   leave(space, channel) {
+    // TODO Do we really need to create this room for leaving? It should
+    // already have been created when joining.
     this.sockethub.ActivityStreams.Object.create({
       '@type': "room",
       '@id': channel.get('sockethubChannelId'),
       displayName: channel.get('name')
     });
 
-    var joinMsg = {
-      context: 'irc',
+    let leaveMsg = buildActivityObject(space, {
       '@type': 'leave',
-      actor: space.get('sockethubPersonId'),
       target: channel.get('sockethubChannelId'),
       object: {}
-    };
+    });
 
-    this.log('leave', 'leaving channel', joinMsg);
-    this.sockethub.socket.emit('message', joinMsg);
+    this.log('leave', 'leaving channel', leaveMsg);
+    this.sockethub.socket.emit('message', leaveMsg);
   },
 
 
@@ -136,17 +152,15 @@ export default Ember.Service.extend({
    * Send a channel topic change
    * @public
    */
-  changeTopic: function(space, channel, topic) {
-    var topicMsg = {
-      context: 'irc',
+  changeTopic(space, channel, topic) {
+    let topicMsg = buildActivityObject(space, {
       '@type': 'update',
-      actor: space.get('sockethubPersonId'),
       target: channel.get('sockethubChannelId'),
       object: {
         '@type': 'topic',
         topic: topic
       }
-    };
+    });
 
     this.sockethub.socket.emit('message', topicMsg);
   },
@@ -155,16 +169,14 @@ export default Ember.Service.extend({
    * Ask for a channel's attendance list (users currently joined)
    * @public
    */
-  observeChannel: function(person, channelId) {
-    var observeMsg = {
-      context: 'irc',
+  observeChannel(space, channel) {
+    let observeMsg = buildActivityObject(space, {
       '@type': 'observe',
-      actor: person,
-      target: channelId,
+      target: channel.get('sockethubChannelId'),
       object: {
         '@type': 'attendance'
       }
-    };
+    });
 
     this.log('irc', 'asking for attendance list', observeMsg);
     this.sockethub.socket.emit('message', observeMsg);

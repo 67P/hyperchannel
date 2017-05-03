@@ -229,7 +229,7 @@ export default Service.extend({
       channel.set('topic', newTopic);
 
       if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.get('visible')) {
-        Notification.requestPermission(function(){
+        Notification.requestPermission(function() {
           new Notification(channel.name, {
             body: `New Topic: ${newTopic}`
           });
@@ -403,7 +403,7 @@ export default Service.extend({
             var channel = space.get('channels').findBy('sockethubChannelId', message.target);
             if (!isEmpty(channel)) {
               channel.set('connected', true);
-              this.get('irc').observeChannel(space.get('sockethubPersonId'), channel.get('sockethubChannelId'));
+              this.get('irc').observeChannel(space, channel);
             }
           }
         }

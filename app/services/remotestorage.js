@@ -19,7 +19,7 @@ export default Ember.Service.extend({
   }.property('rsInstance'),
 
   addDefaultSpace() {
-    let nickname = prompt("Choose a nickname");
+    let nickname = window.prompt("Choose a nickname");
 
     let params = {
       id: 'freenode',
@@ -29,7 +29,7 @@ export default Ember.Service.extend({
         hostname: 'irc.freenode.net',
         secure: true,
         port: 7000,
-        nickname: nickname,
+        nickname: nickname
       },
       channels: [
         '#hackerbeach',
@@ -54,6 +54,12 @@ export default Ember.Service.extend({
   saveSpace(space) {
     return this.get('rs').kosmos.spaces.store(space.serialize())
       .then(() => Ember.Logger.debug('[remotestorage]', `saved space ${space.get('name')} in RS`));
+  },
+
+  removeSpace(space) {
+    // TODO this is buggy in the current rs.js beta branch
+    return this.get('rs').kosmos.spaces.remove(space.get('id'))
+      .then(() => Ember.Logger.debug('[remotestorage]', `removed space ${space.get('name')} from RS`));
   }
 
 });

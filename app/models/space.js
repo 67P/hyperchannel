@@ -62,12 +62,12 @@ export default Ember.Object.extend({
       protocol: this.get('protocol'),
       server: {
         hostname: this.get('server.hostname'),
-        port: parseInt(this.get('server.port')),
+        port: parseInt(this.get('server.port'), 10),
         secure: this.get('server.secure'),
-        nickname: this.get('server.nickname'),
+        nickname: this.get('server.nickname')
       },
       channels: this.get('channelNames') || []
     };
-  },
+  }
 
 });
