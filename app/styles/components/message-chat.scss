@@ -33,6 +33,16 @@
   // white
   .color-16 { color: #333; }
 
+  .bold {
+    font-weight: bold;
+  }
+  .underlined {
+    text-decoration: underline;
+  }
+  .italic {
+    font-style: italic;
+  }
+
   &__date {
     display: block;
     float: right;

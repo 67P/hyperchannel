@@ -30,10 +30,10 @@ test('#formattedContent escapes HTML', function(assert) {
 
 test('#formattedContent converts color codes', function(assert) {
   var component = this.subject({
-    message: { content: 'put some \u000313color\u000f into your life' }
-  });
+    message: { content: 'put some \u000313color\u000f and \u0002bold\u000f into your life. Or \u000305\u0002both\u000f' }
+   });
 
-  assert.equal(component.get('formattedContent').toString(), 'put some <span class="color-13">color</span> into your life');
+  assert.equal(component.get('formattedContent').toString(), 'put some <span class="color-13">color</span> and <span class="bold">bold</span> into your life. Or <span class="color-05"><span class="bold">both</span>');
 });
 
 test('#formattedContent renders images from image URLs', function(assert) {
