@@ -126,20 +126,6 @@ export default Service.extend({
   },
 
   /**
-   * Invokes the channel-part function on the appropriate transport service
-   * @param {Space} space
-   * @param {Channel} channel
-   * @public
-   */
-  partChannel: function(space, channel) {
-    switch (space.get('protocol')) {
-      case 'IRC':
-        this.get('irc').leave(space, channel);
-        break;
-    }
-  },
-
-  /**
    * Invokes the send-message function on the appropriate transport service
    * @public
    */
