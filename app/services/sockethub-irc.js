@@ -51,7 +51,6 @@ function buildMessageObject(space, target, content, type='message') {
 export default Ember.Service.extend({
 
   logger: service(),
-  coms: service(),
 
   /**
    * - Creates an ActivityStreams person object for
@@ -61,11 +60,16 @@ export default Ember.Service.extend({
    * @public
    */
   connect(space) {
-    this.sockethub.ActivityStreams.Object.create({
+    let actorObject = {
       '@id': space.get('sockethubPersonId'),
       '@type': "person",
       displayName: space.get('server.nickname')
-    });
+    };
+    Ember.Logger.debug('actor object', actorObject);
+
+    this.sockethub.ActivityStreams.Object.create(
+      actorObject
+    );
 
     let credentials = buildActivityObject(space, {
       object: {

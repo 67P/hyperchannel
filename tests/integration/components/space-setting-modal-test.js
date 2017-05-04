@@ -23,5 +23,5 @@ test('it renders the form with preset values', function(assert) {
   this.render(hbs`{{space-setting-modal settings=preset}}`);
 
   assert.equal(this.$().find('h1').text().trim(), 'Space Setting');
-  assert.equal(this.$().find('input').first().val().trim(), 'Mozilla');
+  assert.equal(this.$().find('input').first().val().trim(), 'IRC');
 });

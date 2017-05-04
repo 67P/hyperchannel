@@ -1,7 +1,8 @@
 import Ember from 'ember';
 
 const {
-  computed
+  computed,
+  isPresent,
 } = Ember;
 
 export default Ember.Object.extend({
@@ -49,14 +50,23 @@ export default Ember.Object.extend({
   userNickname: computed.alias('server.nickname'),
 
   sockethubPersonId: function() {
-    return `irc://${this.get('server.nickname')}@${this.get('server.hostname')}`;
-  }.property('server.hostname', 'server.nickname'),
+    let personID;
+    switch (this.get('protocol')) {
+      case 'IRC':
+        personID = `irc://${this.get('server.nickname')}@${this.get('server.hostname')}`;
+        break;
+      case 'XMPP':
+        personID = `xmpp://${this.get('server.username')}@${this.get('server.hostname')}`;
+        break;
+    }
+    return personID;
+  }.property('protocol', 'server.hostname', 'server.username', 'server.nickname'),
 
   channelSorting: ['name'],
   sortedChannels: computed.sort('channels', 'channelSorting'),
 
   serialize() {
-    return {
+    let serialized = {
       id: this.get('id'),
       name: this.get('name'),
       protocol: this.get('protocol'),
@@ -68,6 +78,15 @@ export default Ember.Object.extend({
       },
       channels: this.get('channelNames') || []
     };
+
+    ['username', 'password', 'nickname'].forEach(prop => {
+      // TODO credentials need to be encrypted and probably stored elsewhere
+      if (isPresent(this.get(`server.${prop}`))) {
+        serialized.server[prop] = this.get(`server.${prop}`);
+      }
+    });
+
+    return serialized;
   }
 
 });

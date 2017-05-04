@@ -17,6 +17,7 @@ export default Service.extend({
     'sh_completed',
     'sh_failure',
     'irc',
+    'xmpp',
     'ajax-error'
   ],
 
@@ -28,7 +29,8 @@ export default Service.extend({
     'send',
     'sh_completed',
     'sh_failure',
-    'irc'
+    'irc',
+    'xmpp'
   ],
 
   log(type) {
