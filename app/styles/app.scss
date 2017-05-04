@@ -70,15 +70,27 @@ header {
       padding: 0 1em;
       height: 1.6em;
       line-height: 1.6em;
+      &:hover {
+        background-color: rgba(255,255,255,0.2);
+      }
       &.join-channel {
         cursor: pointer;
         opacity: 0.5;
       }
-      &:hover {
-        background-color: rgba(255,255,255,0.2);
+      &.close {
+        width: 0.4em;
+        position: absolute;
+        right: 0;
+        top: 0;
+        &:hover {
+          background-color: transparent;
+        }
       }
     }
     li {
+      width: 100%;
+      display: block;
+      position: relative;
       @include transition(opacity 0.2s linear);
       &.disconnected {
         opacity: 0.5;
@@ -93,10 +105,8 @@ header {
           padding: 0.6em 0 0 0;
           list-style: none;
 
-          li {
-            a.active {
-              background-color: rgba(255,255,255,0.2);
-            }
+          li.active {
+            background-color: rgba(255,255,255,0.2);
           }
         }
       }

@@ -59,8 +59,13 @@ export default Route.extend({
       let channel = this.get('coms').createChannel(space, channelName);
       this.get('storage').saveSpace(space);
       this.transitionTo('space.channel', space, channel);
-    }
+    },
 
+    partChannel(space, channel) {
+      this.get('coms').removeChannel(space, channel.get('name'));
+      let lastChannel = space.get('channels.lastObject');
+      this.transitionTo('space.channel', space, lastChannel);
+    }
   }
 
 });
