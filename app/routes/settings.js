@@ -19,7 +19,7 @@ export default Ember.Route.extend({
         return col;
       },
       e => {
-        console.error(e);
+        Ember.Logger.error(e);
       }
     );
 

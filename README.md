@@ -6,7 +6,7 @@
 
 **Hyperchannel** is the unhosted client application of the
 [Kosmos](https://kosmos.org) project. It is based on
-[Ember.js](http://emberjs.com), connecting to IRC/XMPP/etc. via
+[Ember.js](https://emberjs.com), connecting to IRC/XMPP/etc. via
 [Sockethub](http://sockethub.org) (WebSockets + ActivityStreams), and
 optionally syncing configuration and user data via
 [remoteStorage](https://remotestorage.io) (Webfinger + OAuth + CORS + REST).
@@ -21,8 +21,8 @@ start implementing right away.
 
 You will need the following things properly installed on your computer.
 
-* [Git](http://git-scm.com/)
-* [Node.js](http://nodejs.org/) (with NPM)
+* [Git](https://git-scm.com/)
+* [Node.js](https://nodejs.org/) (with NPM)
 * [Sockethub](http://sockethub.org/)
 * [PhantomJS](http://phantomjs.org/)
 
@@ -69,8 +69,8 @@ not use moduleForModel, as we're not using Ember Data. See existing tests.
 
 ## Further Reading / Useful Links
 
-* [ember.js](http://emberjs.com/)
-* [ember-cli](http://www.ember-cli.com/)
+* [ember.js](https://emberjs.com/)
+* [ember-cli](https://www.ember-cli.com/)
 * Development Browser Extensions
   * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
   * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)

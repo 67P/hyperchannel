@@ -1,3 +1,4 @@
+/* global linkifyStr */
 import Ember from 'ember';
 import BaseChannel from 'hyperchannel/models/base_channel';
 

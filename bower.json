@@ -2,8 +2,6 @@
   "name": "hyperchannel",
   "dependencies": {
     "bourbon": "^4.2.7",
-    "ember": "~2.8.0",
-    "ember-cli-shims": "0.1.1",
     "linkifyjs": "~2.1.3",
     "hammer.js": "https://github.com/67P/hammer.js.git#5e94d08435b3dda3",
     "hammer-time": "1.0.0",
