@@ -1,3 +1,4 @@
+/* global linkifyStr */
 import Ember from 'ember';
 import moment from 'moment';
 

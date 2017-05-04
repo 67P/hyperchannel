@@ -1,10 +1,10 @@
-/*jshint node:true*/
+/* eslint-env node */
 /* global require, module */
-var EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
 
-  var inlineContent = {};
+  const inlineContent = {};
 
   if (process.env.EMBER_ENV.match(/^(staging|production)$/)) {
     inlineContent['sockethub-assets'] = 'vendor/sh-assets-remote.html';
@@ -12,7 +12,7 @@ module.exports = function(defaults) {
     inlineContent['sockethub-assets'] = 'vendor/sh-assets-local.html';
   }
 
-  var app = new EmberApp(defaults, {
+  const app = new EmberApp(defaults, {
     fingerprint: { enabled: false },
     inlineContent: inlineContent,
     sourcemaps: { // enabled sourcemaps for all environments (e.g. for sentry integration)
