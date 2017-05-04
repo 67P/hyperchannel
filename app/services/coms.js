@@ -122,6 +122,9 @@ export default Service.extend({
       case 'IRC':
         this.get('irc').join(space, channel, type);
         break;
+      case 'XMPP':
+        this.get('xmpp').join(space, channel, type);
+        break;
     }
   },
 
@@ -397,15 +400,9 @@ export default Service.extend({
 
     switch(message['@type']) {
       case 'join':
-        if (message['@type'] === 'join') {
-          var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
-          if (!isEmpty(space)) {
-            var channel = space.get('channels').findBy('sockethubChannelId', message.target);
-            if (!isEmpty(channel)) {
-              channel.set('connected', true);
-              this.get('irc').observeChannel(space, channel);
-            }
-          }
+        var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
+        if (!isEmpty(space)) {
+          this.get(message.context).handleJoinCompleted(space, message);
         }
         break;
       case 'observe':

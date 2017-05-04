@@ -3,7 +3,8 @@ import Ember from 'ember';
 const {
   inject: {
     service
-  }
+  },
+  isEmpty
 } = Ember;
 
 
@@ -85,11 +86,19 @@ export default Ember.Service.extend({
     this.sockethub.socket.emit('credentials', credentials);
   },
 
+  handleJoinCompleted(space, message) {
+    var channel = space.get('channels').findBy('sockethubChannelId', message.target);
+    if (!isEmpty(channel)) {
+      channel.set('connected', true);
+      this.observeChannel(space, channel);
+    }
+  },
+
   /**
    * Join a channel/room
    * @public
    */
-  join: function(space, channel, type) {
+  join(space, channel, type) {
     this.sockethub.ActivityStreams.Object.create({
       '@type': type,
       '@id': channel.get('sockethubChannelId'),
