@@ -171,7 +171,9 @@ export default Service.extend({
   updateChannelUserList(message) {
     const channel = this.getChannelByMessage(message);
     if (channel) {
-      channel.set('userList', message.object.members.sort());
+      if (Array.isArray(message.object.members)) {
+        channel.set('userList', message.object.members.sort());
+      }
     }
   },
 
@@ -190,19 +192,18 @@ export default Service.extend({
   },
 
   getChannelByMessage(message) {
-    var addressWithHostname, hostname;
-    if (typeof message.actor === 'object') {
-      addressWithHostname = message.actor['@id'];
-    } else if (typeof message.actor === 'string') {
-      addressWithHostname = message.actor;
-    }
+    return this.getChannel(message.actor['@id'], message.target['@id']);
+  },
 
-    hostname = addressWithHostname.match(/irc:\/\/(?:.+@)?(.+?)(?:\/|$)/)[1];
-
+  /**
+   * @param {string} personId
+   * @param {string} channelId
+   */
+  getChannel(personId, channelId) {
+    var hostname = personId.match(/(?:irc:\/\/)?(?:.+@)?(.+?)(?:\/|$)/)[1];
     var space = this.get('spaces').findBy('server.hostname', hostname);
-
     if (!isEmpty(space)) {
-      var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
+      var channel = space.get('channels').findBy('sockethubChannelId', channelId);
       if (!isEmpty(channel)) {
         return channel;
       }
@@ -400,7 +401,7 @@ export default Service.extend({
 
     switch(message['@type']) {
       case 'join':
-        var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
+        var space = this.get('spaces').findBy('sockethubPersonId', message.actor['@id']);
         if (!isEmpty(space)) {
           this.get(message.context).handleJoinCompleted(space, message);
         }
@@ -459,7 +460,7 @@ export default Service.extend({
   handleChannelJoin(message) {
     if (message.object['@type'] && (message.object['@type'] === 'error')) {
       // failed to join a channel
-      let channel = this.getChannelByMessage(message);
+      let channel = this.getChannel(message.target['@id'], message.actor['@id']);
       channel.set('connected', false);
     } else {
       this.addUserToChannelUserList(message);
