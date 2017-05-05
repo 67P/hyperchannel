@@ -209,6 +209,16 @@ export default Service.extend({
     }
   },
 
+  updateUsername(message) {
+    if (typeof message.actor === 'object') {
+      const actorId = message.actor['@id'];
+      const space = this.get('spaces').findBy('sockethubPersonId', actorId);
+      if (isPresent(space)) {
+        space.updateUsername(message.target.displayName);
+      }
+    }
+  },
+
   updateChannelTopic(message) {
     let hostname;
     if (typeof message.target === 'object') {
@@ -401,6 +411,14 @@ export default Service.extend({
     switch(message['@type']) {
       case 'join':
         var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
+
+        // try to find space by older sockethubPersonId
+        if (isEmpty(space)) {
+          space = this.get('spaces').find((space) => {
+            return space.get('previousSockethubPersonIds').includes(message.actor);
+          });
+        }
+
         if (!isEmpty(space)) {
           this.get(message.context).handleJoinCompleted(space, message);
         }
@@ -419,6 +437,7 @@ export default Service.extend({
    * - Another user joined or left a channel
    * - Received a channel message (normal or me/action)
    * - A channel topic was updated
+   * - The username/address changed
    * @private
    */
   handleSockethubMessage(message) {
@@ -445,8 +464,13 @@ export default Service.extend({
         }
         break;
       case 'update':
-        if (message.object['@type'] === 'topic') {
-          this.updateChannelTopic(message);
+        switch(message.object['@type']) {
+          case 'topic':
+            this.updateChannelTopic(message);
+            break;
+          case 'address':
+            this.updateUsername(message);
+            break;
         }
         break;
     }
