@@ -87,7 +87,7 @@ export default Ember.Service.extend({
   },
 
   handleJoinCompleted(space, message) {
-    var channel = space.get('channels').findBy('sockethubChannelId', message.target);
+    var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
     if (!isEmpty(channel)) {
       channel.set('connected', true);
       this.observeChannel(space, channel);
