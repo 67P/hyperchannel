@@ -431,7 +431,7 @@ export default Service.extend({
         }
         break;
       case 'join':
-        this.addUserToChannelUserList(message);
+        this.handleChannelJoin(message);
         break;
       case 'leave':
         this.removeUserFromChannelUserList(message);
@@ -449,6 +449,20 @@ export default Service.extend({
           this.updateChannelTopic(message);
         }
         break;
+    }
+  },
+
+  /**
+   * Handles the various checks assosciated with channel joins
+   * @private
+   */
+  handleChannelJoin(message) {
+    if (message.object['@type'] && (message.object['@type'] === 'error')) {
+      // failed to join a channel
+      let channel = this.getChannelByMessage(message);
+      channel.set('connected', false);
+    } else {
+      this.addUserToChannelUserList(message);
     }
   },
 
