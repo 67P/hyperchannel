@@ -343,7 +343,7 @@ export default Service.extend({
       dataType: 'json'
     }).then(archive => {
       get(archive, 'today.messages').forEach((message) => {
-        this.log('message', message);
+        this.log('chat_message', message);
 
         let channelMessage = Message.create({
           type: 'message-chat',
@@ -396,7 +396,7 @@ export default Service.extend({
    *     - Channel attendance list response
    */
   handleSockethubCompleted(message) {
-    this.log('sh_completed', message);
+    this.log(`${message.context}_completed`, message);
 
     switch(message['@type']) {
       case 'join':
@@ -422,7 +422,7 @@ export default Service.extend({
    * @private
    */
   handleSockethubMessage(message) {
-    this.log('message', 'SH message', message);
+    this.log(`${message.context}_message`, 'SH message', message);
 
     switch(message['@type']) {
       case 'observe':
