@@ -79,12 +79,12 @@ export default Ember.Object.extend({
     }
   },
 
-  addUser(user) {
-    this.get('userList').pushObject(user);
+  addUser(username) {
+    this.get('userList').pushObject(username);
   },
 
-  removeUser(user) {
-    this.get('userList').removeObject(user);
+  removeUser(username) {
+    this.get('userList').removeObject(username);
   }
 
 });

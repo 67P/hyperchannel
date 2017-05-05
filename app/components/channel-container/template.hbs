@@ -50,8 +50,8 @@
   </header>
   <section id="user-list" class="main">
     <ul>
-      {{#each channel.userList as |user|}}
-      <li>{{#link-to 'space.userChannel' user.username class=user.role}}{{user.decoratedUsername}}{{/link-to}}</li>
+      {{#each channel.userList as |username|}}
+      <li>{{link-to-username username=username}}</li>
       {{/each}}
     </ul>
   </section>

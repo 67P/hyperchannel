@@ -3,7 +3,6 @@ import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
-import User from 'hyperchannel/models/user';
 import config from 'hyperchannel/config/environment';
 import moment from 'moment';
 import { storageFor as localStorageFor } from 'ember-local-storage';
@@ -169,32 +168,21 @@ export default Service.extend({
   updateChannelUserList(message) {
     const channel = this.getChannelByMessage(message);
     if (channel) {
-      const members = message.object.members.map(function(username) {
-        return User.create({
-          username: username
-        });
-      });
-      // FIXME: We will need to do this properly when we support voice and
-      // half-op
-      channel.set('userList', members.sortBy('decoratedUsername'));
+      channel.set('userList', message.object.members.sort());
     }
   },
 
   addUserToChannelUserList(message) {
     const channel = this.getChannelByMessage(message);
     if (channel) {
-      var user = User.create({
-        username: message.actor.displayName
-      });
-      channel.addUser(user);
+      channel.addUser(message.actor.displaName);
     }
   },
 
   removeUserFromChannelUserList(message) {
     const channel = this.getChannelByMessage(message);
     if (channel) {
-      var user = channel.get('userList').findBy('username', message.actor.displayName);
-      channel.removeUser(user);
+      channel.removeUser(message.actor.displayName);
     }
   },
 
