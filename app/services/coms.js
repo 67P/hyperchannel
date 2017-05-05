@@ -223,7 +223,8 @@ export default Service.extend({
       let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
 
       if (isEmpty(channel)) {
-        channel = this.createChannel(space, message.target['@id']);
+        Ember.Logger.warn('No channel for update topic message found. Creating it.', message);
+        channel = this.createChannel(space, message.target['displayName']);
       }
 
       let currentTopic = channel.get('topic');
