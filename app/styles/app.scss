@@ -1,6 +1,6 @@
-$output-bourbon-deprecation-warnings: false;
 @import "bourbon";
 
+$modular-scale-ratio: $golden;
 $headerHeight: 42px;
 $sidebarWidth: 168px;
 
@@ -80,10 +80,10 @@ header {
       }
     }
     li {
-      @include transition(opacity 0.2s linear);
+      transition: opacity 0.2s linear;
       &.disconnected {
         opacity: 0.5;
-        @include transition(opacity 0.2s linear);
+        transition: opacity 0.2s linear;
       }
     }
     > ul {

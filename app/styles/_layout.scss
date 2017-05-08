@@ -1,20 +1,20 @@
 @mixin app-column() {
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(column);
-  @include justify-content(flex-start);
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  justify-content: flex-start;
 
   header {
-    @include flex(0 0 $headerHeight);
+    flex: 0 0 $headerHeight;
     position: relative;
   }
   .main {
-    @include flex(1);
+    flex: 1;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
   }
   footer {
-    @include flex(0 0 $headerHeight);
+    flex: 0 0 $headerHeight;
     position: relative;
   }
 }
@@ -27,10 +27,10 @@
   right: 0;
   overflow: hidden;
   -webkit-overflow-scrolling: none;
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(row);
-  @include justify-content(flex-start);
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
 #global {
@@ -48,7 +48,7 @@
 
 @media screen and (min-width: 900px) {
   #global {
-    @include flex(0 0 $sidebarWidth);
+    flex: 0 0 $sidebarWidth;
     @include app-column;
   }
 }
@@ -73,29 +73,29 @@
 }
 
 div#channel {
-  @include flex(1);
+  flex: 1;
 
-  @include display(flex);
-  @include align-items(stretch);
-  @include flex-direction(row);
-  @include justify-content(flex-start);
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
+  justify-content: flex-start;
 
   transform: none;
   transition: transform 0.4s;
 
   main {
-    @include flex(1);
+    flex: 1;
     @include app-column;
   }
 
   aside {
-    @include flex(0 0 $sidebarWidth);
+    flex: 0 0 $sidebarWidth;
     @include app-column;
   }
 }
 
 section#settings {
-  @include flex(1);
+  flex: 1;
   overflow: auto;
 }
 

@@ -1,6 +1,7 @@
 /* eslint-env node */
 /* global require, module */
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+var autoprefixer = require('autoprefixer');
 
 module.exports = function(defaults) {
 
@@ -23,6 +24,23 @@ module.exports = function(defaults) {
       includePaths: [
         'bower_components/bourbon/app/assets/stylesheets'
       ]
+    },
+    postcssOptions: {
+      compile: {
+        enabled: false
+      },
+      filter: {
+        enabled: true,
+        exclude: ['assets/vendor.css'],
+        plugins: [
+          {
+            module: autoprefixer,
+            options: {
+              browsers: ['last 4 versions']
+            }
+          }
+        ]
+      }
     }
   });
 
