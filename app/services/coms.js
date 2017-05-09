@@ -169,7 +169,7 @@ export default Service.extend({
   },
 
   updateChannelUserList(message) {
-    const channel = this.getChannelByMessage(message);
+    const channel = this.getChannelById(message.actor['@id']);
     if (channel) {
       if (Array.isArray(message.object.members)) {
         channel.set('userList', message.object.members.sort());
@@ -178,21 +178,38 @@ export default Service.extend({
   },
 
   addUserToChannelUserList(message) {
-    const channel = this.getChannelByMessage(message);
+    const channel = this.getChannelById(message.target['@id']);
     if (channel) {
-      channel.addUser(message.actor.displaName);
+      channel.addUser(message.actor.displayName);
     }
   },
 
   removeUserFromChannelUserList(message) {
-    const channel = this.getChannelByMessage(message);
+    const channel = this.getChannelById(message.target['@id']);
     if (channel) {
       channel.removeUser(message.actor.displayName);
     }
   },
 
-  getChannelByMessage(message) {
-    return this.getChannel(message.actor['@id'], message.target['@id']);
+  getChannelById(channelId) {
+    // TODO handle multiple spaces with same hostname:
+    // This method should return an array of channels for all spaces with the
+    // same hostname
+
+    const hostname = channelId.match(/(?:irc:\/\/)?(?:.+@)?(.+?)(?:\/|$)/)[1];
+
+    const space = this.get('spaces').findBy('server.hostname', hostname);
+
+    if (isPresent(space)) {
+      const channel = space.get('channels').findBy('sockethubChannelId', channelId);
+      if (isPresent(channel)) {
+        return channel;
+      } else {
+        Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
+      }
+    } else {
+      Ember.Logger.warn('Could not find space by hostname', hostname);
+    }
   },
 
   /**
@@ -200,13 +217,16 @@ export default Service.extend({
    * @param {string} channelId
    */
   getChannel(personId, channelId) {
-    var hostname = personId.match(/(?:irc:\/\/)?(?:.+@)?(.+?)(?:\/|$)/)[1];
-    var space = this.get('spaces').findBy('server.hostname', hostname);
-    if (!isEmpty(space)) {
-      var channel = space.get('channels').findBy('sockethubChannelId', channelId);
-      if (!isEmpty(channel)) {
+    const space = this.get('spaces').findBy('sockethubPersonId', personId);
+    if (isPresent(space)) {
+      const channel = space.get('channels').findBy('sockethubChannelId', channelId);
+      if (isPresent(channel)) {
         return channel;
+      } else {
+        Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
       }
+    } else {
+      Ember.Logger.warn('Could not find space by sockethubPersonId', personId);
     }
   },
 
