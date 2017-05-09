@@ -26,12 +26,11 @@ module.exports = function(defaults) {
       ]
     },
     postcssOptions: {
-      compile: {
+      filter: {
         enabled: false
       },
-      filter: {
+      compile: {
         enabled: true,
-        exclude: ['assets/vendor.css'],
         plugins: [
           {
             module: autoprefixer,
