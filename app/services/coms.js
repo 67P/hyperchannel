@@ -394,7 +394,6 @@ export default Service.extend({
    * Handles completed Sockethub actions:
    *
    *     - Successfully joined a channel
-   *     - Channel attendance list response
    */
   handleSockethubCompleted(message) {
     this.log(`${message.context}_completed`, message);
@@ -404,11 +403,6 @@ export default Service.extend({
         var space = this.get('spaces').findBy('sockethubPersonId', message.actor['@id']);
         if (!isEmpty(space)) {
           this.get(message.context).handleJoinCompleted(space, message);
-        }
-        break;
-      case 'observe':
-        if (message.object['@type'] === 'attendance') {
-          this.updateChannelUserList(message);
         }
         break;
     }
