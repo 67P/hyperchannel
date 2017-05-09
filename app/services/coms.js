@@ -202,7 +202,7 @@ export default Service.extend({
     var space = this.get('spaces').findBy('server.hostname', hostname);
 
     if (!isEmpty(space)) {
-      var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
+      var channel = space.get('channels').findBy('sockethubChannelId', message.actor['@id']);
       if (!isEmpty(channel)) {
         return channel;
       }
@@ -223,7 +223,8 @@ export default Service.extend({
       let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
 
       if (isEmpty(channel)) {
-        channel = this.createChannel(space, message.target['@id']);
+        Ember.Logger.warn('No channel for update topic message found. Creating it.', message);
+        channel = this.createChannel(space, message.target['displayName']);
       }
 
       let currentTopic = channel.get('topic');
@@ -400,7 +401,7 @@ export default Service.extend({
 
     switch(message['@type']) {
       case 'join':
-        var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
+        var space = this.get('spaces').findBy('sockethubPersonId', message.actor['@id']);
         if (!isEmpty(space)) {
           this.get(message.context).handleJoinCompleted(space, message);
         }
