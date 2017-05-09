@@ -202,7 +202,7 @@ export default Service.extend({
     var space = this.get('spaces').findBy('server.hostname', hostname);
 
     if (!isEmpty(space)) {
-      var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
+      var channel = space.get('channels').findBy('sockethubChannelId', message.actor['@id']);
       if (!isEmpty(channel)) {
         return channel;
       }
@@ -233,7 +233,8 @@ export default Service.extend({
       let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
 
       if (isEmpty(channel)) {
-        channel = this.createChannel(space, message.target['@id']);
+        Ember.Logger.warn('No channel for update topic message found. Creating it.', message);
+        channel = this.createChannel(space, message.target['displayName']);
       }
 
       let currentTopic = channel.get('topic');
@@ -353,7 +354,7 @@ export default Service.extend({
       dataType: 'json'
     }).then(archive => {
       get(archive, 'today.messages').forEach((message) => {
-        this.log('message', message);
+        this.log('chat_message', message);
 
         let channelMessage = Message.create({
           type: 'message-chat',
@@ -406,16 +407,16 @@ export default Service.extend({
    *     - Channel attendance list response
    */
   handleSockethubCompleted(message) {
-    this.log('sh_completed', message);
+    this.log(`${message.context}_completed`, message);
 
     switch(message['@type']) {
       case 'join':
-        var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
+        var space = this.get('spaces').findBy('sockethubPersonId', message.actor['@id']);
 
         // try to find space by older sockethubPersonId
         if (isEmpty(space)) {
           space = this.get('spaces').find((space) => {
-            return space.get('previousSockethubPersonIds').includes(message.actor);
+            return space.get('previousSockethubPersonIds').includes(message.actor['@id']);
           });
         }
 
@@ -441,7 +442,7 @@ export default Service.extend({
    * @private
    */
   handleSockethubMessage(message) {
-    this.log('message', 'SH message', message);
+    this.log(`${message.context}_message`, 'SH message', message);
 
     switch(message['@type']) {
       case 'observe':
