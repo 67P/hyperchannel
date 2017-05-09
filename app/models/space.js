@@ -22,9 +22,14 @@ export default Ember.Object.extend({
   },
   channels   : null, // Channel instances
 
+  // Keep a list of all old sockethubPersonIds, because there might
+  // still be coming events from Sockethub for those.
+  previousSockethubPersonIds: null,
+
   init() {
     this._super(...arguments);
     this.set('channels', []);
+    this.set('previousSockethubPersonIds', []);
   },
 
   channelNames: computed('channels.@each.name', function() {
@@ -48,6 +53,20 @@ export default Ember.Object.extend({
   }.property('name'),
 
   userNickname: computed.alias('server.nickname'),
+
+  updateUsername(username) {
+    // keep track of old name for later reference
+    this.get('previousSockethubPersonIds').pushObject(this.get('sockethubPersonId'));
+
+    switch (this.get('protocol')) {
+      case 'IRC':
+        this.set('server.nickname', username);
+        break;
+      case 'XMPP':
+        this.set('server.username', username);
+        break;
+    }
+  },
 
   sockethubPersonId: function() {
     let personID;
