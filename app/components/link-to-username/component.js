@@ -1,33 +1,35 @@
 import Ember from 'ember';
 
 const {
-  computed
+  Component,
+  computed,
+  isPresent
 } = Ember;
 
-export default Ember.Component.extend({
+export default Component.extend({
+
   username: null,
 
-  role: computed('username', function() {
-    if (this.get('username').startsWith('@')) {
-      return 'op';
-    } else if (this.get('username').startsWith('%')) {
-      return 'half-op';
-    } else if (this.get('username').startsWith('+')) {
-      return 'voice';
-    } else {
-      return 'normal';
+  roles: {
+    '@': 'op',
+    '%': 'half-op',
+    '+': 'voice'
+  },
+
+  role: computed('username', 'roles', function() {
+    const role = this.get('roles')[this.get('username')[0]];
+
+    if (isPresent(role)) {
+      return role;
     }
+
+    return 'normal';
   }),
 
-  usernameWithoutPrefix: computed('username', function() {
-    if (this.get('username').startsWith('@')) {
-      return this.get('username').replace('@', '');
-    } else if (this.get('username').startsWith('%')) {
-      return this.get('username').replace('%', '');
-    } else if (this.get('username').startsWith('+')) {
-      return this.get('username').replace('+', '');
-    } else {
-      return this.get('username');
-    }
-  }),
+  usernameWithoutPrefix: computed('username', 'roles', function() {
+    const regex = RegExp(`^[\\${Object.keys(this.get('roles')).join('\\')}]`);
+
+    return this.get('username').replace(regex, '');
+  })
+
 });
