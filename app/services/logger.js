@@ -13,12 +13,17 @@ export default Service.extend({
     'join',
     'leave',
     'message',
+    'irc_message',
+    'xmpp_message',
     'send',
+    'xmpp_completed',
+    'irc_completed',
     'sh_completed',
     'sh_failure',
     'irc',
     'xmpp',
-    'ajax-error'
+    'ajax-error',
+    'chat_message'
   ],
 
   activeTypes: [
@@ -28,9 +33,14 @@ export default Service.extend({
     'leave',
     'send',
     'sh_completed',
+    'xmpp_completed',
+    'irc_completed',
     'sh_failure',
     'irc',
-    'xmpp'
+    'xmpp',
+    'message',
+    'irc_message',
+    'xmpp_message'
   ],
 
   log(type) {

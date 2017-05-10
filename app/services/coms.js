@@ -122,6 +122,9 @@ export default Service.extend({
       case 'IRC':
         this.get('irc').join(space, channel, type);
         break;
+      case 'XMPP':
+        this.get('xmpp').join(space, channel, type);
+        break;
     }
   },
 
@@ -199,9 +202,19 @@ export default Service.extend({
     var space = this.get('spaces').findBy('server.hostname', hostname);
 
     if (!isEmpty(space)) {
-      var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
+      var channel = space.get('channels').findBy('sockethubChannelId', message.actor['@id']);
       if (!isEmpty(channel)) {
         return channel;
+      }
+    }
+  },
+
+  updateUsername(message) {
+    if (typeof message.actor === 'object') {
+      const actorId = message.actor['@id'];
+      const space = this.get('spaces').findBy('sockethubPersonId', actorId);
+      if (isPresent(space)) {
+        space.updateUsername(message.target.displayName);
       }
     }
   },
@@ -220,7 +233,8 @@ export default Service.extend({
       let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
 
       if (isEmpty(channel)) {
-        channel = this.createChannel(space, message.target['@id']);
+        Ember.Logger.warn('No channel for update topic message found. Creating it.', message);
+        channel = this.createChannel(space, message.target['displayName']);
       }
 
       let currentTopic = channel.get('topic');
@@ -340,7 +354,7 @@ export default Service.extend({
       dataType: 'json'
     }).then(archive => {
       get(archive, 'today.messages').forEach((message) => {
-        this.log('message', message);
+        this.log('chat_message', message);
 
         let channelMessage = Message.create({
           type: 'message-chat',
@@ -393,19 +407,21 @@ export default Service.extend({
    *     - Channel attendance list response
    */
   handleSockethubCompleted(message) {
-    this.log('sh_completed', message);
+    this.log(`${message.context}_completed`, message);
 
     switch(message['@type']) {
       case 'join':
-        if (message['@type'] === 'join') {
-          var space = this.get('spaces').findBy('sockethubPersonId', message.actor);
-          if (!isEmpty(space)) {
-            var channel = space.get('channels').findBy('sockethubChannelId', message.target);
-            if (!isEmpty(channel)) {
-              channel.set('connected', true);
-              this.get('irc').observeChannel(space, channel);
-            }
-          }
+        var space = this.get('spaces').findBy('sockethubPersonId', message.actor['@id']);
+
+        // try to find space by older sockethubPersonId
+        if (isEmpty(space)) {
+          space = this.get('spaces').find((space) => {
+            return space.get('previousSockethubPersonIds').includes(message.actor['@id']);
+          });
+        }
+
+        if (!isEmpty(space)) {
+          this.get(message.context).handleJoinCompleted(space, message);
         }
         break;
       case 'observe':
@@ -422,10 +438,11 @@ export default Service.extend({
    * - Another user joined or left a channel
    * - Received a channel message (normal or me/action)
    * - A channel topic was updated
+   * - The username/address changed
    * @private
    */
   handleSockethubMessage(message) {
-    this.log('message', 'SH message', message);
+    this.log(`${message.context}_message`, 'SH message', message);
 
     switch(message['@type']) {
       case 'observe':
@@ -448,8 +465,13 @@ export default Service.extend({
         }
         break;
       case 'update':
-        if (message.object['@type'] === 'topic') {
-          this.updateChannelTopic(message);
+        switch(message.object['@type']) {
+          case 'topic':
+            this.updateChannelTopic(message);
+            break;
+          case 'address':
+            this.updateUsername(message);
+            break;
         }
         break;
     }
