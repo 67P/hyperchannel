@@ -387,7 +387,7 @@ export default Service.extend({
     const channel = UserChannel.create({
       space: space,
       name: userName,
-      sockethubChannelId: platform.generateChannelId(space, channelName)
+      sockethubChannelId: platform.generateChannelId(space, userName)
     });
 
     this.joinChannel(space, channel, "person");
