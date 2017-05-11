@@ -201,5 +201,10 @@ export default Ember.Service.extend({
    */
   log() {
     this.get('logger').log(...arguments);
+  },
+
+  generateChannelId(space, channelName) {
+    return `irc://${space.get('server.hostname')}/${channelName}`;
   }
+
 });

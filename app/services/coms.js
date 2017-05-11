@@ -313,11 +313,12 @@ export default Service.extend({
   },
 
   createChannel: function(space, channelName) {
-    var channel = Channel.create({
+    const platform = this.getSockethubPlatformFor(space.get('protocol'));
+
+    const channel = Channel.create({
       space: space,
       name: channelName,
-      // TODO use IRC module
-      sockethubChannelId: `irc://${space.get('server.hostname')}/${channelName}`
+      sockethubChannelId: platform.generateChannelId(space, channelName)
     });
 
     this.joinChannel(space, channel, "room");
@@ -381,11 +382,12 @@ export default Service.extend({
   },
 
   createUserChannel: function(space, userName) {
-    var channel = UserChannel.create({
+    const platform = this.getSockethubPlatformFor(space.get('protocol'));
+
+    const channel = UserChannel.create({
       space: space,
       name: userName,
-      // TODO use IRC module
-      sockethubChannelId: `irc://${space.get('server.hostname')}/${userName}`
+      sockethubChannelId: platform.generateChannelId(space, channelName)
     });
 
     this.joinChannel(space, channel, "person");
