@@ -51,7 +51,7 @@
   <section id="user-list" class="main">
     <ul>
       {{#each channel.userList as |username|}}
-        <li>{{#link-to 'space.userChannel' username}}{{username}}{{/link-to}}</li>
+      <li>{{link-to-username username=username}}</li>
       {{/each}}
     </ul>
   </section>
