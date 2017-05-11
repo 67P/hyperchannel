@@ -95,14 +95,7 @@ export default Service.extend({
    * @public
    */
   connectServer(space) {
-    switch (space.get('protocol')) {
-      case 'IRC':
-        this.get('irc').connect(space);
-        break;
-      case 'XMPP':
-        this.get('xmpp').connect(space);
-        break;
-    }
+    this.getSockethubPlatformFor(space.get('protocol')).connect(space);
   },
 
   connectAndAddSpace(space) {
@@ -118,14 +111,7 @@ export default Service.extend({
    * @public
    */
   joinChannel: function(space, channel, type) {
-    switch (space.get('protocol')) {
-      case 'IRC':
-        this.get('irc').join(space, channel, type);
-        break;
-      case 'XMPP':
-        this.get('xmpp').join(space, channel, type);
-        break;
-    }
+    this.getSockethubPlatformFor(space.get('protocol')).join(space, channel, type);
   },
 
   /**
@@ -417,6 +403,10 @@ export default Service.extend({
     this.get('storage').saveSpace(space);
 
     return channel;
+  },
+
+  getSockethubPlatformFor(protocol) {
+    return this.get(protocol.dasherize());
   },
 
   /*
