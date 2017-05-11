@@ -4,7 +4,8 @@
     "window",
     "-Promise",
     "Promise",
-    "linkifyStr"
+    "linkifyStr",
+    "process"
   ],
   "browser": true,
   "boss": true,
