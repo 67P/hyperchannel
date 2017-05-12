@@ -432,6 +432,8 @@ export default Service.extend({
 
         if (!isEmpty(space)) {
           this.get(message.context).handleJoinCompleted(space, message);
+        } else {
+          Logger.warn('Could not find space for join message', message);
         }
         break;
     }

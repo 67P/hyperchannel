@@ -4,7 +4,8 @@ const {
   inject: {
     service
   },
-  isEmpty
+  isEmpty,
+  Logger
 } = Ember;
 
 /**
@@ -90,9 +91,11 @@ export default Ember.Service.extend({
   },
 
   handleJoinCompleted(space, message) {
-    var channel = space.get('channels').findBy('sockethubChannelId', message.target);
+    var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
     if (!isEmpty(channel)) {
       channel.set('connected', true);
+    } else {
+      Logger.warn('Could not find channel for join message', message);
     }
   },
 
