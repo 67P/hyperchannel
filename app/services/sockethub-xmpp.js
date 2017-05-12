@@ -141,7 +141,7 @@ export default Ember.Service.extend({
   },
 
   generateChannelId(space, channelName) {
-    return `xmpp://${space.get('server.hostname')}/${channelName}`;
+    return channelName;
   }
 
 });
