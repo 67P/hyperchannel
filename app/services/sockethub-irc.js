@@ -77,7 +77,7 @@ export default Ember.Service.extend({
         '@type': 'credentials',
         nick: space.get('server.nickname'),
         server: space.get('server.hostname'),
-        port: space.get('server.port'),
+        port: parseInt(space.get('server.port'), 10),
         secure: space.get('server.secure')
       }
     });

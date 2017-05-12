@@ -53,7 +53,7 @@ export default Ember.Service.extend({
         username: space.get('server.username'),
         password: space.get('server.password'),
         server: space.get('server.hostname'),
-        port: space.get('server.port'),
+        port: parseInt(space.get('server.port'), 10),
         resource: 'hyperchannel'
       }
     };
