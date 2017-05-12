@@ -268,18 +268,32 @@ export default Service.extend({
   },
 
   addMessageToChannel: function(message) {
-    var space = this.get('spaces').findBy('server.hostname',
-                message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1]);
-    var nickname = space.get('userNickname');
+    let space, hostname;
+    switch(message.context) {
+      case 'irc':
+        hostname = message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1];
+        space = this.get('spaces').findBy('server.hostname', hostname);
+        break;
+      case 'xmpp':
+        space = this.get('spaces').findBy('sockethubPersonId', message.target['@id']);
+        break;
+    }
 
-    var targetChannelName;
+    if (isEmpty(space)) {
+      Logger.warn('Could not find space for message', message);
+      return;
+    }
+
+    const nickname = space.get('userNickname');
+
+    let targetChannelName;
     if (nickname === message.target.displayName) {
-      targetChannelName = message.actor.displayName;
+      targetChannelName = message.actor.displayName || message.actor['@id'];
     } else {
       targetChannelName = message.target.displayName;
     }
 
-    var channel = space.get('channels').findBy('name', targetChannelName);
+    let channel = space.get('channels').findBy('name', targetChannelName);
     if (!channel) {
       channel = this.createChannel(space, targetChannelName);
     }
@@ -291,10 +305,10 @@ export default Service.extend({
       messageType = 'message-chat';
     }
 
-    var channelMessage = Message.create({
+    const channelMessage = Message.create({
       type: messageType,
       date: new Date(message.published),
-      nickname: message.actor.displayName,
+      nickname: message.actor.displayName || message.actor['@id'],
       content: message.object.content
     });
 
