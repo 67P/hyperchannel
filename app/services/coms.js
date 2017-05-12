@@ -493,6 +493,12 @@ export default Service.extend({
           case 'address':
             this.updateUsername(message);
             break;
+          case 'presence':
+            Logger.debug('Presence update:', message.actor['@id'], message.object.presence, message.object.status);
+            break;
+          case 'error':
+            Logger.warn('Got error update message', message.actor['@id'], message.object.content);
+            break;
         }
         break;
     }
