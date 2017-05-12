@@ -25,6 +25,26 @@ function buildActivityObject(space, details) {
 }
 
 /**
+ * Build a message object
+ *
+ * @param space {Space} space model instance
+ * @param target {String} where to send the message to (channelId)
+ * @param content {String} the message itself
+ * @param type {String} can be either 'message' or 'me'
+ * @returns {Object} the activity object
+ */
+function buildMessageObject(space, target, content, type='message') {
+  return buildActivityObject(space, {
+    '@type': 'send',
+    target: target,
+    object: {
+      '@type': type,
+      content: content
+    }
+  });
+}
+
+/**
  * This service provides helpers for SocketHub XMPP communications
  * @module hyperchannel/services/sockethub-xmpp
  */
@@ -99,6 +119,17 @@ export default Ember.Service.extend({
 
     this.log('xmpp', 'joining channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
+  },
+
+  /**
+   * Send a chat message to a channel
+   * @public
+   */
+  transferMessage(space, target, content) {
+    let message = buildMessageObject(space, target, content);
+
+    this.log('send', 'sending message job', message);
+    this.sockethub.socket.emit('message', message);
   },
 
   /**

@@ -120,11 +120,8 @@ export default Service.extend({
    * @public
    */
   transferMessage(space, target, content) {
-    switch (space.get('protocol')) {
-      case 'IRC':
-        this.get('irc').transferMessage(space, target, content);
-        break;
-    }
+    this.getSockethubPlatformFor(space.get('protocol'))
+      .transferMessage(space, target, content);
   },
 
   /**
