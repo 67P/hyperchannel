@@ -15,11 +15,11 @@ export default Ember.Component.extend({
 
   actions: {
     save() {
-      this.attrs.onSave(this.get('space'));
+      this.onSave(this.get('space'));
     },
 
     cancel() {
-      this.attrs.onCancel();
+      this.onCancel();
     }
   }
 
