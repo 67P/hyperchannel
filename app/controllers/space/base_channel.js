@@ -1,12 +1,22 @@
 import Ember from 'ember';
 import Message from 'hyperchannel/models/message';
 
-export default Ember.Controller.extend({
+const {
+  Controller,
+  inject: {
+    controller,
+    service
+  },
+  Logger,
+  isPresent
+} = Ember;
+
+export default Controller.extend({
 
   newMessage: null,
-  space: Ember.inject.controller(),
-  coms: Ember.inject.service(),
-  storage: Ember.inject.service('remotestorage'),
+  space: controller(),
+  coms: service(),
+  storage: service('remotestorage'),
 
   createMessage(message, type) {
     return Message.create({
@@ -48,7 +58,7 @@ export default Ember.Controller.extend({
       if (availableCommands.includes(command.toLowerCase())) {
         this.send(command + 'Command', commandSplitted.slice(1));
       } else {
-        Ember.Logger.warn('[channel]', 'Unknown command', commandText);
+        Logger.warn('[channel]', 'Unknown command', commandText);
       }
 
       this.set('newMessage', null);
@@ -66,7 +76,11 @@ export default Ember.Controller.extend({
       let channelName = this.get('model.name');
       this.get('coms').removeChannel(space, channelName);
       let lastChannel = space.get('channels.lastObject');
-      this.transitionToRoute('space.channel', space, lastChannel);
+      if (isPresent(lastChannel)) {
+        this.transitionToRoute('space.channel', space, lastChannel);
+      } else {
+        this.transitionToRoute('space', space);
+      }
     },
 
     leaveCommand: function() {
