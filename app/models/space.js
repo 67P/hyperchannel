@@ -46,12 +46,6 @@ export default Ember.Object.extend({
     }
   }),
 
-  id: function() {
-    // This could be based on server type in the future. E.g. IRC would be
-    // server URL, while Campfire would be another id.
-    return this.get('name').dasherize();
-  }.property('name'),
-
   userNickname: computed.alias('server.nickname'),
 
   updateUsername(username) {
@@ -88,7 +82,7 @@ export default Ember.Object.extend({
 
   serialize() {
     let serialized = {
-      id: this.get('id'),
+      id: this.get('id') || this.get('name').dasherize(),
       name: this.get('name'),
       protocol: this.get('protocol'),
       server: {
