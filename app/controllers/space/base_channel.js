@@ -8,7 +8,8 @@ const {
     service
   },
   Logger,
-  isPresent
+  isPresent,
+  assert
 } = Ember;
 
 export default Controller.extend({
@@ -28,17 +29,8 @@ export default Controller.extend({
   },
 
   actions: {
-    sendMessage: function(newMessage) {
-      let message = this.createMessage(newMessage, 'message-chat');
-
-      this.get('coms').transferMessage(
-        this.get('space.model'),
-        this.get('model.sockethubChannelId'),
-        message.get('content')
-      );
-
-      this.get('model.messages').pushObject(message);
-      this.set('newMessage', null);
+    sendMessage: function() {
+      assert('Please define "sendMessage"');
     },
 
     executeCommand: function(newMessage) {
