@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import Message from 'hyperchannel/models/message';
 
 const {
   inject: {
@@ -137,6 +138,64 @@ export default Ember.Service.extend({
 
     this.log('send', 'sending message job', message);
     this.sockethub.socket.emit('message', message);
+  },
+
+  /**
+   * Add an incoming message to a channel
+   * @public
+   */
+  addMessageToChannel(message) {
+    if (isEmpty(message.object.content)) {
+      return;
+    }
+
+    const targetChannelId = message.target['@id'];
+    let space;
+
+    if (message.target['@type'] === 'room') {
+      space = this.get('coms.spaces').find(function(space) {
+        return space.get('sockethubChannelIds').includes(targetChannelId);
+      });
+    } else {
+      space = this.get('coms.spaces').findBy('sockethubPersonId', targetChannelId);
+    }
+
+    if (isEmpty(space)) {
+      Logger.warn('Could not find space for message', message);
+      return;
+    }
+
+    let channel;
+    if (message.target['@type'] === 'room') {
+      channel = space.get('channels').findBy('sockethubChannelId', targetChannelId);
+      if (!channel) {
+        channel = this.get('coms').createChannel(space, targetChannelId);
+      }
+    } else {
+      channel = space.get('channels').findBy('sockethubChannelId', message.actor['@id']);
+      if (!channel) {
+        channel = this.get('coms').createUserChannel(space, message.actor['@id']);
+      }
+    }
+
+    let messageType;
+    if (message.object['@type'] === 'me') {
+      messageType = 'message-chat-me';
+    } else {
+      messageType = 'message-chat';
+    }
+
+    const channelMessage = Message.create({
+      type: messageType,
+      date: new Date(message.published),
+      nickname: message.actor.displayName || message.actor['@id'],
+      content: message.object.content
+    });
+
+    // TODO should check for message and update sent status if exists
+    if (channelMessage.get('nickname') !== space.get('userNickname')) {
+      channel.addMessage(channelMessage);
+    }
   },
 
   /**

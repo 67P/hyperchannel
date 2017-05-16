@@ -267,57 +267,6 @@ export default Service.extend({
     }
   },
 
-  addMessageToChannel: function(message) {
-    let space, hostname;
-    switch(message.context) {
-      case 'irc':
-        hostname = message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1];
-        space = this.get('spaces').findBy('server.hostname', hostname);
-        break;
-      case 'xmpp':
-        space = this.get('spaces').findBy('sockethubPersonId', message.target['@id']);
-        break;
-    }
-
-    if (isEmpty(space)) {
-      Logger.warn('Could not find space for message', message);
-      return;
-    }
-
-    const nickname = space.get('userNickname');
-
-    let targetChannelName;
-    if (nickname === message.target.displayName) {
-      targetChannelName = message.actor.displayName || message.actor['@id'];
-    } else {
-      targetChannelName = message.target.displayName;
-    }
-
-    let channel = space.get('channels').findBy('name', targetChannelName);
-    if (!channel) {
-      channel = this.createChannel(space, targetChannelName);
-    }
-
-    let messageType;
-    if (message.object['@type'] === 'me') {
-      messageType = 'message-chat-me';
-    } else {
-      messageType = 'message-chat';
-    }
-
-    const channelMessage = Message.create({
-      type: messageType,
-      date: new Date(message.published),
-      nickname: message.actor.displayName || message.actor['@id'],
-      content: message.object.content
-    });
-
-    // TODO should check for message and update sent status if exists
-    if (message.actor.displayName !== nickname) {
-      channel.addMessage(channelMessage);
-    }
-  },
-
   instantiateChannels: function(space, channels) {
     channels.forEach((channelName) => {
       this.createChannel(space, channelName);
@@ -481,7 +430,7 @@ export default Service.extend({
         switch(message.object['@type']) {
           case 'message':
           case 'me':
-            this.addMessageToChannel(message);
+            this.getSockethubPlatformFor(message.context).addMessageToChannel(message);
             break;
         }
         break;

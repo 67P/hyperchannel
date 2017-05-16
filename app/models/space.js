@@ -36,6 +36,10 @@ export default Ember.Object.extend({
     return this.get('channels').mapBy('name');
   }),
 
+  sockethubChannelIds: computed('channels.@each.sockethubChannelId', function() {
+    return this.get('channels').mapBy('sockethubChannelId');
+  }),
+
   loggedChannels: computed('name', 'protocol', function() {
     if (this.get('name') === 'Freenode' && this.get('protocol') === 'IRC') {
       return ['#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',

@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import Message from 'hyperchannel/models/message';
 
 const {
   inject: {
@@ -135,6 +136,53 @@ export default Ember.Service.extend({
 
     this.log('send', 'sending message job', message);
     this.sockethub.socket.emit('message', message);
+  },
+
+  /**
+   * Add an incoming message to a channel
+   * @public
+   */
+  addMessageToChannel(message) {
+    const hostname = message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1];
+    const space = this.get('coms.spaces').findBy('server.hostname', hostname);
+
+    if (isEmpty(space)) {
+      Logger.warn('Could not find space for message', message);
+      return;
+    }
+
+    const nickname = space.get('userNickname');
+
+    let targetChannelName;
+    if (nickname === message.target.displayName) {
+      targetChannelName = message.actor.displayName || message.actor['@id'];
+    } else {
+      targetChannelName = message.target.displayName;
+    }
+
+    let channel = space.get('channels').findBy('name', targetChannelName);
+    if (!channel) {
+      channel = this.get('coms').createChannel(space, targetChannelName);
+    }
+
+    let messageType;
+    if (message.object['@type'] === 'me') {
+      messageType = 'message-chat-me';
+    } else {
+      messageType = 'message-chat';
+    }
+
+    const channelMessage = Message.create({
+      type: messageType,
+      date: new Date(message.published),
+      nickname: message.actor.displayName || message.actor['@id'],
+      content: message.object.content
+    });
+
+    // TODO should check for message and update sent status if exists
+    if (message.actor.displayName !== nickname) {
+      channel.addMessage(channelMessage);
+    }
   },
 
   /**
