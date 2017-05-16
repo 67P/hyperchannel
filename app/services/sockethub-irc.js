@@ -5,7 +5,8 @@ const {
   inject: {
     service
   },
-  isEmpty
+  isEmpty,
+  Logger
 } = Ember;
 
 
@@ -67,7 +68,7 @@ export default Ember.Service.extend({
       '@type': "person",
       displayName: space.get('server.nickname')
     };
-    Ember.Logger.debug('actor object', actorObject);
+    Logger.debug('actor object', actorObject);
 
     this.sockethub.ActivityStreams.Object.create(
       actorObject
