@@ -91,7 +91,8 @@ export default Ember.Service.extend({
   },
 
   handleJoinCompleted(space, message) {
-    var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
+    const channelId = message.target['@id'].split('/')[0];
+    const channel = space.get('channels').findBy('sockethubChannelId', channelId);
     if (!isEmpty(channel)) {
       channel.set('connected', true);
     } else {
@@ -112,7 +113,10 @@ export default Ember.Service.extend({
 
     let joinMsg = buildActivityObject(space, {
       '@type': 'join',
-      target: channel.get('sockethubChannelId'),
+      target: {
+        '@type': type,
+        '@id': `${channel.get('sockethubChannelId')}/${space.get('server.nickname')}`
+      },
       object: {
         '@type': 'person',
         '@id': space.get('sockethubPersonId'),
