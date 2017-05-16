@@ -30,7 +30,7 @@ export default Controller.extend({
 
   actions: {
     sendMessage: function() {
-      assert('Please define "sendMessage"');
+      assert('Please define "sendMessage" in the controller inheriting from BaseChannel');
     },
 
     executeCommand: function(newMessage) {
