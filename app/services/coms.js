@@ -71,6 +71,7 @@ export default Service.extend({
             this.instantiateChannels(data.space, data.channels);
             resolve();
           });
+          // resolve();
         } else {
           Object.keys(spaceData).forEach((id) => {
             let space = Space.create({
@@ -169,6 +170,8 @@ export default Service.extend({
   },
 
   removeUserFromChannelUserList(message) {
+    // TODO handle user quit leaves (multiple channels)
+    // e.g. target is `{ @type: 'service', @id: 'irc://irc.freenode.net' }`
     const channel = this.getChannelById(message.target['@id']);
     if (channel) {
       channel.removeUser(message.actor.displayName);
@@ -351,6 +354,8 @@ export default Service.extend({
       sockethubChannelId: platform.generateChannelId(space, userName)
     });
 
+    // TODO check if this is necesarry for XMPP,
+    // because for IRC it is not
     this.joinChannel(space, channel, "person");
     space.get('channels').pushObject(channel);
 
@@ -450,6 +455,14 @@ export default Service.extend({
             break;
         }
         break;
+      case 'request-friend':
+        var space = this.get('spaces').findBy('sockethubPersonId', message.target['@id']);
+        if (isPresent(space)) {
+          this.get('xmpp').handleFriendRequest(space, message);
+        } else {
+          Logger.warn('Could not find space for friend request', message);
+        }
+        break;
     }
   },
 
@@ -461,7 +474,11 @@ export default Service.extend({
     if (message.object['@type'] && (message.object['@type'] === 'error')) {
       // failed to join a channel
       let channel = this.getChannel(message.target['@id'], message.actor['@id']);
-      channel.set('connected', false);
+      if (isPresent(channel)) {
+        channel.set('connected', false);
+      } else {
+        Logger.warn('Could not find channel for error message', message);
+      }
     } else {
       this.addUserToChannelUserList(message);
     }
