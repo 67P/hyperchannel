@@ -102,20 +102,28 @@ export default Ember.Service.extend({
    * @public
    */
   join(space, channel, type) {
-    this.sockethub.ActivityStreams.Object.create({
-      '@type': type,
-      '@id': channel.get('sockethubChannelId'),
-      displayName: channel.get('name')
-    });
+    switch(type) {
+      case 'room':
+        this.sockethub.ActivityStreams.Object.create({
+          '@type': type,
+          '@id': channel.get('sockethubChannelId'),
+          displayName: channel.get('name')
+        });
 
-    let joinMsg = buildActivityObject(space, {
-      '@type': 'join',
-      target: channel.get('sockethubChannelId'),
-      object: {}
-    });
+        var joinMsg = buildActivityObject(space, {
+          '@type': 'join',
+          target: channel.get('sockethubChannelId'),
+          object: {}
+        });
 
-    this.log('irc', 'joining channel', joinMsg);
-    this.sockethub.socket.emit('message', joinMsg);
+        this.log('irc', 'joining channel', joinMsg);
+        this.sockethub.socket.emit('message', joinMsg);
+        break;
+      case 'person':
+        channel.set('connected', true);
+        break;
+    }
+
   },
 
   /**
@@ -155,16 +163,23 @@ export default Ember.Service.extend({
 
     const nickname = space.get('userNickname');
 
-    let targetChannelName;
+    let targetChannelName, channel;
     if (nickname === message.target.displayName) {
+      // direct message
       targetChannelName = message.actor.displayName || message.actor['@id'];
-    } else {
-      targetChannelName = message.target.displayName;
-    }
 
-    let channel = space.get('channels').findBy('name', targetChannelName);
-    if (!channel) {
-      channel = this.get('coms').createChannel(space, targetChannelName);
+      channel = space.get('channels').findBy('name', targetChannelName);
+      if (!channel) {
+        channel = this.get('coms').createUserChannel(space, targetChannelName);
+      }
+    } else {
+      // channel message
+      targetChannelName = message.target.displayName;
+
+      channel = space.get('channels').findBy('name', targetChannelName);
+      if (!channel) {
+        channel = this.get('coms').createChannel(space, targetChannelName);
+      }
     }
 
     let messageType;
@@ -192,22 +207,24 @@ export default Ember.Service.extend({
    * @public
    */
   leave(space, channel) {
-    // TODO Do we really need to create this room for leaving? It should
-    // already have been created when joining.
-    this.sockethub.ActivityStreams.Object.create({
-      '@type': "room",
-      '@id': channel.get('sockethubChannelId'),
-      displayName: channel.get('name')
-    });
+    if (!channel.get('isUserChannel')) {
+      // TODO Do we really need to create this room for leaving? It should
+      // already have been created when joining.
+      this.sockethub.ActivityStreams.Object.create({
+        '@type': "room",
+        '@id': channel.get('sockethubChannelId'),
+        displayName: channel.get('name')
+      });
 
-    let leaveMsg = buildActivityObject(space, {
-      '@type': 'leave',
-      target: channel.get('sockethubChannelId'),
-      object: {}
-    });
+      let leaveMsg = buildActivityObject(space, {
+        '@type': 'leave',
+        target: channel.get('sockethubChannelId'),
+        object: {}
+      });
 
-    this.log('leave', 'leaving channel', leaveMsg);
-    this.sockethub.socket.emit('message', leaveMsg);
+      this.log('leave', 'leaving channel', leaveMsg);
+      this.sockethub.socket.emit('message', leaveMsg);
+    }
   },
 
 

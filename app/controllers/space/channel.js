@@ -10,7 +10,8 @@ export default BaseChannel.extend({
         this.get('space.model'),
         {
           '@id': this.get('model.sockethubChannelId'),
-          '@type': 'room'
+          '@type': 'room',
+          displayName: this.get('model.name')
         },
         message.get('content')
       );
