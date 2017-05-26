@@ -140,6 +140,26 @@ export default Ember.Service.extend({
     this.sockethub.socket.emit('message', message);
   },
 
+  handlePresenceUpdate(message) {
+    if (message.target['@type'] === 'room') {
+      const targetChannelId = message.target['@id']
+      const space = this.get('coms.spaces').find(function(space) {
+        return space.get('sockethubChannelIds').includes(targetChannelId);
+      });
+      const channel = space.get('channels').findBy('sockethubChannelId', targetChannelId);
+
+      if (channel) {
+        if (message.object.presence === 'offline') {
+          channel.removeUser(message.actor.displayName);
+        } else {
+          channel.addUser(message.actor.displayName);
+        }
+      }
+    } else {
+      Logger.debug('Presence update:', message.actor['@id'], message.object.presence, message.object.status);
+    }
+  },
+
   /**
    * Add an incoming message to a channel
    * @public
