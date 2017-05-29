@@ -4,8 +4,7 @@ import moment from 'moment';
 
 const {
   computed,
-  isPresent,
-  isEmpty
+  isPresent
 } = Ember;
 
 export default Ember.Object.extend({
@@ -81,7 +80,7 @@ export default Ember.Object.extend({
   },
 
   addUser(username) {
-    if (isEmpty(this.get('userList').find(name => name === username))) {
+    if (!this.get('userList').includes(username)) {
       this.get('userList').pushObject(username);
     }
   },
