@@ -97,7 +97,7 @@ export default Service.extend({
    * @public
    */
   connectServer(space) {
-    this.getSockethubPlatformFor(space.get('protocol')).connect(space);
+    this.getServiceForSockethubPlatform(space.get('protocol')).connect(space);
   },
 
   connectAndAddSpace(space) {
@@ -113,7 +113,7 @@ export default Service.extend({
    * @public
    */
   joinChannel: function(space, channel, type) {
-    this.getSockethubPlatformFor(space.get('protocol')).join(space, channel, type);
+    this.getServiceForSockethubPlatform(space.get('protocol')).join(space, channel, type);
   },
 
   /**
@@ -129,7 +129,7 @@ export default Service.extend({
       '@type': channel.get('isUserChannel') ? 'person' : 'room',
       displayName: channel.get('name')
     };
-    this.getSockethubPlatformFor(space.get('protocol'))
+    this.getServiceForSockethubPlatform(space.get('protocol'))
       .transferMessage(space, target, content);
   },
 
@@ -285,7 +285,7 @@ export default Service.extend({
   },
 
   createChannel: function(space, channelName) {
-    const platform = this.getSockethubPlatformFor(space.get('protocol'));
+    const platform = this.getServiceForSockethubPlatform(space.get('protocol'));
 
     const channel = Channel.create({
       space: space,
@@ -354,7 +354,7 @@ export default Service.extend({
   },
 
   createUserChannel: function(space, userName) {
-    const platform = this.getSockethubPlatformFor(space.get('protocol'));
+    const platform = this.getServiceForSockethubPlatform(space.get('protocol'));
 
     const channel = UserChannel.create({
       space: space,
@@ -381,7 +381,7 @@ export default Service.extend({
     return channel;
   },
 
-  getSockethubPlatformFor(protocol) {
+  getServiceForSockethubPlatform(protocol) {
     return this.get(protocol.dasherize());
   },
 
@@ -443,7 +443,7 @@ export default Service.extend({
         switch(message.object['@type']) {
           case 'message':
           case 'me':
-            this.getSockethubPlatformFor(message.context).addMessageToChannel(message);
+            this.getServiceForSockethubPlatform(message.context).addMessageToChannel(message);
             break;
         }
         break;
