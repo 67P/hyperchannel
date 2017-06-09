@@ -456,7 +456,7 @@ export default Service.extend({
             this.updateUsername(message);
             break;
           case 'presence':
-            this.getSockethubPlatformFor(message.context).handlePresenceUpdate(message);
+            this.get('xmpp').handlePresenceUpdate(message);
             break;
           case 'error':
             Logger.warn('Got error update message', message.actor['@id'], message.object.content);
