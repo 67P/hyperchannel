@@ -118,9 +118,17 @@ export default Service.extend({
 
   /**
    * Invokes the send-message function on the appropriate transport service
+   * @param {Space} space
+   * @param {Channel} channel
+   * @param {string} content
    * @public
    */
-  transferMessage(space, target, content) {
+  transferMessage(space, channel, content) {
+    const target = {
+      '@id': channel.get('sockethubChannelId'),
+      '@type': channel.get('isUserChannel') ? 'person' : 'room',
+      displayName: channel.get('name')
+    };
     this.getSockethubPlatformFor(space.get('protocol'))
       .transferMessage(space, target, content);
   },
