@@ -103,6 +103,10 @@ export default Ember.Service.extend({
 
   /**
    * Join a channel/room
+   *
+   * @param {Space} space
+   * @param {Channel} channel
+   * @param {String} type - Type of channel. Can be "room" or "person".
    * @public
    */
   join(space, channel, type) {
@@ -115,8 +119,8 @@ export default Ember.Service.extend({
     let joinMsg = buildActivityObject(space, {
       '@type': 'join',
       target: {
-        '@type': type,
-        '@id': `${channel.get('sockethubChannelId')}/${space.get('server.nickname')}`
+        '@id': channel.get('sockethubChannelId'),
+        '@type': type
       },
       object: {
         '@type': 'person',
