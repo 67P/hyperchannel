@@ -161,43 +161,17 @@ export default Ember.Service.extend({
       return;
     }
 
-    const nickname = space.get('userNickname');
-
-    let targetChannelName, channel;
-    if (nickname === message.target.displayName) {
-      // direct message
-      targetChannelName = message.actor.displayName || message.actor['@id'];
-
-      channel = space.get('channels').findBy('name', targetChannelName);
-      if (!channel) {
-        channel = this.get('coms').createUserChannel(space, targetChannelName);
-      }
-    } else {
-      // channel message
-      targetChannelName = message.target.displayName;
-
-      channel = space.get('channels').findBy('name', targetChannelName);
-      if (!channel) {
-        channel = this.get('coms').createChannel(space, targetChannelName);
-      }
-    }
-
-    let messageType;
-    if (message.object['@type'] === 'me') {
-      messageType = 'message-chat-me';
-    } else {
-      messageType = 'message-chat';
-    }
+    const channel = this.getChannelForMessage(message);
 
     const channelMessage = Message.create({
-      type: messageType,
+      type: message.object['@type'] === 'me' ? 'message-chat-me' : 'message-chat',
       date: new Date(message.published),
       nickname: message.actor.displayName || message.actor['@id'],
       content: message.object.content
     });
 
     // TODO should check for message and update sent status if exists
-    if (message.actor.displayName !== nickname) {
+    if (channelMessage.get('nickname') !== space.get('userNickname')) {
       channel.addMessage(channelMessage);
     }
   },
@@ -263,15 +237,55 @@ export default Ember.Service.extend({
   },
 
   /**
+   * Generate a Sockethub Channel ID.
+   *
+   * @param {Space} space
+   * @param {String} channelName - name of the channel
+   * @returns {String} Sockethub channel ID
+   * @public
+   */
+  generateChannelId(space, channelName) {
+    return `irc://${space.get('server.hostname')}/${channelName}`;
+  },
+
+  /**
+   * Get the channel for the given space and message.
+   *
+   * @param {Space} space
+   * @param {Object} message
+   * @returns {Channel} channel
+   * @public
+   */
+  getChannelForMessage(space, message) {
+    let targetChannelName, channel;
+
+    if (space.get('userNickname') === message.target.displayName) {
+      // direct message
+      targetChannelName = message.actor.displayName || message.actor['@id'];
+
+      channel = space.get('channels').findBy('name', targetChannelName);
+      if (!channel) {
+        channel = this.get('coms').createUserChannel(space, targetChannelName);
+      }
+    } else {
+      // channel message
+      targetChannelName = message.target.displayName;
+
+      channel = space.get('channels').findBy('name', targetChannelName);
+      if (!channel) {
+        channel = this.get('coms').createChannel(space, targetChannelName);
+      }
+    }
+
+    return channel;
+  },
+
+  /**
    * Utility function for easier logging
    * @protected
    */
   log() {
     this.get('logger').log(...arguments);
-  },
-
-  generateChannelId(space, channelName) {
-    return `irc://${space.get('server.hostname')}/${channelName}`;
   }
 
 });

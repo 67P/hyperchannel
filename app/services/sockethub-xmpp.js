@@ -173,44 +173,17 @@ export default Ember.Service.extend({
       return;
     }
 
-    const targetChannelId = message.target['@id'];
-    let space;
-
-    if (message.target['@type'] === 'room') {
-      space = this.get('coms.spaces').find(function(space) {
-        return space.get('sockethubChannelIds').includes(targetChannelId);
-      });
-    } else {
-      space = this.get('coms.spaces').findBy('sockethubPersonId', targetChannelId);
-    }
+    const space = this.getSpaceForMessage(message);
 
     if (isEmpty(space)) {
       Logger.warn('Could not find space for message', message);
       return;
     }
 
-    let channel;
-    if (message.target['@type'] === 'room') {
-      channel = space.get('channels').findBy('sockethubChannelId', targetChannelId);
-      if (!channel) {
-        channel = this.get('coms').createChannel(space, targetChannelId);
-      }
-    } else {
-      channel = space.get('channels').findBy('sockethubChannelId', message.actor['@id']);
-      if (!channel) {
-        channel = this.get('coms').createUserChannel(space, message.actor['@id']);
-      }
-    }
-
-    let messageType;
-    if (message.object['@type'] === 'me') {
-      messageType = 'message-chat-me';
-    } else {
-      messageType = 'message-chat';
-    }
+    const channel = this.getChannelForMessage(message);
 
     const channelMessage = Message.create({
-      type: messageType,
+      type: message.object['@type'] === 'me' ? 'message-chat-me' : 'message-chat',
       date: new Date(message.published),
       nickname: message.actor.displayName || message.actor['@id'],
       content: message.object.content
@@ -223,15 +196,69 @@ export default Ember.Service.extend({
   },
 
   /**
+   * Generate a Sockethub Channel ID.
+   *
+   * @param {Space} space
+   * @param {String} channelName - name of the channel
+   * @returns {String} Sockethub channel ID
+   * @public
+   */
+  generateChannelId(space, channelName) {
+    return channelName;
+  },
+
+  /**
+   * Get the space for a given message.
+   *
+   * @param {Object} message
+   * @returns {Space} space
+   * @public
+   */
+  getSpaceForMessage(message) {
+    const targetChannelId = message.target['@id'];
+
+    if (message.target['@type'] === 'room') {
+      return this.get('coms.spaces').find(function(space) {
+        return space.get('sockethubChannelIds').includes(targetChannelId);
+      });
+    } else {
+      return this.get('coms.spaces').findBy('sockethubPersonId', targetChannelId);
+    }
+  },
+
+  /**
+   * Get the channel for the given space and message.
+   *
+   * @param {Space} space
+   * @param {Object} message
+   * @returns {Channel} channel
+   * @public
+   */
+  getChannelForMessage(space, message) {
+    const targetChannelId = message.target['@id'];
+    let channel;
+
+    if (message.target['@type'] === 'room') {
+      channel = space.get('channels').findBy('sockethubChannelId', targetChannelId);
+      if (!channel) {
+        channel = this.get('coms').createChannel(space, targetChannelId);
+      }
+    } else {
+      channel = space.get('channels').findBy('sockethubChannelId', message.actor['@id']);
+      if (!channel) {
+        channel = this.get('coms').createUserChannel(space, message.actor['@id']);
+      }
+    }
+
+    return channel;
+  },
+
+  /**
    * Utility function for easier logging
    * @private
    */
   log() {
     this.get('logger').log(...arguments);
-  },
-
-  generateChannelId(space, channelName) {
-    return channelName;
   }
 
 });

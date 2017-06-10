@@ -195,16 +195,18 @@ export default Service.extend({
 
     const space = this.get('spaces').findBy('server.hostname', hostname);
 
-    if (isPresent(space)) {
-      const channel = space.get('channels').findBy('sockethubChannelId', channelId);
-      if (isPresent(channel)) {
-        return channel;
-      } else {
-        Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
-      }
-    } else {
+    if (isEmpty(space)) {
       Ember.Logger.warn('Could not find space by hostname', hostname);
+      return;
     }
+
+    const channel = space.get('channels').findBy('sockethubChannelId', channelId);
+    if (isEmpty(channel)) {
+      Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
+      return;
+    }
+
+    return channel;
   },
 
   /**
@@ -213,16 +215,18 @@ export default Service.extend({
    */
   getChannel(personId, channelId) {
     const space = this.get('spaces').findBy('sockethubPersonId', personId);
-    if (isPresent(space)) {
-      const channel = space.get('channels').findBy('sockethubChannelId', channelId);
-      if (isPresent(channel)) {
-        return channel;
-      } else {
-        Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
-      }
-    } else {
+    if (isEmpty(space)) {
       Ember.Logger.warn('Could not find space by sockethubPersonId', personId);
+      return;
     }
+
+    const channel = space.get('channels').findBy('sockethubChannelId', channelId);
+    if (isEmpty(channel)) {
+      Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
+      return;
+    }
+
+    return channel;
   },
 
   updateUsername(message) {
