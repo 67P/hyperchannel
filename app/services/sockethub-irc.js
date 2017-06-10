@@ -13,8 +13,8 @@ const {
 /**
  * Build an activity object for sending to Sockethub
  *
- * @param space {Space} space model the activity belongs to
- * @param details {Object} the activity details
+ * @param {Space} space - space model the activity belongs to
+ * @param {Object} details - the activity details
  * @returns {Object} the activity object
  * @private
  */
@@ -123,7 +123,6 @@ export default Ember.Service.extend({
         channel.set('connected', true);
         break;
     }
-
   },
 
   /**
@@ -150,6 +149,7 @@ export default Ember.Service.extend({
 
   /**
    * Add an incoming message to a channel
+   * @param {Object} messsage
    * @public
    */
   addMessageToChannel(message) {

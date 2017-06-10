@@ -109,7 +109,7 @@ export default Service.extend({
    * Invokes the channel-join function on the appropriate transport service
    * @param {Space} space
    * @param {Channel} channel
-   * @param {string} type - Type of channel. Can be "room" or "person"
+   * @param {String} type - Type of channel. Can be "room" or "person"
    * @public
    */
   joinChannel: function(space, channel, type) {
@@ -120,7 +120,7 @@ export default Service.extend({
    * Invokes the send-message function on the appropriate transport service
    * @param {Space} space
    * @param {Channel} channel
-   * @param {string} content
+   * @param {String} content
    * @public
    */
   transferMessage(space, channel, content) {
@@ -210,8 +210,8 @@ export default Service.extend({
   },
 
   /**
-   * @param {string} personId
-   * @param {string} channelId
+   * @param {String} personId
+   * @param {String} channelId
    */
   getChannel(personId, channelId) {
     const space = this.get('spaces').findBy('sockethubPersonId', personId);

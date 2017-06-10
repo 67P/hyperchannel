@@ -166,6 +166,7 @@ export default Ember.Service.extend({
 
   /**
    * Add an incoming message to a channel
+   * @param {Object} messsage
    * @public
    */
   addMessageToChannel(message) {
