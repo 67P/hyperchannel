@@ -71,7 +71,6 @@ export default Service.extend({
             this.instantiateChannels(data.space, data.channels);
             resolve();
           });
-          // resolve();
         } else {
           Object.keys(spaceData).forEach((id) => {
             let space = Space.create({
@@ -465,14 +464,6 @@ export default Service.extend({
           case 'error':
             Logger.warn('Got error update message', message.actor['@id'], message.object.content);
             break;
-        }
-        break;
-      case 'request-friend':
-        var space = this.get('spaces').findBy('sockethubPersonId', message.target['@id']);
-        if (isPresent(space)) {
-          this.get('xmpp').handleFriendRequest(space, message);
-        } else {
-          Logger.warn('Could not find space for friend request', message);
         }
         break;
     }
