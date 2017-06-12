@@ -44,3 +44,15 @@ test('#channelNames returns names of the channels', function(assert) {
 
   assert.deepEqual(space.get('channelNames'), ['#kosmos', '#kosmos-dev', '#remotestorage']);
 });
+
+test('#sockethubChannelIds returns IDs of the channels', function(assert) {
+  let space = this.subject();
+
+  space.set('channels', [
+    Channel.create({ sockethubChannelId: 'irc://freenode.net/#kosmos' }),
+    Channel.create({ sockethubChannelId: 'irc://freenode.net/#kosmos-dev' }),
+    Channel.create({ sockethubChannelId: 'irc://freenode.net/#remotestorage' }),
+  ]);
+
+  assert.deepEqual(space.get('sockethubChannelIds'), ['irc://freenode.net/#kosmos', 'irc://freenode.net/#kosmos-dev', 'irc://freenode.net/#remotestorage']);
+});

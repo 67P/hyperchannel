@@ -63,6 +63,8 @@
     "ember-resolver": "^4.0.0",
     "ember-route-action-helper": "2.0.3",
     "ember-source": "~2.13.0",
+    "ember-sinon": "^0.7.0",
+    "ember-sinon-qunit": "^1.6.0",
     "liquid-fire": "0.27.2",
     "loader.js": "^4.2.3",
     "remotestorage-module-kosmos": "^1.0.0",
