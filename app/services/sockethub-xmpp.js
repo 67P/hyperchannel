@@ -118,14 +118,14 @@ export default Ember.Service.extend({
 
     let joinMsg = buildActivityObject(space, {
       '@type': 'join',
-      target: {
-        '@id': channel.get('sockethubChannelId'),
-        '@type': type
-      },
-      object: {
+      actor: {
         '@type': 'person',
         '@id': space.get('sockethubPersonId'),
         displayName: space.get('server.nickname')
+      },
+      target: {
+        '@id': channel.get('sockethubChannelId'),
+        '@type': type
       }
     });
 
