@@ -65,7 +65,7 @@
     "ember-source": "~2.13.0",
     "liquid-fire": "0.27.2",
     "loader.js": "^4.2.3",
-    "remotestorage-module-kosmos": "67P/remotestorage-module-kosmos",
-    "remotestoragejs": "remotestorage/remotestorage.js#1.0.0-alpha2"
+    "remotestorage-module-kosmos": "^1.0.0",
+    "remotestoragejs": "^1.0.0-alpha3"
   }
 }
