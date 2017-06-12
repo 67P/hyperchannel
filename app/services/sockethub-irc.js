@@ -161,7 +161,7 @@ export default Ember.Service.extend({
       return;
     }
 
-    const channel = this.getChannelForMessage(message);
+    const channel = this.getChannelForMessage(space, message);
 
     const channelMessage = Message.create({
       type: message.object['@type'] === 'me' ? 'message-chat-me' : 'message-chat',
