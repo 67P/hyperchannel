@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import Message from 'hyperchannel/models/message';
+import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
 
 const {
   inject: {
@@ -146,7 +146,7 @@ export default Ember.Service.extend({
 
   handlePresenceUpdate(message) {
     if (message.target['@type'] === 'room') {
-      const targetChannelId = message.target['@id']
+      const targetChannelId = message.target['@id'];
       const space = this.get('coms.spaces').find(function(space) {
         return space.get('sockethubChannelIds').includes(targetChannelId);
       });
@@ -182,13 +182,7 @@ export default Ember.Service.extend({
     }
 
     const channel = this.getChannelForMessage(space, message);
-
-    const channelMessage = Message.create({
-      type: message.object['@type'] === 'me' ? 'message-chat-me' : 'message-chat',
-      date: new Date(message.published),
-      nickname: message.actor.displayName || message.actor['@id'],
-      content: message.object.content
-    });
+    const channelMessage = channelMessageFromSockethubObject(message);
 
     // TODO should check for message and update sent status if exists
     if (channelMessage.get('nickname') !== space.get('userNickname')) {
