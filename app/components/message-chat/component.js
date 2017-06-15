@@ -46,9 +46,11 @@ export default Ember.Component.extend({
     }
 
     // Colors
-    out = out.replace(/\u0003(\d+)/g,'<span class="color-$1">')
-             .replace(/\"color-(\d)\"/g,'"color-0$1"')
-             .replace(/\u000f/, '</span>');
+    out = out.replace(/\u0003(\d+)/g, '<span class="color-$1">')
+             .replace(/\"color-(\d)\"/g, '"color-0$1"')
+             .replace(/\u0002/g, '<span class="bold">')
+             .replace(/\u001D/g, '<span class="italic">')
+             .replace(/\u000f/g,  '</span>');
 
     return htmlSafe(out);
   })
