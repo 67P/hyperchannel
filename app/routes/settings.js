@@ -2,9 +2,20 @@ import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
 import config from 'hyperchannel/config/environment';
 
-export default Ember.Route.extend({
+const {
+  Route,
+  inject: {
+    service
+  },
+  isEmpty,
+  Logger,
+  RSVP
+} = Ember;
 
-  storage: Ember.inject.service('remotestorage'),
+export default Route.extend({
+
+  storage: service('remotestorage'),
+  coms: service(),
 
   model() {
     let rsKosmos = this.get('storage.rs').kosmos;
@@ -12,18 +23,18 @@ export default Ember.Route.extend({
     let spaces = rsKosmos.spaces.getAll().then(
       res => {
         let col = [];
-        if (Ember.isEmpty(res)) { return col; }
+        if (isEmpty(res)) { return col; }
         Object.keys(res).forEach(id => {
           col.push(Space.create(res[id]));
         });
         return col;
       },
       e => {
-        Ember.Logger.error(e);
+        Logger.error(e);
       }
     );
 
-    return Ember.RSVP.hash({
+    return RSVP.hash({
       spaces: spaces,
       spacePresets: config.spacePresets.map((preset) => Space.create(preset))
     });
@@ -38,12 +49,14 @@ export default Ember.Route.extend({
 
     addSpace() {
       let newSpace = this.controller.get('newSpace');
+      newSpace.set('id', newSpace.get('name').dasherize());
 
       this.get('storage').saveSpace(newSpace)
         .then(() => {
+            this.get('coms').connectAndAddSpace(newSpace);
             this.modelFor('settings').spaces.pushObject(newSpace);
           }, e => {
-            Ember.Logger.error('error saving in RS', newSpace, e);
+            Logger.error('error saving in RS', newSpace, e);
           }
         );
     },
@@ -53,7 +66,7 @@ export default Ember.Route.extend({
         .then(() => {
             this.modelFor('settings').spaces.removeObject(space);
           }, e => {
-            Ember.Logger.error('error deleting from RS', space, e);
+            Logger.error('error deleting from RS', space, e);
           }
         );
     }

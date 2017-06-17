@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
 import RemoteStorage from 'npm:remotestoragejs';
-import 'npm:remotestorage-module-kosmos';
+import Kosmos from 'npm:remotestorage-module-kosmos';
 
 export default Ember.Service.extend({
 
@@ -10,7 +10,7 @@ export default Ember.Service.extend({
   rs: function() {
     if (this.get('rsInstance')) { return this.get('rsInstance'); }
 
-    let rs =  new RemoteStorage(/* {logging: true} */);
+    let rs =  new RemoteStorage({modules: [Kosmos.default]});
     rs.access.claim('kosmos', 'rw');
     rs.caching.enable('/kosmos/');
 

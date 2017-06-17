@@ -74,6 +74,7 @@ export default Service.extend({
         } else {
           Object.keys(spaceData).forEach((id) => {
             let space = Space.create({
+              id: id,
               name: spaceData[id].name,
               protocol: spaceData[id].protocol,
               server: spaceData[id].server
@@ -95,14 +96,7 @@ export default Service.extend({
    * @public
    */
   connectServer(space) {
-    switch (space.get('protocol')) {
-      case 'IRC':
-        this.get('irc').connect(space);
-        break;
-      case 'XMPP':
-        this.get('xmpp').connect(space);
-        break;
-    }
+    this.getServiceForSockethubPlatform(space.get('protocol')).connect(space);
   },
 
   connectAndAddSpace(space) {
@@ -114,30 +108,28 @@ export default Service.extend({
    * Invokes the channel-join function on the appropriate transport service
    * @param {Space} space
    * @param {Channel} channel
-   * @param {string} type - Type of channel. Can be "room" or "person"
+   * @param {String} type - Type of channel. Can be "room" or "person"
    * @public
    */
   joinChannel: function(space, channel, type) {
-    switch (space.get('protocol')) {
-      case 'IRC':
-        this.get('irc').join(space, channel, type);
-        break;
-      case 'XMPP':
-        this.get('xmpp').join(space, channel, type);
-        break;
-    }
+    this.getServiceForSockethubPlatform(space.get('protocol')).join(space, channel, type);
   },
 
   /**
    * Invokes the send-message function on the appropriate transport service
+   * @param {Space} space
+   * @param {Channel} channel
+   * @param {String} content
    * @public
    */
-  transferMessage(space, target, content) {
-    switch (space.get('protocol')) {
-      case 'IRC':
-        this.get('irc').transferMessage(space, target, content);
-        break;
-    }
+  transferMessage(space, channel, content) {
+    const target = {
+      '@id': channel.get('sockethubChannelId'),
+      '@type': channel.get('isUserChannel') ? 'person' : 'room',
+      displayName: channel.get('name')
+    };
+    this.getServiceForSockethubPlatform(space.get('protocol'))
+      .transferMessage(space, target, content);
   },
 
   /**
@@ -169,44 +161,71 @@ export default Service.extend({
   },
 
   updateChannelUserList(message) {
-    const channel = this.getChannelByMessage(message);
+    const channel = this.getChannelById(message.actor['@id']);
     if (channel) {
-      channel.set('userList', message.object.members.sort());
+      if (Array.isArray(message.object.members)) {
+        channel.set('userList', message.object.members.sort());
+      }
     }
   },
 
   addUserToChannelUserList(message) {
-    const channel = this.getChannelByMessage(message);
+    const channel = this.getChannelById(message.target['@id']);
     if (channel) {
-      channel.addUser(message.actor.displaName);
+      channel.addUser(message.actor.displayName);
     }
   },
 
   removeUserFromChannelUserList(message) {
-    const channel = this.getChannelByMessage(message);
+    // TODO handle user quit leaves (multiple channels)
+    // e.g. target is `{ @type: 'service', @id: 'irc://irc.freenode.net' }`
+    const channel = this.getChannelById(message.target['@id']);
     if (channel) {
       channel.removeUser(message.actor.displayName);
     }
   },
 
-  getChannelByMessage(message) {
-    var addressWithHostname, hostname;
-    if (typeof message.actor === 'object') {
-      addressWithHostname = message.actor['@id'];
-    } else if (typeof message.actor === 'string') {
-      addressWithHostname = message.actor;
+  getChannelById(channelId) {
+    // TODO handle multiple spaces with same hostname:
+    // This method should return an array of channels for all spaces with the
+    // same hostname
+
+    const hostname = channelId.match(/(?:irc:\/\/)?(?:.+@)?(.+?)(?:\/|$)/)[1];
+
+    const space = this.get('spaces').findBy('server.hostname', hostname);
+
+    if (isEmpty(space)) {
+      Ember.Logger.warn('Could not find space by hostname', hostname);
+      return;
     }
 
-    hostname = addressWithHostname.match(/irc:\/\/(?:.+@)?(.+?)(?:\/|$)/)[1];
-
-    var space = this.get('spaces').findBy('server.hostname', hostname);
-
-    if (!isEmpty(space)) {
-      var channel = space.get('channels').findBy('sockethubChannelId', message.actor['@id']);
-      if (!isEmpty(channel)) {
-        return channel;
-      }
+    const channel = space.get('channels').findBy('sockethubChannelId', channelId);
+    if (isEmpty(channel)) {
+      Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
+      return;
     }
+
+    return channel;
+  },
+
+  /**
+   * @param {String} personId
+   * @param {String} channelId
+   */
+  getChannel(personId, channelId) {
+    const space = this.get('spaces').findBy('sockethubPersonId', personId);
+    if (isEmpty(space)) {
+      Ember.Logger.warn('Could not find space by sockethubPersonId', personId);
+      return;
+    }
+
+    const channel = space.get('channels').findBy('sockethubChannelId', channelId);
+    if (isEmpty(channel)) {
+      Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
+      return;
+    }
+
+    return channel;
   },
 
   updateUsername(message) {
@@ -262,43 +281,6 @@ export default Service.extend({
     }
   },
 
-  addMessageToChannel: function(message) {
-    var space = this.get('spaces').findBy('server.hostname',
-                message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1]);
-    var nickname = space.get('userNickname');
-
-    var targetChannelName;
-    if (nickname === message.target.displayName) {
-      targetChannelName = message.actor.displayName;
-    } else {
-      targetChannelName = message.target.displayName;
-    }
-
-    var channel = space.get('channels').findBy('name', targetChannelName);
-    if (!channel) {
-      channel = this.createChannel(space, targetChannelName);
-    }
-
-    let messageType;
-    if (message.object['@type'] === 'me') {
-      messageType = 'message-chat-me';
-    } else {
-      messageType = 'message-chat';
-    }
-
-    var channelMessage = Message.create({
-      type: messageType,
-      date: new Date(message.published),
-      nickname: message.actor.displayName,
-      content: message.object.content
-    });
-
-    // TODO should check for message and update sent status if exists
-    if (message.actor.displayName !== nickname) {
-      channel.addMessage(channelMessage);
-    }
-  },
-
   instantiateChannels: function(space, channels) {
     channels.forEach((channelName) => {
       this.createChannel(space, channelName);
@@ -306,11 +288,12 @@ export default Service.extend({
   },
 
   createChannel: function(space, channelName) {
-    var channel = Channel.create({
+    const platform = this.getServiceForSockethubPlatform(space.get('protocol'));
+
+    const channel = Channel.create({
       space: space,
       name: channelName,
-      // TODO use IRC module
-      sockethubChannelId: `irc://${space.get('server.hostname')}/${channelName}`
+      sockethubChannelId: platform.generateChannelId(space, channelName)
     });
 
     this.joinChannel(space, channel, "room");
@@ -374,13 +357,16 @@ export default Service.extend({
   },
 
   createUserChannel: function(space, userName) {
-    var channel = UserChannel.create({
+    const platform = this.getServiceForSockethubPlatform(space.get('protocol'));
+
+    const channel = UserChannel.create({
       space: space,
       name: userName,
-      // TODO use IRC module
-      sockethubChannelId: `irc://${space.get('server.hostname')}/${userName}`
+      sockethubChannelId: platform.generateChannelId(space, userName)
     });
 
+    // TODO check if this is necesarry for XMPP,
+    // because for IRC it is not
     this.joinChannel(space, channel, "person");
     space.get('channels').pushObject(channel);
 
@@ -398,13 +384,16 @@ export default Service.extend({
     return channel;
   },
 
+  getServiceForSockethubPlatform(protocol) {
+    return this.get(protocol.dasherize());
+  },
+
   /*
    * @private
    *
    * Handles completed Sockethub actions:
    *
    *     - Successfully joined a channel
-   *     - Channel attendance list response
    */
   handleSockethubCompleted(message) {
     this.log(`${message.context}_completed`, message);
@@ -422,11 +411,8 @@ export default Service.extend({
 
         if (!isEmpty(space)) {
           this.get(message.context).handleJoinCompleted(space, message);
-        }
-        break;
-      case 'observe':
-        if (message.object['@type'] === 'attendance') {
-          this.updateChannelUserList(message);
+        } else {
+          Logger.warn('Could not find space for join message', message);
         }
         break;
     }
@@ -451,7 +437,7 @@ export default Service.extend({
         }
         break;
       case 'join':
-        this.addUserToChannelUserList(message);
+        this.handleChannelJoin(message);
         break;
       case 'leave':
         this.removeUserFromChannelUserList(message);
@@ -460,7 +446,7 @@ export default Service.extend({
         switch(message.object['@type']) {
           case 'message':
           case 'me':
-            this.addMessageToChannel(message);
+            this.getServiceForSockethubPlatform(message.context).addMessageToChannel(message);
             break;
         }
         break;
@@ -472,8 +458,32 @@ export default Service.extend({
           case 'address':
             this.updateUsername(message);
             break;
+          case 'presence':
+            this.get('xmpp').handlePresenceUpdate(message);
+            break;
+          case 'error':
+            Logger.warn('Got error update message', message.actor['@id'], message.object.content);
+            break;
         }
         break;
+    }
+  },
+
+  /**
+   * Handles the various checks assosciated with channel joins
+   * @private
+   */
+  handleChannelJoin(message) {
+    if (message.object['@type'] && (message.object['@type'] === 'error')) {
+      // failed to join a channel
+      let channel = this.getChannel(message.target['@id'], message.actor['@id']);
+      if (isPresent(channel)) {
+        channel.set('connected', false);
+      } else {
+        Logger.warn('Could not find channel for error message', message);
+      }
+    } else {
+      this.addUserToChannelUserList(message);
     }
   },
 

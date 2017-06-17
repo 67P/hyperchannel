@@ -53,7 +53,7 @@ export default Route.extend({
         return;
       }
 
-      if (!channelName.match(/^#/)) {
+      if (space.get('protocol') === 'IRC' && !channelName.match(/^#/)) {
         channelName = `#${channelName}`;
       }
       let channel = this.get('coms').createChannel(space, channelName);

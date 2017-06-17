@@ -42,9 +42,9 @@ export default Component.extend({
 
     processMessageOrCommand() {
       if (this.get('newMessage').substr(0, 1) === "/") {
-        this.attrs.onCommand(this.get('newMessage'));
+        this.onCommand(this.get('newMessage'));
       } else {
-        this.attrs.onMessage(this.get('newMessage'));
+        this.onMessage(this.get('newMessage'));
       }
     },
 

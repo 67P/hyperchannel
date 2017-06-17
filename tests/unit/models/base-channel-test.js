@@ -129,3 +129,30 @@ test('#isLogged returns false when channel is not logged', function(assert) {
 
   assert.notOk(channel.get('isLogged'));
 });
+
+//
+// addUser
+//
+
+test('#addUser adds a user to the list', function(assert) {
+  let channel = this.subject({
+    space: Space.create({ name: 'Freenode' }),
+    name: '#some-random-chan'
+  });
+
+  channel.addUser('some-random-user');
+
+  assert.ok(channel.get('userList').includes('some-random-user'));
+});
+
+test('#addUser does not add duplicates', function(assert) {
+  let channel = this.subject({
+    space: Space.create({ name: 'Freenode' }),
+    name: '#some-random-chan'
+  });
+
+  channel.addUser('some-random-user');
+  channel.addUser('some-random-user');
+
+  assert.deepEqual(channel.get('userList'), ['some-random-user']);
+});

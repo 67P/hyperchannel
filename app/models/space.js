@@ -36,6 +36,10 @@ export default Ember.Object.extend({
     return this.get('channels').mapBy('name');
   }),
 
+  sockethubChannelIds: computed('channels.@each.sockethubChannelId', function() {
+    return this.get('channels').mapBy('sockethubChannelId');
+  }),
+
   loggedChannels: computed('name', 'protocol', function() {
     if (this.get('name') === 'Freenode' && this.get('protocol') === 'IRC') {
       return ['#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',
@@ -45,12 +49,6 @@ export default Ember.Object.extend({
       return [];
     }
   }),
-
-  id: function() {
-    // This could be based on server type in the future. E.g. IRC would be
-    // server URL, while Campfire would be another id.
-    return this.get('name').toLowerCase();
-  }.property('name'),
 
   userNickname: computed.alias('server.nickname'),
 
@@ -72,10 +70,12 @@ export default Ember.Object.extend({
     let personID;
     switch (this.get('protocol')) {
       case 'IRC':
+        // TODO - remove the use of any URI protocol part
         personID = `irc://${this.get('server.nickname')}@${this.get('server.hostname')}`;
         break;
       case 'XMPP':
-        personID = `xmpp://${this.get('server.username')}@${this.get('server.hostname')}`;
+        // TODO - why isn't the full JID user+host+resource?
+        personID = `${this.get('server.username')}/hyperchannel`;
         break;
     }
     return personID;
@@ -86,7 +86,7 @@ export default Ember.Object.extend({
 
   serialize() {
     let serialized = {
-      id: this.get('id'),
+      id: this.get('id') || this.get('name').dasherize(),
       name: this.get('name'),
       protocol: this.get('protocol'),
       server: {
