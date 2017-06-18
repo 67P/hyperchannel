@@ -33,8 +33,8 @@
   "devDependencies": {
     "autoprefixer": "^7.0.1",
     "bower": "^1.8.0",
-    "broccoli-asset-rev": "^2.4.5",
-    "broccoli-serviceworker": "0.1.4",
+    "broccoli-asset-rev": "^2.5.0",
+    "broccoli-serviceworker": "0.1.6",
     "ember-ajax": "^3.0.0",
     "ember-browserify": "^1.1.13",
     "ember-cli": "2.13.1",
