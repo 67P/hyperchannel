@@ -1,3 +1,4 @@
+/* global module, require */
 /* eslint-env node */
 const fs = require('fs');
 let spacePresets = JSON.parse(fs.readFileSync('config/space-presets.json'));
