@@ -40,7 +40,8 @@ export default Ember.Component.extend({
         validate: {
           url: function (value) {
             return /^(http)s?:\/\//.test(value);
-          }
+          },
+          email: function () { return false; }
         }
       });
     }
