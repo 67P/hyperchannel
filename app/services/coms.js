@@ -163,6 +163,7 @@ export default Service.extend({
   updateChannelUserList(message) {
     const channel = this.getChannelById(message.actor['@id']);
     if (channel) {
+      channel.set('connected', true);
       if (Array.isArray(message.object.members)) {
         channel.set('userList', message.object.members.sort());
       }
