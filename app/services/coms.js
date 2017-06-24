@@ -161,7 +161,16 @@ export default Service.extend({
   },
 
   updateChannelUserList(message) {
-    const channel = this.getChannelById(message.actor['@id']);
+    let channel;
+    switch(message.context) {
+      case 'irc':
+        channel = this.getChannelById(message.actor['@id']);
+        break;
+      case 'xmpp':
+        channel = this.getChannel(message.target['@id'], message.actor['@id']);
+        break;
+    }
+
     if (channel) {
       channel.set('connected', true);
       if (Array.isArray(message.object.members)) {
