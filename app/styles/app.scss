@@ -115,6 +115,10 @@ header {
         height: $headerHeight;
         line-height: $headerHeight;
         margin-right: 1em;
+        &.disconnected {
+          opacity: 0.5;
+          transition: opacity 0.2s linear;
+        }
       }
       p#channel-title {
         display: inline;
