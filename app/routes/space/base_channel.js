@@ -52,8 +52,12 @@ export default Route.extend({
       this.set('userSettings.currentSpace', space.get('id'));
       this.set('userSettings.currentChannel', channel.get('slug'));
 
+      // Mark all other channels as inactive/invisible
+      this.get('coms.spaces').forEach((space) => {
+        space.get('channels').setEach('visible', false);
+      });
+
       // Mark channel as active/visible
-      space.get('channels').setEach('visible', false);
       channel.set('visible', true);
 
       // Mark unread messages as read
