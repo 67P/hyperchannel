@@ -1,3 +1,4 @@
+/* global Hammer */
 import Ember from 'ember';
 
 const {
@@ -36,6 +37,13 @@ export default Component.extend({
     this._super(...arguments);
 
     scheduleOnce('afterRender', scrollToBottom);
+
+    // We need to define an empty handler for swipe events on the
+    // #channel-content element, so that the actual handler of the app container
+    // component gets triggered
+    scheduleOnce('afterRender', function() {
+      Hammer(document.getElementById('channel-content')).on('swipe', function(){});
+    });
   },
 
   actions: {
