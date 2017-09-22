@@ -244,7 +244,7 @@ export default Service.extend({
     if (typeof message.target === 'object') {
       hostname = message.target['@id'].match(/irc:\/\/(.+)\//)[1];
     } else if (typeof message.actor === 'string') {
-      hostname = message.actor.match(/irc:\/\/.+\@(.+)/)[1];
+      hostname = message.actor.match(/irc:\/\/.+@(.+)/)[1];
     }
 
     let space = this.get('spaces').findBy('server.hostname', hostname);

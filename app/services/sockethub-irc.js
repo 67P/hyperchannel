@@ -152,7 +152,7 @@ export default Ember.Service.extend({
    * @public
    */
   addMessageToChannel(message) {
-    const hostname = message.actor['@id'].match(/irc:\/\/.+\@(.+)/)[1];
+    const hostname = message.actor['@id'].match(/irc:\/\/.+@(.+)/)[1];
     const space = this.get('coms.spaces').findBy('server.hostname', hostname);
 
     if (isEmpty(space)) {
