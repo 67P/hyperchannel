@@ -55,7 +55,7 @@
     "ember-cli-uglify": "^1.2.0",
     "ember-elsewhere": "1.0.0",
     "ember-export-application-global": "^2.0.0",
-    "ember-gestures": "67p/ember-gestures#dcd4db05",
+    "ember-gestures": "0.4.7",
     "ember-hammertime": "1.2.4",
     "ember-load-initializers": "^1.0.0",
     "ember-local-storage": "1.3.5",
