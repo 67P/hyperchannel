@@ -1,12 +1,14 @@
 /* global module, require */
 /* eslint-env node */
+'use strict';
+
 const fs = require('fs');
 let spacePresets = JSON.parse(fs.readFileSync('config/space-presets.json'));
 
 module.exports = function(environment) {
-  var ENV = {
+  let ENV = {
     modulePrefix: 'hyperchannel',
-    environment: environment,
+    environment,
     rootURL: '/',
     locationType: 'auto',
     EmberENV: {

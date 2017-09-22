@@ -24,7 +24,7 @@ You will need the following things properly installed on your computer.
 * [Git](https://git-scm.com/)
 * [Node.js](https://nodejs.org/) (with NPM)
 * [Sockethub](http://sockethub.org/)
-* [PhantomJS](http://phantomjs.org/)
+* [Google Chrome](https://google.com/chrome/)
 
 ## Installation
 
@@ -70,7 +70,7 @@ not use moduleForModel, as we're not using Ember Data. See existing tests.
 ## Further Reading / Useful Links
 
 * [ember.js](https://emberjs.com/)
-* [ember-cli](https://www.ember-cli.com/)
+* [ember-cli](https://ember-cli.com/)
 * Development Browser Extensions
   * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
   * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
