@@ -6,6 +6,9 @@ node_js:
 
 sudo: false
 
+addons:
+  chrome: stable
+
 cache:
   directories:
     - $HOME/.npm
@@ -14,8 +17,6 @@ before_install:
   - npm config set spin false
   - npm install -g bower
   - bower --version
-  - npm install -g phantomjs-prebuilt
-  - phantomjs --version
 
 install:
   - npm install

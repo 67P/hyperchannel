@@ -1,5 +1,8 @@
 /* eslint-env node */
 /* global require, module */
+
+'use strict';
+
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 var autoprefixer = require('autoprefixer');
 
