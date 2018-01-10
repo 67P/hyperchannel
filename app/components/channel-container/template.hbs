@@ -1,6 +1,6 @@
 <main>
   <header id="channel-header" {{action "menu" "global" "toggle"}} onClick="">
-    <h2 id="channel-name">{{channel.name}}</h2>
+    <h2 id="channel-name" class="{{if channel.connected "connected" "disconnected"}}">{{channel.name}}</h2>
     <p id="channel-title">{{channel.formattedTopic}}</p>
     <nav>
       <a href="#"><i class="icon-megaphone"></i></a><a href="#"><i class="icon-mute"></i></a>
