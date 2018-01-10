@@ -82,10 +82,14 @@ div#channel {
 
   transform: none;
   transition: transform 0.4s;
+  overflow: auto;
+  overflow-wrap: break-word;
 
   main {
     flex: 1;
     @include app-column;
+
+    overflow: auto;
   }
 
   aside {
