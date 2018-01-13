@@ -1,15 +1,11 @@
 /* global linkifyStr */
-import Ember from 'ember';
+import Component from '@ember/component';
+
+import { computed } from '@ember/object';
+import { htmlSafe } from '@ember/string';
 import moment from 'moment';
 
-const {
-  computed,
-  String: {
-    htmlSafe
-  }
-} = Ember;
-
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'div',
   classNames: ['chat-message'],
 

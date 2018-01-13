@@ -1,9 +1,10 @@
+import Service from '@ember/service';
 import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
 import RemoteStorage from 'npm:remotestoragejs';
 import Kosmos from 'npm:remotestorage-module-kosmos';
 
-export default Ember.Service.extend({
+export default Service.extend({
 
   rsInstance: null,
 

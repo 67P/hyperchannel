@@ -1,7 +1,7 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import Space from 'hyperchannel/models/space';
 
-export default Ember.Component.extend({
+export default Component.extend({
 
   settings: null,
   space: null,

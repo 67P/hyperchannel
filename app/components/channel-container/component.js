@@ -1,20 +1,14 @@
 /* global Hammer */
-import Ember from 'ember';
+import $ from 'jquery';
 
-const {
-  Component,
-  observer,
-  run: {
-    scheduleOnce
-  },
-  inject: {
-    service
-  }
-} = Ember;
+import Component from '@ember/component';
+import { observer } from '@ember/object';
+import { scheduleOnce } from '@ember/runloop';
+import { inject as service } from '@ember/service';
 
 function scrollToBottom() {
-  Ember.$('#channel-content').animate({
-    scrollTop: Ember.$('#channel-content ul').height()
+  $('#channel-content').animate({
+    scrollTop: $('#channel-content ul').height()
   }, '500');
 }
 

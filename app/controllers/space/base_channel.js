@@ -1,14 +1,11 @@
+import Controller, { inject as controller } from '@ember/controller';
+import { inject as service } from '@ember/service';
+import { isPresent } from '@ember/utils';
 import Ember from 'ember';
 import Message from 'hyperchannel/models/message';
 
 const {
-  Controller,
-  inject: {
-    controller,
-    service
-  },
-  Logger,
-  isPresent
+  Logger
 } = Ember;
 
 export default Controller.extend({

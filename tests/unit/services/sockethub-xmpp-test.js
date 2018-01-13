@@ -1,5 +1,5 @@
+import Service from '@ember/service';
 import { moduleFor, test } from 'ember-qunit';
-import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 
@@ -10,7 +10,7 @@ moduleFor('service:sockethub-xmpp', 'Unit | Service | sockethub xmpp', {
 test('#handlePresenceUpdate adds new users to the channel', function(assert) {
   const channel = Channel.create({ sockethubChannelId: 'some-channel' });
   const space = Space.create();
-  const comsStub = Ember.Service.create({ spaces: [space] });
+  const comsStub = Service.create({ spaces: [space] });
   const service = this.subject({ coms: comsStub });
 
   space.get('channels').pushObject(channel);
@@ -36,7 +36,7 @@ test('#handlePresenceUpdate adds new users to the channel', function(assert) {
 test('#handlePresenceUpdate removes offline users from the channel', function(assert) {
   const channel = Channel.create({ sockethubChannelId: 'some-channel' });
   const space = Space.create();
-  const comsStub = Ember.Service.create({ spaces: [space] });
+  const comsStub = Service.create({ spaces: [space] });
 
   channel.addUser('some_user');
   space.get('channels').pushObject(channel);
@@ -71,7 +71,7 @@ test('#generateChannelId returns a Sockethub channel ID', function(assert) {
 test('#getSpaceForMessage returns the space for a given message', function(assert) {
   const space = Space.create();
   const channel = Channel.create({ sockethubChannelId: 'some-channel@some-server.com' });
-  const comsStub = Ember.Service.create({ spaces: [space] });
+  const comsStub = Service.create({ spaces: [space] });
   const service = this.subject({ coms: comsStub });
 
   space.get('channels').pushObject(channel);
@@ -99,7 +99,7 @@ test('#getSpaceForMessage returns the space for a given message', function(asser
 test('#getChannelForMessage returns the channel for a given message', function(assert) {
   const space = Space.create();
   const channel = Channel.create({ sockethubChannelId: 'some-channel@some-server.com' });
-  const comsStub = Ember.Service.create({ spaces: [space] });
+  const comsStub = Service.create({ spaces: [space] });
   const service = this.subject({ coms: comsStub });
 
   space.get('channels').pushObject(channel);
@@ -127,7 +127,7 @@ test('#getChannelForMessage returns the channel for a given message', function(a
 test('#addMessageToChannel adds the message to the channel', function(assert) {
   const space = Space.create();
   const channel = Channel.create({ sockethubChannelId: 'some-channel@some-server.com' });
-  const comsStub = Ember.Service.create({ spaces: [space] });
+  const comsStub = Service.create({ spaces: [space] });
   const service = this.subject({ coms: comsStub });
 
   space.get('channels').pushObject(channel);

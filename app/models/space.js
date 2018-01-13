@@ -1,11 +1,8 @@
-import Ember from 'ember';
+import { alias, sort } from '@ember/object/computed';
+import EmberObject, { computed } from '@ember/object';
+import { isPresent } from '@ember/utils';
 
-const {
-  computed,
-  isPresent,
-} = Ember;
-
-export default Ember.Object.extend({
+export default EmberObject.extend({
 
   name      : null,
   protocol  : 'IRC',
@@ -50,7 +47,7 @@ export default Ember.Object.extend({
     }
   }),
 
-  userNickname: computed.alias('server.nickname'),
+  userNickname: alias('server.nickname'),
 
   updateUsername(username) {
     // keep track of old name for later reference
@@ -82,7 +79,7 @@ export default Ember.Object.extend({
   }.property('protocol', 'server.hostname', 'server.username', 'server.nickname'),
 
   channelSorting: ['name'],
-  sortedChannels: computed.sort('channels', 'channelSorting'),
+  sortedChannels: sort('channels', 'channelSorting'),
 
   serialize() {
     let serialized = {

@@ -1,15 +1,13 @@
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import { isEmpty } from '@ember/utils';
+import RSVP from 'rsvp';
 import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
 import config from 'hyperchannel/config/environment';
 
 const {
-  Route,
-  inject: {
-    service
-  },
-  isEmpty,
-  Logger,
-  RSVP
+  Logger
 } = Ember;
 
 export default Route.extend({

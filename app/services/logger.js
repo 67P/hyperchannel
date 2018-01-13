@@ -1,8 +1,5 @@
+import Service from '@ember/service';
 import Ember from 'ember';
-
-const {
-  Service
-} = Ember;
 
 export default Service.extend({
   enabled: true,

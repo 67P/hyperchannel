@@ -1,12 +1,6 @@
-import Ember from 'ember';
-
-const {
-  Route,
-  inject: {
-    service
-  },
-  isEmpty
-} = Ember;
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import { isEmpty } from '@ember/utils';
 
 export default Route.extend({
   logger: service(),

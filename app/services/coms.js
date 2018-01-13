@@ -1,3 +1,7 @@
+import Service, { inject as service } from '@ember/service';
+import RSVP from 'rsvp';
+import { isPresent, isEmpty } from '@ember/utils';
+import { get } from '@ember/object';
 import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
@@ -8,15 +12,7 @@ import moment from 'moment';
 import { storageFor as localStorageFor } from 'ember-local-storage';
 
 const {
-  Service,
-  inject: {
-    service
-  },
-  RSVP,
-  isEmpty,
-  isPresent,
-  Logger,
-  get
+  Logger
 } = Ember;
 
 /**
