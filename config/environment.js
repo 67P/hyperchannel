@@ -63,8 +63,8 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
 
-    ENV.serviceWorker.enabled = true;
-    ENV.serviceWorker.includeRegistration = true;
+    // ENV.serviceWorker.enabled = true;
+    // ENV.serviceWorker.includeRegistration = true;
   }
 
   if (environment === 'test') {
