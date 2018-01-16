@@ -6,18 +6,17 @@ import Kosmos from 'npm:remotestorage-module-kosmos';
 
 export default Service.extend({
 
-  rsInstance: null,
+  rs: null,
 
-  rs: function() {
-    if (this.get('rsInstance')) { return this.get('rsInstance'); }
+  init () {
+    this._super(...arguments);
 
-    let rs =  new RemoteStorage({modules: [Kosmos.default]});
+    const rs =  new RemoteStorage({modules: [Kosmos.default]});
     rs.access.claim('kosmos', 'rw');
     rs.caching.enable('/kosmos/');
 
-    this.set('rsInstance', rs);
-    return rs;
-  }.property('rsInstance'),
+    this.set('rs', rs);
+  },
 
   addDefaultSpace() {
     let nickname = window.prompt("Choose a nickname");
@@ -48,7 +47,10 @@ export default Service.extend({
         let channels = params.channels;
         delete params.channels;
 
-        return { space: Space.create(params), channels: channels };
+        const space = Space.create();
+        space.setProperties(params);
+
+        return { space, channels };
       });
   },
 

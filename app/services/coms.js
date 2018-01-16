@@ -69,7 +69,8 @@ export default Service.extend({
           });
         } else {
           Object.keys(spaceData).forEach((id) => {
-            let space = Space.create({
+            const space = Space.create();
+            space.setProperties({
               id: id,
               name: spaceData[id].name,
               protocol: spaceData[id].protocol,

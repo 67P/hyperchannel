@@ -7,9 +7,9 @@ const Router = EmberRouter.extend({
 });
 
 Router.map(function() {
-  this.route('space', {path: '/:id'}, function() {
-    this.route('channel', {path: '/channel/:slug'});
-    this.route('userChannel', {path: '/user/:slug'});
+  this.route('space', { path: '/:id' }, function() {
+    this.route('channel', { path: '/channel/:slug' });
+    this.route('user-channel', { path: '/user/:slug' });
   });
 
   this.route('settings');

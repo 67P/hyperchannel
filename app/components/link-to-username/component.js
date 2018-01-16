@@ -5,11 +5,16 @@ import { isPresent } from '@ember/utils';
 export default Component.extend({
 
   username: null,
+  roles: null,
 
-  roles: {
-    '@': 'op',
-    '%': 'half-op',
-    '+': 'voice'
+  init () {
+    this._super(...arguments);
+
+    this.set('roles', {
+      '@': 'op',
+      '%': 'half-op',
+      '+': 'voice'
+    });
   },
 
   role: computed('username', 'roles', function() {

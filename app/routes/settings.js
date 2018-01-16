@@ -23,7 +23,9 @@ export default Route.extend({
         let col = [];
         if (isEmpty(res)) { return col; }
         Object.keys(res).forEach(id => {
-          col.push(Space.create(res[id]));
+          const space = Space.create();
+          space.setProperties(res[id]);
+          col.push(space);
         });
         return col;
       },
@@ -34,7 +36,11 @@ export default Route.extend({
 
     return RSVP.hash({
       spaces: spaces,
-      spacePresets: config.spacePresets.map((preset) => Space.create(preset))
+      spacePresets: config.spacePresets.map((preset) => {
+        const space = Space.create();
+        space.setProperties(preset);
+        return space;
+      })
     });
   },
 

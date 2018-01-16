@@ -35,9 +35,9 @@ module.exports = function(environment) {
     // precacheURLs: [
     // ],
     networkFirstURLs: [
-      /activity\-streams\.js/,
+      /activity-streams\.js/,
       /socket\.io\.js/,
-      /sockethub\-client\.js/
+      /sockethub-client\.js/
     ],
     excludePaths: [/test.*/, 'robots.txt', 'crossdomain.xml']
     // fallback: [

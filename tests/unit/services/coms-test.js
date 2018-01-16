@@ -16,7 +16,8 @@ test('#connectServer calls connect on the appropriate transport service', functi
   const connectStub = this.stub(ircStub, 'connect');
   const service = this.subject({ irc: ircStub });
 
-  const space = Space.create({ protocol: 'IRC' });
+  const space = Space.create();
+  space.set('protocol', 'IRC');
 
   service.connectServer(space);
 
@@ -31,7 +32,8 @@ test('#joinChannel calls join on the appropriate transport service', function(as
   const joinStub = this.stub(xmppStub, 'join');
   const service = this.subject({ xmpp: xmppStub });
 
-  const space = Space.create({ protocol: 'XMPP' });
+  const space = Space.create();
+  space.set('protocol', 'XMPP');
   const channel = Channel.create({});
 
   service.joinChannel(space, channel, 'room');
@@ -53,7 +55,8 @@ test('#transferMessage calls transferMessage on the appropriate transport servic
 
   const service = this.subject({ xmpp: xmppStub });
 
-  const space = Space.create({ protocol: 'XMPP', name: 'Testspace' });
+  const space = Space.create();
+  space.setProperties({ protocol: 'XMPP', name: 'Testspace' });
   const channel = Channel.create({
     name: 'testchannel',
     sockethubChannelId: 'testspace-testchannel',
@@ -85,7 +88,8 @@ test('#updateChannelUserList updates the users and connects the channel', functi
     "published": "2017-06-23T15:44:54.383Z"
   };
 
-  const space = Space.create({
+  const space = Space.create();
+  space.setProperties({
     protocol: 'IRC',
     name: 'Freenode',
     server: { hostname: 'irc.freenode.net' }

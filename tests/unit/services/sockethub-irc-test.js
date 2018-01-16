@@ -46,7 +46,8 @@ test('#join directly connects a person channel', function(assert) {
 
 test('#generateChannelId returns a Sockethub channel ID', function(assert) {
   const service = this.subject();
-  const space = Space.create({
+  const space = Space.create();
+  space.setProperties({
     server: {
       hostname: 'freenode.net'
     }

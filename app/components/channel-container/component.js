@@ -51,7 +51,7 @@ export default Component.extend({
     },
 
     menu(which, what) {
-      this.sendAction('menu', which, what);
+      this.get('menu')(which, what);
     },
 
     loadPreviousMessages() {

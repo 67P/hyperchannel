@@ -10,7 +10,9 @@ export default Component.extend({
     this._super(...arguments);
 
     // create a clone of the settings that we can operate on
-    this.set('space', Space.create(this.get('settings').serialize()));
+    const space = Space.create();
+    space.setProperties(this.get('settings').serialize());
+    this.set('space', space);
   },
 
   actions: {

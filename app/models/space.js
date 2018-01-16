@@ -4,29 +4,36 @@ import { isPresent } from '@ember/utils';
 
 export default EmberObject.extend({
 
-  name      : null,
-  protocol  : 'IRC',
-  server : {
-    hostname: null,
-    port: 7000,
-    secure: true,
-    username: null,
-    password: null,
-    nickname: null,
-    nickServ: {
-      password: null
-    }
-  },
-  channels   : null, // Channel instances
+  name    : null,
+  protocol: 'IRC',
+  server  : null,
+  channels: null, // Channel instances
 
   // Keep a list of all old sockethubPersonIds, because there might
   // still be coming events from Sockethub for those.
   previousSockethubPersonIds: null,
 
-  init() {
-    this._super(...arguments);
+  channelSorting: null,
+  sortedChannels: sort('channels', 'channelSorting'),
+
+  init () {
+    this.set('channelSorting', ['name']);
     this.set('channels', []);
     this.set('previousSockethubPersonIds', []);
+
+    this.set('server', {
+      hostname: null,
+      port: 7000,
+      secure: true,
+      username: null,
+      password: null,
+      nickname: null,
+      nickServ: {
+        password: null
+      }
+    });
+
+    this._super(...arguments);
   },
 
   channelNames: computed('channels.@each.name', function() {
@@ -63,7 +70,7 @@ export default EmberObject.extend({
     }
   },
 
-  sockethubPersonId: function() {
+  sockethubPersonId: computed('protocol', 'server.{hostname,username,nickname}', function () {
     let personID;
     switch (this.get('protocol')) {
       case 'IRC':
@@ -76,10 +83,7 @@ export default EmberObject.extend({
         break;
     }
     return personID;
-  }.property('protocol', 'server.hostname', 'server.username', 'server.nickname'),
-
-  channelSorting: ['name'],
-  sortedChannels: sort('channels', 'channelSorting'),
+  }),
 
   serialize() {
     let serialized = {
