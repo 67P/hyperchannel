@@ -6,6 +6,9 @@ node_js:
 
 sudo: required
 
+services:
+  - redis-server
+
 addons:
   chrome: stable
 
@@ -25,6 +28,10 @@ before_install:
 
 install:
   - npm install
+  - npm install sockethub
+
+before_script:
+  - ./node_modules/sockethub/bin/sockethub 2> /dev/null &
 
 script:
   - npm run lint:js
