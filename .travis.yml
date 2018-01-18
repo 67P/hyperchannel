@@ -15,6 +15,7 @@ addons:
 cache:
   directories:
     - $HOME/.npm
+    - $HOME/sockethub
 
 env:
   global:
@@ -27,11 +28,16 @@ before_install:
   - bower --version
 
 install:
-  - npm install
+  - mkdir -p $HOME/sockethub
+  - cd $HOME/sockethub
   - npm install sockethub
+  - cd node_modules/sockethub
+  - npm install
+  - cd $TRAVIS_BUILD_DIR
+  - npm install
 
 before_script:
-  - ./node_modules/sockethub/bin/sockethub 2> /dev/null &
+  - $HOME/sockethub/node_modules/sockethub/bin/sockethub 2> /dev/null &
 
 script:
   - npm run lint:js
