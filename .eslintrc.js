@@ -15,6 +15,7 @@ module.exports = {
     browser: true
   },
   rules: {
+    "no-control-regex": "off"
   },
   overrides: [
     // node files
