@@ -1,7 +1,7 @@
-import Ember from 'ember';
+import Route from '@ember/routing/route';
 import { storageFor as localStorageFor } from 'ember-local-storage';
 
-export default Ember.Route.extend({
+export default Route.extend({
 
   userSettings: localStorageFor('user-settings'),
 

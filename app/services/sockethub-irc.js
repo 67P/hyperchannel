@@ -1,11 +1,10 @@
+import $ from 'jquery';
+import Service, { inject as service } from '@ember/service';
+import { isEmpty } from '@ember/utils';
 import Ember from 'ember';
 import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
 
 const {
-  inject: {
-    service
-  },
-  isEmpty,
   Logger
 } = Ember;
 
@@ -24,7 +23,7 @@ function buildActivityObject(space, details) {
     actor: space.get('sockethubPersonId')
   };
 
-  return Ember.$.extend({}, baseObject, details);
+  return $.extend({}, baseObject, details);
 }
 
 /**
@@ -51,7 +50,7 @@ function buildMessageObject(space, target, content, type='message') {
  * This service provides helpers for SocketHub IRC communications
  * @module hyperchannel/services/sockethub-irc
  */
-export default Ember.Service.extend({
+export default Service.extend({
 
   logger: service(),
   coms: service(),

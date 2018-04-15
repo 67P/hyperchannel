@@ -1,17 +1,19 @@
-import Ember from 'ember';
+import { later } from '@ember/runloop';
+import { computed } from '@ember/object';
+import Component from '@ember/component';
 import moment from 'moment';
 
-export default Ember.Component.extend({
+export default Component.extend({
 
   classNames: ['date-headline'],
 
   updateInterval: 120000, // 2 minutes
 
-  headline: Ember.computed('message.date', function() {
+  headline: computed('message.date', function() {
     let date = moment(this.get('message.date'));
 
     let scheduleUpdate = () => {
-      Ember.run.later(() => {
+      later(() => {
         this.notifyPropertyChange('message.date');
       }, this.get('updateInterval'));
     };
