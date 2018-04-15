@@ -1,13 +1,9 @@
-import Ember from 'ember';
+import EmberObject, { computed } from '@ember/object';
+import { isPresent } from '@ember/utils';
 import Message from 'hyperchannel/models/message';
 import moment from 'moment';
 
-const {
-  computed,
-  isPresent
-} = Ember;
-
-export default Ember.Object.extend({
+export default EmberObject.extend({
 
   space: null,
   name: '',

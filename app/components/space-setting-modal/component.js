@@ -1,7 +1,7 @@
-import Ember from 'ember';
+import Component from '@ember/component';
 import Space from 'hyperchannel/models/space';
 
-export default Ember.Component.extend({
+export default Component.extend({
 
   settings: null,
   space: null,
@@ -10,7 +10,9 @@ export default Ember.Component.extend({
     this._super(...arguments);
 
     // create a clone of the settings that we can operate on
-    this.set('space', Space.create(this.get('settings').serialize()));
+    const space = Space.create();
+    space.setProperties(this.get('settings').serialize());
+    this.set('space', space);
   },
 
   actions: {

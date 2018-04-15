@@ -1,5 +1,4 @@
 /* global module, require */
-/* eslint-env node */
 'use strict';
 
 const fs = require('fs');
@@ -36,9 +35,9 @@ module.exports = function(environment) {
     // precacheURLs: [
     // ],
     networkFirstURLs: [
-      /activity\-streams\.js/,
+      /activity-streams\.js/,
       /socket\.io\.js/,
-      /sockethub\-client\.js/
+      /sockethub-client\.js/
     ],
     excludePaths: [/test.*/, 'robots.txt', 'crossdomain.xml']
     // fallback: [
@@ -76,6 +75,7 @@ module.exports = function(environment) {
     ENV.APP.LOG_VIEW_LOOKUPS = false;
 
     ENV.APP.rootElement = '#ember-testing';
+    ENV.APP.autoboot = false;
   }
 
   if (environment === 'production') {

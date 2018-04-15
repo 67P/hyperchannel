@@ -7,7 +7,8 @@ moduleForComponent('space-setting-modal', 'Integration | Component | space setti
 });
 
 test('it renders the form with preset values', function(assert) {
-  this.set('preset', Space.create({
+  const space = Space.create();
+  space.setProperties({
     "id": "moznet",
     "name": "Mozilla",
     "description": "Mozilla's public IRC network",
@@ -18,7 +19,9 @@ test('it renders the form with preset values', function(assert) {
       "secure": true,
       "port": 6697
     }
-  }));
+  });
+
+  this.set('preset', space);
 
   this.render(hbs`{{space-setting-modal settings=preset}}`);
 

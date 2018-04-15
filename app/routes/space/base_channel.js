@@ -1,20 +1,12 @@
-import Ember from 'ember';
+import $ from 'jquery';
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import { scheduleOnce, later } from '@ember/runloop';
 import { storageFor as localStorageFor } from 'ember-local-storage';
-
-const {
-  Route,
-  inject: {
-    service
-  },
-  run: {
-    later,
-    scheduleOnce
-  }
-} = Ember;
 
 function focusMessageInput() {
   if (window.innerWidth > 900) {
-    Ember.$('input#message-field').focus();
+    $('input#message-field').focus();
   } else {
     // Don't auto-focus on small screens
   }

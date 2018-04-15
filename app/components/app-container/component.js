@@ -1,12 +1,13 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import $ from 'jquery';
 import RecognizerMixin from 'ember-gestures/mixins/recognizers';
 
 function isElementOf(id, element) {
   return element.id === id ||
-         Ember.$(element).parents(`#${id}`).length > 0;
+         $(element).parents(`#${id}`).length > 0;
 }
 
-export default Ember.Component.extend(RecognizerMixin, {
+export default Component.extend(RecognizerMixin, {
 
   tagName: 'div',
   classNames: ['app-container'],

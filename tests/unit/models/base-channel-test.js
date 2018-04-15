@@ -113,8 +113,10 @@ test('#addDateHeadline does not add a date-headline when one exists already', fu
 //
 
 test('#isLogged returns true when channel is logged', function(assert) {
+  const space = Space.create();
+  space.set('name', 'Freenode');
   let channel = this.subject({
-    space: Space.create({ name: 'Freenode' }),
+    space: space,
     name: '#kosmos'
   });
 
@@ -122,8 +124,10 @@ test('#isLogged returns true when channel is logged', function(assert) {
 });
 
 test('#isLogged returns false when channel is not logged', function(assert) {
+  const space = Space.create();
+  space.set('name', 'Freenode');
   let channel = this.subject({
-    space: Space.create({ name: 'Freenode' }),
+    space: space,
     name: '#some-random-chan'
   });
 
@@ -135,8 +139,10 @@ test('#isLogged returns false when channel is not logged', function(assert) {
 //
 
 test('#addUser adds a user to the list', function(assert) {
+  const space = Space.create();
+  space.set('name', 'Freenode');
   let channel = this.subject({
-    space: Space.create({ name: 'Freenode' }),
+    space: space,
     name: '#some-random-chan'
   });
 
@@ -146,8 +152,10 @@ test('#addUser adds a user to the list', function(assert) {
 });
 
 test('#addUser does not add duplicates', function(assert) {
+  const space = Space.create();
+  space.set('name', 'Freenode');
   let channel = this.subject({
-    space: Space.create({ name: 'Freenode' }),
+    space: space,
     name: '#some-random-chan'
   });
 

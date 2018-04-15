@@ -22,7 +22,8 @@ start implementing right away.
 You will need the following things properly installed on your computer.
 
 * [Git](https://git-scm.com/)
-* [Node.js](https://nodejs.org/) (with NPM)
+* [Node.js](https://nodejs.org/) (with npm)
+* [Ember CLI](https://ember-cli.com/)
 * [Sockethub](http://sockethub.org/)
 * [Google Chrome](https://google.com/chrome/)
 
@@ -43,6 +44,7 @@ You might need to manually execute:
 
 * `npm start`
 * Visit the app at [http://localhost:4200](http://localhost:4200).
+* Visit your tests at [http://localhost:4200/tests](http://localhost:4200/tests).
 
 ### Code Generators
 
