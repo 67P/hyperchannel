@@ -22,7 +22,7 @@ export default Component.extend({
   coms: service(),
 
   messagesUpdated: observer('channel.messages.[]', function() {
-    if (!this.get('scrollingDisabled')) {
+    if (!this.scrollingDisabled) {
       scheduleOnce('afterRender', scrollToBottom);
     }
   }),
@@ -43,22 +43,22 @@ export default Component.extend({
   actions: {
 
     processMessageOrCommand() {
-      if (this.get('newMessage').substr(0, 1) === "/") {
-        this.onCommand(this.get('newMessage'));
+      if (this.newMessage.substr(0, 1) === "/") {
+        this.onCommand(this.newMessage);
       } else {
-        this.onMessage(this.get('newMessage'));
+        this.onMessage(this.newMessage);
       }
     },
 
     menu(which, what) {
-      this.get('menu')(which, what);
+      this.menu(which, what);
     },
 
     loadPreviousMessages() {
       this.set('scrollingDisabled', true);
-      this.get('coms').loadLastMessages(
+      this.coms.loadLastMessages(
         this.get('channel.space'),
-        this.get('channel'),
+        this.channel,
         this.get('channel.searchedPreviousLogsUntilDate')
       ).catch(() => {
         // TODO what to do here?

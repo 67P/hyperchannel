@@ -62,7 +62,7 @@ export default Service.extend({
       rs.kosmos.spaces.getAll().then(spaceData => {
         if (isEmpty(Object.keys(spaceData))) {
           Logger.debug('No space data found in RS. Adding default space...');
-          this.get('storage').addDefaultSpace().then((data) => {
+          this.storage.addDefaultSpace().then((data) => {
             this.connectAndAddSpace(data.space);
             this.instantiateChannels(data.space, data.channels);
             resolve();
@@ -98,7 +98,7 @@ export default Service.extend({
 
   connectAndAddSpace(space) {
     this.connectServer(space);
-    this.get('spaces').pushObject(space);
+    this.spaces.pushObject(space);
   },
 
   /**
@@ -136,7 +136,7 @@ export default Service.extend({
   transferMeMessage(space, target, content) {
     switch (space.get('protocol')) {
       case 'IRC':
-        this.get('irc').transferMeMessage(space, target, content);
+        this.irc.transferMeMessage(space, target, content);
         break;
     }
   },
@@ -144,7 +144,7 @@ export default Service.extend({
   leaveChannel: function(space, channel) {
     switch (space.get('protocol')) {
       case 'IRC':
-        this.get('irc').leave(space, channel);
+        this.irc.leave(space, channel);
         break;
     }
   },
@@ -152,7 +152,7 @@ export default Service.extend({
   changeTopic: function(space, channel, topic) {
     switch (space.get('protocol')) {
       case 'IRC':
-        this.get('irc').changeTopic(space, channel, topic);
+        this.irc.changeTopic(space, channel, topic);
         break;
     }
   },
@@ -190,7 +190,7 @@ export default Service.extend({
 
     const hostname = channelId.match(/(?:irc:\/\/)?(?:.+@)?(.+?)(?:\/|$)/)[1];
 
-    const space = this.get('spaces').findBy('server.hostname', hostname);
+    const space = this.spaces.findBy('server.hostname', hostname);
 
     if (isEmpty(space)) {
       Ember.Logger.warn('Could not find space by hostname', hostname);
@@ -211,7 +211,7 @@ export default Service.extend({
    * @param {String} channelId
    */
   getChannel(personId, channelId) {
-    const space = this.get('spaces').findBy('sockethubPersonId', personId);
+    const space = this.spaces.findBy('sockethubPersonId', personId);
     if (isEmpty(space)) {
       Ember.Logger.warn('Could not find space by sockethubPersonId', personId);
       return;
@@ -229,7 +229,7 @@ export default Service.extend({
   updateUsername(message) {
     if (typeof message.actor === 'object') {
       const actorId = message.actor['@id'];
-      const space = this.get('spaces').findBy('sockethubPersonId', actorId);
+      const space = this.spaces.findBy('sockethubPersonId', actorId);
       if (isPresent(space)) {
         space.updateUsername(message.target.displayName);
       }
@@ -244,7 +244,7 @@ export default Service.extend({
       hostname = message.actor.match(/irc:\/\/.+@(.+)/)[1];
     }
 
-    let space = this.get('spaces').findBy('server.hostname', hostname);
+    let space = this.spaces.findBy('server.hostname', hostname);
 
     if (!isEmpty(space)) {
       let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
@@ -298,7 +298,7 @@ export default Service.extend({
     space.get('channels').pushObject(channel);
 
     // TODO Do we need this on startup? Could overwrite updates from remote.
-    this.get('storage').saveSpace(space);
+    this.storage.saveSpace(space);
 
     if (channel.get('isLogged')) {
       this.loadLastMessages(space, channel, moment.utc(), 2).catch(() => {});
@@ -330,7 +330,7 @@ export default Service.extend({
     let logsUrl = `${config.publicLogsUrl}/${space.get('name').toLowerCase()}/channels/${channel.get('slug')}/`;
         logsUrl += date.format('YYYY/MM/DD');
 
-    return this.get('ajax').request(logsUrl, {
+    return this.ajax.request(logsUrl, {
       type: 'GET',
       dataType: 'json'
     }).then(archive => {
@@ -377,7 +377,7 @@ export default Service.extend({
 
     space.get('channels').removeObject(channel);
 
-    this.get('storage').saveSpace(space);
+    this.storage.saveSpace(space);
 
     return channel;
   },
@@ -398,11 +398,11 @@ export default Service.extend({
 
     switch(message['@type']) {
       case 'join':
-        var space = this.get('spaces').findBy('sockethubPersonId', message.actor['@id']);
+        var space = this.spaces.findBy('sockethubPersonId', message.actor['@id']);
 
         // try to find space by older sockethubPersonId
         if (isEmpty(space)) {
-          space = this.get('spaces').find((space) => {
+          space = this.spaces.find((space) => {
             return space.get('previousSockethubPersonIds').includes(message.actor['@id']);
           });
         }
@@ -457,7 +457,7 @@ export default Service.extend({
             this.updateUsername(message);
             break;
           case 'presence':
-            this.get('xmpp').handlePresenceUpdate(message);
+            this.xmpp.handlePresenceUpdate(message);
             break;
           case 'error':
             Logger.warn('Got error update message', message.actor['@id'], message.object.content);
@@ -498,6 +498,6 @@ export default Service.extend({
    * @private
    */
   log() {
-    this.get('logger').log(...arguments);
+    this.logger.log(...arguments);
   }
 });

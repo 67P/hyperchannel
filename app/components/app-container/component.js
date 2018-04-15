@@ -38,7 +38,7 @@ export default Component.extend(RecognizerMixin, {
   },
 
   tap(e) {
-    if (this.get('showGlobalMenu') &&
+    if (this.showGlobalMenu &&
         !isElementOf('channel-header', e.target) &&
         !isElementOf('global', e.target)) {
       this.set('showGlobalMenu', false);

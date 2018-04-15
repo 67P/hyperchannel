@@ -257,7 +257,7 @@ export default Service.extend({
 
       channel = space.get('channels').findBy('name', targetChannelName);
       if (!channel) {
-        channel = this.get('coms').createUserChannel(space, targetChannelName);
+        channel = this.coms.createUserChannel(space, targetChannelName);
       }
     } else {
       // channel message
@@ -265,7 +265,7 @@ export default Service.extend({
 
       channel = space.get('channels').findBy('name', targetChannelName);
       if (!channel) {
-        channel = this.get('coms').createChannel(space, targetChannelName);
+        channel = this.coms.createChannel(space, targetChannelName);
       }
     }
 
@@ -277,7 +277,7 @@ export default Service.extend({
    * @protected
    */
   log() {
-    this.get('logger').log(...arguments);
+    this.logger.log(...arguments);
   }
 
 });

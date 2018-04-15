@@ -8,8 +8,8 @@ export default BaseChannel.extend({
   searchedPreviousLogsUntilDate: null,
 
   formattedTopic: computed('topic', function() {
-    if (this.get('topic') !== null) {
-      let topic = linkifyStr(this.get('topic'), {
+    if (this.topic !== null) {
+      let topic = linkifyStr(this.topic, {
         defaultProtocol: 'https',
         linkAttributes: { rel: 'nofollow' }
       });

@@ -15,7 +15,7 @@ export default Component.extend({
     let scheduleUpdate = () => {
       later(() => {
         this.notifyPropertyChange('message.date');
-      }, this.get('updateInterval'));
+      }, this.updateInterval);
     };
 
     if (date.isSame(moment(), 'day')) {
