@@ -1,5 +1,4 @@
 import Service from '@ember/service';
-import Ember from 'ember';
 
 export default Service.extend({
   enabled: true,
@@ -55,7 +54,7 @@ export default Service.extend({
     if (this.activeTypes.includes(type) && this.enabled) {
       var params = Array.prototype.slice.call(arguments);
       params[0] = `[${params[0]}]`;
-      Ember.Logger.debug.apply(null, params);
+      console.debug.apply(null, params);
     }
   },
 

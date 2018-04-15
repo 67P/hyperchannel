@@ -2,7 +2,6 @@ import Service, { inject as service } from '@ember/service';
 import RSVP from 'rsvp';
 import { isPresent, isEmpty } from '@ember/utils';
 import { get } from '@ember/object';
-import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 import UserChannel from 'hyperchannel/models/user_channel';
@@ -10,10 +9,6 @@ import Message from 'hyperchannel/models/message';
 import config from 'hyperchannel/config/environment';
 import moment from 'moment';
 import { storageFor as localStorageFor } from 'ember-local-storage';
-
-const {
-  Logger
-} = Ember;
 
 /**
  * This service provides the central command interface for communicating with
@@ -61,7 +56,7 @@ export default Service.extend({
     return new RSVP.Promise((resolve, reject) => {
       rs.kosmos.spaces.getAll().then(spaceData => {
         if (isEmpty(Object.keys(spaceData))) {
-          Logger.debug('No space data found in RS. Adding default space...');
+          console.debug('No space data found in RS. Adding default space...');
           this.storage.addDefaultSpace().then((data) => {
             this.connectAndAddSpace(data.space);
             this.instantiateChannels(data.space, data.channels);
@@ -193,13 +188,13 @@ export default Service.extend({
     const space = this.spaces.findBy('server.hostname', hostname);
 
     if (isEmpty(space)) {
-      Ember.Logger.warn('Could not find space by hostname', hostname);
+      console.warn('Could not find space by hostname', hostname);
       return;
     }
 
     const channel = space.get('channels').findBy('sockethubChannelId', channelId);
     if (isEmpty(channel)) {
-      Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
+      console.warn('Could not find channel by sockethubChannelId', channelId);
       return;
     }
 
@@ -213,13 +208,13 @@ export default Service.extend({
   getChannel(personId, channelId) {
     const space = this.spaces.findBy('sockethubPersonId', personId);
     if (isEmpty(space)) {
-      Ember.Logger.warn('Could not find space by sockethubPersonId', personId);
+      console.warn('Could not find space by sockethubPersonId', personId);
       return;
     }
 
     const channel = space.get('channels').findBy('sockethubChannelId', channelId);
     if (isEmpty(channel)) {
-      Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
+      console.warn('Could not find channel by sockethubChannelId', channelId);
       return;
     }
 
@@ -250,7 +245,7 @@ export default Service.extend({
       let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
 
       if (isEmpty(channel)) {
-        Ember.Logger.warn('No channel for update topic message found. Creating it.', message);
+        console.warn('No channel for update topic message found. Creating it.', message);
         channel = this.createChannel(space, message.target['displayName']);
       }
 
@@ -410,7 +405,7 @@ export default Service.extend({
         if (!isEmpty(space)) {
           this.get(message.context).handleJoinCompleted(space, message);
         } else {
-          Logger.warn('Could not find space for join message', message);
+          console.warn('Could not find space for join message', message);
         }
         break;
     }
@@ -460,7 +455,7 @@ export default Service.extend({
             this.xmpp.handlePresenceUpdate(message);
             break;
           case 'error':
-            Logger.warn('Got error update message', message.actor['@id'], message.object.content);
+            console.warn('Got error update message', message.actor['@id'], message.object.content);
             break;
         }
         break;
@@ -478,7 +473,7 @@ export default Service.extend({
       if (isPresent(channel)) {
         channel.set('connected', false);
       } else {
-        Logger.warn('Could not find channel for error message', message);
+        console.warn('Could not find channel for error message', message);
       }
     } else {
       this.addUserToChannelUserList(message);

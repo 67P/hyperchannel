@@ -15,7 +15,8 @@ module.exports = {
     browser: true
   },
   rules: {
-    "no-control-regex": "off"
+    "no-control-regex": "off",
+    "no-console": ["error", { allow: ["warn", "debug", "error"] }]
   },
   overrides: [
     // node files

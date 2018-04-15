@@ -1,5 +1,3 @@
-import Ember from 'ember';
-
 export function initialize(appInstance) {
   let storage = appInstance.lookup('service:remotestorage');
   let remoteStorage = storage.get('rs');
@@ -14,7 +12,7 @@ export function initialize(appInstance) {
   ];
 
   rsEvents.forEach(evt => {
-    remoteStorage.on(evt, () => Ember.Logger.debug(`[remotestorage] RS event: ${evt}`));
+    remoteStorage.on(evt, () => console.debug(`[remotestorage] RS event: ${evt}`));
   });
 }
 
