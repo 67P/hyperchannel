@@ -36,7 +36,7 @@ module('Integration | Component | date-headline', function(hooks) {
     assert.expect(2);
 
     this.set('dateMessage', Message.create({
-      date: moment('2017/02/25').startOf('day').toDate()
+      date: moment('2017/02/25', 'YYYY-MM-DD').startOf('day').toDate()
     }));
 
     await render(hbs`{{date-headline message=dateMessage}}`);
