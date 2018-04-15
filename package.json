@@ -73,6 +73,6 @@
     "liquid-fire": "0.29.2",
     "loader.js": "^4.2.3",
     "remotestorage-module-kosmos": "^1.0.0",
-    "remotestoragejs": "^1.0.0-alpha3"
+    "remotestoragejs": "^1.0.3"
   }
 }
