@@ -93,8 +93,8 @@ export default Service.extend({
   handleJoinCompleted(space, message) {
     const channelId = message.target['@id'].split('/')[0];
     const channel = space.get('channels').findBy('sockethubChannelId', channelId);
-    if (!isEmpty(channel)) {
-      channel.set('connected', true);
+    if (channel) {
+      this.observeChannel(space, channel);
     } else {
       Logger.warn('Could not find channel for join message', message);
     }
@@ -187,6 +187,26 @@ export default Service.extend({
     if (channelMessage.get('nickname') !== space.get('userNickname')) {
       channel.addMessage(channelMessage);
     }
+  },
+
+  /**
+   * Ask for a channel's attendance list (users currently joined)
+   *
+   * @param {Space} space
+   * @param {Channel} channel
+   * @public
+   */
+  observeChannel(space, channel) {
+    let observeMsg = buildActivityObject(space, {
+      '@type': 'observe',
+      target: channel.get('sockethubChannelId'),
+      object: {
+        '@type': 'attendance'
+      }
+    });
+
+    this.log('xmpp', 'asking for attendance list', observeMsg);
+    this.sockethub.socket.emit('message', observeMsg);
   },
 
   /**
