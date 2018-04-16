@@ -68,6 +68,28 @@ test('#sortedMessages returns an empty array if there are no messages', function
 });
 
 //
+// sortedUserList
+//
+
+test('#sortedUserList returns an empty array if there are no users', function(assert) {
+  const channel = this.subject();
+
+  assert.equal(typeof channel.get('sortedUserList'), 'object');
+  assert.equal(channel.get('sortedUserList').length, 0);
+});
+
+test('#sortedUserList returns a list of sorted usernames', function(assert) {
+  const channel = this.subject();
+
+  channel.set('userList', ['silverbucket', 'XioNox', 'raucau', '@operator',
+                           'gregkare', 'galfert', '@MrOps']);
+
+  assert.deepEqual(channel.get('sortedUserList'), ['@MrOps', '@operator', 'galfert',
+                                                   'gregkare', 'raucau', 'silverbucket',
+                                                   'XioNox']);
+});
+
+//
 // addDateHeadline
 //
 

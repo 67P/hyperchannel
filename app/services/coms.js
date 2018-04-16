@@ -162,7 +162,7 @@ export default Service.extend({
     if (channel) {
       channel.set('connected', true);
       if (Array.isArray(message.object.members)) {
-        channel.set('userList', message.object.members.sort());
+        channel.set('userList', message.object.members);
       }
     }
   },
