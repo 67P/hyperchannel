@@ -49,7 +49,7 @@ export default EmberObject.extend({
   }),
 
   sortedUserList: computed('userList.[]', function () {
-    return this.userList.sort(function (a, b) {
+    return this.get('userList').sort(function (a, b) {
       return a.toLowerCase().localeCompare(b.toLowerCase());
     });
   }),
