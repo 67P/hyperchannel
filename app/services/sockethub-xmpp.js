@@ -93,8 +93,8 @@ export default Service.extend({
   handleJoinCompleted(space, message) {
     const channelId = message.target['@id'].split('/')[0];
     const channel = space.get('channels').findBy('sockethubChannelId', channelId);
-    if (!isEmpty(channel)) {
-      channel.set('connected', true);
+    if (channel) {
+      this.observeChannel(space, channel);
     } else {
       Logger.warn('Could not find channel for join message', message);
     }
@@ -190,6 +190,26 @@ export default Service.extend({
   },
 
   /**
+   * Ask for a channel's attendance list (users currently joined)
+   *
+   * @param {Space} space
+   * @param {Channel} channel
+   * @public
+   */
+  observeChannel(space, channel) {
+    let observeMsg = buildActivityObject(space, {
+      '@type': 'observe',
+      target: channel.get('sockethubChannelId'),
+      object: {
+        '@type': 'attendance'
+      }
+    });
+
+    this.log('xmpp', 'asking for attendance list', observeMsg);
+    this.sockethub.socket.emit('message', observeMsg);
+  },
+
+  /**
    * Generate a Sockethub Channel ID.
    *
    * @param {Space} space
@@ -235,12 +255,12 @@ export default Service.extend({
     if (message.target['@type'] === 'room') {
       channel = space.get('channels').findBy('sockethubChannelId', targetChannelId);
       if (!channel) {
-        channel = this.get('coms').createChannel(space, targetChannelId);
+        channel = this.coms.createChannel(space, targetChannelId);
       }
     } else {
       channel = space.get('channels').findBy('sockethubChannelId', message.actor['@id']);
       if (!channel) {
-        channel = this.get('coms').createUserChannel(space, message.actor['@id']);
+        channel = this.coms.createUserChannel(space, message.actor['@id']);
       }
     }
 
@@ -252,7 +272,7 @@ export default Service.extend({
    * @private
    */
   log() {
-    this.get('logger').log(...arguments);
+    this.logger.log(...arguments);
   }
 
 });

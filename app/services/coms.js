@@ -2,7 +2,6 @@ import Service, { inject as service } from '@ember/service';
 import RSVP from 'rsvp';
 import { isPresent, isEmpty } from '@ember/utils';
 import { get } from '@ember/object';
-import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 import UserChannel from 'hyperchannel/models/user_channel';
@@ -10,10 +9,6 @@ import Message from 'hyperchannel/models/message';
 import config from 'hyperchannel/config/environment';
 import moment from 'moment';
 import { storageFor as localStorageFor } from 'ember-local-storage';
-
-const {
-  Logger
-} = Ember;
 
 /**
  * This service provides the central command interface for communicating with
@@ -61,8 +56,8 @@ export default Service.extend({
     return new RSVP.Promise((resolve, reject) => {
       rs.kosmos.spaces.getAll().then(spaceData => {
         if (isEmpty(Object.keys(spaceData))) {
-          Logger.debug('No space data found in RS. Adding default space...');
-          this.get('storage').addDefaultSpace().then((data) => {
+          console.debug('No space data found in RS. Adding default space...');
+          this.storage.addDefaultSpace().then((data) => {
             this.connectAndAddSpace(data.space);
             this.instantiateChannels(data.space, data.channels);
             resolve();
@@ -98,7 +93,7 @@ export default Service.extend({
 
   connectAndAddSpace(space) {
     this.connectServer(space);
-    this.get('spaces').pushObject(space);
+    this.spaces.pushObject(space);
   },
 
   /**
@@ -136,7 +131,7 @@ export default Service.extend({
   transferMeMessage(space, target, content) {
     switch (space.get('protocol')) {
       case 'IRC':
-        this.get('irc').transferMeMessage(space, target, content);
+        this.irc.transferMeMessage(space, target, content);
         break;
     }
   },
@@ -144,7 +139,7 @@ export default Service.extend({
   leaveChannel: function(space, channel) {
     switch (space.get('protocol')) {
       case 'IRC':
-        this.get('irc').leave(space, channel);
+        this.irc.leave(space, channel);
         break;
     }
   },
@@ -152,13 +147,22 @@ export default Service.extend({
   changeTopic: function(space, channel, topic) {
     switch (space.get('protocol')) {
       case 'IRC':
-        this.get('irc').changeTopic(space, channel, topic);
+        this.irc.changeTopic(space, channel, topic);
         break;
     }
   },
 
   updateChannelUserList(message) {
-    const channel = this.getChannelById(message.actor['@id']);
+    let channel;
+    switch(message.context) {
+      case 'irc':
+        channel = this.getChannelById(message.actor['@id']);
+        break;
+      case 'xmpp':
+        channel = this.getChannel(message.target['@id'], message.actor['@id']);
+        break;
+    }
+
     if (channel) {
       channel.set('connected', true);
       if (Array.isArray(message.object.members)) {
@@ -190,16 +194,16 @@ export default Service.extend({
 
     const hostname = channelId.match(/(?:irc:\/\/)?(?:.+@)?(.+?)(?:\/|$)/)[1];
 
-    const space = this.get('spaces').findBy('server.hostname', hostname);
+    const space = this.spaces.findBy('server.hostname', hostname);
 
     if (isEmpty(space)) {
-      Ember.Logger.warn('Could not find space by hostname', hostname);
+      console.warn('Could not find space by hostname', hostname);
       return;
     }
 
     const channel = space.get('channels').findBy('sockethubChannelId', channelId);
     if (isEmpty(channel)) {
-      Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
+      console.warn('Could not find channel by sockethubChannelId', channelId);
       return;
     }
 
@@ -211,15 +215,15 @@ export default Service.extend({
    * @param {String} channelId
    */
   getChannel(personId, channelId) {
-    const space = this.get('spaces').findBy('sockethubPersonId', personId);
+    const space = this.spaces.findBy('sockethubPersonId', personId);
     if (isEmpty(space)) {
-      Ember.Logger.warn('Could not find space by sockethubPersonId', personId);
+      console.warn('Could not find space by sockethubPersonId', personId);
       return;
     }
 
     const channel = space.get('channels').findBy('sockethubChannelId', channelId);
     if (isEmpty(channel)) {
-      Ember.Logger.warn('Could not find channel by sockethubChannelId', channelId);
+      console.warn('Could not find channel by sockethubChannelId', channelId);
       return;
     }
 
@@ -229,7 +233,7 @@ export default Service.extend({
   updateUsername(message) {
     if (typeof message.actor === 'object') {
       const actorId = message.actor['@id'];
-      const space = this.get('spaces').findBy('sockethubPersonId', actorId);
+      const space = this.spaces.findBy('sockethubPersonId', actorId);
       if (isPresent(space)) {
         space.updateUsername(message.target.displayName);
       }
@@ -244,13 +248,13 @@ export default Service.extend({
       hostname = message.actor.match(/irc:\/\/.+@(.+)/)[1];
     }
 
-    let space = this.get('spaces').findBy('server.hostname', hostname);
+    let space = this.spaces.findBy('server.hostname', hostname);
 
     if (!isEmpty(space)) {
       let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
 
       if (isEmpty(channel)) {
-        Ember.Logger.warn('No channel for update topic message found. Creating it.', message);
+        console.warn('No channel for update topic message found. Creating it.', message);
         channel = this.createChannel(space, message.target['displayName']);
       }
 
@@ -298,7 +302,7 @@ export default Service.extend({
     space.get('channels').pushObject(channel);
 
     // TODO Do we need this on startup? Could overwrite updates from remote.
-    this.get('storage').saveSpace(space);
+    this.storage.saveSpace(space);
 
     if (channel.get('isLogged')) {
       this.loadLastMessages(space, channel, moment.utc(), 2).catch(() => {});
@@ -330,7 +334,7 @@ export default Service.extend({
     let logsUrl = `${config.publicLogsUrl}/${space.get('name').toLowerCase()}/channels/${channel.get('slug')}/`;
         logsUrl += date.format('YYYY/MM/DD');
 
-    return this.get('ajax').request(logsUrl, {
+    return this.ajax.request(logsUrl, {
       type: 'GET',
       dataType: 'json'
     }).then(archive => {
@@ -377,7 +381,7 @@ export default Service.extend({
 
     space.get('channels').removeObject(channel);
 
-    this.get('storage').saveSpace(space);
+    this.storage.saveSpace(space);
 
     return channel;
   },
@@ -398,11 +402,11 @@ export default Service.extend({
 
     switch(message['@type']) {
       case 'join':
-        var space = this.get('spaces').findBy('sockethubPersonId', message.actor['@id']);
+        var space = this.spaces.findBy('sockethubPersonId', message.actor['@id']);
 
         // try to find space by older sockethubPersonId
         if (isEmpty(space)) {
-          space = this.get('spaces').find((space) => {
+          space = this.spaces.find((space) => {
             return space.get('previousSockethubPersonIds').includes(message.actor['@id']);
           });
         }
@@ -410,7 +414,7 @@ export default Service.extend({
         if (!isEmpty(space)) {
           this.get(message.context).handleJoinCompleted(space, message);
         } else {
-          Logger.warn('Could not find space for join message', message);
+          console.warn('Could not find space for join message', message);
         }
         break;
     }
@@ -457,10 +461,10 @@ export default Service.extend({
             this.updateUsername(message);
             break;
           case 'presence':
-            this.get('xmpp').handlePresenceUpdate(message);
+            this.xmpp.handlePresenceUpdate(message);
             break;
           case 'error':
-            Logger.warn('Got error update message', message.actor['@id'], message.object.content);
+            console.warn('Got error update message', message.actor['@id'], message.object.content);
             break;
         }
         break;
@@ -478,7 +482,7 @@ export default Service.extend({
       if (isPresent(channel)) {
         channel.set('connected', false);
       } else {
-        Logger.warn('Could not find channel for error message', message);
+        console.warn('Could not find channel for error message', message);
       }
     } else {
       this.addUserToChannelUserList(message);
@@ -498,6 +502,6 @@ export default Service.extend({
    * @private
    */
   log() {
-    this.get('logger').log(...arguments);
+    this.logger.log(...arguments);
   }
 });

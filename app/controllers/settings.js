@@ -21,8 +21,8 @@ export default Controller.extend({
     saveSpace(space) {
       this.set('selectedSpacePreset', null);
 
-      this.get('storage').saveSpace(space).then(() => {
-        this.get('coms').connectAndAddSpace(space);
+      this.storage.saveSpace(space).then(() => {
+        this.coms.connectAndAddSpace(space);
       });
     }
   }

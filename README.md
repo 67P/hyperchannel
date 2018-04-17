@@ -58,6 +58,11 @@ not use moduleForModel, as we're not using Ember Data. See existing tests.
 * `npm test`
 * `npm test -- --server` (will re-run on saving files)
 
+### Linting
+
+* `npm run lint:js`
+* `npm run lint:js -- --fix`
+
 ### Building
 
 (Not yet used.)

@@ -1,13 +1,13 @@
-import { moduleFor, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
-moduleFor('service:remotestorage', 'Unit | Service | remotestorage', {
-  // Specify the other units that are required for this test.
-  // needs: ['service:foo']
-});
+module('Unit | Service | remotestorage', function(hooks) {
+  setupTest(hooks);
 
-test('#rs returns a remoteStorage instance', function(assert) {
-  let service = this.subject();
-  let remoteStorage = service.get('rs');
+  test('#rs returns a remoteStorage instance', function(assert) {
+    let service = this.owner.lookup('service:remotestorage');
+    let remoteStorage = service.get('rs');
 
-  assert.equal(typeof remoteStorage.scope, 'function');
+    assert.equal(typeof remoteStorage.scope, 'function');
+  });
 });

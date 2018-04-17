@@ -11,13 +11,13 @@ export default Component.extend({
 
     // create a clone of the settings that we can operate on
     const space = Space.create();
-    space.setProperties(this.get('settings').serialize());
+    space.setProperties(this.settings.serialize());
     this.set('space', space);
   },
 
   actions: {
     save() {
-      this.onSave(this.get('space'));
+      this.onSave(this.space);
     },
 
     cancel() {

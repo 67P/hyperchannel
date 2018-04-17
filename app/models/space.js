@@ -37,15 +37,15 @@ export default EmberObject.extend({
   },
 
   channelNames: computed('channels.@each.name', function() {
-    return this.get('channels').mapBy('name');
+    return this.channels.mapBy('name');
   }),
 
   sockethubChannelIds: computed('channels.@each.sockethubChannelId', function() {
-    return this.get('channels').mapBy('sockethubChannelId');
+    return this.channels.mapBy('sockethubChannelId');
   }),
 
   loggedChannels: computed('name', 'protocol', function() {
-    if (this.get('name') === 'Freenode' && this.get('protocol') === 'IRC') {
+    if (this.name === 'Freenode' && this.protocol === 'IRC') {
       return ['#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',
               '#unhosted','#sockethub','#opensourcedesign','#openknot','#emberjs',
               '#indieweb', '#mastodon'];
@@ -58,9 +58,9 @@ export default EmberObject.extend({
 
   updateUsername(username) {
     // keep track of old name for later reference
-    this.get('previousSockethubPersonIds').pushObject(this.get('sockethubPersonId'));
+    this.previousSockethubPersonIds.pushObject(this.sockethubPersonId);
 
-    switch (this.get('protocol')) {
+    switch (this.protocol) {
       case 'IRC':
         this.set('server.nickname', username);
         break;
@@ -72,7 +72,7 @@ export default EmberObject.extend({
 
   sockethubPersonId: computed('protocol', 'server.{hostname,username,nickname}', function () {
     let personID;
-    switch (this.get('protocol')) {
+    switch (this.protocol) {
       case 'IRC':
         // TODO - remove the use of any URI protocol part
         personID = `irc://${this.get('server.nickname')}@${this.get('server.hostname')}`;
@@ -87,16 +87,16 @@ export default EmberObject.extend({
 
   serialize() {
     let serialized = {
-      id: this.get('id') || this.get('name').dasherize(),
-      name: this.get('name'),
-      protocol: this.get('protocol'),
+      id: this.id || this.name.dasherize(),
+      name: this.name,
+      protocol: this.protocol,
       server: {
         hostname: this.get('server.hostname'),
         port: parseInt(this.get('server.port'), 10),
         secure: this.get('server.secure'),
         nickname: this.get('server.nickname')
       },
-      channels: this.get('channelNames') || []
+      channels: this.channelNames || []
     };
 
     ['username', 'password', 'nickname'].forEach(prop => {

@@ -1,28 +1,32 @@
-import { moduleFor, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
+import Channel from 'hyperchannel/models/channel';
 
-moduleFor('model:channel', 'Unit | Model | channel');
+module('Unit | Model | channel', function(hooks) {
+  setupTest(hooks);
 
-test('it exists', function(assert) {
-  let model = this.subject();
-  assert.ok(!!model);
-});
+  test('it exists', function(assert) {
+    const model = Channel.create();
+    assert.ok(!!model);
+  });
 
 
-//
-// formattedTopic
-//
+  //
+  // formattedTopic
+  //
 
-test('#formattedTopic turns URLs into links', function(assert) {
-  var channel = this.subject();
-  channel.set('topic', 'visit kosmos.org for more info');
+  test('#formattedTopic turns URLs into links', function(assert) {
+    const channel = Channel.create();
+    channel.set('topic', 'visit kosmos.org for more info');
 
-  assert.equal(channel.get('formattedTopic').toString(), 'visit <a href="https://kosmos.org" class="linkified" target="_blank" rel="nofollow">kosmos.org</a> for more info');
-});
+    assert.equal(channel.get('formattedTopic').toString(), 'visit <a href="https://kosmos.org" class="linkified" target="_blank" rel="nofollow">kosmos.org</a> for more info');
+  });
 
-test('#formattedTopic escapes HTML', function(assert) {
-  var channel = this.subject();
-  channel.set('topic', 'never gonna <marquee>give you up</marquee>');
+  test('#formattedTopic escapes HTML', function(assert) {
+    const channel = Channel.create();
+    channel.set('topic', 'never gonna <marquee>give you up</marquee>');
 
-  assert.equal(channel.get('formattedTopic').toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
+    assert.equal(channel.get('formattedTopic').toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
+  });
 });
 

@@ -1,5 +1,4 @@
 import Service from '@ember/service';
-import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
 import RemoteStorage from 'npm:remotestoragejs';
 import Kosmos from 'npm:remotestorage-module-kosmos';
@@ -40,9 +39,9 @@ export default Service.extend({
       ]
     };
 
-    return this.get('rs').kosmos.spaces.store(params)
+    return this.rs.kosmos.spaces.store(params)
       .then(() => {
-        Ember.Logger.debug('[remotestorage]', 'created/stored default space');
+        console.debug('[remotestorage]', 'created/stored default space');
 
         let channels = params.channels;
         delete params.channels;
@@ -55,14 +54,14 @@ export default Service.extend({
   },
 
   saveSpace(space) {
-    return this.get('rs').kosmos.spaces.store(space.serialize())
-      .then(() => Ember.Logger.debug('[remotestorage]', `saved space ${space.get('name')} in RS`));
+    return this.rs.kosmos.spaces.store(space.serialize())
+      .then(() => console.debug('[remotestorage]', `saved space ${space.get('name')} in RS`));
   },
 
   removeSpace(space) {
     // TODO this is buggy in the current rs.js beta branch
-    return this.get('rs').kosmos.spaces.remove(space.get('id'))
-      .then(() => Ember.Logger.debug('[remotestorage]', `removed space ${space.get('name')} from RS`));
+    return this.rs.kosmos.spaces.remove(space.get('id'))
+      .then(() => console.debug('[remotestorage]', `removed space ${space.get('name')} from RS`));
   }
 
 });

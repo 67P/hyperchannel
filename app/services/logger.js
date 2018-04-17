@@ -1,5 +1,4 @@
 import Service from '@ember/service';
-import Ember from 'ember';
 
 export default Service.extend({
   enabled: true,
@@ -48,23 +47,23 @@ export default Service.extend({
   },
 
   log(type) {
-    if (!this.get('allowedTypes').includes(type)) {
+    if (!this.allowedTypes.includes(type)) {
       throw new Error(`You specified a unknown type: "${type}".`);
     }
 
-    if (this.get('activeTypes').includes(type) && this.get('enabled')) {
+    if (this.activeTypes.includes(type) && this.enabled) {
       var params = Array.prototype.slice.call(arguments);
       params[0] = `[${params[0]}]`;
-      Ember.Logger.debug.apply(null, params);
+      console.debug.apply(null, params);
     }
   },
 
   add(type) {
-    this.get('activeTypes').addObject(type);
+    this.activeTypes.addObject(type);
   },
 
   remove(type) {
-    this.get('activeTypes').removeObject(type);
+    this.activeTypes.removeObject(type);
   },
 
   disable() {

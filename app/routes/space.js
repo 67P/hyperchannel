@@ -6,7 +6,7 @@ export default Route.extend({
   coms: service(),
 
   model: function(params) {
-    return this.get('coms').get('spaces')
+    return this.coms.get('spaces')
                           .findBy('id', params.id);
   }
 
