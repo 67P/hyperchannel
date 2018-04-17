@@ -255,12 +255,12 @@ export default Service.extend({
     if (message.target['@type'] === 'room') {
       channel = space.get('channels').findBy('sockethubChannelId', targetChannelId);
       if (!channel) {
-        channel = this.get('coms').createChannel(space, targetChannelId);
+        channel = this.coms.createChannel(space, targetChannelId);
       }
     } else {
       channel = space.get('channels').findBy('sockethubChannelId', message.actor['@id']);
       if (!channel) {
-        channel = this.get('coms').createUserChannel(space, message.actor['@id']);
+        channel = this.coms.createUserChannel(space, message.actor['@id']);
       }
     }
 
@@ -272,7 +272,7 @@ export default Service.extend({
    * @private
    */
   log() {
-    this.get('logger').log(...arguments);
+    this.logger.log(...arguments);
   }
 
 });

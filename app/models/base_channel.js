@@ -25,7 +25,7 @@ export default EmberObject.extend({
 
   isLogged: computed('space.loggedChannels.[]', 'name', function() {
     let loggedChannel = this.get('space.loggedChannels').find((channelName) => {
-      return channelName === this.get('name');
+      return channelName === this.name;
     });
 
     return isPresent(loggedChannel);
@@ -34,24 +34,24 @@ export default EmberObject.extend({
   slug: computed('name', function() {
     // This could be based on server type in the future. E.g. IRC would be
     // server URL, while Campfire would be another id.
-    return this.get('name').replace(/#/g,'');
+    return this.name.replace(/#/g,'');
   }),
 
   unreadMessagesClass: computed('visible', 'unreadMessages', 'unreadMentions', function() {
-    if (this.get('visible') || !this.get('unreadMessages')) {
+    if (this.visible || !this.unreadMessages) {
       return null;
     }
-    return this.get('unreadMentions') ? 'unread-mentions' : 'unread-messages';
+    return this.unreadMentions ? 'unread-mentions' : 'unread-messages';
   }),
 
   sortedMessages: computed('messages.@each.date', function() {
-    return this.get('messages').sortBy('date');
+    return this.messages.sortBy('date');
   }),
 
   addDateHeadline(newMessage) {
     let headlineDate = moment(newMessage.get('date')).startOf('day').toDate();
 
-    let existingDateHeadline = this.get('messages').find(function(message) {
+    let existingDateHeadline = this.messages.find(function(message) {
       return message.get('type') === 'date-headline' &&
              message.get('date').toString() === headlineDate.toString();
     });
@@ -59,15 +59,15 @@ export default EmberObject.extend({
     if (existingDateHeadline) { return; }
 
     let dateMessage = Message.create({ type: 'date-headline', date: headlineDate });
-    this.get('messages').pushObject(dateMessage);
+    this.messages.pushObject(dateMessage);
   },
 
   addMessage(message) {
     this.addDateHeadline(message);
 
-    this.get('messages').pushObject(message);
+    this.messages.pushObject(message);
 
-    if (!this.get('visible')) {
+    if (!this.visible) {
       this.set('unreadMessages', true);
       if (message.get('content').match(this.get('space.userNickname'))) {
         this.set('unreadMentions', true);
@@ -76,13 +76,13 @@ export default EmberObject.extend({
   },
 
   addUser(username) {
-    if (!this.get('userList').includes(username)) {
-      this.get('userList').pushObject(username);
+    if (!this.userList.includes(username)) {
+      this.userList.pushObject(username);
     }
   },
 
   removeUser(username) {
-    this.get('userList').removeObject(username);
+    this.userList.removeObject(username);
   }
 
 });

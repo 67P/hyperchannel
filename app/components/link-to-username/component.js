@@ -18,7 +18,7 @@ export default Component.extend({
   },
 
   role: computed('username', 'roles', function() {
-    const role = this.get('roles')[this.get('username')[0]];
+    const role = this.roles[this.username[0]];
 
     if (isPresent(role)) {
       return role;
@@ -28,9 +28,9 @@ export default Component.extend({
   }),
 
   usernameWithoutPrefix: computed('username', 'roles', function() {
-    const regex = RegExp(`^[\\${Object.keys(this.get('roles')).join('\\')}]`);
+    const regex = RegExp(`^[\\${Object.keys(this.roles).join('\\')}]`);
 
-    return this.get('username').replace(regex, '');
+    return this.username.replace(regex, '');
   })
 
 });

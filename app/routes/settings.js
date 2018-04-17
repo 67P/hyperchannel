@@ -55,9 +55,9 @@ export default Route.extend({
       let newSpace = this.controller.get('newSpace');
       newSpace.set('id', newSpace.get('name').dasherize());
 
-      this.get('storage').saveSpace(newSpace)
+      this.storage.saveSpace(newSpace)
         .then(() => {
-            this.get('coms').connectAndAddSpace(newSpace);
+            this.coms.connectAndAddSpace(newSpace);
             this.modelFor('settings').spaces.pushObject(newSpace);
           }, e => {
             Logger.error('error saving in RS', newSpace, e);
@@ -66,7 +66,7 @@ export default Route.extend({
     },
 
     removeSpace(space) {
-      this.get('storage').removeSpace(space)
+      this.storage.removeSpace(space)
         .then(() => {
             this.modelFor('settings').spaces.removeObject(space);
           }, e => {

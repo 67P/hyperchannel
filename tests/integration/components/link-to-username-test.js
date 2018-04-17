@@ -1,27 +1,35 @@
-import { moduleForComponent, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit';
+import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-moduleForComponent('link-to-username', 'Integration | Component | link to username', {
-  integration: true
-});
+module('Integration | Component | link to username', function(hooks) {
+  setupRenderingTest(hooks);
 
-test('it renders for a normal user', function(assert) {
-  this.render(hbs`{{link-to-username username='test_user'}}`);
+  test('it renders for a normal user', async function(assert) {
+    await render(hbs`{{link-to-username username='test_user'}}`);
 
-  assert.equal(this.$().text().trim(), 'test_user');
-  assert.equal(this.$().find('a').first().attr('class'), 'normal ember-view');
-});
+    const link = this.element.querySelector('a');
 
-test('it renders for an op user', function(assert) {
-  this.render(hbs`{{link-to-username username='@op'}}`);
+    assert.equal(link.innerText, 'test_user');
+    assert.equal(link.className, 'normal ember-view');
+  });
 
-  assert.equal(this.$().text().trim(), '@op');
-  assert.equal(this.$().find('a').first().attr('class'), 'op ember-view');
-});
+  test('it renders for an op user', async function(assert) {
+    await render(hbs`{{link-to-username username='@op'}}`);
 
-test('it renders for a half-op user', function(assert) {
-  this.render(hbs`{{link-to-username username='%wannabe_op'}}`);
+    const link = this.element.querySelector('a');
 
-  assert.equal(this.$().text().trim(), '%wannabe_op');
-  assert.equal(this.$().find('a').first().attr('class'), 'half-op ember-view');
+    assert.equal(link.innerText, '@op');
+    assert.equal(link.className, 'op ember-view');
+  });
+
+  test('it renders for a half-op user', async function(assert) {
+    await render(hbs`{{link-to-username username='%wannabe_op'}}`);
+
+    const link = this.element.querySelector('a');
+
+    assert.equal(link.innerText, '%wannabe_op');
+    assert.equal(link.className, 'half-op ember-view');
+  });
 });

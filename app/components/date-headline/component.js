@@ -2,6 +2,7 @@ import { later } from '@ember/runloop';
 import { computed } from '@ember/object';
 import Component from '@ember/component';
 import moment from 'moment';
+import config from '../../config/environment';
 
 export default Component.extend({
 
@@ -13,9 +14,12 @@ export default Component.extend({
     let date = moment(this.get('message.date'));
 
     let scheduleUpdate = () => {
-      later(() => {
-        this.notifyPropertyChange('message.date');
-      }, this.get('updateInterval'));
+      // don't schedule updates during testing, because it makes the tests time out
+      if (!config.environment === 'testing') {
+        later(() => {
+          this.notifyPropertyChange('message.date');
+        }, this.updateInterval);
+      }
     };
 
     if (date.isSame(moment(), 'day')) {
