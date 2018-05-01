@@ -21,9 +21,9 @@
         </li>
       {{else}}
         {{#if channel.isLogged}}
-          <li class="no-messages">No recent messages to display.</li>
+          <li class="no-messages discreet">No recent messages to display.</li>
         {{else}}
-          <li class="no-messages">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank">Learn more</a></li>
+          <li class="no-messages discreet">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank">Learn more</a></li>
         {{/if}}
       {{/each}}
     </ul>
