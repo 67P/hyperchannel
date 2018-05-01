@@ -64,7 +64,7 @@
     "ember-resolver": "^4.0.0",
     "ember-route-action-helper": "2.0.3",
     "ember-service-worker": "^0.6.12",
-    "ember-service-worker-hubot-web-push-notifications": "^1.0.0",
+    "ember-service-worker-hubot-web-push-notifications": "67P/ember-service-worker-hubot-web-push-notifications",
     "ember-sinon": "^2.1.0",
     "ember-sinon-qunit": "^3.1.0",
     "ember-source": "~3.1.0",
@@ -73,7 +73,7 @@
     "linkifyjs": "^2.1.6",
     "liquid-fire": "0.29.2",
     "loader.js": "^4.2.3",
-    "remotestorage-module-kosmos": "^1.0.0",
+    "remotestorage-module-kosmos": "^1.1.0",
     "remotestoragejs": "^1.0.3"
   }
 }
