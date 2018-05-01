@@ -9,7 +9,8 @@
       "hostname": "irc.freenode.net",
       "secure": true,
       "port": 7000
-    }
+    },
+    "botkaURL": "https://freenode.botka.kosmos.org"
   },
   {
     "id": "moznet",
@@ -33,6 +34,18 @@
       "hostname": "irc.gnome.org",
       "secure": true,
       "port": 6697
+    }
+  },
+  {
+    "id": "irc-localhost",
+    "name": "IRC localhost",
+    "description": "Local IRC server for development",
+    "website": "",
+    "protocol": "IRC",
+    "server": {
+      "hostname": "localhost",
+      "secure": false,
+      "port": 6667
     }
   },
   {

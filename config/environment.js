@@ -22,7 +22,8 @@ module.exports = function(environment) {
     },
     sockethubURL: 'http://localhost:10550',
     publicLogsUrl: 'https://storage.5apps.com/kosmos/public/chat-messages',
-    spacePresets: spacePresets
+    spacePresets: spacePresets,
+    defaultSpaceId:'irc-localhost'
   };
 
   if (environment === 'development') {
@@ -46,6 +47,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
+    ENV.defaultSpaceId = 'freenode';
     ENV.sockethubURL = 'https://sockethub.kosmos.org:10550';
   }
 

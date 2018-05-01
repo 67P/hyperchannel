@@ -2,6 +2,7 @@ import Service from '@ember/service';
 import Space from 'hyperchannel/models/space';
 import RemoteStorage from 'npm:remotestoragejs';
 import Kosmos from 'npm:remotestorage-module-kosmos';
+import config from 'hyperchannel/config/environment';
 
 export default Service.extend({
 
@@ -18,26 +19,25 @@ export default Service.extend({
   },
 
   addDefaultSpace() {
-    let nickname = window.prompt("Choose a nickname");
+    let spaceConfig = config.spacePresets
+                            .find(s => s.id === config.defaultSpaceId);
 
     let params = {
-      id: 'freenode',
-      name: 'Freenode',
-      protocol: 'IRC',
-      server: {
-        hostname: 'irc.freenode.net',
-        secure: true,
-        port: 7000,
-        nickname: nickname
-      },
+      id: spaceConfig.id,
+      name: spaceConfig.name,
+      protocol: spaceConfig.protocol,
+      server: spaceConfig.server,
       channels: [
         '#hackerbeach',
         '#kosmos',
         '#kosmos-dev',
         '#kosmos-random',
         '#sockethub'
-      ]
+      ],
+      botkaURL: 'http://localhost:4242'
     };
+
+    params.server.nickname = window.prompt("Choose a nickname");
 
     return this.rs.kosmos.spaces.store(params)
       .then(() => {
@@ -59,7 +59,6 @@ export default Service.extend({
   },
 
   removeSpace(space) {
-    // TODO this is buggy in the current rs.js beta branch
     return this.rs.kosmos.spaces.remove(space.get('id'))
       .then(() => console.debug('[remotestorage]', `removed space ${space.get('name')} from RS`));
   }
