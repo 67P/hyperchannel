@@ -63,6 +63,8 @@
     "ember-polyfill-for-tests": "0.2.0",
     "ember-resolver": "^4.0.0",
     "ember-route-action-helper": "2.0.3",
+    "ember-service-worker": "^0.6.12",
+    "ember-service-worker-hubot-web-push-notifications": "^1.0.0",
     "ember-sinon": "^2.1.0",
     "ember-sinon-qunit": "^3.1.0",
     "ember-source": "~3.1.0",

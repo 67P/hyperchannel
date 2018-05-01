@@ -1,5 +1,6 @@
 import Route from '@ember/routing/route';
 import { storageFor as localStorageFor } from 'ember-local-storage';
+import config from 'hyperchannel/config/environment';
 
 export default Route.extend({
 

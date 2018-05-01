@@ -191,8 +191,9 @@ header {
   color: #aaa;
 }
 
-@import "layout";
 @import "iconfont";
+@import "layout";
+@import "buttons";
 @import "components/channel-nav";
 @import "components/channel-container";
 @import "components/message-chat";
@@ -200,3 +201,4 @@ header {
 @import "components/notification-topic-change";
 @import "components/modal-target";
 @import "settings";
+@import "space";
