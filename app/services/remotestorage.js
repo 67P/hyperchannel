@@ -34,7 +34,7 @@ export default Service.extend({
         '#kosmos-random',
         '#sockethub'
       ],
-      botkaURL: 'http://localhost:4242'
+      botkaURL: spaceConfig.botkaURL
     };
 
     params.server.nickname = window.prompt("Choose a nickname");

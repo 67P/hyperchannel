@@ -47,6 +47,8 @@
       "secure": false,
       "port": 6667
     }
+    },
+    "botkaURL": "http://localhost:4242"
   },
   {
     "id": "xmpp-localhost",
