@@ -1,13 +1,13 @@
 import StorageObject from 'ember-local-storage/local/object';
+import config from 'hyperchannel/config/environment';
 
 const Storage = StorageObject.extend();
 
-// Uncomment if you would like to set initialState
 Storage.reopenClass({
   initialState() {
     return {
       nickname: null,
-      currentSpace: 'freenode',
+      currentSpace: config.defaultSpaceId,
       currentChannel: 'kosmos'
     };
   }

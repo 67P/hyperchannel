@@ -43,7 +43,10 @@ module.exports = function(defaults) {
           }
         ]
       }
-    }
+    },
+    // 'ember-service-worker': {
+    //   enabled: false
+    // }
   });
 
   // Use `app.import` to add additional libraries to the generated

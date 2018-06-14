@@ -22,48 +22,16 @@ module.exports = function(environment) {
     },
     sockethubURL: 'http://localhost:10550',
     publicLogsUrl: 'https://storage.5apps.com/kosmos/public/chat-messages',
-    spacePresets: spacePresets
-  };
-
-  //
-  // Service Worker
-  //
-  ENV.serviceWorker = {
-    enabled: false,
-    includeRegistration: false,
-    debug: true,
-    // precacheURLs: [
-    // ],
-    networkFirstURLs: [
-      /activity-streams\.js/,
-      /socket\.io\.js/,
-      /sockethub-client\.js/
-    ],
-    excludePaths: [/test.*/, 'robots.txt', 'crossdomain.xml']
-    // fallback: [
-    //   '/online.html /offline.html'
-    // ],
-    // serviceWorkerFile: "service-worker.js",
-    // skipWaiting: true,
-    // swIncludeFiles: [
-    //   'bower_components/pouchdb/dist/pouchdb.js'
-    // ],
-    // swEnvironment: {
-    // }
+    spacePresets: spacePresets,
+    defaultSpaceId:'irc-localhost'
   };
 
   if (environment === 'development') {
-    // ENV.serviceWorker.enabled = true;
-    // ENV.serviceWorker.includeRegistration = true;
-    // ENV.serviceWorker.debug = true;
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
-
-    // ENV.serviceWorker.enabled = true;
-    // ENV.serviceWorker.includeRegistration = true;
   }
 
   if (environment === 'test') {
@@ -79,10 +47,8 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
+    ENV.defaultSpaceId = 'freenode';
     ENV.sockethubURL = 'https://sockethub.kosmos.org:10550';
-
-    ENV.serviceWorker.enabled = true;
-    ENV.serviceWorker.includeRegistration = true;
   }
 
   return ENV;

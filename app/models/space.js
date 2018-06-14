@@ -8,6 +8,7 @@ export default EmberObject.extend({
   protocol: 'IRC',
   server  : null,
   channels: null, // Channel instances
+  botkaURL: null, // Kosmos bot
 
   // Keep a list of all old sockethubPersonIds, because there might
   // still be coming events from Sockethub for those.
@@ -96,7 +97,8 @@ export default EmberObject.extend({
         secure: this.get('server.secure'),
         nickname: this.get('server.nickname')
       },
-      channels: this.channelNames || []
+      channels: this.channelNames || [],
+      botkaURL: this.botkaURL || null
     };
 
     ['username', 'password', 'nickname'].forEach(prop => {
