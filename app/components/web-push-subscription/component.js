@@ -30,7 +30,6 @@ export default Component.extend({
         const response = await fetch(this.webPushBaseURL+'/vapid-public-key');
         const vapidPublicKey = await response.text();
         // Chrome doesn't accept the base64-encoded (string) vapidPublicKey yet
-        // urlBase64ToUint8Array() is defined in /tools.js
         const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
         // Subscribe the user
         return registration.pushManager.subscribe({
