@@ -69,7 +69,8 @@ export default Service.extend({
               id: id,
               name: spaceData[id].name,
               protocol: spaceData[id].protocol,
-              server: spaceData[id].server
+              server: spaceData[id].server,
+              botkaURL: spaceData[id].botkaURL
             });
             this.connectAndAddSpace(space);
             this.instantiateChannels(space, spaceData[id].channels);

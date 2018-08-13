@@ -1,0 +1,11 @@
+<p>
+  <i>username:</i> {{username}}<br>
+  <i>base URL:</i> {{webPushBaseURL}}
+</p>
+<p>
+  {{#if subscribed}}
+    <button {{action "unsubscribe"}}>Disable push notifications</button>
+  {{else}}
+    <button {{action "subscribe"}}>Receive push notifications</button>
+  {{/if}}
+</p>

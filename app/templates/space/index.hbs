@@ -1,0 +1,12 @@
+<section id="space">
+  <header>
+    <h2>{{model.name}}</h2>
+    <p class="discreet">{{model.server.hostname}}</p>
+  </header>
+  <div class="content">
+    <p>
+      {{web-push-subscription botkaURL=model.botkaURL
+                              username=model.userNickname}}
+    </p>
+  </div>
+</section>
