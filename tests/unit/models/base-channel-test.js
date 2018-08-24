@@ -77,7 +77,7 @@ module('Unit | Model | base-channel', function(hooks) {
   test('#sortedUserList returns an empty array if there are no users', function(assert) {
     const channel = BaseChannel.create();
 
-    assert.equal(typeof channel.get('sortedUserList'), 'object');
+    assert.ok(Array.isArray(channel.get('sortedUserList')));
     assert.equal(channel.get('sortedUserList').length, 0);
   });
 
