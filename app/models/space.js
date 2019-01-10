@@ -97,9 +97,10 @@ export default EmberObject.extend({
         secure: this.get('server.secure'),
         nickname: this.get('server.nickname')
       },
-      channels: this.channelNames || [],
-      botkaURL: this.botkaURL || null
+      channels: this.channelNames || []
     };
+
+    if (isPresent(this.botkaURL)) { serialized.botkaURL = this.botkaURL; }
 
     ['username', 'password', 'nickname'].forEach(prop => {
       // TODO credentials need to be encrypted and probably stored elsewhere
