@@ -55,7 +55,8 @@ export default Service.extend({
 
   saveSpace(space) {
     return this.rs.kosmos.spaces.store(space.serialize())
-      .then(() => console.debug('[remotestorage]', `saved space ${space.get('name')} in RS`));
+      .then(() => console.debug('[remotestorage]', `saved space ${space.get('name')}`))
+      .catch(err => console.error('saving space failed:', err));
   },
 
   removeSpace(space) {
