@@ -11,7 +11,7 @@ module('Integration | Component | channel-nav', function(hooks) {
 
     await render(hbs`{{channel-nav}}`);
 
-    assert.equal(this.element.textContent.trim(), '');
+    assert.dom(this.element).hasText('');
   });
 });
 

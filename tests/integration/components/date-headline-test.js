@@ -17,7 +17,7 @@ module('Integration | Component | date-headline', function(hooks) {
 
     await render(hbs`{{date-headline message=dateMessage}}`);
 
-    assert.equal(this.element.querySelector('h3').textContent.trim(), 'Today');
+    assert.dom(this.element.querySelector('h3')).hasText('Today');
   });
 
   test('show headline "Yesterday" for the previous day', async function(assert) {
@@ -29,7 +29,7 @@ module('Integration | Component | date-headline', function(hooks) {
 
     await render(hbs`{{date-headline message=dateMessage}}`);
 
-    assert.equal(this.element.querySelector('h3').textContent.trim(), 'Yesterday');
+    assert.dom(this.element.querySelector('h3')).hasText('Yesterday');
   });
 
   test('show headline as a date for all other days', async function(assert) {
