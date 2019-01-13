@@ -38,5 +38,6 @@ before_script:
 
 script:
   - cd $TRAVIS_BUILD_DIR
+  - npm run lint:hbs
   - npm run lint:js
   - npm test
