@@ -1,13 +1,7 @@
 import $ from 'jquery';
 import Service, { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
-import Ember from 'ember';
 import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
-
-const {
-  Logger
-} = Ember;
-
 
 /**
  * Build an activity object for sending to Sockethub
@@ -68,7 +62,7 @@ export default Service.extend({
       '@type': "person",
       displayName: space.get('server.nickname')
     };
-    Logger.debug('actor object', actorObject);
+    console.debug('actor object', actorObject);
 
     this.sockethub.ActivityStreams.Object.create(
       actorObject
@@ -155,7 +149,7 @@ export default Service.extend({
     const space = this.get('coms.spaces').findBy('server.hostname', hostname);
 
     if (isEmpty(space)) {
-      Logger.warn('Could not find space for message', message);
+      console.warn('Could not find space for message', message);
       return;
     }
 
