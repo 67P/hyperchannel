@@ -1,12 +1,7 @@
 import Controller, { inject as controller } from '@ember/controller';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
-import Ember from 'ember';
 import Message from 'hyperchannel/models/message';
-
-const {
-  Logger
-} = Ember;
 
 export default Controller.extend({
 
@@ -55,7 +50,7 @@ export default Controller.extend({
       if (availableCommands.includes(command.toLowerCase())) {
         this.send(command + 'Command', commandSplitted.slice(1));
       } else {
-        Logger.warn('[channel]', 'Unknown command', commandText);
+        console.warn('[channel]', 'Unknown command', commandText);
       }
 
       this.set('newMessage', null);

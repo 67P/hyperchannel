@@ -1,12 +1,7 @@
 import $ from 'jquery';
 import Service, { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
-import Ember from 'ember';
 import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
-
-const {
-  Logger
-} = Ember;
 
 /**
  * Build an activity object for sending to Sockethub
@@ -96,7 +91,7 @@ export default Service.extend({
     if (channel) {
       this.observeChannel(space, channel);
     } else {
-      Logger.warn('Could not find channel for join message', message);
+      console.warn('Could not find channel for join message', message);
     }
   },
 
@@ -159,7 +154,7 @@ export default Service.extend({
         }
       }
     } else {
-      Logger.debug('Presence update:', message.actor['@id'], message.object.presence, message.object.status);
+      console.debug('Presence update:', message.actor['@id'], message.object.presence, message.object.status);
     }
   },
 
@@ -176,7 +171,7 @@ export default Service.extend({
     const space = this.getSpaceForMessage(message);
 
     if (isEmpty(space)) {
-      Logger.warn('Could not find space for message', message);
+      console.warn('Could not find space for message', message);
       return;
     }
 

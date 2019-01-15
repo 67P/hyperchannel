@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 
@@ -50,7 +49,7 @@ module('Unit | Service | logger', function(hooks) {
     assert.expect(1);
 
     const originalDebug = console.debug;
-    Ember.Logger.debug = function() {
+    console.debug = function() {
       assert.ok(false);
     };
 
@@ -66,7 +65,7 @@ module('Unit | Service | logger', function(hooks) {
     assert.expect(1);
 
     const originalDebug = console.debug;
-    Ember.Logger.debug = function() {
+    console.debug = function() {
       assert.ok(false);
     };
 

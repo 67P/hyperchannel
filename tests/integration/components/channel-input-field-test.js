@@ -11,6 +11,6 @@ module('Integration | Component | channel-input-field', function(hooks) {
 
     await render(hbs`{{channel-input-field}}`);
 
-    assert.equal(this.element.textContent.trim(), '');
+    assert.dom(this.element).hasText('');
   });
 });

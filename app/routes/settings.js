@@ -2,13 +2,8 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
 import RSVP from 'rsvp';
-import Ember from 'ember';
 import Space from 'hyperchannel/models/space';
 import config from 'hyperchannel/config/environment';
-
-const {
-  Logger
-} = Ember;
 
 export default Route.extend({
 
@@ -30,7 +25,7 @@ export default Route.extend({
         return col;
       },
       e => {
-        Logger.error(e);
+        console.error(e);
       }
     );
 
@@ -60,7 +55,7 @@ export default Route.extend({
             this.coms.connectAndAddSpace(newSpace);
             this.modelFor('settings').spaces.pushObject(newSpace);
           }, e => {
-            Logger.error('error saving in RS', newSpace, e);
+            console.error('error saving in RS', newSpace, e);
           }
         );
     },
@@ -70,7 +65,7 @@ export default Route.extend({
         .then(() => {
             this.modelFor('settings').spaces.removeObject(space);
           }, e => {
-            Logger.error('error deleting from RS', space, e);
+            console.error('error deleting from RS', space, e);
           }
         );
     }
