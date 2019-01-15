@@ -48,6 +48,12 @@ export default EmberObject.extend({
     return this.messages.sortBy('date');
   }),
 
+  sortedUserList: computed('userList.[]', function () {
+    return this.get('userList').sort(function (a, b) {
+      return a.toLowerCase().localeCompare(b.toLowerCase());
+    });
+  }),
+
   addDateHeadline(newMessage) {
     let headlineDate = moment(newMessage.get('date')).startOf('day').toDate();
 

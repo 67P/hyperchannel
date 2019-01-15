@@ -66,8 +66,32 @@ module('Unit | Model | base-channel', function(hooks) {
   test('#sortedMessages returns an empty array if there are no messages', function(assert) {
     const channel = BaseChannel.create();
 
-    assert.equal(typeof channel.get('sortedMessages'), 'object');
+    assert.ok(Array.isArray(channel.get('sortedMessages')));
     assert.equal(channel.get('sortedMessages').length, 0);
+  });
+
+  //
+  // sortedUserList
+  //
+
+  test('#sortedUserList returns an empty array if there are no users', function(assert) {
+    const channel = BaseChannel.create();
+
+    assert.ok(Array.isArray(channel.get('sortedUserList')));
+    assert.equal(channel.get('sortedUserList').length, 0);
+  });
+
+  test('#sortedUserList returns a list of sorted usernames', function(assert) {
+    const channel = BaseChannel.create();
+
+    channel.set('userList', ['silverbucket', 'XioNox', 'raucau', '@operator',
+                             'gregkare', 'galfert', '@MrOps', '~TheOwner',
+                             '&DaAdmin', '%HalfOp', '+TheVoice']);
+
+    assert.deepEqual(channel.get('sortedUserList'), ['@MrOps', '@operator', '&DaAdmin',
+                                                     '%HalfOp', '+TheVoice', '~TheOwner',
+                                                     'galfert', 'gregkare', 'raucau',
+                                                     'silverbucket', 'XioNox']);
   });
 
   //
