@@ -17,3 +17,5 @@ ratings:
     - "app/**/*"
 exclude_paths:
   - "tests/**/*"
+  - ".eslintrc.js"
+  - ".template-lintrc.js"
