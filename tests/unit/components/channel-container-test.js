@@ -7,6 +7,7 @@ module('Unit | Component | channel-container', function(hooks) {
 
   test('add username mention to message, with empty message', function(assert) {
     let component = this.owner.factoryFor('component:channel-container').create();
+    component.focusMessageInputField = function () { return true; }
     assert.equal(component.newMessage, '');
 
     run(() => component.send('addUsernameMentionToMessage', 'toshi'));
@@ -16,6 +17,7 @@ module('Unit | Component | channel-container', function(hooks) {
 
   test('add username mention to message, with existing message', function(assert) {
     let component = this.owner.factoryFor('component:channel-container').create();
+    component.focusMessageInputField = function () { return true; }
     component.set('newMessage', 'hey, wasup?')
 
     run(() => component.send('addUsernameMentionToMessage', 'toshi'));
@@ -26,6 +28,7 @@ module('Unit | Component | channel-container', function(hooks) {
 
   test('add username mention to message, with existing message with username', function(assert) {
     let component = this.owner.factoryFor('component:channel-container').create();
+    component.focusMessageInputField = function () { return true; }
     component.set('newMessage', 'toshi: hey, wasup?')
 
     run(() => component.send('addUsernameMentionToMessage', 'toshi'));
