@@ -65,6 +65,16 @@ export default Component.extend({
       }).finally(() => {
         this.set('scrollingDisabled', false);
       });
+    },
+
+    addUsernameMentionToMessage (username) {
+      const msg = this.newMessage;
+      if (msg.match(new RegExp(`^${username}`))) {
+        // new message already starts with username
+        return false;
+      } else {
+        this.set('newMessage', `${username}: ${msg}`)
+      }
     }
 
   }
