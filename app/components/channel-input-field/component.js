@@ -1,6 +1,6 @@
-import Ember from 'ember';
+import TextField from '@ember/component/text-field';
 
-export default Ember.TextField.extend({
+export default TextField.extend({
 
   keyUp: function(ev) {
     // console.debug('keyUp', ev);

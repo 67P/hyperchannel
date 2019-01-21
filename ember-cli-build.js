@@ -1,6 +1,9 @@
-/* eslint-env node */
 /* global require, module */
+
+'use strict';
+
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+var autoprefixer = require('autoprefixer');
 
 module.exports = function(defaults) {
 
@@ -21,9 +24,29 @@ module.exports = function(defaults) {
     },
     sassOptions: {
       includePaths: [
-        'bower_components/bourbon/app/assets/stylesheets'
+        'node_modules/bourbon/app/assets/stylesheets'
       ]
-    }
+    },
+    postcssOptions: {
+      compile: {
+        enabled: false
+      },
+      filter: {
+        enabled: true,
+        exclude: ['assets/vendor.css'],
+        plugins: [
+          {
+            module: autoprefixer,
+            options: {
+              browsers: ['last 4 versions']
+            }
+          }
+        ]
+      }
+    },
+    // 'ember-service-worker': {
+    //   enabled: false
+    // }
   });
 
   // Use `app.import` to add additional libraries to the generated
@@ -39,9 +62,9 @@ module.exports = function(defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
 
-  app.import('bower_components/linkifyjs/linkify.min.js');
-  app.import('bower_components/linkifyjs/linkify-string.min.js');
-  app.import('bower_components/inobounce/inobounce.js');
+  app.import('node_modules/linkifyjs/dist/linkify.js');
+  app.import('node_modules/linkifyjs/dist/linkify-string.js');
+  app.import('node_modules/inobounce/inobounce.js');
 
   return app.toTree();
 };

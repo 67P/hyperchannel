@@ -1,17 +1,13 @@
-import Ember from 'ember';
-
-const {
-  inject: {
-    service
-  }
-} = Ember;
-
+import $ from 'jquery';
+import Service, { inject as service } from '@ember/service';
+import { isEmpty } from '@ember/utils';
+import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
 
 /**
  * Build an activity object for sending to Sockethub
  *
- * @param space {Space} space model the activity belongs to
- * @param details {Object} the activity details
+ * @param {Space} space - space model the activity belongs to
+ * @param {Object} details - the activity details
  * @returns {Object} the activity object
  * @private
  */
@@ -21,7 +17,7 @@ function buildActivityObject(space, details) {
     actor: space.get('sockethubPersonId')
   };
 
-  return Ember.$.extend({}, baseObject, details);
+  return $.extend({}, baseObject, details);
 }
 
 /**
@@ -48,9 +44,10 @@ function buildMessageObject(space, target, content, type='message') {
  * This service provides helpers for SocketHub IRC communications
  * @module hyperchannel/services/sockethub-irc
  */
-export default Ember.Service.extend({
+export default Service.extend({
 
   logger: service(),
+  coms: service(),
 
   /**
    * - Creates an ActivityStreams person object for
@@ -65,7 +62,7 @@ export default Ember.Service.extend({
       '@type': "person",
       displayName: space.get('server.nickname')
     };
-    Ember.Logger.debug('actor object', actorObject);
+    console.debug('actor object', actorObject);
 
     this.sockethub.ActivityStreams.Object.create(
       actorObject
@@ -76,7 +73,7 @@ export default Ember.Service.extend({
         '@type': 'credentials',
         nick: space.get('server.nickname'),
         server: space.get('server.hostname'),
-        port: space.get('server.port'),
+        port: parseInt(space.get('server.port'), 10),
         secure: space.get('server.secure')
       }
     });
@@ -85,25 +82,39 @@ export default Ember.Service.extend({
     this.sockethub.socket.emit('credentials', credentials);
   },
 
+  handleJoinCompleted(space, message) {
+    var channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
+    if (channel) {
+      this.observeChannel(space, channel);
+    }
+  },
+
   /**
    * Join a channel/room
    * @public
    */
-  join: function(space, channel, type) {
-    this.sockethub.ActivityStreams.Object.create({
-      '@type': type,
-      '@id': channel.get('sockethubChannelId'),
-      displayName: channel.get('name')
-    });
+  join(space, channel, type) {
+    switch(type) {
+      case 'room':
+        this.sockethub.ActivityStreams.Object.create({
+          '@type': type,
+          '@id': channel.get('sockethubChannelId'),
+          displayName: channel.get('name')
+        });
 
-    let joinMsg = buildActivityObject(space, {
-      '@type': 'join',
-      target: channel.get('sockethubChannelId'),
-      object: {}
-    });
+        var joinMsg = buildActivityObject(space, {
+          '@type': 'join',
+          target: channel.get('sockethubChannelId'),
+          object: {}
+        });
 
-    this.log('irc', 'joining channel', joinMsg);
-    this.sockethub.socket.emit('message', joinMsg);
+        this.log('irc', 'joining channel', joinMsg);
+        this.sockethub.socket.emit('message', joinMsg);
+        break;
+      case 'person':
+        channel.set('connected', true);
+        break;
+    }
   },
 
   /**
@@ -129,26 +140,51 @@ export default Ember.Service.extend({
   },
 
   /**
+   * Add an incoming message to a channel
+   * @param {Object} messsage
+   * @public
+   */
+  addMessageToChannel(message) {
+    const hostname = message.actor['@id'].match(/irc:\/\/.+@(.+)/)[1];
+    const space = this.get('coms.spaces').findBy('server.hostname', hostname);
+
+    if (isEmpty(space)) {
+      console.warn('Could not find space for message', message);
+      return;
+    }
+
+    const channel = this.getChannelForMessage(space, message);
+    const channelMessage = channelMessageFromSockethubObject(message);
+
+    // TODO should check for message and update sent status if exists
+    if (channelMessage.get('nickname') !== space.get('userNickname')) {
+      channel.addMessage(channelMessage);
+    }
+  },
+
+  /**
    * Leave a channel
    * @public
    */
   leave(space, channel) {
-    // TODO Do we really need to create this room for leaving? It should
-    // already have been created when joining.
-    this.sockethub.ActivityStreams.Object.create({
-      '@type': "room",
-      '@id': channel.get('sockethubChannelId'),
-      displayName: channel.get('name')
-    });
+    if (!channel.get('isUserChannel')) {
+      // TODO Do we really need to create this room for leaving? It should
+      // already have been created when joining.
+      this.sockethub.ActivityStreams.Object.create({
+        '@type': "room",
+        '@id': channel.get('sockethubChannelId'),
+        displayName: channel.get('name')
+      });
 
-    let leaveMsg = buildActivityObject(space, {
-      '@type': 'leave',
-      target: channel.get('sockethubChannelId'),
-      object: {}
-    });
+      let leaveMsg = buildActivityObject(space, {
+        '@type': 'leave',
+        target: channel.get('sockethubChannelId'),
+        object: {}
+      });
 
-    this.log('leave', 'leaving channel', leaveMsg);
-    this.sockethub.socket.emit('message', leaveMsg);
+      this.log('leave', 'leaving channel', leaveMsg);
+      this.sockethub.socket.emit('message', leaveMsg);
+    }
   },
 
 
@@ -187,10 +223,55 @@ export default Ember.Service.extend({
   },
 
   /**
+   * Generate a Sockethub Channel ID.
+   *
+   * @param {Space} space
+   * @param {String} channelName - name of the channel
+   * @returns {String} Sockethub channel ID
+   * @public
+   */
+  generateChannelId(space, channelName) {
+    return `irc://${space.get('server.hostname')}/${channelName}`;
+  },
+
+  /**
+   * Get the channel for the given space and message.
+   *
+   * @param {Space} space
+   * @param {Object} message
+   * @returns {Channel} channel
+   * @public
+   */
+  getChannelForMessage(space, message) {
+    let targetChannelName, channel;
+
+    if (space.get('userNickname') === message.target.displayName) {
+      // direct message
+      targetChannelName = message.actor.displayName || message.actor['@id'];
+
+      channel = space.get('channels').findBy('name', targetChannelName);
+      if (!channel) {
+        channel = this.coms.createUserChannel(space, targetChannelName);
+      }
+    } else {
+      // channel message
+      targetChannelName = message.target.displayName;
+
+      channel = space.get('channels').findBy('name', targetChannelName);
+      if (!channel) {
+        channel = this.coms.createChannel(space, targetChannelName);
+      }
+    }
+
+    return channel;
+  },
+
+  /**
    * Utility function for easier logging
    * @protected
    */
   log() {
-    this.get('logger').log(...arguments);
+    this.logger.log(...arguments);
   }
+
 });

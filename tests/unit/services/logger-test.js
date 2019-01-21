@@ -1,72 +1,79 @@
-import Ember from 'ember';
-import { moduleFor, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
-moduleFor('service:logger', 'Unit | Service | logger', {
-  // Specify the other units that are required for this test.
-  // needs: ['service:foo']
-});
+module('Unit | Service | logger', function(hooks) {
+  setupTest(hooks);
 
-// Replace this with your real tests.
-test('it exists', function(assert) {
-  let service = this.subject();
-  assert.ok(service);
-});
+  // Replace this with your real tests.
+  test('it exists', function(assert) {
+    let service = this.owner.lookup('service:logger');
+    assert.ok(service);
+  });
 
-test('is enabled by default', function(assert) {
-  assert.expect(1);
+  test('is enabled by default', function(assert) {
+    assert.expect(1);
 
-  let service = this.subject();
-  assert.ok(service.get('enabled'));
-});
+    let service = this.owner.lookup('service:logger');
+    assert.ok(service.get('enabled'));
+  });
 
-test('does log activeTypes', function(assert) {
-  assert.expect(2);
+  test('does log activeTypes', function(assert) {
+    assert.expect(2);
 
-  Ember.Logger.debug = function() {
-    assert.equal(arguments[0], '[error]');
-    assert.ok(true);
-  };
+    const originalDebug = console.debug;
+    console.debug = function() {
+      assert.equal(arguments[0], '[error]');
+      assert.ok(true);
+      console.debug = originalDebug;
+    };
 
-  let service = this.subject();
-  service.log('error', 'test');
-});
+    let service = this.owner.lookup('service:logger');
+    service.log('error', 'test');
+  });
 
-test('does log added types', function(assert) {
-  assert.expect(1);
+  test('does log added types', function(assert) {
+    assert.expect(1);
 
-  Ember.Logger.debug = function() {
-    assert.ok(true);
-  };
+    const originalDebug = console.debug;
+    console.debug = function() {
+      assert.ok(true);
+      console.debug = originalDebug;
+    };
 
-  let service = this.subject();
-  service.add('message');
-  service.log('message', 'test');
-});
+    let service = this.owner.lookup('service:logger');
+    service.add('message');
+    service.log('message', 'test');
+  });
 
-test('does not log if disabled', function(assert) {
-  assert.expect(1);
+  test('does not log if disabled', function(assert) {
+    assert.expect(1);
 
-  Ember.Logger.debug = function() {
-    assert.ok(false);
-  };
+    const originalDebug = console.debug;
+    console.debug = function() {
+      assert.ok(false);
+    };
 
-  let service = this.subject();
-  service.disable();
-  assert.ok(!service.get('enabled'));
+    let service = this.owner.lookup('service:logger');
+    service.disable();
+    assert.ok(!service.get('enabled'));
 
-  service.log('error', 'test');
-});
+    service.log('error', 'test');
+    console.debug = originalDebug;
+  });
 
-test('does not log if removed types', function(assert) {
-  assert.expect(1);
+  test('does not log if removed types', function(assert) {
+    assert.expect(1);
 
-  Ember.Logger.debug = function() {
-    assert.ok(false);
-  };
+    const originalDebug = console.debug;
+    console.debug = function() {
+      assert.ok(false);
+    };
 
-  let service = this.subject();
-  service.remove('error');
-  assert.ok(!service.get('activeTypes').includes('error'));
+    let service = this.owner.lookup('service:logger');
+    service.remove('error');
+    assert.ok(!service.get('activeTypes').includes('error'));
 
-  service.log('error', 'test');
+    service.log('error', 'test');
+    console.debug = originalDebug;
+  });
 });

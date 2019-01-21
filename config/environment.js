@@ -1,11 +1,13 @@
-/* eslint-env node */
+/* global module, require */
+'use strict';
+
 const fs = require('fs');
 let spacePresets = JSON.parse(fs.readFileSync('config/space-presets.json'));
 
 module.exports = function(environment) {
-  var ENV = {
+  let ENV = {
     modulePrefix: 'hyperchannel',
-    environment: environment,
+    environment,
     rootURL: '/',
     locationType: 'auto',
     EmberENV: {
@@ -20,40 +22,11 @@ module.exports = function(environment) {
     },
     sockethubURL: 'http://localhost:10550',
     publicLogsUrl: 'https://storage.5apps.com/kosmos/public/chat-messages',
-    spacePresets: spacePresets
-  };
-
-  //
-  // Service Worker
-  //
-  ENV.serviceWorker = {
-    enabled: false,
-    includeRegistration: false,
-    debug: true,
-    // precacheURLs: [
-    // ],
-    networkFirstURLs: [
-      /activity\-streams\.js/,
-      /socket\.io\.js/,
-      /sockethub\-client\.js/
-    ],
-    excludePaths: [/test.*/, 'robots.txt', 'crossdomain.xml']
-    // fallback: [
-    //   '/online.html /offline.html'
-    // ],
-    // serviceWorkerFile: "service-worker.js",
-    // skipWaiting: true,
-    // swIncludeFiles: [
-    //   'bower_components/pouchdb/dist/pouchdb.js'
-    // ],
-    // swEnvironment: {
-    // }
+    spacePresets: spacePresets,
+    defaultSpaceId: 'freenode'
   };
 
   if (environment === 'development') {
-    // ENV.serviceWorker.enabled = true;
-    // ENV.serviceWorker.includeRegistration = true;
-    // ENV.serviceWorker.debug = true;
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
@@ -70,13 +43,12 @@ module.exports = function(environment) {
     ENV.APP.LOG_VIEW_LOOKUPS = false;
 
     ENV.APP.rootElement = '#ember-testing';
+    ENV.APP.autoboot = false;
   }
 
   if (environment === 'production') {
+    ENV.defaultSpaceId = 'freenode';
     ENV.sockethubURL = 'https://sockethub.kosmos.org:10550';
-
-    ENV.serviceWorker.enabled = true;
-    ENV.serviceWorker.includeRegistration = true;
   }
 
   return ENV;

@@ -1,6 +1,6 @@
 <main>
   <header id="channel-header" {{action "menu" "global" "toggle"}} onClick="">
-    <h2 id="channel-name">{{channel.name}}</h2>
+    <h2 id="channel-name" class={{if channel.connected "connected" "disconnected"}}>{{channel.name}}</h2>
     <p id="channel-title">{{channel.formattedTopic}}</p>
     <nav>
       <a href="#"><i class="icon-megaphone"></i></a><a href="#"><i class="icon-mute"></i></a>
@@ -9,7 +9,7 @@
 
   <section id="channel-content" class="main">
     {{#if channel.isLogged}}
-      <a {{action "loadPreviousMessages"}} class="load-previous">
+      <a {{action "loadPreviousMessages"}} class="load-previous" role="button">
         Load previous messages
       </a>
     {{/if}}
@@ -21,9 +21,9 @@
         </li>
       {{else}}
         {{#if channel.isLogged}}
-          <li class="no-messages">No recent messages to display.</li>
+          <li class="no-messages discreet">No recent messages to display.</li>
         {{else}}
-          <li class="no-messages">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank">Learn more</a></li>
+          <li class="no-messages discreet">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank" rel="noopener">Learn more</a></li>
         {{/if}}
       {{/each}}
     </ul>
@@ -45,13 +45,13 @@
 <aside>
   <header>
     <nav>
-      {{#link-to 'index' class='active'}}<i class="icon-users"></i>{{/link-to}}<a href="#"><i class="icon-paperclip"></i></a>{{#link-to 'settings'}}<i class="icon-cog"></i>{{/link-to}}<a href="#"><i class="icon-resize-enlarge"></i></a>
+      {{#link-to "index" class="active"}}<i class="icon-users"></i>{{/link-to}}<a href="#"><i class="icon-paperclip"></i></a>{{#link-to "settings"}}<i class="icon-cog"></i>{{/link-to}}<a href="#"><i class="icon-resize-enlarge"></i></a>
     </nav>
   </header>
   <section id="user-list" class="main">
     <ul>
-      {{#each channel.userList as |username|}}
-        <li>{{#link-to 'space.userChannel' username}}{{username}}{{/link-to}}</li>
+      {{#each channel.sortedUserList as |username|}}
+        <li>{{link-to-username username=username}}</li>
       {{/each}}
     </ul>
   </section>

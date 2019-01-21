@@ -1,15 +1,11 @@
 /* global linkifyStr */
-import Ember from 'ember';
+import Component from '@ember/component';
+
+import { computed } from '@ember/object';
+import { htmlSafe } from '@ember/string';
 import moment from 'moment';
 
-const {
-  computed,
-  String: {
-    htmlSafe
-  }
-} = Ember;
-
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'div',
   classNames: ['chat-message'],
 
@@ -40,15 +36,18 @@ export default Ember.Component.extend({
         validate: {
           url: function (value) {
             return /^(http)s?:\/\//.test(value);
-          }
+          },
+          email: function () { return false; }
         }
       });
     }
 
     // Colors
-    out = out.replace(/\u0003(\d+)/g,'<span class="color-$1">')
-             .replace(/\"color-(\d)\"/g,'"color-0$1"')
-             .replace(/\u000f/, '</span>');
+    out = out.replace(/\u0003(\d+)/g, '<span class="color-$1">')
+             .replace(/"color-(\d)"/g, '"color-0$1"')
+             .replace(/\u0002/g, '<span class="bold">')
+             .replace(/\u001D/g, '<span class="italic">')
+             .replace(/\u000f/g,  '</span>');
 
     return htmlSafe(out);
   })

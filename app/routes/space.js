@@ -1,12 +1,12 @@
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
+import Route from '@ember/routing/route';
 
-export default Ember.Route.extend({
+export default Route.extend({
 
-  coms: Ember.inject.service(),
+  coms: service(),
 
   model: function(params) {
-    return this.get('coms').get('spaces')
-                          .findBy('id', params.id);
+    return this.coms.get('spaces').findBy('id', params.id);
   }
 
 });

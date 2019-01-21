@@ -1,10 +1,14 @@
-import Ember from 'ember';
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import { isEmpty } from '@ember/utils';
+import RSVP from 'rsvp';
 import Space from 'hyperchannel/models/space';
 import config from 'hyperchannel/config/environment';
 
-export default Ember.Route.extend({
+export default Route.extend({
 
-  storage: Ember.inject.service('remotestorage'),
+  storage: service('remotestorage'),
+  coms: service(),
 
   model() {
     let rsKosmos = this.get('storage.rs').kosmos;
@@ -12,20 +16,26 @@ export default Ember.Route.extend({
     let spaces = rsKosmos.spaces.getAll().then(
       res => {
         let col = [];
-        if (Ember.isEmpty(res)) { return col; }
+        if (isEmpty(res)) { return col; }
         Object.keys(res).forEach(id => {
-          col.push(Space.create(res[id]));
+          const space = Space.create();
+          space.setProperties(res[id]);
+          col.push(space);
         });
         return col;
       },
       e => {
-        Ember.Logger.error(e);
+        console.error(e);
       }
     );
 
-    return Ember.RSVP.hash({
+    return RSVP.hash({
       spaces: spaces,
-      spacePresets: config.spacePresets.map((preset) => Space.create(preset))
+      spacePresets: config.spacePresets.map((preset) => {
+        const space = Space.create();
+        space.setProperties(preset);
+        return space;
+      })
     });
   },
 
@@ -38,22 +48,24 @@ export default Ember.Route.extend({
 
     addSpace() {
       let newSpace = this.controller.get('newSpace');
+      newSpace.set('id', newSpace.get('name').dasherize());
 
-      this.get('storage').saveSpace(newSpace)
+      this.storage.saveSpace(newSpace)
         .then(() => {
+            this.coms.connectAndAddSpace(newSpace);
             this.modelFor('settings').spaces.pushObject(newSpace);
           }, e => {
-            Ember.Logger.error('error saving in RS', newSpace, e);
+            console.error('error saving in RS', newSpace, e);
           }
         );
     },
 
     removeSpace(space) {
-      this.get('storage').removeSpace(space)
+      this.storage.removeSpace(space)
         .then(() => {
             this.modelFor('settings').spaces.removeObject(space);
           }, e => {
-            Ember.Logger.error('error deleting from RS', space, e);
+            console.error('error deleting from RS', space, e);
           }
         );
     }

@@ -1,12 +1,14 @@
-import Ember from 'ember';
+import Controller, { inject as controller } from '@ember/controller';
+import { inject as service } from '@ember/service';
+import { isPresent } from '@ember/utils';
 import Message from 'hyperchannel/models/message';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
 
   newMessage: null,
-  space: Ember.inject.controller(),
-  coms: Ember.inject.service(),
-  storage: Ember.inject.service('remotestorage'),
+  space: controller(),
+  coms: service(),
+  storage: service('remotestorage'),
 
   createMessage(message, type) {
     return Message.create({
@@ -21,9 +23,9 @@ export default Ember.Controller.extend({
     sendMessage: function(newMessage) {
       let message = this.createMessage(newMessage, 'message-chat');
 
-      this.get('coms').transferMessage(
+      this.coms.transferMessage(
         this.get('space.model'),
-        this.get('model.sockethubChannelId'),
+        this.model,
         message.get('content')
       );
 
@@ -48,7 +50,7 @@ export default Ember.Controller.extend({
       if (availableCommands.includes(command.toLowerCase())) {
         this.send(command + 'Command', commandSplitted.slice(1));
       } else {
-        Ember.Logger.warn('[channel]', 'Unknown command', commandText);
+        console.warn('[channel]', 'Unknown command', commandText);
       }
 
       this.set('newMessage', null);
@@ -56,17 +58,21 @@ export default Ember.Controller.extend({
 
     joinCommand: function(args) {
       let space = this.get('space.model');
-      let channel = this.get('coms').createChannel(space, args[0]);
-      this.get('storage').saveSpace(space);
+      let channel = this.coms.createChannel(space, args[0]);
+      this.storage.saveSpace(space);
       this.transitionToRoute('space.channel', space, channel);
     },
 
     partCommand: function() {
       let space = this.get('space.model');
       let channelName = this.get('model.name');
-      this.get('coms').removeChannel(space, channelName);
+      this.coms.removeChannel(space, channelName);
       let lastChannel = space.get('channels.lastObject');
-      this.transitionToRoute('space.channel', space, lastChannel);
+      if (isPresent(lastChannel)) {
+        this.transitionToRoute('space.channel', space, lastChannel);
+      } else {
+        this.transitionToRoute('space', space);
+      }
     },
 
     leaveCommand: function() {
@@ -81,7 +87,7 @@ export default Ember.Controller.extend({
 
       let message = this.createMessage(newMessage, 'message-chat-me');
 
-      this.get('coms').transferMeMessage(
+      this.coms.transferMeMessage(
         this.get('space.model'),
         this.get('model.sockethubChannelId'),
         message.get('content')
@@ -92,17 +98,17 @@ export default Ember.Controller.extend({
 
     msgCommand: function(args) {
       let username = args.shift();
-      this.get('coms').createUserChannel(this.get('space.model'), username);
+      this.coms.createUserChannel(this.get('space.model'), username);
       // TODO fix this, sockethub sends a failure event with error
       // "TypeError: Cannot read property 'indexOf' of undefined"
       // this.get('coms').transferMessage(this.get('space.model'), username, args.join(' '));
     },
 
     topicCommand: function(args) {
-      let channel = this.get('model');
+      let channel = this.model;
       let topic = args.join(' ');
 
-      this.get('coms').changeTopic(this.get('space.model'), channel, topic);
+      this.coms.changeTopic(this.get('space.model'), channel, topic);
     }
   }
 

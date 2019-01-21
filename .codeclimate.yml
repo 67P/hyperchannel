@@ -5,7 +5,8 @@ engines:
     enabled: true
     config:
       languages:
-        - javascript
+        javascript:
+          mass_threshold: 60
   fixme:
     enabled: true
     checks:
@@ -16,3 +17,5 @@ ratings:
     - "app/**/*"
 exclude_paths:
   - "tests/**/*"
+  - ".eslintrc.js"
+  - ".template-lintrc.js"

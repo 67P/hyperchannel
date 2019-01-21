@@ -1,38 +1,52 @@
-import Ember from 'ember';
+import { alias, sort } from '@ember/object/computed';
+import EmberObject, { computed } from '@ember/object';
+import { isPresent } from '@ember/utils';
 
-const {
-  computed,
-  isPresent,
-} = Ember;
+export default EmberObject.extend({
 
-export default Ember.Object.extend({
+  name    : null,
+  protocol: 'IRC',
+  server  : null,
+  channels: null, // Channel instances
+  botkaURL: null, // Kosmos bot
 
-  name      : null,
-  protocol  : 'IRC',
-  server : {
-    hostname: null,
-    port: 7000,
-    secure: true,
-    username: null,
-    password: null,
-    nickname: null,
-    nickServ: {
-      password: null
-    }
-  },
-  channels   : null, // Channel instances
+  // Keep a list of all old sockethubPersonIds, because there might
+  // still be coming events from Sockethub for those.
+  previousSockethubPersonIds: null,
 
-  init() {
-    this._super(...arguments);
+  channelSorting: null,
+  sortedChannels: sort('channels', 'channelSorting'),
+
+  init () {
+    this.set('channelSorting', ['name']);
     this.set('channels', []);
+    this.set('previousSockethubPersonIds', []);
+
+    this.set('server', {
+      hostname: null,
+      port: 7000,
+      secure: true,
+      username: null,
+      password: null,
+      nickname: null,
+      nickServ: {
+        password: null
+      }
+    });
+
+    this._super(...arguments);
   },
 
   channelNames: computed('channels.@each.name', function() {
-    return this.get('channels').mapBy('name');
+    return this.channels.mapBy('name');
+  }),
+
+  sockethubChannelIds: computed('channels.@each.sockethubChannelId', function() {
+    return this.channels.mapBy('sockethubChannelId');
   }),
 
   loggedChannels: computed('name', 'protocol', function() {
-    if (this.get('name') === 'Freenode' && this.get('protocol') === 'IRC') {
+    if (this.name === 'Freenode' && this.protocol === 'IRC') {
       return ['#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',
               '#unhosted','#sockethub','#opensourcedesign','#openknot','#emberjs',
               '#indieweb', '#mastodon'];
@@ -41,43 +55,52 @@ export default Ember.Object.extend({
     }
   }),
 
-  id: function() {
-    // This could be based on server type in the future. E.g. IRC would be
-    // server URL, while Campfire would be another id.
-    return this.get('name').toLowerCase();
-  }.property('name'),
+  userNickname: alias('server.nickname'),
 
-  userNickname: computed.alias('server.nickname'),
+  updateUsername(username) {
+    // keep track of old name for later reference
+    this.previousSockethubPersonIds.pushObject(this.sockethubPersonId);
 
-  sockethubPersonId: function() {
-    let personID;
-    switch (this.get('protocol')) {
+    switch (this.protocol) {
       case 'IRC':
+        this.set('server.nickname', username);
+        break;
+      case 'XMPP':
+        this.set('server.username', username);
+        break;
+    }
+  },
+
+  sockethubPersonId: computed('protocol', 'server.{hostname,username,nickname}', function () {
+    let personID;
+    switch (this.protocol) {
+      case 'IRC':
+        // TODO - remove the use of any URI protocol part
         personID = `irc://${this.get('server.nickname')}@${this.get('server.hostname')}`;
         break;
       case 'XMPP':
-        personID = `xmpp://${this.get('server.username')}@${this.get('server.hostname')}`;
+        // TODO - why isn't the full JID user+host+resource?
+        personID = `${this.get('server.username')}/hyperchannel`;
         break;
     }
     return personID;
-  }.property('protocol', 'server.hostname', 'server.username', 'server.nickname'),
-
-  channelSorting: ['name'],
-  sortedChannels: computed.sort('channels', 'channelSorting'),
+  }),
 
   serialize() {
     let serialized = {
-      id: this.get('id'),
-      name: this.get('name'),
-      protocol: this.get('protocol'),
+      id: this.id || this.name.dasherize(),
+      name: this.name,
+      protocol: this.protocol,
       server: {
         hostname: this.get('server.hostname'),
         port: parseInt(this.get('server.port'), 10),
         secure: this.get('server.secure'),
         nickname: this.get('server.nickname')
       },
-      channels: this.get('channelNames') || []
+      channels: this.channelNames || []
     };
+
+    if (isPresent(this.botkaURL)) { serialized.botkaURL = this.botkaURL; }
 
     ['username', 'password', 'nickname'].forEach(prop => {
       // TODO credentials need to be encrypted and probably stored elsewhere

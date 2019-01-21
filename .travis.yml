@@ -1,23 +1,43 @@
 ---
+dist: trusty
 language: node_js
 node_js:
-  - "6"
+  - "lts/*"
 
-sudo: false
+sudo: required
+
+services:
+  - redis-server
+
+addons:
+  chrome: stable
 
 cache:
   directories:
     - $HOME/.npm
 
+env:
+  global:
+    # See https://git.io/vdao3 for details.
+    - JOBS=1
+
 before_install:
   - npm config set spin false
-  - npm install -g bower
-  - bower --version
-  - npm install -g phantomjs-prebuilt
-  - phantomjs --version
 
 install:
+  - cd $HOME
+  - git clone https://github.com/sockethub/sockethub.git
+  - cd sockethub
+  - npm install
+  - cd $TRAVIS_BUILD_DIR
   - npm install
 
+before_script:
+  - cd $HOME/sockethub
+  - npm start 2> /dev/null &
+
 script:
+  - cd $TRAVIS_BUILD_DIR
+  - npm run lint:hbs
+  - npm run lint:js
   - npm test

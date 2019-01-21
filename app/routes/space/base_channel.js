@@ -1,20 +1,12 @@
-import Ember from 'ember';
+import $ from 'jquery';
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import { scheduleOnce, later } from '@ember/runloop';
 import { storageFor as localStorageFor } from 'ember-local-storage';
-
-const {
-  Route,
-  inject: {
-    service
-  },
-  run: {
-    later,
-    scheduleOnce
-  }
-} = Ember;
 
 function focusMessageInput() {
   if (window.innerWidth > 900) {
-    Ember.$('input#message-field').focus();
+    $('input#message-field').focus();
   } else {
     // Don't auto-focus on small screens
   }
@@ -52,8 +44,12 @@ export default Route.extend({
       this.set('userSettings.currentSpace', space.get('id'));
       this.set('userSettings.currentChannel', channel.get('slug'));
 
+      // Mark all other channels as inactive/invisible
+      this.get('coms.spaces').forEach((space) => {
+        space.get('channels').setEach('visible', false);
+      });
+
       // Mark channel as active/visible
-      space.get('channels').setEach('visible', false);
       channel.set('visible', true);
 
       // Mark unread messages as read

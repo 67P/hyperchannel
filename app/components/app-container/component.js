@@ -1,12 +1,15 @@
-import Ember from 'ember';
+/* global Hammer */
+import Component from '@ember/component';
+import $ from 'jquery';
 import RecognizerMixin from 'ember-gestures/mixins/recognizers';
+import { computed } from '@ember/object';
 
 function isElementOf(id, element) {
   return element.id === id ||
-         Ember.$(element).parents(`#${id}`).length > 0;
+         $(element).parents(`#${id}`).length > 0;
 }
 
-export default Ember.Component.extend(RecognizerMixin, {
+export default Component.extend(RecognizerMixin, {
 
   tagName: 'div',
   classNames: ['app-container'],
@@ -14,6 +17,17 @@ export default Ember.Component.extend(RecognizerMixin, {
                       'showChannelMenu:channel-menu-open'],
 
   recognizers: 'swipeleft swiperight tap',
+
+  // Hammer.js manager options
+  // Used by the ember-gestures recognizer Mixin,
+  // needed to fix swipe gestures in Chrome.
+  managerOptions: computed('', function () {
+    return {
+      domEvents: true,
+      touchAction: 'auto',
+      inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput,
+    }
+  }),
 
   swipeLeft() {
     this.set('showGlobalMenu', false);
@@ -24,7 +38,7 @@ export default Ember.Component.extend(RecognizerMixin, {
   },
 
   tap(e) {
-    if (this.get('showGlobalMenu') &&
+    if (this.showGlobalMenu &&
         !isElementOf('channel-header', e.target) &&
         !isElementOf('global', e.target)) {
       this.set('showGlobalMenu', false);

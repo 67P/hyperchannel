@@ -33,6 +33,13 @@
   // white
   .color-16 { color: #333; }
 
+  .bold {
+    font-weight: bold;
+  }
+  .italic {
+    font-style: italic;
+  }
+
   &__date {
     display: block;
     float: right;
@@ -62,20 +69,6 @@
   a {
     text-decoration: underline;
     color: #339;
-
-    /* These are technically the same, but use both */
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    /* IE
-    -ms-word-break: break-all;
-    /* Instead use this non-standard one: */
-    word-break: break-word;
-    /* Adds a hyphen where the word breaks, if supported (No Blink) */
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-
   }
 
   img {

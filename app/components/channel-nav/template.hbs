@@ -5,7 +5,7 @@
       {{#each space.sortedChannels as |channel|}}
       <li class="{{if channel.connected "connected" "disconnected"}} {{channel.unreadMessagesClass}} {{if channel.visible "active" ""}}">
           {{#if channel.isUserChannel}}
-            {{#link-to "space.userChannel" space channel}}{{channel.name}}{{/link-to}}
+            {{#link-to "space.user-channel" space channel}}{{channel.name}}{{/link-to}}
           {{else}}
             {{#link-to "space.channel" space channel}}{{channel.name}}{{/link-to}}
           {{/if}}
@@ -13,7 +13,7 @@
         </li>
       {{/each}}
       <li>
-        <a {{action (action joinChannel space)}} class="join-channel">+</a>
+        <a {{action (action joinChannel space)}} class="join-channel" role="button">+</a>
       </li>
     </ul>
   </li>

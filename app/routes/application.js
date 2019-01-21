@@ -1,12 +1,6 @@
-import Ember from 'ember';
-
-const {
-  Route,
-  inject: {
-    service
-  },
-  isEmpty
-} = Ember;
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import { isEmpty } from '@ember/utils';
 
 export default Route.extend({
   logger: service(),
@@ -24,8 +18,8 @@ export default Route.extend({
   },
 
   model() {
-    this.get('coms').setupListeners();
-    return this.get('coms').instantiateSpacesAndChannels();
+    this.coms.setupListeners();
+    return this.coms.instantiateSpacesAndChannels();
   },
 
   actions: {
@@ -53,11 +47,11 @@ export default Route.extend({
         return;
       }
 
-      if (!channelName.match(/^#/)) {
+      if (space.get('protocol') === 'IRC' && !channelName.match(/^#/)) {
         channelName = `#${channelName}`;
       }
-      let channel = this.get('coms').createChannel(space, channelName);
-      this.get('storage').saveSpace(space);
+      let channel = this.coms.createChannel(space, channelName);
+      this.storage.saveSpace(space);
       this.transitionTo('space.channel', space, channel);
     },
 

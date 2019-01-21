@@ -1,5 +1,6 @@
 @import "bourbon";
 
+$modular-scale-ratio: $golden;
 $headerHeight: 42px;
 $sidebarWidth: 168px;
 
@@ -91,10 +92,11 @@ header {
       width: 100%;
       display: block;
       position: relative;
-      @include transition(opacity 0.2s linear);
+      transition: opacity 0.2s linear;
+
       &.disconnected {
         opacity: 0.5;
-        @include transition(opacity 0.2s linear);
+        transition: opacity 0.2s linear;
       }
     }
     > ul {
@@ -124,6 +126,10 @@ header {
         height: $headerHeight;
         line-height: $headerHeight;
         margin-right: 1em;
+        &.disconnected {
+          opacity: 0.5;
+          transition: opacity 0.2s linear;
+        }
       }
       p#channel-title {
         display: inline;
@@ -190,11 +196,15 @@ header {
 
 .no-messages {
   margin-top: 10px;
+}
+
+.discreet {
   color: #aaa;
 }
 
-@import "layout";
 @import "iconfont";
+@import "layout";
+@import "buttons";
 @import "components/channel-nav";
 @import "components/channel-container";
 @import "components/message-chat";
@@ -202,3 +212,4 @@ header {
 @import "components/notification-topic-change";
 @import "components/modal-target";
 @import "settings";
+@import "space";

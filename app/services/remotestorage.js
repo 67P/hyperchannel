@@ -1,65 +1,67 @@
-import Ember from 'ember';
+import Service from '@ember/service';
 import Space from 'hyperchannel/models/space';
 import RemoteStorage from 'npm:remotestoragejs';
-import 'npm:remotestorage-module-kosmos';
+import Kosmos from 'npm:remotestorage-module-kosmos';
+import config from 'hyperchannel/config/environment';
 
-export default Ember.Service.extend({
+export default Service.extend({
 
-  rsInstance: null,
+  rs: null,
 
-  rs: function() {
-    if (this.get('rsInstance')) { return this.get('rsInstance'); }
+  init () {
+    this._super(...arguments);
 
-    let rs =  new RemoteStorage(/* {logging: true} */);
+    const rs =  new RemoteStorage({modules: [Kosmos.default]});
     rs.access.claim('kosmos', 'rw');
     rs.caching.enable('/kosmos/');
 
-    this.set('rsInstance', rs);
-    return rs;
-  }.property('rsInstance'),
+    this.set('rs', rs);
+  },
 
   addDefaultSpace() {
-    let nickname = window.prompt("Choose a nickname");
+    let spaceConfig = config.spacePresets
+                            .find(s => s.id === config.defaultSpaceId);
 
     let params = {
-      id: 'freenode',
-      name: 'Freenode',
-      protocol: 'IRC',
-      server: {
-        hostname: 'irc.freenode.net',
-        secure: true,
-        port: 7000,
-        nickname: nickname
-      },
+      id: spaceConfig.id,
+      name: spaceConfig.name,
+      protocol: spaceConfig.protocol,
+      server: spaceConfig.server,
       channels: [
         '#hackerbeach',
         '#kosmos',
         '#kosmos-dev',
         '#kosmos-random',
         '#sockethub'
-      ]
+      ],
+      botkaURL: spaceConfig.botkaURL
     };
 
-    return this.get('rs').kosmos.spaces.store(params)
+    params.server.nickname = window.prompt("Choose a nickname");
+
+    return this.rs.kosmos.spaces.store(params)
       .then(() => {
-        Ember.Logger.debug('[remotestorage]', 'created/stored default space');
+        console.debug('[remotestorage]', 'created/stored default space');
 
         let channels = params.channels;
         delete params.channels;
 
-        return { space: Space.create(params), channels: channels };
+        const space = Space.create();
+        space.setProperties(params);
+
+        return { space, channels };
       });
   },
 
   saveSpace(space) {
-    return this.get('rs').kosmos.spaces.store(space.serialize())
-      .then(() => Ember.Logger.debug('[remotestorage]', `saved space ${space.get('name')} in RS`));
+    return this.rs.kosmos.spaces.store(space.serialize())
+      .then(() => console.debug('[remotestorage]', `saved space ${space.get('name')}`))
+      .catch(err => console.error('saving space failed:', err));
   },
 
   removeSpace(space) {
-    // TODO this is buggy in the current rs.js beta branch
-    return this.get('rs').kosmos.spaces.remove(space.get('id'))
-      .then(() => Ember.Logger.debug('[remotestorage]', `removed space ${space.get('name')} from RS`));
+    return this.rs.kosmos.spaces.remove(space.get('id'))
+      .then(() => console.debug('[remotestorage]', `removed space ${space.get('name')} from RS`));
   }
 
 });

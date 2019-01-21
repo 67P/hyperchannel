@@ -1,19 +1,14 @@
-import Ember from 'ember';
+/* global Hammer */
+import $ from 'jquery';
 
-const {
-  Component,
-  observer,
-  run: {
-    scheduleOnce
-  },
-  inject: {
-    service
-  }
-} = Ember;
+import Component from '@ember/component';
+import { observer } from '@ember/object';
+import { scheduleOnce } from '@ember/runloop';
+import { inject as service } from '@ember/service';
 
 function scrollToBottom() {
-  Ember.$('#channel-content').animate({
-    scrollTop: Ember.$('#channel-content ul').height()
+  $('#channel-content').animate({
+    scrollTop: $('#channel-content ul').height()
   }, '500');
 }
 
@@ -27,7 +22,7 @@ export default Component.extend({
   coms: service(),
 
   messagesUpdated: observer('channel.messages.[]', function() {
-    if (!this.get('scrollingDisabled')) {
+    if (!this.scrollingDisabled) {
       scheduleOnce('afterRender', scrollToBottom);
     }
   }),
@@ -36,27 +31,34 @@ export default Component.extend({
     this._super(...arguments);
 
     scheduleOnce('afterRender', scrollToBottom);
+
+    // We need to define an empty handler for swipe events on the
+    // #channel-content element, so that the actual handler of the app container
+    // component gets triggered
+    scheduleOnce('afterRender', function() {
+      Hammer(document.getElementById('channel-content')).on('swipe', function(){});
+    });
   },
 
   actions: {
 
     processMessageOrCommand() {
-      if (this.get('newMessage').substr(0, 1) === "/") {
-        this.attrs.onCommand(this.get('newMessage'));
+      if (this.newMessage.substr(0, 1) === "/") {
+        this.onCommand(this.newMessage);
       } else {
-        this.attrs.onMessage(this.get('newMessage'));
+        this.onMessage(this.newMessage);
       }
     },
 
     menu(which, what) {
-      this.sendAction('menu', which, what);
+      this.menu(which, what);
     },
 
     loadPreviousMessages() {
       this.set('scrollingDisabled', true);
-      this.get('coms').loadLastMessages(
+      this.coms.loadLastMessages(
         this.get('channel.space'),
-        this.get('channel'),
+        this.channel,
         this.get('channel.searchedPreviousLogsUntilDate')
       ).catch(() => {
         // TODO what to do here?

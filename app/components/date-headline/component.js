@@ -1,19 +1,25 @@
-import Ember from 'ember';
+import { later } from '@ember/runloop';
+import { computed } from '@ember/object';
+import Component from '@ember/component';
 import moment from 'moment';
+import config from '../../config/environment';
 
-export default Ember.Component.extend({
+export default Component.extend({
 
   classNames: ['date-headline'],
 
   updateInterval: 120000, // 2 minutes
 
-  headline: Ember.computed('message.date', function() {
+  headline: computed('message.date', function() {
     let date = moment(this.get('message.date'));
 
     let scheduleUpdate = () => {
-      Ember.run.later(() => {
-        this.notifyPropertyChange('message.date');
-      }, this.get('updateInterval'));
+      // don't schedule updates during testing, because it makes the tests time out
+      if (!config.environment === 'testing') {
+        later(() => {
+          this.notifyPropertyChange('message.date');
+        }, this.updateInterval);
+      }
     };
 
     if (date.isSame(moment(), 'day')) {
