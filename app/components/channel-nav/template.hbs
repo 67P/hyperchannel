@@ -9,7 +9,7 @@
           {{else}}
             {{#link-to "space.channel" space channel}}{{channel.name}}{{/link-to}}
           {{/if}}
-          <a {{action (action partChannel space channel)}} class="close" title="Leave {{channel.name}}">x</a>
+          <a {{action (action partChannel space channel)}} class="leave-channel" title="Leave {{channel.name}}">x</a>
         </li>
       {{/each}}
       <li>

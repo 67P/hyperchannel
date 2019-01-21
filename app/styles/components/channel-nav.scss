@@ -1,18 +1,90 @@
 nav#channels {
+  padding: 1.5rem 0;
 
-  ul {
-    li {
-      &.unread-messages {
-        a {
-          color: lightblue;
-        }
-      }
-      &.unread-mentions {
-        a {
-          color: yellow;
+  li {
+    display: block;
+    position: relative;
+    width: 100%;
+    transition: opacity 0.2s linear;
+
+    &.disconnected {
+      opacity: 0.5;
+      transition: opacity 0.2s linear;
+    }
+  }
+
+  > ul {
+    list-style: none;
+
+    > li {
+      margin-bottom: 1.6em;
+
+      > ul {
+        padding: 0.6em 0 0 0;
+        list-style: none;
+
+        li {
+          width: 168px;
+          overflow: hidden;
+          white-space: nowrap;
+
+          &:hover {
+            background-color: rgba(255,255,255,0.2);
+
+            a {
+              &.leave-channel {
+                display: inline-block;
+              }
+            }
+          }
+
+          &.active {
+            background-color: rgba(255,255,255,0.2);
+          }
+
+          &.unread-messages {
+            a {
+              color: lightblue;
+            }
+          }
+          &.unread-mentions {
+            a {
+              color: yellow;
+            }
+          }
         }
       }
     }
   }
 
+  a {
+    display: block;
+    padding: 0 1em;
+    height: 1.6em;
+    line-height: 1.6em;
+    text-overflow: ellipsis;
+
+    &.join-channel {
+      cursor: pointer;
+      opacity: 0.5;
+    }
+
+    &.leave-channel {
+      position: absolute;
+      display: none;
+      width: 1.6em;
+      height: 1.6em;
+      line-height: 1.6em;
+      right: 0;
+      top: 0;
+      padding: 0;
+      text-align: center;
+      color: #fff;
+
+      &:hover {
+        background-color: darkred;
+        color: #fff;
+      }
+    }
+  }
 }
