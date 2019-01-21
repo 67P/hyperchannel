@@ -17,7 +17,8 @@
     <ul>
       {{#each channel.sortedMessages as |message|}}
         <li>
-          {{component message.type message=message}}
+          {{component message.type message=message
+                      onUsernameClick=(action "addUsernameMentionToMessage")}}
         </li>
       {{else}}
         {{#if channel.isLogged}}
