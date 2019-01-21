@@ -69,12 +69,13 @@ export default Component.extend({
 
     addUsernameMentionToMessage (username) {
       const msg = this.newMessage;
-      if (msg.match(new RegExp(`^${username}`))) {
-        // new message already starts with username
-        return false;
-      } else {
+
+      if (! msg.match(new RegExp(`^${username}`))) {
         this.set('newMessage', `${username}: ${msg}`)
       }
+
+      let inputEl = this.$('#message-field').get(0);
+      inputEl.focus();
     }
 
   }
