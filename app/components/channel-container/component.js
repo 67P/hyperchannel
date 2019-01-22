@@ -40,6 +40,11 @@ export default Component.extend({
     });
   },
 
+  focusMessageInputField () {
+    let inputEl = this.$('#message-field').get(0);
+    inputEl.focus();
+  },
+
   actions: {
 
     processMessageOrCommand() {
@@ -65,6 +70,14 @@ export default Component.extend({
       }).finally(() => {
         this.set('scrollingDisabled', false);
       });
+    },
+
+    addUsernameMentionToMessage (username) {
+      const msg = this.newMessage;
+      if (! msg.match(new RegExp(`^${username}`))) {
+        this.set('newMessage', `${username}: ${msg}`)
+      }
+      this.focusMessageInputField();
     }
 
   }

@@ -1,4 +1,6 @@
-<span class="chat-message__username" data-username={{message.nickname}}>
+<span class="chat-message__username"
+      data-username={{message.nickname}}
+      onclick={{action "usernameClick" message.nickname}}>
   {{message.nickname}}:
 </span>
 

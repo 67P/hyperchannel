@@ -50,5 +50,13 @@ export default Component.extend({
              .replace(/\u000f/g,  '</span>');
 
     return htmlSafe(out);
-  })
+  }),
+
+  actions: {
+
+    usernameClick (username) {
+      this.onUsernameClick(username);
+    }
+
+  }
 });
