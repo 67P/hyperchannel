@@ -57,8 +57,12 @@ export default Route.extend({
 
     partChannel(space, channel) {
       this.get('coms').removeChannel(space, channel.get('name'));
-      let lastChannel = space.get('channels.lastObject');
-      this.transitionTo('space.channel', space, lastChannel);
+
+      // Switch to last channel if the channel parted was currently open
+      if (channel.visible) {
+        let lastChannel = space.get('sortedChannels.lastObject');
+        this.transitionTo('space.channel', space, lastChannel);
+      }
     }
   }
 
