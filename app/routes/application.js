@@ -53,8 +53,17 @@ export default Route.extend({
       let channel = this.coms.createChannel(space, channelName);
       this.storage.saveSpace(space);
       this.transitionTo('space.channel', space, channel);
-    }
+    },
 
+    partChannel(space, channel) {
+      this.get('coms').removeChannel(space, channel.get('name'));
+
+      // Switch to last channel if the channel parted was currently open
+      if (channel.visible) {
+        let lastChannel = space.get('sortedChannels.lastObject');
+        this.transitionTo('space.channel', space, lastChannel);
+      }
+    }
   }
 
 });

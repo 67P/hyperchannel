@@ -58,50 +58,9 @@ header {
   }
 }
 
-
 #global {
   .main {
     background-color: rgba(0,255,255,0.2);
-  }
-
-  nav#channels {
-    padding: 1.5rem 0;
-    a {
-      display: block;
-      padding: 0 1em;
-      height: 1.6em;
-      line-height: 1.6em;
-      &.join-channel {
-        cursor: pointer;
-        opacity: 0.5;
-      }
-      &:hover {
-        background-color: rgba(255,255,255,0.2);
-      }
-    }
-    li {
-      transition: opacity 0.2s linear;
-      &.disconnected {
-        opacity: 0.5;
-        transition: opacity 0.2s linear;
-      }
-    }
-    > ul {
-      list-style: none;
-      > li {
-        margin-bottom: 1.6em;
-        > ul {
-          padding: 0.6em 0 0 0;
-          list-style: none;
-
-          li {
-            a.active {
-              background-color: rgba(255,255,255,0.2);
-            }
-          }
-        }
-      }
-    }
   }
 }
 
