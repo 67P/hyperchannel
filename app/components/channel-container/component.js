@@ -5,6 +5,7 @@ import Component from '@ember/component';
 import { observer } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
+import { task } from 'ember-concurrency';
 
 function scrollToBottom() {
   $('#channel-content').animate({
@@ -45,6 +46,18 @@ export default Component.extend({
     inputEl.focus();
   },
 
+  loadPreviousMessages: task(function * () {
+    this.set('scrollingDisabled', true);
+
+    yield this.coms.loadLastMessages(
+      this.get('channel.space'),
+      this.channel,
+      this.get('channel.searchedPreviousLogsUntilDate')
+    );
+
+    this.set('scrollingDisabled', false);
+  }).drop(),
+
   actions: {
 
     processMessageOrCommand() {
@@ -57,19 +70,6 @@ export default Component.extend({
 
     menu(which, what) {
       this.menu(which, what);
-    },
-
-    loadPreviousMessages() {
-      this.set('scrollingDisabled', true);
-      this.coms.loadLastMessages(
-        this.get('channel.space'),
-        this.channel,
-        this.get('channel.searchedPreviousLogsUntilDate')
-      ).catch(() => {
-        // TODO what to do here?
-      }).finally(() => {
-        this.set('scrollingDisabled', false);
-      });
     },
 
     addUsernameMentionToMessage (username) {
