@@ -9,7 +9,7 @@
 
   <section id="channel-content" class="main">
     {{#if channel.isLogged}}
-      <a {{action "loadPreviousMessages"}} class="load-previous" role="button">
+      <a onclick={{perform loadPreviousMessages}} class="load-previous" role="button">
         Load previous messages
       </a>
     {{/if}}
