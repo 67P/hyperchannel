@@ -39,7 +39,7 @@ export default Component.extend({
 
   transitionToRelativeChannel (relativePosition) {
     if (isPresent(this.activeChannel)) {
-      let channels = this.activeChannel.space.channels;
+      let channels = this.activeChannel.space.sortedChannels;
       let currentPosition = channels.indexOf(this.activeChannel);
 
       let edge = channels.length-1;
@@ -51,7 +51,7 @@ export default Component.extend({
       }
 
       let newPosition = currentPosition === edge ? edgeOpposite : currentPosition + relativePosition;
-      let newChannel = this.activeChannel.space.channels[newPosition];
+      let newChannel = channels[newPosition];
       this.router.transitionTo('space.channel', newChannel.space, newChannel);
     }
   },
