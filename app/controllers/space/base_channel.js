@@ -9,6 +9,7 @@ export default Controller.extend({
   space: controller(),
   coms: service(),
   storage: service('remotestorage'),
+  automaticSrollingEnabled: true,
 
   createMessage(message, type) {
     return Message.create({

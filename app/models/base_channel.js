@@ -16,6 +16,9 @@ export default EmberObject.extend({
   unreadMentions: false,
   visible: false, // Current/active channel
 
+  paginationMessagesPerPage: 30,
+  paginationMessagesToLoad: 0,
+
   init() {
     this._super(...arguments);
 
@@ -46,6 +49,20 @@ export default EmberObject.extend({
 
   sortedMessages: computed('messages.@each.date', function() {
     return this.messages.sortBy('date');
+  }),
+
+  increaseMessagePagination () {
+    let newMessageCount = this.paginatedMessages.length + this.paginationMessagesPerPage;
+    this.set('paginationMessagesToLoad', newMessageCount);
+  },
+
+  paginatedMessages: computed('sortedMessages', 'paginationMessagesToLoad', function () {
+    let messages = this.sortedMessages.slice(-this.paginationMessagesToLoad);
+    if (isPresent(messages)) {
+      messages.firstObject.set('isObservingMessage', true);
+    }
+
+    return messages;
   }),
 
   sortedUserList: computed('userList.[]', function () {

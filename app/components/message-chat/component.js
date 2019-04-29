@@ -52,6 +52,13 @@ export default Component.extend({
     return htmlSafe(out);
   }),
 
+  didInsertElement () {
+    this._super(...arguments);
+
+    let domElement = this.element;
+    this.onInsert(domElement, this.message);
+  },
+
   actions: {
 
     usernameClick (username) {

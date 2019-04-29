@@ -1,16 +1,13 @@
 /* global Hammer */
-import $ from 'jquery';
-
 import Component from '@ember/component';
-import { observer } from '@ember/object';
-import { scheduleOnce } from '@ember/runloop';
+import { debounce, scheduleOnce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import { task } from 'ember-concurrency';
+import { isPresent } from '@ember/utils';
 
-function scrollToBottom() {
-  $('#channel-content').animate({
-    scrollTop: $('#channel-content ul').height()
-  }, '500');
+function scrollToBottom () {
+  let elem = document.getElementById('channel-content');
+  elem.scrollTop = elem.scrollHeight;
 }
 
 export default Component.extend({
@@ -18,27 +15,57 @@ export default Component.extend({
   elementId: 'channel',
   newMessage: '',
   channel: null,
-  scrollingDisabled: false,
+  automaticScrollingEnabled: true,
+  paginationObserver: null,
 
   coms: service(),
 
-  messagesUpdated: observer('channel.messages.[]', function() {
-    if (!this.scrollingDisabled) {
-      scheduleOnce('afterRender', scrollToBottom);
-    }
-  }),
-
-  didInsertElement() {
+  didInsertElement () {
     this._super(...arguments);
 
-    scheduleOnce('afterRender', scrollToBottom);
+    scheduleOnce('afterRender', this, function () {
+      this.createScrollingObserver();
+      this.createPaginationObserver();
 
-    // We need to define an empty handler for swipe events on the
-    // #channel-content element, so that the actual handler of the app container
-    // component gets triggered
-    scheduleOnce('afterRender', function() {
+      // We need to define an empty handler for swipe events on the
+      // #channel-content element, so that the actual handler of the app container
+      // component gets triggered
       Hammer(document.getElementById('channel-content')).on('swipe', function(){});
     });
+  },
+
+  // disable automatic scrolling when user scrolls away from the bottom
+  createScrollingObserver () {
+    let elem = document.getElementById('channel-content');
+
+    elem.onscroll = (event) => {
+      // check if we scrolled to the end of the container
+      if (event.target.offsetHeight + event.target.scrollTop === event.target.scrollHeight) {
+        this.set('automaticScrollingEnabled', true);
+      } else {
+        this.set('automaticScrollingEnabled', false);
+      }
+    };
+  },
+
+  // loads new messages when the last message comes into view
+  createPaginationObserver () {
+    const config = {
+      root: this.element,
+      rootMargin: '0px',
+      threshold: 0
+    };
+
+    let observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          this.channel.increaseMessagePagination();
+          observer.unobserve(entry.target);
+        }
+      });
+    }, config);
+
+    this.set('paginationObserver', observer);
   },
 
   focusMessageInputField () {
@@ -47,25 +74,42 @@ export default Component.extend({
   },
 
   loadPreviousMessages: task(function * () {
-    this.set('scrollingDisabled', true);
-
     yield this.coms.loadLastMessages(
       this.get('channel.space'),
       this.channel,
       this.get('channel.searchedPreviousLogsUntilDate')
     );
-
-    this.set('scrollingDisabled', false);
   }).drop(),
+
+  handleNewMessage () {
+    if (this.automaticScrollingEnabled) {
+      scheduleOnce('afterRender', this, function () {
+        scrollToBottom();
+      });
+    }
+
+    if (isPresent(this.observedMessageElement)) {
+      this.paginationObserver.observe(this.observedMessageElement);
+      this.set('observedMessageElement', null);
+    }
+  },
 
   actions: {
 
-    processMessageOrCommand() {
+    processMessageOrCommand () {
       if (this.newMessage.substr(0, 1) === "/") {
         this.onCommand(this.newMessage);
       } else {
         this.onMessage(this.newMessage);
       }
+    },
+
+    addMessageElement (domElement, message) {
+      if (message.isObservingMessage) {
+        this.set('observedMessageElement', domElement);
+      }
+
+      debounce(this, this.handleNewMessage, 50);
     },
 
     menu(which, what) {

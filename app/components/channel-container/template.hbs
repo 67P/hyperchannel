@@ -15,10 +15,11 @@
     {{/if}}
 
     <ul>
-      {{#each channel.sortedMessages as |message|}}
+      {{#each channel.paginatedMessages as |message|}}
         <li>
           {{component message.type message=message
-                      onUsernameClick=(action "addUsernameMentionToMessage")}}
+                      onUsernameClick=(action "addUsernameMentionToMessage")
+                      onInsert=(action "addMessageElement")}}
         </li>
       {{else}}
         {{#if channel.isLogged}}
