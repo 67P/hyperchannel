@@ -17,6 +17,7 @@ export default Component.extend({
   channel: null,
   automaticScrollingEnabled: true,
   paginationObserver: null,
+  scrollingObserver: null,
 
   coms: service(),
 
@@ -36,16 +37,23 @@ export default Component.extend({
 
   // disable automatic scrolling when user scrolls away from the bottom
   createScrollingObserver () {
-    let elem = document.getElementById('channel-content');
-
-    elem.onscroll = (event) => {
-      // check if we scrolled to the end of the container
-      if (event.target.offsetHeight + event.target.scrollTop === event.target.scrollHeight) {
-        this.set('automaticScrollingEnabled', true);
-      } else {
-        this.set('automaticScrollingEnabled', false);
-      }
+    const config = {
+      root: this.element,
+      rootMargin: '0px',
+      threshold: 1 // full element has to be in view
     };
+
+    let observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          this.set('automaticScrollingEnabled', true);
+        } else {
+          this.set('automaticScrollingEnabled', false);
+        }
+      });
+    }, config);
+
+    this.set('scrollingObserver', observer);
   },
 
   // loads new messages when the last message comes into view
@@ -82,15 +90,23 @@ export default Component.extend({
   }).drop(),
 
   handleNewMessage () {
-    if (this.automaticScrollingEnabled) {
-      scheduleOnce('afterRender', this, function () {
-        scrollToBottom();
-      });
-    }
+    let scrollingEnabled = this.automaticScrollingEnabled;
 
     if (isPresent(this.observedMessageElement)) {
       this.paginationObserver.observe(this.observedMessageElement);
       this.set('observedMessageElement', null);
+    }
+
+    if (isPresent(this.latestMessageElement)) {
+      this.scrollingObserver.disconnect(); // unobserve all previous elements
+      this.scrollingObserver.observe(this.latestMessageElement);
+      this.set('latestMessageElement', null);
+    }
+
+    if (scrollingEnabled) {
+      scheduleOnce('afterRender', this, function () {
+        scrollToBottom();
+      });
     }
   },
 
@@ -107,6 +123,10 @@ export default Component.extend({
     addMessageElement (domElement, message) {
       if (message.isObservingMessage) {
         this.set('observedMessageElement', domElement);
+      }
+
+      if (message.isLatestMessage) {
+        this.set('latestMessageElement', domElement);
       }
 
       debounce(this, this.handleNewMessage, 50);

@@ -60,6 +60,8 @@ export default EmberObject.extend({
     let messages = this.sortedMessages.slice(-this.paginationMessagesToLoad);
     if (isPresent(messages)) {
       messages.firstObject.set('isObservingMessage', true);
+
+      messages.lastObject.set('isLatestMessage', true);
     }
 
     return messages;
