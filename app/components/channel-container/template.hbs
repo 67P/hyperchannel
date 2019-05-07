@@ -15,7 +15,7 @@
     {{/if}}
 
     <ul>
-      {{#each channel.paginatedMessages as |message|}}
+      {{#each channel.renderedMessages as |message|}}
         <li>
           {{component message.type message=message
                       onUsernameClick=(action "addUsernameMentionToMessage")

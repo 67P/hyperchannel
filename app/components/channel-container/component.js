@@ -16,7 +16,7 @@ export default Component.extend({
   newMessage: '',
   channel: null,
   automaticScrollingEnabled: true,
-  paginationObserver: null,
+  partialRenderingObserver: null,
   scrollingObserver: null,
 
   coms: service(),
@@ -26,7 +26,7 @@ export default Component.extend({
 
     scheduleOnce('afterRender', this, function () {
       this.createScrollingObserver();
-      this.createPaginationObserver();
+      this.createPartialRenderingObserver();
 
       // We need to define an empty handler for swipe events on the
       // #channel-content element, so that the actual handler of the app container
@@ -57,7 +57,7 @@ export default Component.extend({
   },
 
   // loads new messages when the last message comes into view
-  createPaginationObserver () {
+  createPartialRenderingObserver () {
     const config = {
       root: this.element,
       rootMargin: '0px',
@@ -67,13 +67,13 @@ export default Component.extend({
     let observer = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          this.channel.increaseMessagePagination();
+          this.channel.increaseRenderedMessagesCount();
           observer.unobserve(entry.target);
         }
       });
     }, config);
 
-    this.set('paginationObserver', observer);
+    this.set('partialRenderingObserver', observer);
   },
 
   focusMessageInputField () {
@@ -93,7 +93,7 @@ export default Component.extend({
     let scrollingEnabled = this.automaticScrollingEnabled;
 
     if (isPresent(this.observedMessageElement)) {
-      this.paginationObserver.observe(this.observedMessageElement);
+      this.partialRenderingObserver.observe(this.observedMessageElement);
       this.set('observedMessageElement', null);
     }
 

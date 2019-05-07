@@ -30,7 +30,7 @@ export default Route.extend({
   setupController(controller, model) {
     this._super(controller, model);
 
-    model.set('paginationMessagesToLoad', model.paginationMessagesPerPage);
+    model.set('renderedMessagesCount', model.renderedMessagesAddendumAmount);
     controller.set('automaticScrollingEnabled', true);
 
     scheduleOnce('afterRender', function() {

@@ -16,9 +16,9 @@ export default EmberObject.extend({
   unreadMentions: false,
   visible: false, // Current/active channel
 
-  paginationMessagesPerPage: 30,
-  paginationMessagesToLoad: 0,
-  paginationOffset: 20,
+  renderedMessagesCount: 0, // maximum number of messages to render
+  renderedMessagesAddendumAmount: 30, // number of messages to increase rendering count by
+  observedMessageOffset: 20, // position of message that triggers the increase of rendering count
 
   init() {
     this._super(...arguments);
@@ -52,15 +52,15 @@ export default EmberObject.extend({
     return this.messages.sortBy('date');
   }),
 
-  increaseMessagePagination () {
-    let newMessageCount = this.paginatedMessages.length + this.paginationMessagesPerPage;
-    this.set('paginationMessagesToLoad', newMessageCount);
+  increaseRenderedMessagesCount () {
+    let newMessageCount = this.renderedMessages.length + this.renderedMessagesAddendumAmount;
+    this.set('renderedMessagesCount', newMessageCount);
   },
 
-  paginatedMessages: computed('sortedMessages', 'paginationMessagesToLoad', function () {
-    let messages = this.sortedMessages.slice(-this.paginationMessagesToLoad);
+  renderedMessages: computed('sortedMessages', 'renderedMessagesCount', function () {
+    let messages = this.sortedMessages.slice(-this.renderedMessagesCount);
     if (isPresent(messages)) {
-      let messagePosition = messages.length > this.paginationOffset ? this.paginationOffset : 0;
+      let messagePosition = messages.length > this.observedMessageOffset ? this.observedMessageOffset : 0;
       messages[messagePosition].set('isObservingMessage', true);
 
       messages.lastObject.set('isLatestMessage', true);
