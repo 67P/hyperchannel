@@ -18,6 +18,7 @@ export default EmberObject.extend({
 
   paginationMessagesPerPage: 30,
   paginationMessagesToLoad: 0,
+  paginationOffset: 20,
 
   init() {
     this._super(...arguments);
@@ -59,7 +60,8 @@ export default EmberObject.extend({
   paginatedMessages: computed('sortedMessages', 'paginationMessagesToLoad', function () {
     let messages = this.sortedMessages.slice(-this.paginationMessagesToLoad);
     if (isPresent(messages)) {
-      messages.firstObject.set('isObservingMessage', true);
+      let messagePosition = messages.length > this.paginationOffset ? this.paginationOffset : 0;
+      messages[messagePosition].set('isObservingMessage', true);
 
       messages.lastObject.set('isLatestMessage', true);
     }
