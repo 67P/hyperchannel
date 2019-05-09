@@ -39,7 +39,7 @@ export default Component.extend({
   createScrollingObserver () {
     const config = {
       root: this.element,
-      rootMargin: '0px',
+      rootMargin: `${this.element.clientHeight/4}px`, // TODO update the config when window is resized
       threshold: 1 // full element has to be in view
     };
 

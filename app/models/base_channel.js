@@ -18,7 +18,6 @@ export default EmberObject.extend({
 
   renderedMessagesCount: 0, // maximum number of messages to render
   renderedMessagesAddendumAmount: 30, // number of messages to increase rendering count by
-  observedMessageOffset: 20, // position of message that triggers the increase of rendering count
 
   init() {
     this._super(...arguments);
@@ -60,9 +59,7 @@ export default EmberObject.extend({
   renderedMessages: computed('sortedMessages.[]', 'renderedMessagesCount', function () {
     let messages = this.sortedMessages.slice(-this.renderedMessagesCount);
     if (isPresent(messages)) {
-      let messagePosition = messages.length > this.observedMessageOffset ? this.observedMessageOffset : 0;
-      messages[messagePosition].set('isObservingMessage', true);
-
+      messages.firstObject.set('isObservingMessage', true);
       messages.lastObject.set('isLatestMessage', true);
     }
 
