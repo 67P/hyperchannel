@@ -1,9 +1,8 @@
 /* global Hammer */
 import Component from '@ember/component';
-import { debounce, scheduleOnce } from '@ember/runloop';
+import { scheduleOnce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import { task } from 'ember-concurrency';
-import { isPresent } from '@ember/utils';
 
 function scrollToBottom () {
   let elem = document.getElementById('channel-content');
