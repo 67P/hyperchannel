@@ -89,27 +89,6 @@ export default Component.extend({
     );
   }).drop(),
 
-  handleNewMessage () {
-    let scrollingEnabled = this.automaticScrollingEnabled;
-
-    if (isPresent(this.observedMessageElement)) {
-      this.partialRenderingObserver.observe(this.observedMessageElement);
-      this.set('observedMessageElement', null);
-    }
-
-    if (isPresent(this.latestMessageElement)) {
-      this.scrollingObserver.disconnect(); // unobserve all previous elements
-      this.scrollingObserver.observe(this.latestMessageElement);
-      this.set('latestMessageElement', null);
-    }
-
-    if (scrollingEnabled) {
-      scheduleOnce('afterRender', this, function () {
-        scrollToBottom();
-      });
-    }
-  },
-
   actions: {
 
     processMessageOrCommand () {
@@ -121,15 +100,22 @@ export default Component.extend({
     },
 
     addMessageElement (domElement, message) {
+      let scrollingEnabled = this.automaticScrollingEnabled;
+
       if (message.isObservingMessage) {
-        this.set('observedMessageElement', domElement);
+        this.partialRenderingObserver.observe(domElement);
       }
 
       if (message.isLatestMessage) {
-        this.set('latestMessageElement', domElement);
+        this.scrollingObserver.disconnect(); // unobserve all previous elements
+        this.scrollingObserver.observe(domElement);
       }
 
-      debounce(this, this.handleNewMessage, 50);
+      if (scrollingEnabled) {
+        scheduleOnce('afterRender', this, function () {
+          scrollToBottom();
+        });
+      }
     },
 
     menu(which, what) {

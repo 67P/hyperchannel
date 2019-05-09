@@ -57,7 +57,7 @@ export default EmberObject.extend({
     this.set('renderedMessagesCount', newMessageCount);
   },
 
-  renderedMessages: computed('sortedMessages', 'renderedMessagesCount', function () {
+  renderedMessages: computed('sortedMessages.[]', 'renderedMessagesCount', function () {
     let messages = this.sortedMessages.slice(-this.renderedMessagesCount);
     if (isPresent(messages)) {
       let messagePosition = messages.length > this.observedMessageOffset ? this.observedMessageOffset : 0;
