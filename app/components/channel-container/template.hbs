@@ -49,11 +49,6 @@
       {{#link-to "index" class="active"}}<i class="icon-users"></i>{{/link-to}}<a href="#"><i class="icon-paperclip"></i></a>{{#link-to "settings"}}<i class="icon-cog"></i>{{/link-to}}<a href="#"><i class="icon-resize-enlarge"></i></a>
     </nav>
   </header>
-  <section id="user-list" class="main">
-    <ul>
-      {{#each channel.sortedUserList as |username|}}
-        <li>{{link-to-username username=username}}</li>
-      {{/each}}
-    </ul>
-  </section>
+
+  {{user-list users=channel.sortedUserList}}
 </aside>
