@@ -8,6 +8,7 @@ export default Component.extend({
   rootMargin: '100px',
   threshold: 0,
   enabled: true,
+  retriggeringEnabled: true,
   observer: null,
 
   didInsertElement () {
@@ -19,8 +20,13 @@ export default Component.extend({
   },
 
   createIntersectionObserver () {
+    let rootElement = this.rootElement;
+    if (typeof rootElement === 'string') {
+      rootElement = document.querySelector(rootElement);
+    }
+
     const config = {
-      root: this.rootElement,
+      root: rootElement,
       rootMargin: this.rootMargin,
       threshold: this.threshold
     };
@@ -31,11 +37,15 @@ export default Component.extend({
           if (this.onIntersect) {
             this.onIntersect();
           }
-          if (this.enabled) {
+          if (this.enabled && this.retriggeringEnabled) {
             scheduleOnce('afterRender', this, function () {
               observer.unobserve(entry.target);
               observer.observe(entry.target);
             });
+          }
+        } else {
+          if (this.onDiverge) {
+            this.onDiverge();
           }
         }
       });
@@ -45,6 +55,13 @@ export default Component.extend({
 
     this.set('observer', observer);
   },
+
+  rootMarginChanged: observer('rootMargin', function () {
+    if (this.enabled && this.observer) {
+      this.observer.disconnect();
+      this.createIntersectionObserver();
+    }
+  }),
 
   enabledChanged: observer('enabled', function () {
     if (this.enabled) {
