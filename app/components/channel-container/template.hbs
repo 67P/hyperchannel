@@ -15,7 +15,13 @@
     {{/if}}
 
     <ul>
-      {{#each channel.sortedMessages as |message|}}
+      <li>
+        {{scrolling-observer rootElement="#channel-content"
+                             rootMargin=partialRenderingObserverMargin
+                             enabled=partialRenderingEnabled
+                             onIntersect=(action "increaseRenderedMessagesCount")}}
+      </li>
+      {{#each renderedMessages as |message|}}
         <li>
           {{component message.type message=message
                       onUsernameClick=(action "addUsernameMentionToMessage")}}
@@ -27,6 +33,14 @@
           <li class="no-messages discreet">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank" rel="noopener">Learn more</a></li>
         {{/if}}
       {{/each}}
+      <li>
+        {{scrolling-observer rootElement=element
+                             rootMargin="0px"
+                             threshold=1
+                             retriggeringEnabled=false
+                             onIntersect=(action "setAutomaticScrolling" true)
+                             onDiverge=(action "setAutomaticScrolling" false)}}
+      </li>
     </ul>
   </section>
 

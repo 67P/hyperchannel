@@ -1,16 +1,13 @@
 /* global Hammer */
-import $ from 'jquery';
-
 import Component from '@ember/component';
-import { observer } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import { task } from 'ember-concurrency';
+import { computed, observer } from '@ember/object';
 
-function scrollToBottom() {
-  $('#channel-content').animate({
-    scrollTop: $('#channel-content ul').height()
-  }, '500');
+function scrollToBottom () {
+  let elem = document.getElementById('channel-content');
+  elem.scrollTop = elem.scrollHeight;
 }
 
 export default Component.extend({
@@ -18,25 +15,45 @@ export default Component.extend({
   elementId: 'channel',
   newMessage: '',
   channel: null,
-  scrollingDisabled: false,
+  automaticScrollingEnabled: true,
+  partialRenderingEnabled: true,
+
+  partialRenderingObserverMargin: '200px',
+
+  renderedMessagesCount: 0, // maximum number of messages to render
+  renderedMessagesAddendumAmount: 30, // number of messages to increase rendering count by
 
   coms: service(),
 
-  messagesUpdated: observer('channel.messages.[]', function() {
-    if (!this.scrollingDisabled) {
+  renderedMessages: computed('channel.sortedMessages.[]', 'renderedMessagesCount', function () {
+    if (this.partialRenderingEnabled) {
+      return this.channel.sortedMessages.slice(-this.renderedMessagesCount);
+    } else {
+      return this.channel.sortedMessages;
+    }
+  }),
+
+  channelChanged: observer('channel', function () {
+    this.set('renderedMessagesCount', this.renderedMessagesAddendumAmount);
+    this.set('partialRenderingEnabled', true);
+    this.set('automaticScrollingEnabled', true);
+  }),
+
+  messagesUpdated: observer('renderedMessages.[]', function () {
+    if (this.automaticScrollingEnabled) {
       scheduleOnce('afterRender', scrollToBottom);
     }
   }),
 
-  didInsertElement() {
+  didInsertElement () {
     this._super(...arguments);
 
-    scheduleOnce('afterRender', scrollToBottom);
+    scheduleOnce('afterRender', this, function () {
+      this.set('partialRenderingObserverMargin', `${this.element.clientHeight/3}px`); // TODO update the config when window is resized
 
-    // We need to define an empty handler for swipe events on the
-    // #channel-content element, so that the actual handler of the app container
-    // component gets triggered
-    scheduleOnce('afterRender', function() {
+      // We need to define an empty handler for swipe events on the
+      // #channel-content element, so that the actual handler of the app container
+      // component gets triggered
       Hammer(document.getElementById('channel-content')).on('swipe', function(){});
     });
   },
@@ -47,20 +64,17 @@ export default Component.extend({
   },
 
   loadPreviousMessages: task(function * () {
-    this.set('scrollingDisabled', true);
-
+    this.set('automaticScrollingEnabled', false);
     yield this.coms.loadLastMessages(
       this.get('channel.space'),
       this.channel,
       this.get('channel.searchedPreviousLogsUntilDate')
     );
-
-    this.set('scrollingDisabled', false);
   }).drop(),
 
   actions: {
 
-    processMessageOrCommand() {
+    processMessageOrCommand () {
       if (this.newMessage.substr(0, 1) === "/") {
         this.onCommand(this.newMessage);
       } else {
@@ -78,6 +92,16 @@ export default Component.extend({
         this.set('newMessage', `${username}: ${msg}`)
       }
       this.focusMessageInputField();
+    },
+
+    increaseRenderedMessagesCount () {
+      let newMessagesCount = this.renderedMessagesCount + this.renderedMessagesAddendumAmount;
+      this.set('renderedMessagesCount', newMessagesCount);
+      this.set('partialRenderingEnabled', newMessagesCount < this.channel.sortedMessages.length);
+    },
+
+    setAutomaticScrolling (state) {
+      this.set('automaticScrollingEnabled', state);
     }
 
   }
