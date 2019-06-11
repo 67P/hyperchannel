@@ -82,7 +82,7 @@ export default Component.extend({
       }
     },
 
-    menu(which, what) {
+    menu (which, what) {
       this.menu(which, what);
     },
 
