@@ -19,6 +19,14 @@ export default Component.extend({
     });
   },
 
+  willDestroyElement () {
+    this._super(...arguments);
+
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  },
+
   createIntersectionObserver () {
     let rootElement = this.rootElement;
     if (typeof rootElement === 'string') {
