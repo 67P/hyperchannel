@@ -24,9 +24,10 @@
     "start": "ember serve",
     "test": "ember test",
     "build": "ember build",
-    "build-prod": "ember build --environment production",
-    "update-version-file": "bash scripts/update-version-file.sh",
-    "deploy": "npm run build-prod && npm run update-version-file && bash scripts/deploy.sh"
+    "build-prod": "rm -rf release/* && ember build -prod --output-path release",
+    "preversion": "npm test",
+    "version": "npm run build-prod && git add release/",
+    "deploy": "git push 5apps master"
   },
   "engines": {
     "node": ">= 8"
