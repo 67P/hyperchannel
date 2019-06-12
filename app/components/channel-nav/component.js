@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import { isPresent } from '@ember/utils';
+import { isEmpty, isPresent } from '@ember/utils';
 import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { bindKeyboardShortcuts, unbindKeyboardShortcuts } from 'ember-keyboard-shortcuts';
@@ -8,6 +8,8 @@ export default Component.extend({
 
   tagName: 'ul',
   router: service(),
+  coms: service(),
+  storage: service('remotestorage'),
 
   keyboardShortcuts: Object.freeze({
     'ctrl+shift+up': 'goPreviousChannel',
@@ -57,6 +59,31 @@ export default Component.extend({
   },
 
   actions: {
+    joinChannel (space) {
+      let channelName = window.prompt('Join channel');
+
+      if (isEmpty(channelName)) {
+        return;
+      }
+
+      if (space.get('protocol') === 'IRC' && !channelName.match(/^#/)) {
+        channelName = `#${channelName}`;
+      }
+      let channel = this.coms.createChannel(space, channelName);
+      this.storage.saveSpace(space);
+      this.router.transitionTo('space.channel', space, channel);
+    },
+
+    leaveChannel (space, channel) {
+      this.coms.removeChannel(space, channel.name);
+
+      // Switch to last channel if the channel parted was currently open
+      if (channel.visible) {
+        let lastChannel = space.get('sortedChannels.lastObject');
+        this.router.transitionTo('space.channel', space, lastChannel);
+      }
+    },
+
     goPreviousChannel () {
       this.transitionToRelativeChannel(-1);
     },

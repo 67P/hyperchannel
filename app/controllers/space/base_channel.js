@@ -6,6 +6,7 @@ import Message from 'hyperchannel/models/message';
 export default Controller.extend({
 
   newMessage: null,
+  application: controller(),
   space: controller(),
   coms: service(),
   storage: service('remotestorage'),
@@ -20,6 +21,22 @@ export default Controller.extend({
   },
 
   actions: {
+    menu(which, what) {
+      let menuProp = `show${which.capitalize()}Menu`;
+
+      switch(what) {
+        case 'show':
+          this.application.set(menuProp, true);
+          break;
+        case 'hide':
+          this.application.set(menuProp, false);
+          break;
+        case 'toggle':
+          this.application.toggleProperty(menuProp);
+          break;
+      }
+    },
+
     sendMessage: function(newMessage) {
       let message = this.createMessage(newMessage, 'message-chat');
 
