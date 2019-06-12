@@ -46,7 +46,7 @@ export default Controller.extend({
         message.get('content')
       );
 
-      this.get('model.messages').pushObject(message);
+      this.get('model').addMessage(message);
       this.set('newMessage', null);
     },
 
@@ -110,7 +110,7 @@ export default Controller.extend({
         message.get('content')
       );
 
-      this.get('model.messages').pushObject(message);
+      this.get('model').addMessage(message);
     },
 
     msgCommand: function(args) {

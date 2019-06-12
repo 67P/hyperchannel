@@ -156,10 +156,7 @@ export default Service.extend({
     const channel = this.getChannelForMessage(space, message);
     const channelMessage = channelMessageFromSockethubObject(message);
 
-    // TODO should check for message and update sent status if exists
-    if (channelMessage.get('nickname') !== space.get('userNickname')) {
-      channel.addMessage(channelMessage);
-    }
+    channel.addMessage(channelMessage);
   },
 
   /**
