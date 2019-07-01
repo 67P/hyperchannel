@@ -1,7 +1,7 @@
 import Service from '@ember/service';
 import Space from 'hyperchannel/models/space';
-import RemoteStorage from 'npm:remotestoragejs';
-import Kosmos from 'npm:remotestorage-module-kosmos';
+import RemoteStorage from 'remotestoragejs';
+import Kosmos from 'remotestorage-module-kosmos';
 import config from 'hyperchannel/config/environment';
 
 export default Service.extend({
@@ -11,7 +11,7 @@ export default Service.extend({
   init () {
     this._super(...arguments);
 
-    const rs =  new RemoteStorage({modules: [Kosmos.default]});
+    const rs =  new RemoteStorage({modules: [Kosmos]});
     rs.access.claim('kosmos', 'rw');
     rs.caching.enable('/kosmos/');
 
