@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import { scheduleOnce, later } from '@ember/runloop';
+import { scheduleOnce } from '@ember/runloop';
 import { storageFor as localStorageFor } from 'ember-local-storage';
 
 function focusMessageInput() {
@@ -55,8 +55,6 @@ export default Route.extend({
       // Mark unread messages as read
       channel.set('unreadMessages', false);
       channel.set('unreadMentions', false);
-
-      later(this, () => this.send('menu', 'global', 'hide'), 500);
     }
 
   }
