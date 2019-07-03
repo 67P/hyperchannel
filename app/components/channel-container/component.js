@@ -1,6 +1,6 @@
 /* global Hammer */
 import Component from '@ember/component';
-import { scheduleOnce } from '@ember/runloop';
+import { later, scheduleOnce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import { task } from 'ember-concurrency';
 import { computed, observer } from '@ember/object';
@@ -37,6 +37,7 @@ export default Component.extend({
     this.set('renderedMessagesCount', this.renderedMessagesAddendumAmount);
     this.set('partialRenderingEnabled', true);
     this.set('automaticScrollingEnabled', true);
+    later(this, () => this.send('menu', 'global', 'hide'), 500);
   }),
 
   messagesUpdated: observer('renderedMessages.[]', function () {
