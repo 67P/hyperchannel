@@ -81,6 +81,6 @@
     "loader.js": "^4.7.0",
     "qunit-dom": "^0.8.4",
     "remotestorage-module-kosmos": "^1.1.0",
-    "remotestoragejs": "^1.0.3"
+    "remotestoragejs": "^1.2.2"
   }
 }
