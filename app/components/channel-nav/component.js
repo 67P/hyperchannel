@@ -2,7 +2,10 @@ import Component from '@ember/component';
 import { isEmpty, isPresent } from '@ember/utils';
 import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { bindKeyboardShortcuts, unbindKeyboardShortcuts } from 'ember-keyboard-shortcuts';
+import {
+  bindKeyboardShortcuts,
+  unbindKeyboardShortcuts
+} from 'ember-keyboard-shortcuts';
 
 export default Component.extend({
 

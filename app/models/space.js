@@ -56,7 +56,7 @@ export default EmberObject.extend({
   }),
 
   activeChannel: computed('channels.@each.visible', function () {
-    return this.get('channels').findBy('visible', true);
+    return this.channels.findBy('visible', true);
   }),
 
   userNickname: alias('server.nickname'),
