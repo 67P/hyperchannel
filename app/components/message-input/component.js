@@ -1,5 +1,8 @@
 import Component from '@ember/component';
-import { bindKeyboardShortcuts, unbindKeyboardShortcuts } from 'ember-keyboard-shortcuts';
+import {
+  bindKeyboardShortcuts,
+  unbindKeyboardShortcuts
+} from 'ember-keyboard-shortcuts';
 import { isEmpty } from '@ember/utils';
 import { scheduleOnce } from '@ember/runloop';
 
