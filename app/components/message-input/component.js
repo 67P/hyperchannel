@@ -28,39 +28,39 @@ export default Component.extend({
   actions: {
 
     completeUsername () {
-      let input = this.element.querySelector('#message-field');
-      let cursorPosition = input.selectionStart;
-      let textBeforeCursor = this.message.slice(0, cursorPosition);
-      let textAfterCursor = this.message.slice(cursorPosition);
-      let words = textBeforeCursor.split(' ');
-      let searchWord = words.pop();
+      const input = this.element.querySelector('#message-field');
+      const cursorPosition = input.selectionStart;
+      const textBeforeCursor = this.message.slice(0, cursorPosition);
+      const textAfterCursor = this.message.slice(cursorPosition);
+      const words = textBeforeCursor.split(' ');
+      const searchWord = words.pop();
 
-      if (isPresent(searchWord)) {
-        let username = this.usernames.find(username => {
-          return username.toLowerCase().startsWith(searchWord.toLowerCase());
-        });
+      if (isEmpty(searchWord)) return;
 
-        if (isPresent(username)) {
-          // add a colon when inserting the username in the beginning
-          if (words.length === 0) {
-            username = `${username}: `;
-          }
+      let username = this.usernames.find(username => {
+        return username.toLowerCase().startsWith(searchWord.toLowerCase());
+      });
 
-          let lengthDiff = username.length - searchWord.length;
-          let newCursorPosition = cursorPosition + lengthDiff;
+      if (isEmpty(username)) return;
 
-          words.push(username);
-          let newMessage = `${words.join(' ')}${textAfterCursor}`;
-          this.set('message', newMessage);
-
-          // set the cursor right behind the inserted username,
-          // but we have to wait for the update of the input first
-          scheduleOnce('afterRender', this, function () {
-            input.focus();
-            input.setSelectionRange(newCursorPosition, newCursorPosition);
-          });
-        }
+      // add a colon when inserting the username in the beginning
+      if (words.length === 0) {
+        username = `${username}: `;
       }
+
+      const lengthDiff = username.length - searchWord.length;
+      const newCursorPosition = cursorPosition + lengthDiff;
+
+      words.push(username);
+      const newMessage = `${words.join(' ')}${textAfterCursor}`;
+      this.set('message', newMessage);
+
+      // set the cursor right behind the inserted username,
+      // but we have to wait for the update of the input first
+      scheduleOnce('afterRender', this, function () {
+        input.focus();
+        input.setSelectionRange(newCursorPosition, newCursorPosition);
+      });
     }
 
   }
