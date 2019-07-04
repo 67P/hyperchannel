@@ -2,6 +2,9 @@ engines:
   eslint:
     enabled: true
     channel: "eslint-5"
+    checks:
+      ember/no-observers:
+        enabled: false
   duplication:
     enabled: true
     config:
