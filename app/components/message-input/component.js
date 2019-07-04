@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import { bindKeyboardShortcuts, unbindKeyboardShortcuts } from 'ember-keyboard-shortcuts';
-import { isPresent } from '@ember/utils';
+import { isEmpty } from '@ember/utils';
 import { scheduleOnce } from '@ember/runloop';
 
 export default Component.extend({
