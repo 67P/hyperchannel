@@ -16,7 +16,8 @@ module.exports = {
   },
   rules: {
     "no-control-regex": "off",
-    "no-console": ["error", { allow: ["warn", "debug", "error"] }]
+    "no-console": ["error", { allow: ["warn", "debug", "error"] }],
+    "ember/no-observers": 1
   },
   overrides: [
     // node files
