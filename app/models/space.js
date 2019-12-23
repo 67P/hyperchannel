@@ -80,7 +80,7 @@ export default EmberObject.extend({
     switch (this.protocol) {
       case 'IRC':
         // TODO - remove the use of any URI protocol part
-        personID = `irc://${this.get('server.nickname')}@${this.get('server.hostname')}`;
+        personID = `${this.get('server.nickname')}@${this.get('server.hostname')}`;
         break;
       case 'XMPP':
         // TODO - why isn't the full JID user+host+resource?

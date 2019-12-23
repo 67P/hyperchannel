@@ -68,7 +68,7 @@ module('Unit | Service | coms', function(hooks) {
     const observeMessage = {
       "@type": "observe",
       "actor": {
-          "@id": "irc://irc.freenode.net/#kosmos",
+          "@id": "irc.freenode.net/#kosmos",
           "@type": "room",
           "displayName": "#kosmos"
       },
@@ -94,7 +94,7 @@ module('Unit | Service | coms', function(hooks) {
     });
     const channel = Channel.create({
       name: '#kosmos',
-      sockethubChannelId: 'irc://irc.freenode.net/#kosmos',
+      sockethubChannelId: 'irc.freenode.net/#kosmos',
       space: space,
       connected: false
     });

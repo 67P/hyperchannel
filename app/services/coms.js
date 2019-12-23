@@ -181,7 +181,7 @@ export default Service.extend({
 
   removeUserFromChannelUserList(message) {
     // TODO handle user quit leaves (multiple channels)
-    // e.g. target is `{ @type: 'service', @id: 'irc://irc.freenode.net' }`
+    // e.g. target is `{ @type: 'service', @id: 'irc.freenode.net' }`
     const channel = this.getChannelById(message.target['@id']);
     if (channel) {
       channel.removeUser(message.actor.displayName);
@@ -193,7 +193,7 @@ export default Service.extend({
     // This method should return an array of channels for all spaces with the
     // same hostname
 
-    const hostname = channelId.match(/(?:irc:\/\/)?(?:.+@)?(.+?)(?:\/|$)/)[1];
+    const hostname = channelId.match(/(?:.+@)?(.+?)(?:\/|$)/)[1];
 
     const space = this.spaces.findBy('server.hostname', hostname);
 
@@ -244,9 +244,9 @@ export default Service.extend({
   updateChannelTopic(message) {
     let hostname;
     if (typeof message.target === 'object') {
-      hostname = message.target['@id'].match(/irc:\/\/(.+)\//)[1];
+      hostname = message.target['@id'].match(/(.+)\//)[1];
     } else if (typeof message.actor === 'string') {
-      hostname = message.actor.match(/irc:\/\/.+@(.+)/)[1];
+      hostname = message.actor.match(/.+@(.+)/)[1];
     }
 
     let space = this.spaces.findBy('server.hostname', hostname);

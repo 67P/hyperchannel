@@ -145,7 +145,7 @@ export default Service.extend({
    * @public
    */
   addMessageToChannel(message) {
-    const hostname = message.actor['@id'].match(/irc:\/\/.+@(.+)/)[1];
+    const hostname = message.actor['@id'].match(/.+@(.+)/)[1];
     const space = this.get('coms.spaces').findBy('server.hostname', hostname);
 
     if (isEmpty(space)) {
@@ -228,7 +228,7 @@ export default Service.extend({
    * @public
    */
   generateChannelId(space, channelName) {
-    return `irc://${space.get('server.hostname')}/${channelName}`;
+    return `${space.get('server.hostname')}/${channelName}`;
   },
 
   /**

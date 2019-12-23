@@ -5,7 +5,7 @@ import { module, test } from 'qunit';
 module('Unit | Utility | channel message from sockethub object', function() {
   let sockethubMessageObject = {
     actor: {
-      '@id': 'irc://raucao@irc.freenode.net',
+      '@id': 'raucao@irc.freenode.net',
       '@type': 'person',
       displayName: 'raucao'
     },
