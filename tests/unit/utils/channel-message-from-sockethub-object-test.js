@@ -43,4 +43,15 @@ module('Unit | Utility | channel message from sockethub object', function() {
     assert.equal(new Date(result.get('date')).toISOString(),
                  new Date('2017-06-14T06:32:42.025Z').toISOString());
   });
+
+  test('it works with the published field being a unix timestamp', function(assert) {
+    sockethubMessageObject.published = '1497421962025';
+
+    let result = channelMessageFromSockethubObject(sockethubMessageObject);
+
+    assert.ok(result instanceof Message);
+    assert.equal(new Date(result.get('date')).toISOString(),
+                 new Date('2017-06-14T06:32:42.025Z').toISOString());
+  });
+
 });
