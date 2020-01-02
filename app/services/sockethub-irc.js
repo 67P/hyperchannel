@@ -89,6 +89,30 @@ export default Service.extend({
     }
   },
 
+  handlePresenceUpdate(message) {
+    let hostname;
+    if (typeof message.target === 'object') {
+      hostname = message.target['@id'].match(/(.+)\//)[1];
+    }
+
+    let space = this.coms.spaces.findBy('server.hostname', hostname);
+
+    if (isEmpty(space)) {
+      console.warn('No space for presence update message found.', message);
+      return;
+    }
+
+    let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
+
+    if (isEmpty(channel)) {
+      console.warn('No channel for presence update message found. Creating it.', message);
+      channel = this.coms.createChannel(space, message.target['displayName'], message.target['@id']);
+    }
+
+    channel.set('connected', true);
+    channel.addUser(message.actor.displayName);
+  },
+
   /**
    * Join a channel/room
    * @public

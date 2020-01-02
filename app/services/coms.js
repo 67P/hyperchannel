@@ -153,25 +153,6 @@ export default Service.extend({
     }
   },
 
-  updateChannelUserList(message) {
-    let channel;
-    switch(message.context) {
-      case 'irc':
-        channel = this.getChannelById(message.actor['@id']);
-        break;
-      case 'xmpp':
-        channel = this.getChannel(message.target['@id'], message.actor['@id']);
-        break;
-    }
-
-    if (channel) {
-      channel.set('connected', true);
-      if (Array.isArray(message.object.members)) {
-        channel.set('userList', message.object.members);
-      }
-    }
-  },
-
   addUserToChannelUserList(message) {
     const channel = this.getChannelById(message.target['@id']);
     if (channel) {
@@ -290,13 +271,17 @@ export default Service.extend({
     });
   },
 
-  createChannel: function(space, channelName) {
+  createChannel: function(space, channelName, channelId = null) {
     const platform = this.getServiceForSockethubPlatform(space.get('protocol'));
+
+    if (isEmpty(channelId)) {
+      channelId = platform.generateChannelId(space, channelName);
+    }
 
     const channel = Channel.create({
       space: space,
       name: channelName,
-      sockethubChannelId: platform.generateChannelId(space, channelName)
+      sockethubChannelId: channelId
     });
 
     this.joinChannel(space, channel, "room");
@@ -423,7 +408,6 @@ export default Service.extend({
 
   /**
    * Handles incoming Sockethub messages:
-   * - Attendance list for channel
    * - Another user joined or left a channel
    * - Received a channel message (normal or me/action)
    * - A channel topic was updated
@@ -434,11 +418,6 @@ export default Service.extend({
     this.log(`${message.context}_message`, 'SH message', message);
 
     switch(message['@type']) {
-      case 'observe':
-        if (message.object['@type'] === 'attendance') {
-          this.updateChannelUserList(message);
-        }
-        break;
       case 'join':
         this.handleChannelJoin(message);
         break;
@@ -462,7 +441,7 @@ export default Service.extend({
             this.updateUsername(message);
             break;
           case 'presence':
-            this.xmpp.handlePresenceUpdate(message);
+            this.getServiceForSockethubPlatform(message.context).handlePresenceUpdate(message);
             break;
           case 'error':
             console.warn('Got error update message', message.actor['@id'], message.object.content);
