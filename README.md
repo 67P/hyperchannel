@@ -73,7 +73,9 @@ not use moduleForModel, as we're not using Ember Data. See existing tests.
 
 ### Deploying
 
-[TODO]
+With push permission for the production Git repo:
+
+* `npm run deploy`
 
 ## Further Reading / Useful Links
 
