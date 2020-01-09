@@ -6092,7 +6092,7 @@ if(s&&(s=this.chooseModuleName(s,e)),s&&this._moduleRegistry.has(s)&&(r=s),t||th
 if(e!==n&&this._moduleRegistry.has(e)&&this._moduleRegistry.has(n))throw new TypeError("Ambiguous module names: '"+e+"' and '"+n+"'")
 if(this._moduleRegistry.has(e))return e
 if(this._moduleRegistry.has(n))return n
-var r=e.replace(/\/-([^\/]*)$/,"/_$1")
+var r=e.replace(/\/-([^/]*)$/,"/_$1")
 return this._moduleRegistry.has(r)?r:void 0},lookupDescription:function(e){var t=this.parseName(e)
 return this.findModuleName(t,!0)},_logLookup:function(e,t,n){if(Ember.ENV.LOG_MODULE_RESOLVER||t.root.LOG_RESOLVER){var r=void 0,i=e?"[✓]":"[ ]"
 r=t.fullName.length>60?".":new Array(60-t.fullName.length).join("."),n||(n=this.lookupDescription(t)),console&&console.info&&console.info(i,t.fullName,r,n)}},knownForType:function(e){for(var t=this._moduleRegistry.moduleNames(),r=(0,n.default)(),i=0,o=t.length;i<o;i++){var s=t[i],a=this.translateToContainerFullname(e,s)
@@ -6488,7 +6488,7 @@ a.push=t,a=a.slice()
 for(var l=0;l<a.length;l++)t(a[l])
 var c=u
 return o.push([2,2]),n()}([function(e,t){window._eai_r=require,window._eai_d=define},,function(e,t,n){n(0),e.exports=n(3)},function(e,t,n){var r,i,o
-"undefined"!=typeof document&&(n.p=(r=document.querySelectorAll("script"))[r.length-1].src.replace(/\/[^\/]*$/,"/")),e.exports=(i=_eai_d,o=_eai_r,window.emberAutoImportDynamic=function(e){return o("_eai_dyn_"+e)},i("remotestorage-module-kosmos",[],function(){return n(4)}),void i("remotestoragejs",[],function(){return n(1)}))}]);(window.webpackJsonp_ember_auto_import_=window.webpackJsonp_ember_auto_import_||[]).push([[2],[,function(e,t,n){e.exports=function(e){var t={}
+"undefined"!=typeof document&&(n.p=(r=document.querySelectorAll("script"))[r.length-1].src.replace(/\/[^/]*$/,"/")),e.exports=(i=_eai_d,o=_eai_r,window.emberAutoImportDynamic=function(e){return o("_eai_dyn_"+e)},i("remotestorage-module-kosmos",[],function(){return n(4)}),void i("remotestoragejs",[],function(){return n(1)}))}]);(window.webpackJsonp_ember_auto_import_=window.webpackJsonp_ember_auto_import_||[]).push([[2],[,function(e,t,n){e.exports=function(e){var t={}
 function n(r){if(t[r])return t[r].exports
 var i=t[r]={i:r,l:!1,exports:{}}
 return e[r].call(i.exports,i,i.exports,n),i.l=!0,i.exports}return n.m=e,n.c=t,n.d=function(e,t,r){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e
