@@ -2,6 +2,7 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 
 export default Route.extend({
+
   logger: service(),
   coms: service(),
 
@@ -18,6 +19,20 @@ export default Route.extend({
   model() {
     this.coms.setupListeners();
     return this.coms.instantiateSpacesAndChannels();
+  },
+
+  actions: {
+
+    leaveChannel (space, channel) {
+      this.coms.removeChannel(space, channel.name);
+
+      // Switch to last channel if the channel parted was currently open
+      if (channel.visible) {
+        let lastChannel = space.get('sortedChannels.lastObject');
+        this.transitionTo('space.channel', space, lastChannel);
+      }
+    }
+
   }
 
 });
