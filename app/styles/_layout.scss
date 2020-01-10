@@ -10,7 +10,8 @@
   }
   .main {
     flex: 1;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
   }
   footer {
@@ -86,10 +87,17 @@ div#channel {
   overflow-wrap: break-word;
 
   main {
-    flex: 1;
     @include app-column;
-
+    flex: 1;
     overflow: auto;
+
+    header {
+      nav {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+    }
   }
 
   aside {
@@ -129,16 +137,8 @@ section#settings, section#space {
   }
 }
 
-header {
-//   #topbar {
-//     @include flex(1);
-//     position: relative;
-//   }
+header, footer {
   nav {
-    position: absolute;
-    top: 0;
-    right: 0;
-
     a {
       display: flex;
       float: left;
