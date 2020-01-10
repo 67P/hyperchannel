@@ -25,6 +25,9 @@ export default Controller.extend({
 
   actions: {
     menu(which, what) {
+      // Do not toggle sidebav on desktop
+      if (which === 'global' && window.innerWidth > 900) return;
+
       let menuProp = `show${which.capitalize()}Menu`;
 
       switch(what) {
