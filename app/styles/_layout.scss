@@ -64,10 +64,17 @@
     transform: translate3d(-168px, 0, 0);
     transition: transform 0.4s;
     z-index: 10000;
+
     .main {
       position: absolute;
       width: $sidebarWidth;
       top: $headerHeight;
+      bottom: $headerHeight;
+    }
+
+    footer {
+      position: absolute;
+      width: $sidebarWidth;
       bottom: 0;
     }
   }
