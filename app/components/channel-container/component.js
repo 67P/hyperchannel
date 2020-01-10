@@ -23,6 +23,7 @@ export default Component.extend({
   renderedMessagesCount: 0, // maximum number of messages to render
   renderedMessagesAddendumAmount: 30, // number of messages to increase rendering count by
 
+  router: service(),
   coms: service(),
 
   renderedMessages: computed('channel.sortedMessages.[]', 'renderedMessagesCount', function () {
@@ -103,7 +104,18 @@ export default Component.extend({
 
     setAutomaticScrolling (state) {
       this.set('automaticScrollingEnabled', state);
-    }
+    },
+
+    // TODO DRY up with channel-nav component
+    leaveChannel (space, channel) {
+      this.coms.removeChannel(space, channel.name);
+
+      // Switch to last channel if the channel parted was currently open
+      if (channel.visible) {
+        let lastChannel = space.get('sortedChannels.lastObject');
+        this.router.transitionTo('space.channel', space, lastChannel);
+      }
+    },
 
   }
 });

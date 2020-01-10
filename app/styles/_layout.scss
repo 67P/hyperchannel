@@ -138,14 +138,23 @@ header {
     position: absolute;
     top: 0;
     right: 0;
+
     a {
-      display: inline-block;
+      display: flex;
+      float: left;
+      align-items: center;
+      justify-content: center;
       @include size($headerHeight);
       text-align: center;
-      line-height: $headerHeight;
       text-decoration: none;
+
       &:hover {
         background-color: rgba(255,255,255,0.2);
+      }
+
+      svg {
+        width: 14px;
+        height: 14px;
       }
     }
   }

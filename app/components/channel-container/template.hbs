@@ -3,7 +3,7 @@
     <h2 id="channel-name" class={{if channel.connected "connected" "disconnected"}}>{{channel.name}}</h2>
     <p id="channel-title">{{channel.formattedTopic}}</p>
     <nav>
-      <a href="#"><i class="icon-megaphone"></i></a><a href="#"><i class="icon-mute"></i></a>
+      <a {{action "leaveChannel" space channel}} title="Leave {{channel.name}}"><IconLogOut /></a>
     </nav>
   </header>
 
@@ -54,7 +54,7 @@
 <aside>
   <header>
     <nav>
-      {{#link-to "index" class="active"}}<i class="icon-users"></i>{{/link-to}}<a href="#"><i class="icon-paperclip"></i></a>{{#link-to "settings"}}<i class="icon-cog"></i>{{/link-to}}<a href="#"><i class="icon-resize-enlarge"></i></a>
+      {{#link-to "index" class="active"}}<IconUsers />{{/link-to}}<a href="#"><IconPaperclip /></a><a href="#"><IconInfo /></a>{{#link-to "settings"}}<IconSettings />{{/link-to}}
     </nav>
   </header>
 

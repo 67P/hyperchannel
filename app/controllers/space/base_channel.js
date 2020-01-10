@@ -1,4 +1,5 @@
 import Controller, { inject as controller } from '@ember/controller';
+import { alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import Message from 'hyperchannel/models/message';
@@ -11,11 +12,13 @@ export default Controller.extend({
   coms: service(),
   storage: service('remotestorage'),
 
+  currentSpace: alias('space.model'),
+
   createMessage(message, type) {
     return Message.create({
       type: type,
       date: new Date(),
-      nickname: this.get('space.model.server.nickname'),
+      nickname: this.get('currentSpace.server.nickname'),
       content: message
     });
   },
@@ -41,7 +44,7 @@ export default Controller.extend({
       let message = this.createMessage(newMessage, 'message-chat');
 
       this.coms.transferMessage(
-        this.get('space.model'),
+        this.get('currentSpace'),
         this.model,
         message.get('content')
       );
@@ -74,14 +77,14 @@ export default Controller.extend({
     },
 
     joinCommand: function(args) {
-      let space = this.get('space.model');
+      let space = this.get('currentSpace');
       let channel = this.coms.createChannel(space, args[0]);
       this.storage.saveSpace(space);
       this.transitionToRoute('space.channel', space, channel);
     },
 
     partCommand: function() {
-      let space = this.get('space.model');
+      let space = this.get('currentSpace');
       let channelName = this.get('model.name');
       this.coms.removeChannel(space, channelName);
       let lastChannel = space.get('channels.lastObject');
@@ -105,7 +108,7 @@ export default Controller.extend({
       let message = this.createMessage(newMessage, 'message-chat-me');
 
       this.coms.transferMeMessage(
-        this.get('space.model'),
+        this.get('currentSpace'),
         this.get('model.sockethubChannelId'),
         message.get('content')
       );
@@ -115,17 +118,17 @@ export default Controller.extend({
 
     msgCommand: function(args) {
       let username = args.shift();
-      this.coms.createUserChannel(this.get('space.model'), username);
+      this.coms.createUserChannel(this.get('currentSpace'), username);
       // TODO fix this, sockethub sends a failure event with error
       // "TypeError: Cannot read property 'indexOf' of undefined"
-      // this.get('coms').transferMessage(this.get('space.model'), username, args.join(' '));
+      // this.get('coms').transferMessage(this.get('currentSpace'), username, args.join(' '));
     },
 
     topicCommand: function(args) {
       let channel = this.model;
       let topic = args.join(' ');
 
-      this.coms.changeTopic(this.get('space.model'), channel, topic);
+      this.coms.changeTopic(this.get('currentSpace'), channel, topic);
     }
   }
 
