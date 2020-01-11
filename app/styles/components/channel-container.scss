@@ -1,5 +1,81 @@
 #channel {
 
+  main {
+    header {
+      display: flex;
+      align-items: stretch;
+      flex-direction: row;
+      justify-content: flex-start;
+
+      h2#channel-name {
+        flex: 0 0;
+        padding: 0 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+        background-color: $background-color-magenta;
+        color: #fff;
+        transition: color 0.2s;
+
+        &.disconnected {
+          color: rgba(255,255,255,0.6);
+        }
+      }
+
+      p#channel-title {
+        flex: 1;
+        display: inline;
+        line-height: $headerHeight;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 1rem;
+        background-color: $background-color-magenta;
+        font-style: italic;
+        color: rgba(255,255,255,0.6);
+        transition: color 0.2s;
+
+        a {
+          color: rgba(255,255,255,0.6);
+        }
+
+        &:hover {
+          color: #fff;
+
+          a {
+            color: #fff;
+          }
+        }
+
+        @include media("<desktop") {
+          text-indent: -1000000px;
+        }
+      }
+
+      nav {
+        flex: 0 0 $sidebarWidth;
+
+        a {
+          background-color: $background-color-yellow;
+          &:hover  { background-color: rgba(255,255,255,0.3); }
+          &.active { background-color: $background-color-cyan; }
+
+          @include media("<desktop") {
+            background-color: $background-color-magenta;
+            &.active { background-color: $background-color-magenta; }
+          }
+        }
+      }
+    }
+
+    aside {
+      @include media("<desktop") {
+        display: none;
+      }
+    }
+  }
+
   #channel-content {
     padding: 0 1rem 1.5rem 1rem;
     background-color: #fff;
@@ -8,9 +84,11 @@
     a {
       color: #aaa;
       text-decoration: underline;
+
       &:hover {
         color: #333;
       }
+
       &.load-previous {
         display: block;
         padding-top: 1rem;
@@ -21,6 +99,7 @@
     ul {
       list-style: none;
       margin-bottom: 1.5rem;
+
       li {
         line-height: 1.5em;
         margin-bottom: 0.75em;

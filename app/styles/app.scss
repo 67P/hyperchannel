@@ -1,8 +1,11 @@
 @import "bourbon";
+@import "colors";
+@import "vendor/include_media";
 
 $modular-scale-ratio: $golden;
 $headerHeight: 42px;
 $sidebarWidth: 168px;
+$breakpoints: (desktop: 900px);
 
 * {
   margin: 0;
@@ -50,7 +53,7 @@ input, button {
 
 header {
   &#sitename {
-    background-color: rgba(255,255,0,0.2);
+    background-color: $background-color-yellow;
   }
 
   a {
@@ -70,25 +73,6 @@ header {
 
 #channel {
   main {
-    header {
-      padding: 0 1em;
-      background-color: rgba(255,0,255,0.2);
-      h2#channel-name {
-        display: inline;
-        height: $headerHeight;
-        line-height: $headerHeight;
-        margin-right: 1em;
-        &.disconnected {
-          opacity: 0.5;
-          transition: opacity 0.2s linear;
-        }
-      }
-      p#channel-title {
-        display: inline;
-        font-style: italic;
-      }
-    }
-
     footer {
       background-color: #efefef;
       color: #333;
@@ -97,6 +81,7 @@ header {
         padding: 0 14px;
         color: #fff;
         border-radius: 3px;
+
         input[name=chat-message] {
           width: 100%;
           background: none;
@@ -109,22 +94,6 @@ header {
   }
 
   aside {
-    header {
-      nav {
-        a {
-          background-color: rgba(255,255,0,0.2);
-
-          &.active {
-            background-color: rgba(0,255,255,0.2);
-          }
-
-          &:hover {
-            background-color: rgba(255,255,255,0.3);
-          }
-        }
-      }
-    }
-
     section#user-list {
       // TODO unify with other sidebar nav
       background-color: rgba(0,255,255,0.2);
@@ -132,6 +101,7 @@ header {
 
       > ul {
         list-style: none;
+
         li {
           a {
             display: block;

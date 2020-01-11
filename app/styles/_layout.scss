@@ -98,11 +98,21 @@ div#channel {
     flex: 1;
     overflow: auto;
 
-    header {
-      nav {
-        position: absolute;
-        top: 0;
-        right: 0;
+    .content-container {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      flex-direction: row;
+      justify-content: flex-start;
+      overflow: hidden;
+
+      > .content {
+        flex: 1;
+        @include app-column;
+      }
+
+      > aside {
+        flex: 0 0 $sidebarWidth;
       }
     }
   }
@@ -126,21 +136,6 @@ section#settings, section#space {
   div#channel {
     transform: translate3d(168px, 0, 0);
     transition: transform 0.4s;
-  }
-}
-
-@media screen and (max-width: 900px) {
-  div#channel {
-    main {
-      header {
-        p#channel-title {
-          display: none;
-        }
-      }
-    }
-    aside {
-      display: none;
-    }
   }
 }
 
