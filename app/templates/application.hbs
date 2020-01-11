@@ -7,9 +7,15 @@
 
     <div class="main">
       <nav id="channels">
-        {{channel-nav spaces=spaces}}
+        {{channel-nav spaces=spaces onLeaveChannel=(route-action "leaveChannel")}}
       </nav>
     </div>
+
+    <footer>
+      <nav>
+        {{#link-to "settings"}}<IconSettings />{{/link-to}}
+      </nav>
+    </footer>
   </div>
 
   {{outlet}}

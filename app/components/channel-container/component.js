@@ -23,6 +23,7 @@ export default Component.extend({
   renderedMessagesCount: 0, // maximum number of messages to render
   renderedMessagesAddendumAmount: 30, // number of messages to increase rendering count by
 
+  router: service(),
   coms: service(),
 
   renderedMessages: computed('channel.sortedMessages.[]', 'renderedMessagesCount', function () {
@@ -103,7 +104,11 @@ export default Component.extend({
 
     setAutomaticScrolling (state) {
       this.set('automaticScrollingEnabled', state);
-    }
+    },
+
+    leaveChannel (space, channel) {
+      this.onLeaveChannel(space, channel);
+    },
 
   }
 });

@@ -62,6 +62,10 @@ header {
   .main {
     background-color: rgba(0,255,255,0.2);
   }
+
+  footer {
+    background-color: rgba(0,255,255,0.2);
+  }
 }
 
 #channel {
@@ -109,9 +113,11 @@ header {
       nav {
         a {
           background-color: rgba(255,255,0,0.2);
+
           &.active {
             background-color: rgba(0,255,255,0.2);
           }
+
           &:hover {
             background-color: rgba(255,255,255,0.3);
           }
@@ -150,7 +156,6 @@ header {
   color: #aaa;
 }
 
-@import "iconfont";
 @import "layout";
 @import "buttons";
 @import "components/channel-nav";
