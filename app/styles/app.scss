@@ -28,10 +28,8 @@ body {
   color: #fff;
   background-image: url('/img/bg.jpg');
   background-repeat: none;
-}
 
-@media screen and (min-width: 900px) {
-  body {
+  @include media(">desktop") {
     background-size: cover;
   }
 }
@@ -63,58 +61,11 @@ header {
 
 #global {
   .main {
-    background-color: rgba(0,255,255,0.2);
+    background-color: $background-color-cyan;
   }
 
   footer {
-    background-color: rgba(0,255,255,0.2);
-  }
-}
-
-#channel {
-  main {
-    footer {
-      background-color: #efefef;
-      color: #333;
-
-      section#new-message {
-        padding: 0 14px;
-        color: #fff;
-        border-radius: 3px;
-
-        input[name=chat-message] {
-          width: 100%;
-          background: none;
-          border: none;
-          height: $headerHeight;
-          line-height: $headerHeight;
-        }
-      }
-    }
-  }
-
-  aside {
-    section#user-list {
-      // TODO unify with other sidebar nav
-      background-color: rgba(0,255,255,0.2);
-      padding: 1.5em 0;
-
-      > ul {
-        list-style: none;
-
-        li {
-          a {
-            display: block;
-            padding: 0 1em;
-            height: 1.6em;
-            line-height: 1.6em;
-            &:hover {
-              background-color: rgba(255,255,255,0.2);
-            }
-          }
-        }
-      }
-    }
+    background-color: $background-color-cyan;
   }
 }
 
