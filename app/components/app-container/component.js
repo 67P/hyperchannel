@@ -1,13 +1,8 @@
 /* global Hammer */
 import Component from '@ember/component';
-import $ from 'jquery';
 import RecognizerMixin from 'ember-gestures/mixins/recognizers';
 import { computed } from '@ember/object';
-
-function isElementOf(id, element) {
-  return element.id === id ||
-         $(element).parents(`#${id}`).length > 0;
-}
+import isDescendantOf from 'hyperchannel/utils/dom/is-descendant-of';
 
 export default Component.extend(RecognizerMixin, {
 
@@ -39,8 +34,8 @@ export default Component.extend(RecognizerMixin, {
 
   tap(e) {
     if (this.showGlobalMenu &&
-        !isElementOf('channel-header', e.target) &&
-        !isElementOf('global', e.target)) {
+        !isDescendantOf('channel-header', e.target) &&
+        !isDescendantOf('global', e.target)) {
       this.set('showGlobalMenu', false);
     }
   }
