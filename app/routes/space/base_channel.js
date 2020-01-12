@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { scheduleOnce } from '@ember/runloop';
@@ -30,9 +29,7 @@ export default Route.extend({
   setupController(controller, model) {
     this._super(controller, model);
 
-    scheduleOnce('afterRender', function() {
-      focusMessageInput();
-    });
+    scheduleOnce('afterRender', this, focusMessageInput);
   },
 
   actions: {

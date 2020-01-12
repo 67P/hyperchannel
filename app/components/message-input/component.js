@@ -60,10 +60,8 @@ export default Component.extend({
 
       // set the cursor right behind the inserted username,
       // but we have to wait for the update of the input first
-      scheduleOnce('afterRender', this, function () {
-        input.focus();
-        input.setSelectionRange(newCursorPosition, newCursorPosition);
-      });
+      scheduleOnce('afterRender', this, input.focus);
+      scheduleOnce('afterRender', this, input.setSelectionRange(newCursorPosition, newCursorPosition));
     }
 
   }
