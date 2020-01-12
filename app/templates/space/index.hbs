@@ -5,8 +5,7 @@
   </header>
   <div class="content">
     <p>
-      {{web-push-subscription botkaURL=model.botkaURL
-                              username=model.userNickname}}
+      <WebPushSubscription @botkaURL={{model.botkaURL}} @username={{model.userNickname}} />
     </p>
   </div>
 </section>

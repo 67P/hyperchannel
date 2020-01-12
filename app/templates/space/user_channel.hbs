@@ -1,4 +1,1 @@
-{{channel-container channel=model
-                    newMessage=newMessage
-                    onMessage=(action "sendMessage")
-                    onCommand=(action "executeCommand")}}
+<ChannelContainer @channel={{model}} @newMessage={{newMessage}} @onMessage={{action "sendMessage"}} @onCommand={{action "executeCommand"}} />

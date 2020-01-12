@@ -47,7 +47,7 @@ export default Controller.extend({
       let message = this.createMessage(newMessage, 'message-chat');
 
       this.coms.transferMessage(
-        this.get('currentSpace'),
+        this.currentSpace,
         this.model,
         message.get('content')
       );
@@ -80,14 +80,14 @@ export default Controller.extend({
     },
 
     joinCommand: function(args) {
-      let space = this.get('currentSpace');
+      let space = this.currentSpace;
       let channel = this.coms.createChannel(space, args[0]);
       this.storage.saveSpace(space);
       this.transitionToRoute('space.channel', space, channel);
     },
 
     partCommand: function() {
-      let space = this.get('currentSpace');
+      let space = this.currentSpace;
       let channelName = this.get('model.name');
       this.coms.removeChannel(space, channelName);
       let lastChannel = space.get('channels.lastObject');
@@ -111,7 +111,7 @@ export default Controller.extend({
       let message = this.createMessage(newMessage, 'message-chat-me');
 
       this.coms.transferMeMessage(
-        this.get('currentSpace'),
+        this.currentSpace,
         this.get('model.sockethubChannelId'),
         message.get('content')
       );
@@ -121,7 +121,7 @@ export default Controller.extend({
 
     msgCommand: function(args) {
       let username = args.shift();
-      this.coms.createUserChannel(this.get('currentSpace'), username);
+      this.coms.createUserChannel(this.currentSpace, username);
       // TODO fix this, sockethub sends a failure event with error
       // "TypeError: Cannot read property 'indexOf' of undefined"
       // this.get('coms').transferMessage(this.get('currentSpace'), username, args.join(' '));
@@ -131,7 +131,7 @@ export default Controller.extend({
       let channel = this.model;
       let topic = args.join(' ');
 
-      this.coms.changeTopic(this.get('currentSpace'), channel, topic);
+      this.coms.changeTopic(this.currentSpace, channel, topic);
     }
   }
 
