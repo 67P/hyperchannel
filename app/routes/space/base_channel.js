@@ -5,7 +5,7 @@ import { storageFor as localStorageFor } from 'ember-local-storage';
 
 function focusMessageInput() {
   if (window.innerWidth > 900) {
-    $('input#message-field').focus();
+    document.querySelector('input#message-field').focus();
   } else {
     // Don't auto-focus on small screens
   }

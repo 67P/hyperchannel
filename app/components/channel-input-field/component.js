@@ -15,7 +15,7 @@ export default TextField.extend({
   },
 
   _insertAtCaret: function(myValue) {
-    let el = this.$().get(0);
+    let el = this.element;
 
     if (document.selection) {
       el.focus();

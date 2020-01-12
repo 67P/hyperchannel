@@ -87,5 +87,8 @@
     "remotestorage-module-kosmos": "^1.1.0",
     "remotestoragejs": "^1.2.2",
     "sass": "^1.24.4"
+  },
+  "dependencies": {
+    "extend": "^3.0.2"
   }
 }

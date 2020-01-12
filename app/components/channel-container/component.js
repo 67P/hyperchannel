@@ -64,7 +64,7 @@ export default Component.extend({
   },
 
   focusMessageInputField () {
-    let inputEl = this.$('#message-field').get(0);
+    let inputEl = this.element.querySelector('#message-field');
     inputEl.focus();
   },
 
