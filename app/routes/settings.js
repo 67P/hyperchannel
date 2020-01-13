@@ -41,35 +41,7 @@ export default Route.extend({
 
   setupController(controller) {
     this._super(...arguments);
-    controller.set('newSpace', Space.create());
-  },
-
-  actions: {
-
-    addSpace() {
-      let newSpace = this.controller.get('newSpace');
-      newSpace.set('id', newSpace.get('name').dasherize());
-
-      this.storage.saveSpace(newSpace)
-        .then(() => {
-            this.coms.connectAndAddSpace(newSpace);
-            this.modelFor('settings').spaces.pushObject(newSpace);
-          }, e => {
-            console.error('error saving in RS', newSpace, e);
-          }
-        );
-    },
-
-    removeSpace(space) {
-      this.storage.removeSpace(space)
-        .then(() => {
-            this.modelFor('settings').spaces.removeObject(space);
-          }, e => {
-            console.error('error deleting from RS', space, e);
-          }
-        );
-    }
-
+    controller.newSpace = Space.create();
   }
 
 });

@@ -1,4 +1,4 @@
-<AppContainer @showGlobalMenu={{showGlobalMenu}} @showChannelMenu={{showChannelMenu}}>
+<AppContainer @showGlobalMenu={{this.showGlobalMenu}} @showChannelMenu={{this.showChannelMenu}}>
   <div id="global">
     <header id="sitename">
       <h1>Kosmos</h1>
@@ -6,7 +6,7 @@
 
     <div class="main">
       <nav id="channels">
-        <ChannelNav @spaces={{spaces}} @onLeaveChannel={{route-action "leaveChannel"}} />
+        <ChannelNav @spaces={{this.spaces}} @onLeaveChannel={{route-action "leaveChannel"}} />
       </nav>
     </div>
 

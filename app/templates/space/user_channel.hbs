@@ -1,1 +1,4 @@
-<ChannelContainer @channel={{model}} @newMessage={{newMessage}} @onMessage={{action "sendMessage"}} @onCommand={{action "executeCommand"}} />
+<ChannelContainer @channel={{this.model}}
+                  @newMessage={{this.newMessage}}
+                  @onMessage={{action "sendMessage"}}
+                  @onCommand={{action "executeCommand"}} />

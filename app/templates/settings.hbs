@@ -4,43 +4,43 @@
   <div class="content">
     <h3>Spaces</h3>
 
-    {{#each model.spaces as |space|}}
+    {{#each this.model.spaces as |space|}}
       <h3>{{space.name}}</h3>
-      <button {{action "removeSpace" space}}>delete</button>
+      <button type="button" {{on "click" (fn this.removeSpace space)}}>delete</button>
       <hr>
     {{/each}}
 
     <h3>Presets</h3>
 
-    {{#each model.spacePresets as |spacePreset|}}
+    {{#each this.model.spacePresets as |spacePreset|}}
       <h3>{{spacePreset.name}}</h3>
-      <button {{action "addSpaceFromPreset" spacePreset}}>add</button>
+      <button type="button" {{on "click" (fn this.addSpaceFromPreset spacePreset)}}>add</button>
       <hr>
     {{/each}}
 
     <h3>Add new space</h3>
-    <form {{action "addSpace" on="submit"}} name="add-space">
+    <form {{on "submit" this.addSpace}} name="add-space">
       <p>
-        <Input @value={{newSpace.name}} required="required" placeholder="Freenode" />
+        <Input @value={{this.newSpace.name}} required="required" placeholder="Freenode" />
       </p>
       <p>
-        <Input @value={{newSpace.server.hostname}} required="required" placeholder="irc.servername.org" />
+        <Input @value={{this.newSpace.server.hostname}} required="required" placeholder="irc.servername.org" />
       </p>
       <p>
-        <Input @value={{newSpace.server.port}} required="required" placeholder="6667" />
+        <Input @value={{this.newSpace.server.port}} required="required" placeholder="6667" />
       </p>
       <p>
-        <Input @type="checkbox" @checked={{newSpace.server.secure}} @id="tls-enabled" />
+        <Input @type="checkbox" @checked={{this.newSpace.server.secure}} @id="tls-enabled" />
         <label for="tls-enabled">Secure (TLS)</label>
       </p>
       <p>
-        <Input @value={{newSpace.server.username}} placeholder="username" />
+        <Input @value={{this.newSpace.server.username}} placeholder="username" />
       </p>
       <p>
-        <Input @type="password" @value={{newSpace.server.password}} placeholder="password" />
+        <Input @type="password" @value={{this.newSpace.server.password}} placeholder="password" />
       </p>
       <p>
-        <Input @value={{newSpace.server.nickname}} required="required" placeholder="nickname" />
+        <Input @value={{this.newSpace.server.nickname}} required="required" placeholder="nickname" />
       </p>
       <p>
         <input type="submit" value="Save">
@@ -50,10 +50,11 @@
   </div>
 </section>
 
-{{#if showSpaceSettingModal}}
-  <ToElsewhere @named="modal" @send={{hash body=(component "space-setting-modal"
-                                            settings=selectedSpacePreset
-                                            onSave=(action "saveSpace")
-                                            onCancel=(action (mut selectedSpacePreset) null))
-                            onOutsideClick=(action (mut selectedSpacePreset) null)}} />
+{{#if this.showSpaceSettingModal}}
+  <ToElsewhere @named="modal"
+               @send={{hash body=(component "space-setting-modal"
+                              settings=this.selectedSpacePreset
+                              onSave=(action "saveSpace")
+                              onCancel=(action (mut this.selectedSpacePreset) null))
+               onOutsideClick=(action (mut this.selectedSpacePreset) null)}} />
 {{/if}}

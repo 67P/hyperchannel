@@ -1,24 +1,23 @@
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
 
-export default Component.extend({
+export default class ModalTargetComponent extends Component {
 
-  modalAnimation() {
+  modalAnimation () {
     return this.lookup('explode').call(this, {
       pick: '.modal-background',
-      use: ['fade', { maxOpacity: 0.5 }]
+      use: ['fade', { maxOpacity: 0.5, duration: 200 }]
     }, {
       pick: '.modal-dialog',
-      use: 'scale'
+      use: ['scale', { duration: 200 }]
     });
-  },
+  }
 
-  actions: {
-    outsideClick(modal) {
-      if (modal && modal.onOutsideClick) {
-        modal.onOutsideClick();
-      }
+  @action
+  outsideClick (modal) {
+    if (modal && modal.onOutsideClick) {
+      modal.onOutsideClick();
     }
   }
 
-});
-
+}

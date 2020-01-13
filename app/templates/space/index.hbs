@@ -1,11 +1,11 @@
 <section id="space">
   <header>
-    <h2>{{model.name}}</h2>
-    <p class="discreet">{{model.server.hostname}}</p>
+    <h2>{{this.model.name}}</h2>
+    <p class="discreet">{{this.model.server.hostname}}</p>
   </header>
   <div class="content">
     <p>
-      <WebPushSubscription @botkaURL={{model.botkaURL}} @username={{model.userNickname}} />
+      <WebPushSubscription @botkaURL={{this.model.botkaURL}} @username={{this.model.userNickname}} />
     </p>
   </div>
 </section>
