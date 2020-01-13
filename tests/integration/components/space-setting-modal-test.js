@@ -26,7 +26,7 @@ module('Integration | Component | space setting modal', function(hooks) {
 
     await render(hbs`{{space-setting-modal settings=preset}}`);
 
-    assert.equal(find('h1').text().trim(), 'Space Setting');
-    assert.equal(find('input').first().val().trim(), 'IRC');
+    assert.equal(find('h1').textContent.trim(), 'Space Setting');
+    assert.equal(find('input').value.trim(), 'IRC');
   });
 });
