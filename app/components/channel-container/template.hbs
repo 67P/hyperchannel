@@ -1,22 +1,22 @@
 <main>
   <header id="channel-header">
     <h2 id="channel-name"
-        class={{if channel.connected "connected" "disconnected"}}
+        class={{if this.channel.connected "connected" "disconnected"}}
         {{action "menu" "global" "toggle"}}>
-      {{channel.name}}
+      {{this.channelname}}
     </h2>
     <p id="channel-title">
-      {{channel.formattedTopic}}
+      {{this.channelformattedTopic}}
     </p>
     <nav>
-      {{#link-to "index" class="active"}}<IconUsers />{{/link-to}}<a><IconPaperclip /></a><a><IconSettings /></a><a {{action "leaveChannel" space channel}} title="Leave {{channel.name}}"><IconLogOut /></a>
+      <LinkTo @route="index" class="active"><IconUsers /></LinkTo><a><IconPaperclip /></a><a><IconSettings /></a><a {{action "leaveChannel" this.space this.channel}} title="Leave {{this.channelname}}"><IconLogOut /></a>
     </nav>
   </header>
 
   <div class="content-container">
     <div class="content">
       <section id="channel-content" class="main">
-        {{#if channel.isLogged}}
+        {{#if this.channel.isLogged}}
           <a onclick={{perform loadPreviousMessages}} class="load-previous" role="button">
             Load previous messages
           </a>
@@ -25,24 +25,24 @@
         <ul>
           <li>
             {{scrolling-observer rootElement="#channel-content"
-                                 rootMargin=partialRenderingObserverMargin
-                                 enabled=partialRenderingEnabled
+                                 rootMargin=this.partialRenderingObserverMargin
+                                 enabled=this.partialRenderingEnabled
                                  onIntersect=(action "increaseRenderedMessagesCount")}}
           </li>
-          {{#each renderedMessages as |message|}}
+          {{#each this.renderedMessages as |message|}}
             <li>
               {{component message.type message=message
                           onUsernameClick=(action "addUsernameMentionToMessage")}}
             </li>
           {{else}}
-            {{#if channel.isLogged}}
+            {{#if this.channel.isLogged}}
               <li class="no-messages discreet">No recent messages to display.</li>
             {{else}}
-              <li class="no-messages discreet">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank" rel="noopener">Learn more</a></li>
+              <li class="no-messages discreet">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank" rel="noopener noreferrer">Learn more</a></li>
             {{/if}}
           {{/each}}
           <li>
-            {{scrolling-observer rootElement=element
+            {{scrolling-observer rootElement=this.element
                                  rootMargin="0px"
                                  threshold=1
                                  retriggeringEnabled=false
@@ -53,14 +53,14 @@
       </section>
 
       <footer>
-        {{message-input message=newMessage
-                        onSend=(action "processMessageOrCommand")
-                        usernames=channel.userList}}
+        <MessageInput @message={{this.newMessage}}
+                      @onSend={{action "processMessageOrCommand"}}
+                      @usernames={{this.channel.userList}} />
       </footer>
     </div>
 
     <aside>
-      {{user-list users=channel.sortedUserList}}
+      <UserList @users={{this.channel.sortedUserList}} />
     </aside>
   </div>
 </main>
