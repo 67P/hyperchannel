@@ -50,18 +50,21 @@ export default Component.extend({
   didInsertElement () {
     this._super(...arguments);
 
-    scheduleOnce('afterRender', this, function () {
-      this.set('partialRenderingObserverMargin', `${this.element.clientHeight/3}px`); // TODO update the config when window is resized
+    scheduleOnce('afterRender', this, this.onAfterRender);
+  },
 
-      // We need to define an empty handler for swipe events on the
-      // #channel-content element, so that the actual handler of the app container
-      // component gets triggered
-      Hammer(document.getElementById('channel-content')).on('swipe', function(){});
-    });
+  onAfterRender () {
+    // TODO update the config when window is resized
+    this.set('partialRenderingObserverMargin', `${this.element.clientHeight/3}px`);
+
+    // We need to define an empty handler for swipe events on the
+    // #channel-content element, so that the actual handler of the app container
+    // component gets triggered
+    Hammer(document.getElementById('channel-content')).on('swipe', function(){});
   },
 
   focusMessageInputField () {
-    let inputEl = this.$('#message-field').get(0);
+    let inputEl = this.element.querySelector('#message-field');
     inputEl.focus();
   },
 

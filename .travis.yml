@@ -42,6 +42,10 @@ before_script:
   - cd $HOME/sockethub
   - npm start 2> /dev/null &
 
+branches:
+  only:
+    - master
+
 script:
   - cd $TRAVIS_BUILD_DIR
   - npm test

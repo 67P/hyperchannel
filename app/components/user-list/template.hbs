@@ -1,10 +1,11 @@
 <ul>
-  {{#each renderedUsers as |username|}}
-    <li>{{link-to-username username=username}}</li>
+  {{#each this.renderedUsers as |username|}}
+    <li><LinkToUsername @username={{username}} /></li>
   {{/each}}
+
   <li class="last-element"></li>
-  {{scrolling-observer rootElement=element
+  {{scrolling-observer rootElement=this.element
                        rootMargin="200px"
-                       enabled=partialRenderingEnabled
+                       enabled=this.partialRenderingEnabled
                        onIntersect=(action "increaseRenderedUsersCount")}}
 </ul>
