@@ -7,6 +7,11 @@ module.exports = {
     'no-invalid-interactive': false
   },
 
+  ignore: [
+    'hyperchannel/templates/components/**',
+    'app/templates/components/**'
+  ],
+
   pending: [
     {
       "moduleId": "app/templates/settings",

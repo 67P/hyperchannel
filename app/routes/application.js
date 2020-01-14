@@ -12,7 +12,7 @@ export default Route.extend({
     // Add or remove all your log types here:
     // this.logger.add('message');
     // this.logger.remove('join');
-    // this.logger.disable();
+    this.logger.disable();
     // this.logger.enable();
   },
 
