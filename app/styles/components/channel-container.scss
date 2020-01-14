@@ -84,6 +84,10 @@
               padding: 0 1em;
               height: 1.6em;
               line-height: 1.6em;
+              overflow-wrap: unset;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
 
               &:hover {
                 background-color: rgba(255,255,255,0.2);
