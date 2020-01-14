@@ -154,7 +154,7 @@ export default Service.extend({
         }
       }
     } else {
-      console.debug('Presence update:', message.actor['@id'], message.object.presence, message.object.status);
+      this.log('xmpp', 'presence update from contact:', message.actor['@id'], message.object.presence, message.object.status);
     }
   },
 

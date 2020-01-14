@@ -62,7 +62,6 @@ export default Service.extend({
       '@type': "person",
       displayName: space.get('server.nickname')
     };
-    console.debug('actor object', actorObject);
 
     this.sockethub.ActivityStreams.Object.create(
       actorObject
