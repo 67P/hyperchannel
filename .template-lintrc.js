@@ -98,8 +98,7 @@ module.exports = {
       "moduleId": "app/components/user-list/template",
       "only": [
         "no-action",
-        "no-curly-component-invocation",
-        "no-implicit-this"
+        "no-curly-component-invocation"
       ]
     },
     {
@@ -207,8 +206,7 @@ module.exports = {
       "moduleId": "hyperchannel/components/user-list/template",
       "only": [
         "no-action",
-        "no-curly-component-invocation",
-        "no-implicit-this"
+        "no-curly-component-invocation"
       ]
     },
     {
