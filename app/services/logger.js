@@ -1,15 +1,15 @@
 import Service from '@ember/service';
 
-export default Service.extend({
-  enabled: true,
+export default class LoggerService extends Service {
 
-  allowedTypes: null,
-  activeTypes: null,
+  enabled = true;
+  allowedTypes;
+  activeTypes;
 
-  init () {
-    this._super(...arguments);
+  constructor () {
+    super(...arguments);
 
-    this.set('allowedTypes', [
+    this.allowedTypes = [
       'connection',
       'error',
       'join',
@@ -26,9 +26,9 @@ export default Service.extend({
       'xmpp',
       'fetch-error',
       'chat_message'
-    ]);
+    ];
 
-    this.set('activeTypes', [
+    this.activeTypes = [
       'connection',
       'error',
       'join',
@@ -43,10 +43,10 @@ export default Service.extend({
       'message',
       'irc_message',
       'xmpp_message'
-    ]);
-  },
+    ];
+  }
 
-  log(type) {
+  log (type) {
     if (!this.allowedTypes.includes(type)) {
       throw new Error(`You specified a unknown type: "${type}".`);
     }
@@ -56,21 +56,21 @@ export default Service.extend({
       params[0] = `[${params[0]}]`;
       console.debug.apply(null, params);
     }
-  },
-
-  add(type) {
-    this.activeTypes.addObject(type);
-  },
-
-  remove(type) {
-    this.activeTypes.removeObject(type);
-  },
-
-  disable() {
-    this.set('enabled', false);
-  },
-
-  enable() {
-    this.set('enabled', true);
   }
-});
+
+  add (type) {
+    this.activeTypes.addObject(type);
+  }
+
+  remove (type) {
+    this.activeTypes.removeObject(type);
+  }
+
+  disable () {
+    this.enabled = false;
+  }
+
+  enable () {
+    this.enabled = true;
+  }
+}
