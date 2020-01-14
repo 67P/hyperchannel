@@ -25,6 +25,11 @@ export default Component.extend({
     }
   },
 
+  retriggerObservation (observer, target) {
+    observer.unobserve(target);
+    observer.observe(target);
+  },
+
   createIntersectionObserver () {
     let rootElement = this.rootElement;
     if (typeof rootElement === 'string') {
@@ -44,8 +49,7 @@ export default Component.extend({
             this.onIntersect();
           }
           if (this.enabled && this.retriggeringEnabled) {
-            scheduleOnce('afterRender', this, observer.unobserve(entry.target));
-            scheduleOnce('afterRender', this, observer.observe(entry.target));
+            scheduleOnce('afterRender', this, 'retriggerObservation', observer, entry.target);
           }
         } else {
           if (this.onDiverge) {
