@@ -1,7 +1,7 @@
 import Service, { inject as service } from '@ember/service';
-import RSVP from 'rsvp';
 import { isPresent, isEmpty } from '@ember/utils';
 import { get } from '@ember/object';
+import RSVP from 'rsvp';
 import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 import UserChannel from 'hyperchannel/models/user_channel';
@@ -9,48 +9,49 @@ import Message from 'hyperchannel/models/message';
 import config from 'hyperchannel/config/environment';
 import moment from 'moment';
 import { storageFor as localStorageFor } from 'ember-local-storage';
+import { tracked } from '@glimmer/tracking';
 
 /**
  * This service provides the central command interface for communicating with
  * chat servers/networks
- * @module hyperchannel/services/coms
+ * @class hyperchannel/services/coms
  */
-export default Service.extend({
+export default class ComsService extends Service {
 
   // Utils
-  logger: service(),
+  @service logger;
   // Data storage
-  userSettings: localStorageFor('user-settings'),
-  storage: service('remotestorage'),
+  @localStorageFor('user-settings') userSettings;
+  @service('remotestorage') storage;
   // Message transport
-  irc:  service('sockethub-irc'),
-  xmpp: service('sockethub-xmpp'),
+  @service('sockethub-irc') irc;
+  @service('sockethub-xmpp') xmpp;
 
   /**
    * A collection of all space model instances
    * @type {Space[]}
    */
-  spaces: null,
+  @tracked spaces = null;
 
   /**
    * This is called from the application route on app startup. Sets up all
    * listeners for incoming Sockethub messages.
    * @public
    */
-  setupListeners() {
+  setupListeners () {
     this.sockethub.socket.on('completed', this.handleSockethubCompleted.bind(this));
     this.sockethub.socket.on('message'  , this.handleSockethubMessage.bind(this));
     this.sockethub.socket.on('failure'  , this.handleSockethubFailure.bind(this));
-  },
+  }
 
   /**
    * This is called from the application route on app startup. Instantiates,
    * connects, and joins all either configured/saved or default spaces/channels
    * @public
    */
-  instantiateSpacesAndChannels() {
-    this.set('spaces', []);
-    let rs = this.get('storage.rs');
+  instantiateSpacesAndChannels () {
+    this.spaces = [];
+    let rs = this.storage.rs;
 
     return new RSVP.Promise((resolve, reject) => {
       rs.kosmos.spaces.getAll().then(spaceData => {
@@ -81,20 +82,21 @@ export default Service.extend({
         reject();
       });
     });
-  },
+  }
 
   /**
    * Invokes the connect function on the appropriate transport service
    * @public
    */
-  connectServer(space) {
-    this.getServiceForSockethubPlatform(space.get('protocol')).connect(space);
-  },
+  connectServer (space) {
+    this.getServiceForSockethubPlatform(space.protocol)
+        .connect(space);
+  }
 
-  connectAndAddSpace(space) {
+  connectAndAddSpace (space) {
     this.connectServer(space);
     this.spaces.pushObject(space);
-  },
+  }
 
   /**
    * Invokes the channel-join function on the appropriate transport service
@@ -103,9 +105,10 @@ export default Service.extend({
    * @param {String} type - Type of channel. Can be "room" or "person"
    * @public
    */
-  joinChannel: function(space, channel, type) {
-    this.getServiceForSockethubPlatform(space.get('protocol')).join(space, channel, type);
-  },
+  joinChannel (space, channel, type) {
+    this.getServiceForSockethubPlatform(space.protocol)
+        .join(space, channel, type);
+  }
 
   /**
    * Invokes the send-message function on the appropriate transport service
@@ -114,45 +117,45 @@ export default Service.extend({
    * @param {String} content
    * @public
    */
-  transferMessage(space, channel, content) {
+  transferMessage (space, channel, content) {
     const target = {
-      '@id': channel.get('sockethubChannelId'),
-      '@type': channel.get('isUserChannel') ? 'person' : 'room',
-      displayName: channel.get('name')
+      '@id': channel.sockethubChannelId,
+      '@type': channel.isUserChannel ? 'person' : 'room',
+      displayName: channel.name
     };
-    this.getServiceForSockethubPlatform(space.get('protocol'))
-      .transferMessage(space, target, content);
-  },
+    this.getServiceForSockethubPlatform(space.protocol)
+        .transferMessage(space, target, content);
+  }
 
   /**
    * Invokes the send-action-message function on the appropriate transport service
    * @public
    */
-  transferMeMessage(space, target, content) {
-    switch (space.get('protocol')) {
+  transferMeMessage (space, target, content) {
+    switch (space.protocol) {
       case 'IRC':
         this.irc.transferMeMessage(space, target, content);
         break;
     }
-  },
+  }
 
-  leaveChannel: function(space, channel) {
-    switch (space.get('protocol')) {
+  leaveChannel (space, channel) {
+    switch (space.protocol) {
       case 'IRC':
         this.irc.leave(space, channel);
         break;
     }
-  },
+  }
 
-  changeTopic: function(space, channel, topic) {
-    switch (space.get('protocol')) {
+  changeTopic (space, channel, topic) {
+    switch (space.protocol) {
       case 'IRC':
         this.irc.changeTopic(space, channel, topic);
         break;
     }
-  },
+  }
 
-  updateChannelUserList(message) {
+  updateChannelUserList (message) {
     let channel;
     switch(message.context) {
       case 'irc':
@@ -169,23 +172,23 @@ export default Service.extend({
         channel.set('userList', message.object.members);
       }
     }
-  },
+  }
 
-  addUserToChannelUserList(message) {
+  addUserToChannelUserList (message) {
     const channel = this.getChannelById(message.target['@id']);
     if (channel) {
       channel.addUser(message.actor.displayName);
     }
-  },
+  }
 
-  removeUserFromChannelUserList(message) {
+  removeUserFromChannelUserList (message) {
     // TODO handle user quit leaves (multiple channels)
     // e.g. target is `{ @type: 'service', @id: 'irc://irc.freenode.net' }`
     const channel = this.getChannelById(message.target['@id']);
     if (channel) {
       channel.removeUser(message.actor.displayName);
     }
-  },
+  }
 
   getChannelById(channelId) {
     // TODO handle multiple spaces with same hostname:
@@ -201,36 +204,36 @@ export default Service.extend({
       return;
     }
 
-    const channel = space.get('channels').findBy('sockethubChannelId', channelId);
+    const channel = space.channels.findBy('sockethubChannelId', channelId);
     if (isEmpty(channel)) {
       console.warn('Could not find channel by sockethubChannelId', channelId);
       return;
     }
 
     return channel;
-  },
+  }
 
   /**
    * @param {String} personId
    * @param {String} channelId
    */
-  getChannel(personId, channelId) {
+  getChannel (personId, channelId) {
     const space = this.spaces.findBy('sockethubPersonId', personId);
     if (isEmpty(space)) {
       console.warn('Could not find space by sockethubPersonId', personId);
       return;
     }
 
-    const channel = space.get('channels').findBy('sockethubChannelId', channelId);
+    const channel = space.channels.findBy('sockethubChannelId', channelId);
     if (isEmpty(channel)) {
       console.warn('Could not find channel by sockethubChannelId', channelId);
       return;
     }
 
     return channel;
-  },
+  }
 
-  updateUsername(message) {
+  updateUsername (message) {
     if (typeof message.actor === 'object') {
       const actorId = message.actor['@id'];
       const space = this.spaces.findBy('sockethubPersonId', actorId);
@@ -238,9 +241,9 @@ export default Service.extend({
         space.updateUsername(message.target.displayName);
       }
     }
-  },
+  }
 
-  updateChannelTopic(message) {
+  updateChannelTopic (message) {
     let hostname;
     if (typeof message.target === 'object') {
       hostname = message.target['@id'].match(/irc:\/\/(.+)\//)[1];
@@ -251,19 +254,19 @@ export default Service.extend({
     let space = this.spaces.findBy('server.hostname', hostname);
 
     if (!isEmpty(space)) {
-      let channel = space.get('channels').findBy('sockethubChannelId', message.target['@id']);
+      let channel = space.channels.findBy('sockethubChannelId', message.target['@id']);
 
       if (isEmpty(channel)) {
         console.warn('No channel for update topic message found. Creating it.', message);
         channel = this.createChannel(space, message.target['displayName']);
       }
 
-      let currentTopic = channel.get('topic');
+      let currentTopic = channel.topic;
       let newTopic = message.object.topic;
 
       channel.set('topic', newTopic);
 
-      if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.get('visible')) {
+      if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.visible) {
         Notification.requestPermission(function() {
           new Notification(channel.name, {
             body: `New Topic: ${newTopic}`
@@ -278,19 +281,19 @@ export default Service.extend({
       //   content: message.object.topic
       // });
 
-      // channel.get('messages').pushObject(notification);
+      // channel.messages.pushObject(notification);
 
     }
-  },
+  }
 
-  instantiateChannels: function(space, channels) {
+  instantiateChannels (space, channels) {
     channels.forEach((channelName) => {
       this.createChannel(space, channelName);
     });
-  },
+  }
 
-  createChannel: function(space, channelName) {
-    const platform = this.getServiceForSockethubPlatform(space.get('protocol'));
+  createChannel (space, channelName) {
+    const platform = this.getServiceForSockethubPlatform(space.protocol);
 
     const channel = Channel.create({
       space: space,
@@ -299,22 +302,22 @@ export default Service.extend({
     });
 
     this.joinChannel(space, channel, "room");
-    space.get('channels').pushObject(channel);
+    space.channels.pushObject(channel);
 
     // TODO Do we need this on startup? Could overwrite updates from remote.
     this.storage.saveSpace(space);
 
-    if (channel.get('isLogged')) {
+    if (channel.isLogged) {
       this.loadLastMessages(space, channel, moment.utc(), 2).catch(() => {});
     }
 
     return channel;
-  },
+  }
 
-  loadLastMessages(space, channel, date, maximumDays = 14) {
+  loadLastMessages (space, channel, date, maximumDays = 14) {
     let searchUntilDate;
-    if (channel.get('searchedPreviousLogsUntilDate')) {
-      searchUntilDate = moment(channel.get('searchedPreviousLogsUntilDate')).subtract(maximumDays, 'days');
+    if (channel.searchedPreviousLogsUntilDate) {
+      searchUntilDate = moment(channel.searchedPreviousLogsUntilDate).subtract(maximumDays, 'days');
     } else {
       searchUntilDate = moment.utc().subtract(maximumDays, 'days');
     }
@@ -328,10 +331,10 @@ export default Service.extend({
       // didn't find any archive for this day, restart searching for the previous day
       return this.loadLastMessages(space, channel, date.subtract(1, 'day'));
     });
-  },
+  }
 
-  loadArchiveMessages(space, channel, date) {
-    let logsUrl = `${config.publicLogsUrl}/${space.get('name').toLowerCase()}/channels/${channel.get('slug')}/`;
+  loadArchiveMessages (space, channel, date) {
+    let logsUrl = `${config.publicLogsUrl}/${space.name.toLowerCase()}/channels/${channel.slug}/`;
         logsUrl += date.format('YYYY/MM/DD');
 
     return fetch(logsUrl).then(res => res.json()).then(archive => {
@@ -353,10 +356,10 @@ export default Service.extend({
       this.log('fetch-error', 'couldn\'t load archive document', error);
       throw(error);
     });
-  },
+  }
 
-  createUserChannel: function(space, userName) {
-    const platform = this.getServiceForSockethubPlatform(space.get('protocol'));
+  createUserChannel (space, userName) {
+    const platform = this.getServiceForSockethubPlatform(space.protocol);
 
     const channel = UserChannel.create({
       space: space,
@@ -367,25 +370,25 @@ export default Service.extend({
     // TODO check if this is necesarry for XMPP,
     // because for IRC it is not
     this.joinChannel(space, channel, "person");
-    space.get('channels').pushObject(channel);
+    space.channels.pushObject(channel);
 
     return channel;
-  },
+  }
 
-  removeChannel: function(space, channelName) {
-    var channel = space.get('channels').findBy('name', channelName);
+  removeChannel (space, channelName) {
+    const channel = space.channels.findBy('name', channelName);
     this.leaveChannel(space, channel);
 
-    space.get('channels').removeObject(channel);
+    space.channels.removeObject(channel);
 
     this.storage.saveSpace(space);
 
     return channel;
-  },
+  }
 
-  getServiceForSockethubPlatform(protocol) {
-    return this.get(protocol.dasherize());
-  },
+  getServiceForSockethubPlatform (protocol) {
+    return this[protocol.dasherize()];
+  }
 
   /*
    * @private
@@ -394,7 +397,7 @@ export default Service.extend({
    *
    *     - Successfully joined a channel
    */
-  handleSockethubCompleted(message) {
+  handleSockethubCompleted (message) {
     this.log(`${message.context}_completed`, message);
 
     switch(message['@type']) {
@@ -404,18 +407,18 @@ export default Service.extend({
         // try to find space by older sockethubPersonId
         if (isEmpty(space)) {
           space = this.spaces.find((space) => {
-            return space.get('previousSockethubPersonIds').includes(message.actor['@id']);
+            return space.previousSockethubPersonIds.includes(message.actor['@id']);
           });
         }
 
         if (!isEmpty(space)) {
-          this.get(message.context).handleJoinCompleted(space, message);
+          this[message.context].handleJoinCompleted(space, message);
         } else {
           console.warn('Could not find space for join message', message);
         }
         break;
     }
-  },
+  }
 
   /**
    * Handles incoming Sockethub messages:
@@ -426,7 +429,7 @@ export default Service.extend({
    * - The username/address changed
    * @private
    */
-  handleSockethubMessage(message) {
+  handleSockethubMessage (message) {
     this.log(`${message.context}_message`, 'SH message', message);
 
     switch(message['@type']) {
@@ -445,7 +448,8 @@ export default Service.extend({
         switch(message.object['@type']) {
           case 'message':
           case 'me':
-            this.getServiceForSockethubPlatform(message.context).addMessageToChannel(message);
+            this.getServiceForSockethubPlatform(message.context)
+                .addMessageToChannel(message);
             break;
         }
         break;
@@ -466,16 +470,17 @@ export default Service.extend({
         }
         break;
     }
-  },
+  }
 
   /**
    * Handles the various checks assosciated with channel joins
    * @private
    */
-  handleChannelJoin(message) {
+  handleChannelJoin (message) {
     if (message.object['@type'] && (message.object['@type'] === 'error')) {
       // failed to join a channel
-      let channel = this.getChannel(message.target['@id'], message.actor['@id']);
+      const channel = this.getChannel(message.target['@id'], message.actor['@id']);
+
       if (isPresent(channel)) {
         channel.set('connected', false);
       } else {
@@ -484,21 +489,21 @@ export default Service.extend({
     } else {
       this.addUserToChannelUserList(message);
     }
-  },
+  }
 
   /**
    * Handles incoming Sockethub errors/failures
    * @private
    */
-  handleSockethubFailure(message) {
+  handleSockethubFailure (message) {
     this.log('sh_failure', message);
-  },
+  }
 
   /**
    * Utility function for easier logging
    * @private
    */
-  log() {
+  log () {
     this.logger.log(...arguments);
   }
-});
+}
