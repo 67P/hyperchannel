@@ -1,8 +1,12 @@
 module.exports = {
   root: true,
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 2018,
-    sourceType: 'module'
+    sourceType: 'module',
+    ecmaFeatures: {
+      legacyDecorators: true
+    }
   },
   plugins: [
     'ember'
@@ -17,7 +21,8 @@ module.exports = {
   rules: {
     "no-control-regex": "off",
     "no-console": ["error", { allow: ["warn", "debug", "error"] }],
-    "ember/no-observers": 1
+    "ember/no-observers": 1,
+    'ember/no-jquery': 'error'
   },
   overrides: [
     // node files
@@ -32,8 +37,7 @@ module.exports = {
         'server/**/*.js'
       ],
       parserOptions: {
-        sourceType: 'script',
-        ecmaVersion: 2015
+        sourceType: 'script'
       },
       env: {
         browser: false,

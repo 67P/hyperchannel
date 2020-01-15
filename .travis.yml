@@ -35,11 +35,15 @@ install:
   - cd sockethub
   - yarn install
   - cd $TRAVIS_BUILD_DIR
-  - npm install
+  - npm ci
 
 before_script:
   - cd $HOME/sockethub
   - yarn start 2> /dev/null &
+
+branches:
+  only:
+    - master
 
 script:
   - cd $TRAVIS_BUILD_DIR

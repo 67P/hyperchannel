@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import { computed } from '@ember/object';
-import { isPresent } from '@ember/utils';
+import { isPresent, isEmpty } from '@ember/utils';
 
 export default Component.extend({
 
@@ -18,18 +18,16 @@ export default Component.extend({
   },
 
   role: computed('username', 'roles', function() {
+    if (isEmpty(this.username)) return 'normal';
+
     const role = this.roles[this.username[0]];
-
-    if (isPresent(role)) {
-      return role;
-    }
-
-    return 'normal';
+    return isPresent(role) ? role : 'normal';
   }),
 
   usernameWithoutPrefix: computed('username', 'roles', function() {
-    const regex = RegExp(`^[\\${Object.keys(this.roles).join('\\')}]`);
+    if (isEmpty(this.username)) return null;
 
+    const regex = RegExp(`^[\\${Object.keys(this.roles).join('\\')}]`);
     return this.username.replace(regex, '');
   })
 

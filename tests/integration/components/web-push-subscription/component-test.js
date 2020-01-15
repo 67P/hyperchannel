@@ -9,10 +9,10 @@ module('Integration | Component | web-push-subscription', function(hooks) {
   test('it shows the correct button', async function(assert) {
     this.set('subscribed', false);
     await render(hbs`{{web-push-subscription subscribed=subscribed}}`);
-    assert.ok(this.$('button')[0].innerText.match('Receive'));
+    assert.ok(this.element.querySelector('button').innerText.match('Receive'));
 
     this.set('subscribed', true);
     await render(hbs`{{web-push-subscription subscribed=subscribed}}`);
-    assert.ok(this.$('button')[0].innerText.match('Disable'));
+    assert.ok(this.element.querySelector('button').innerText.match('Disable'));
   });
 });

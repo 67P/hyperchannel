@@ -24,7 +24,7 @@ export default Service.extend({
       'sh_failure',
       'irc',
       'xmpp',
-      'ajax-error',
+      'fetch-error',
       'chat_message'
     ]);
 

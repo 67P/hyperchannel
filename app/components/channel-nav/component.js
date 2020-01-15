@@ -78,13 +78,7 @@ export default Component.extend({
     },
 
     leaveChannel (space, channel) {
-      this.coms.removeChannel(space, channel.name);
-
-      // Switch to last channel if the channel parted was currently open
-      if (channel.visible) {
-        let lastChannel = space.get('sortedChannels.lastObject');
-        this.router.transitionTo('space.channel', space, lastChannel);
-      }
+      this.onLeaveChannel(space, channel);
     },
 
     goPreviousChannel () {

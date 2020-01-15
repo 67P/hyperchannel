@@ -10,7 +10,8 @@
   }
   .main {
     flex: 1;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
   }
   footer {
@@ -63,10 +64,17 @@
     transform: translate3d(-168px, 0, 0);
     transition: transform 0.4s;
     z-index: 10000;
+
     .main {
       position: absolute;
       width: $sidebarWidth;
       top: $headerHeight;
+      bottom: $headerHeight;
+    }
+
+    footer {
+      position: absolute;
+      width: $sidebarWidth;
       bottom: 0;
     }
   }
@@ -86,10 +94,27 @@ div#channel {
   overflow-wrap: break-word;
 
   main {
-    flex: 1;
     @include app-column;
-
+    flex: 1;
     overflow: auto;
+
+    .content-container {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      flex-direction: row;
+      justify-content: flex-start;
+      overflow: hidden;
+
+      > .content {
+        flex: 1;
+        @include app-column;
+      }
+
+      > aside {
+        flex: 0 0 $sidebarWidth;
+      }
+    }
   }
 
   aside {
@@ -114,38 +139,24 @@ section#settings, section#space {
   }
 }
 
-@media screen and (max-width: 900px) {
-  div#channel {
-    main {
-      header {
-        p#channel-title {
-          display: none;
-        }
-      }
-    }
-    aside {
-      display: none;
-    }
-  }
-}
-
-header {
-//   #topbar {
-//     @include flex(1);
-//     position: relative;
-//   }
+header, footer {
   nav {
-    position: absolute;
-    top: 0;
-    right: 0;
     a {
-      display: inline-block;
+      display: flex;
+      float: left;
+      align-items: center;
+      justify-content: center;
       @include size($headerHeight);
       text-align: center;
-      line-height: $headerHeight;
       text-decoration: none;
+
       &:hover {
         background-color: rgba(255,255,255,0.2);
+      }
+
+      svg {
+        width: 14px;
+        height: 14px;
       }
     }
   }

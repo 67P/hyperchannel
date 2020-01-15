@@ -14,9 +14,7 @@ export default Component.extend({
   didInsertElement () {
     this._super(...arguments);
 
-    scheduleOnce('afterRender', this, function () {
-      this.createIntersectionObserver();
-    });
+    scheduleOnce('afterRender', this, this.createIntersectionObserver);
   },
 
   willDestroyElement () {
@@ -25,6 +23,11 @@ export default Component.extend({
     if (this.observer) {
       this.observer.disconnect();
     }
+  },
+
+  retriggerObservation (observer, target) {
+    observer.unobserve(target);
+    observer.observe(target);
   },
 
   createIntersectionObserver () {
@@ -46,10 +49,7 @@ export default Component.extend({
             this.onIntersect();
           }
           if (this.enabled && this.retriggeringEnabled) {
-            scheduleOnce('afterRender', this, function () {
-              observer.unobserve(entry.target);
-              observer.observe(entry.target);
-            });
+            scheduleOnce('afterRender', this, 'retriggerObservation', observer, entry.target);
           }
         } else {
           if (this.onDiverge) {

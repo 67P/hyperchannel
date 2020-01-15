@@ -1,6 +1,6 @@
-import $ from 'jquery';
 import Service, { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
+import extend from 'extend';
 import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
 
 /**
@@ -17,7 +17,7 @@ function buildActivityObject(space, details) {
     actor: space.get('sockethubPersonId')
   };
 
-  return $.extend({}, baseObject, details);
+  return extend({}, baseObject, details);
 }
 
 /**

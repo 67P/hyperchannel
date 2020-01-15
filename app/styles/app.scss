@@ -1,8 +1,11 @@
 @import "bourbon";
+@import "colors";
+@import "vendor/include_media";
 
 $modular-scale-ratio: $golden;
 $headerHeight: 42px;
 $sidebarWidth: 168px;
+$breakpoints: (desktop: 900px);
 
 * {
   margin: 0;
@@ -25,10 +28,8 @@ body {
   color: #fff;
   background-image: url('/img/bg.jpg');
   background-repeat: none;
-}
 
-@media screen and (min-width: 900px) {
-  body {
+  @include media(">desktop") {
     background-size: cover;
   }
 }
@@ -50,7 +51,7 @@ input, button {
 
 header {
   &#sitename {
-    background-color: rgba(255,255,0,0.2);
+    background-color: $background-color-yellow;
   }
 
   a {
@@ -60,85 +61,11 @@ header {
 
 #global {
   .main {
-    background-color: rgba(0,255,255,0.2);
-  }
-}
-
-#channel {
-  main {
-    header {
-      padding: 0 1em;
-      background-color: rgba(255,0,255,0.2);
-      h2#channel-name {
-        display: inline;
-        height: $headerHeight;
-        line-height: $headerHeight;
-        margin-right: 1em;
-        &.disconnected {
-          opacity: 0.5;
-          transition: opacity 0.2s linear;
-        }
-      }
-      p#channel-title {
-        display: inline;
-        font-style: italic;
-      }
-    }
-
-    footer {
-      background-color: #efefef;
-      color: #333;
-
-      section#new-message {
-        padding: 0 14px;
-        color: #fff;
-        border-radius: 3px;
-        input[name=chat-message] {
-          width: 100%;
-          background: none;
-          border: none;
-          height: $headerHeight;
-          line-height: $headerHeight;
-        }
-      }
-    }
+    background-color: $background-color-cyan;
   }
 
-  aside {
-    header {
-      nav {
-        a {
-          background-color: rgba(255,255,0,0.2);
-          &.active {
-            background-color: rgba(0,255,255,0.2);
-          }
-          &:hover {
-            background-color: rgba(255,255,255,0.3);
-          }
-        }
-      }
-    }
-
-    section#user-list {
-      // TODO unify with other sidebar nav
-      background-color: rgba(0,255,255,0.2);
-      padding: 1.5em 0;
-
-      > ul {
-        list-style: none;
-        li {
-          a {
-            display: block;
-            padding: 0 1em;
-            height: 1.6em;
-            line-height: 1.6em;
-            &:hover {
-              background-color: rgba(255,255,255,0.2);
-            }
-          }
-        }
-      }
-    }
+  footer {
+    background-color: $background-color-cyan;
   }
 }
 
@@ -150,7 +77,6 @@ header {
   color: #aaa;
 }
 
-@import "iconfont";
 @import "layout";
 @import "buttons";
 @import "components/channel-nav";

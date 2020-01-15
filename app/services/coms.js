@@ -18,7 +18,6 @@ import { storageFor as localStorageFor } from 'ember-local-storage';
 export default Service.extend({
 
   // Utils
-  ajax: service(),
   logger: service(),
   // Data storage
   userSettings: localStorageFor('user-settings'),
@@ -320,10 +319,7 @@ export default Service.extend({
     let logsUrl = `${config.publicLogsUrl}/${space.get('name').toLowerCase()}/channels/${channel.get('slug')}/`;
         logsUrl += date.format('YYYY/MM/DD');
 
-    return this.ajax.request(logsUrl, {
-      type: 'GET',
-      dataType: 'json'
-    }).then(archive => {
+    return fetch(logsUrl).then(res => res.json()).then(archive => {
       get(archive, 'today.messages').forEach((message) => {
         this.log('chat_message', message);
 
@@ -339,7 +335,7 @@ export default Service.extend({
       let previous = get(archive, 'today.previous');
       channel.set('searchedPreviousLogsUntilDate', moment.utc(previous.replace(/\//g, '-')));
     }).catch(error => {
-      this.log('ajax-error', 'couldn\'t load archive document', error);
+      this.log('fetch-error', 'couldn\'t load archive document', error);
       throw(error);
     });
   },

@@ -25,10 +25,13 @@ export default Component.extend({
   usersChanged: observer('users', function () {
     this.set('renderedUsersCount', this.renderedUsersAddendumAmount);
     this.set('partialRenderingEnabled', true);
-    scheduleOnce('afterRender', this, function () {
-      this.element.scrollTop = 0;
-    });
+
+    scheduleOnce('afterRender', this, this.scrollToTop);
   }),
+
+  scrollToTop () {
+    this.element.scrollTop = 0;
+  },
 
   actions: {
     increaseRenderedUsersCount () {
