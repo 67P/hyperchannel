@@ -22,7 +22,6 @@ module.exports = {
     {
       "moduleId": "app/components/channel-container/template",
       "only": [
-        "link-rel-noopener",
         "link-href-attributes",
         "no-action",
         "no-curly-component-invocation",
@@ -130,7 +129,6 @@ module.exports = {
     {
       "moduleId": "hyperchannel/components/channel-container/template",
       "only": [
-        "link-rel-noopener",
         "link-href-attributes",
         "no-action",
         "no-curly-component-invocation",
