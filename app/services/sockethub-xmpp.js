@@ -14,7 +14,7 @@ import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-messag
 function buildActivityObject(space, details) {
   let baseObject = {
     context: 'xmpp',
-    actor: space.get('sockethubPersonId')
+    actor: space.sockethubPersonId
   };
 
   return extend({}, baseObject, details);
@@ -42,39 +42,39 @@ function buildMessageObject(space, target, content, type='message') {
 
 /**
  * This service provides helpers for SocketHub XMPP communications
- * @module hyperchannel/services/sockethub-xmpp
+ * @class hyperchannel/services/sockethub-xmpp
  */
-export default Service.extend({
+export default class SockethubXmppService extends Service {
 
-  logger: service(),
-  coms: service(),
+  @service logger;
+  @service coms;
 
   /**
    * @public
    */
-  connect(space) {
-    let actor = space.get('sockethubPersonId');
+  connect (space) {
+    let actor = space.sockethubPersonId;
 
     this.sockethub.ActivityStreams.Object.create({
       '@id': actor,
       '@type': "person",
-      displayName: space.get('server.nickname'),
+      displayName: space.server.nickname,
     });
 
-    let credentialsJob = {
+    const credentialsJob = {
       actor: actor,
       context: 'xmpp',
       object: {
         '@type': 'credentials',
-        username: space.get('server.username'),
-        password: space.get('server.password'),
-        server: space.get('server.hostname'),
-        port: parseInt(space.get('server.port'), 10),
+        username: space.server.username,
+        password: space.server.password,
+        server: space.server.hostname,
+        port: parseInt(space.server.port, 10),
         resource: 'hyperchannel'
       }
     };
 
-    let connectJob = {
+    const connectJob = {
       '@type': 'connect',
       context: 'xmpp',
       actor: actor
@@ -83,17 +83,17 @@ export default Service.extend({
     this.log('xmpp', 'connecting to XMPP server...');
     this.sockethub.socket.emit('credentials', credentialsJob);
     this.sockethub.socket.emit('message', connectJob);
-  },
+  }
 
-  handleJoinCompleted(space, message) {
+  handleJoinCompleted (space, message) {
     const channelId = message.target['@id'].split('/')[0];
-    const channel = space.get('channels').findBy('sockethubChannelId', channelId);
+    const channel = space.channels.findBy('sockethubChannelId', channelId);
     if (channel) {
       this.observeChannel(space, channel);
     } else {
       console.warn('Could not find channel for join message', message);
     }
-  },
+  }
 
   /**
    * Join a channel/room
@@ -103,48 +103,48 @@ export default Service.extend({
    * @param {String} type - Type of channel. Can be "room" or "person".
    * @public
    */
-  join(space, channel, type) {
+  join (space, channel, type) {
     this.sockethub.ActivityStreams.Object.create({
       '@type': type,
-      '@id': channel.get('sockethubChannelId'),
-      displayName: channel.get('name')
+      '@id': channel.sockethubChannelId,
+      displayName: channel.name
     });
 
     let joinMsg = buildActivityObject(space, {
       '@type': 'join',
       actor: {
         '@type': 'person',
-        '@id': space.get('sockethubPersonId'),
-        displayName: space.get('server.nickname')
+        '@id': space.sockethubPersonId,
+        displayName: space.server.nickname
       },
       target: {
-        '@id': channel.get('sockethubChannelId'),
+        '@id': channel.sockethubChannelId,
         '@type': type
       }
     });
 
     this.log('xmpp', 'joining channel', joinMsg);
     this.sockethub.socket.emit('message', joinMsg);
-  },
+  }
 
   /**
    * Send a chat message to a channel
    * @public
    */
-  transferMessage(space, target, content) {
+  transferMessage (space, target, content) {
     let message = buildMessageObject(space, target, content);
 
     this.log('send', 'sending message job', message);
     this.sockethub.socket.emit('message', message);
-  },
+  }
 
-  handlePresenceUpdate(message) {
+  handlePresenceUpdate (message) {
     if (message.target['@type'] === 'room') {
       const targetChannelId = message.target['@id'];
-      const space = this.get('coms.spaces').find(function(space) {
-        return space.get('sockethubChannelIds').includes(targetChannelId);
+      const space = this.coms.spaces.find(function(space) {
+        return space.sockethubChannelIds.includes(targetChannelId);
       });
-      const channel = space.get('channels').findBy('sockethubChannelId', targetChannelId);
+      const channel = space.channels.findBy('sockethubChannelId', targetChannelId);
 
       if (channel) {
         if (message.object.presence === 'offline') {
@@ -156,14 +156,14 @@ export default Service.extend({
     } else {
       console.debug('Presence update:', message.actor['@id'], message.object.presence, message.object.status);
     }
-  },
+  }
 
   /**
    * Add an incoming message to a channel
    * @param {Object} messsage
    * @public
    */
-  addMessageToChannel(message) {
+  addMessageToChannel (message) {
     if (isEmpty(message.object.content)) {
       return;
     }
@@ -179,10 +179,10 @@ export default Service.extend({
     const channelMessage = channelMessageFromSockethubObject(message);
 
     // TODO should check for message and update sent status if exists
-    if (channelMessage.get('nickname') !== space.get('userNickname')) {
+    if (channelMessage.nickname !== space.userNickname) {
       channel.addMessage(channelMessage);
     }
-  },
+  }
 
   /**
    * Ask for a channel's attendance list (users currently joined)
@@ -191,10 +191,10 @@ export default Service.extend({
    * @param {Channel} channel
    * @public
    */
-  observeChannel(space, channel) {
+  observeChannel (space, channel) {
     let observeMsg = buildActivityObject(space, {
       '@type': 'observe',
-      target: channel.get('sockethubChannelId'),
+      target: channel.sockethubChannelId,
       object: {
         '@type': 'attendance'
       }
@@ -202,7 +202,7 @@ export default Service.extend({
 
     this.log('xmpp', 'asking for attendance list', observeMsg);
     this.sockethub.socket.emit('message', observeMsg);
-  },
+  }
 
   /**
    * Generate a Sockethub Channel ID.
@@ -212,9 +212,9 @@ export default Service.extend({
    * @returns {String} Sockethub channel ID
    * @public
    */
-  generateChannelId(space, channelName) {
+  generateChannelId (space, channelName) {
     return channelName;
-  },
+  }
 
   /**
    * Get the space for a given message.
@@ -223,17 +223,17 @@ export default Service.extend({
    * @returns {Space} space
    * @public
    */
-  getSpaceForMessage(message) {
+  getSpaceForMessage (message) {
     const targetChannelId = message.target['@id'];
 
     if (message.target['@type'] === 'room') {
-      return this.get('coms.spaces').find(function(space) {
-        return space.get('sockethubChannelIds').includes(targetChannelId);
+      return this.coms.spaces.find(function(space) {
+        return space.sockethubChannelIds.includes(targetChannelId);
       });
     } else {
-      return this.get('coms.spaces').findBy('sockethubPersonId', targetChannelId);
+      return this.coms.spaces.findBy('sockethubPersonId', targetChannelId);
     }
-  },
+  }
 
   /**
    * Get the channel for the given space and message.
@@ -243,31 +243,31 @@ export default Service.extend({
    * @returns {Channel} channel
    * @public
    */
-  getChannelForMessage(space, message) {
+  getChannelForMessage (space, message) {
     const targetChannelId = message.target['@id'];
     let channel;
 
     if (message.target['@type'] === 'room') {
-      channel = space.get('channels').findBy('sockethubChannelId', targetChannelId);
+      channel = space.channels.findBy('sockethubChannelId', targetChannelId);
       if (!channel) {
         channel = this.coms.createChannel(space, targetChannelId);
       }
     } else {
-      channel = space.get('channels').findBy('sockethubChannelId', message.actor['@id']);
+      channel = space.channels.findBy('sockethubChannelId', message.actor['@id']);
       if (!channel) {
         channel = this.coms.createUserChannel(space, message.actor['@id']);
       }
     }
 
     return channel;
-  },
+  }
 
   /**
    * Utility function for easier logging
    * @private
    */
-  log() {
+  log () {
     this.logger.log(...arguments);
   }
 
-});
+}
