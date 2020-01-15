@@ -1,7 +1,9 @@
-<form {{action onSend on="submit"}}>
-  {{channel-input-field value=message
-                        placeholder="Type a message and hit enter"
-                        name="chat-message"
-                        id="message-field"
-                        autocomplete="off"}}
-</form>
+<section id="new-message" {{did-insert this.didInsertNode}} {{will-destroy this.willDestroyNode}}>
+  <form {{on "submit" @sendMessage}}>
+    <ChannelInputField @value={{@message}}
+                       @placeholder="Type a message and hit enter"
+                       @name="chat-message"
+                       @id="message-field"
+                       @autocomplete="off" />
+  </form>
+</section>

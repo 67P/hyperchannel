@@ -79,11 +79,14 @@ export default Component.extend({
 
   actions: {
 
-    processMessageOrCommand () {
-      if (this.newMessage.substr(0, 1) === "/") {
-        this.onCommand(this.newMessage);
+    processMessageOrCommand (e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const msg = document.querySelector('input#message-field').value;
+
+      if (msg.substr(0, 1) === "/") {
+        this.onCommand(msg);
       } else {
-        this.onMessage(this.newMessage);
+        this.onMessage(msg);
       }
     },
 
@@ -111,7 +114,7 @@ export default Component.extend({
 
     leaveChannel (space, channel) {
       this.onLeaveChannel(space, channel);
-    },
+    }
 
   }
 });

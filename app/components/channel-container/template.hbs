@@ -53,14 +53,14 @@
       </section>
 
       <footer>
-        {{message-input message=newMessage
-                        onSend=(action "processMessageOrCommand")
-                        usernames=channel.userList}}
+        <MessageInput @message={{newMessage}}
+                      @sendMessage={{action "processMessageOrCommand"}}
+                      @usernames={{channel.userList}} />
       </footer>
     </div>
 
     <aside>
-      {{user-list users=channel.sortedUserList}}
+      <UserList @users={{channel.sortedUserList}} />
     </aside>
   </div>
 </main>
