@@ -3,48 +3,42 @@ import Service from '@ember/service';
 export default class LoggerService extends Service {
 
   enabled = true;
-  allowedTypes;
-  activeTypes;
 
-  constructor () {
-    super(...arguments);
+  allowedTypes = [
+    'connection',
+    'error',
+    'join',
+    'leave',
+    'message',
+    'irc_message',
+    'xmpp_message',
+    'send',
+    'xmpp_completed',
+    'irc_completed',
+    'sh_completed',
+    'sh_failure',
+    'irc',
+    'xmpp',
+    'fetch-error',
+    'chat_message'
+  ];
 
-    this.allowedTypes = [
-      'connection',
-      'error',
-      'join',
-      'leave',
-      'message',
-      'irc_message',
-      'xmpp_message',
-      'send',
-      'xmpp_completed',
-      'irc_completed',
-      'sh_completed',
-      'sh_failure',
-      'irc',
-      'xmpp',
-      'fetch-error',
-      'chat_message'
-    ];
-
-    this.activeTypes = [
-      'connection',
-      'error',
-      'join',
-      'leave',
-      'send',
-      'sh_completed',
-      'xmpp_completed',
-      'irc_completed',
-      'sh_failure',
-      'irc',
-      'xmpp',
-      'message',
-      'irc_message',
-      'xmpp_message'
-    ];
-  }
+  activeTypes = [
+    'connection',
+    'error',
+    'join',
+    'leave',
+    'send',
+    'sh_completed',
+    'xmpp_completed',
+    'irc_completed',
+    'sh_failure',
+    'irc',
+    'xmpp',
+    'message',
+    'irc_message',
+    'xmpp_message'
+  ];
 
   log (type) {
     if (!this.allowedTypes.includes(type)) {
