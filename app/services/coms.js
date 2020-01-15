@@ -152,6 +152,25 @@ export default Service.extend({
     }
   },
 
+  updateChannelUserList(message) {
+    let channel;
+    switch(message.context) {
+      case 'irc':
+        channel = this.getChannelById(message.actor['@id']);
+        break;
+      case 'xmpp':
+        channel = this.getChannel(message.target['@id'], message.actor['@id']);
+        break;
+    }
+
+    if (channel) {
+      channel.set('connected', true);
+      if (Array.isArray(message.object.members)) {
+        channel.set('userList', message.object.members);
+      }
+    }
+  },
+
   addUserToChannelUserList(message) {
     const channel = this.getChannelById(message.target['@id']);
     if (channel) {
@@ -414,6 +433,11 @@ export default Service.extend({
     this.log(`${message.context}_message`, 'SH message', message);
 
     switch(message['@type']) {
+      case 'observe':
+        if (message.object['@type'] === 'attendance') {
+          this.updateChannelUserList(message);
+        }
+        break;
       case 'join':
         this.handleChannelJoin(message);
         break;
