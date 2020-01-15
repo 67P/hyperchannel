@@ -4,25 +4,21 @@ import RemoteStorage from 'remotestoragejs';
 import Kosmos from 'remotestorage-module-kosmos';
 import config from 'hyperchannel/config/environment';
 
-export default Service.extend({
+export default class RemotestorageService extends Service {
 
-  rs: null,
+  constructor () {
+    super(...arguments);
 
-  init () {
-    this._super(...arguments);
+    this.rs = new RemoteStorage({modules: [Kosmos]});
+    this.rs.access.claim('kosmos', 'rw');
+    this.rs.caching.enable('/kosmos/');
+  }
 
-    const rs =  new RemoteStorage({modules: [Kosmos]});
-    rs.access.claim('kosmos', 'rw');
-    rs.caching.enable('/kosmos/');
+  addDefaultSpace () {
+    const spaceConfig = config.spacePresets
+                              .find(s => s.id === config.defaultSpaceId);
 
-    this.set('rs', rs);
-  },
-
-  addDefaultSpace() {
-    let spaceConfig = config.spacePresets
-                            .find(s => s.id === config.defaultSpaceId);
-
-    let params = {
+    const params = {
       id: spaceConfig.id,
       name: spaceConfig.name,
       protocol: spaceConfig.protocol,
@@ -51,17 +47,17 @@ export default Service.extend({
 
         return { space, channels };
       });
-  },
+  }
 
-  saveSpace(space) {
+  saveSpace (space) {
     return this.rs.kosmos.spaces.store(space.serialize())
       .then(() => console.debug('[remotestorage]', `saved space ${space.get('name')}`))
       .catch(err => console.error('saving space failed:', err));
-  },
+  }
 
-  removeSpace(space) {
+  removeSpace (space) {
     return this.rs.kosmos.spaces.remove(space.get('id'))
       .then(() => console.debug('[remotestorage]', `removed space ${space.get('name')} from RS`));
   }
 
-});
+}
