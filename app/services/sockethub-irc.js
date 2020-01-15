@@ -109,7 +109,14 @@ export default Service.extend({
       channel = this.coms.createChannel(space, message.target['displayName'], message.target['@id']);
     }
 
+    // Hotfix for adding one's own user to the channel and marking it as
+    // connected.
+    // ATM, Sockethub doesn't send any events or information that we
+    // successfully joined a channel. So for now we just assume, if we receive
+    // presence updates from other users, we should be in the channel, too.
+    channel.addUser(space.userNickname);
     channel.set('connected', true);
+
     channel.addUser(message.actor.displayName);
   },
 

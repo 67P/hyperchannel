@@ -79,7 +79,6 @@ export default EmberObject.extend({
     let personID;
     switch (this.protocol) {
       case 'IRC':
-        // TODO - remove the use of any URI protocol part
         personID = `${this.get('server.nickname')}@${this.get('server.hostname')}`;
         break;
       case 'XMPP':
