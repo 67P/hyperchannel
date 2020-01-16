@@ -8,6 +8,11 @@ module.exports = {
     'link-href-attributes': false
   },
 
+  ignore: [
+    'hyperchannel/templates/components/**',
+    'app/templates/components/**'
+  ],
+
   pending: [
     {
       "moduleId": "app/templates/settings",
@@ -19,6 +24,16 @@ module.exports = {
       "moduleId": "app/components/channel-container/template",
       "only": [
         "link-rel-noopener",
+        "link-href-attributes",
+        "no-action",
+        "no-curly-component-invocation",
+        "no-implicit-this"
+      ]
+    },
+    {
+      "moduleId": "app/components/channel-nav/template",
+      "only": [
+        "link-href-attributes",
         "no-action",
         "no-curly-component-invocation",
         "no-implicit-this"
@@ -109,6 +124,15 @@ module.exports = {
       "moduleId": "hyperchannel/components/channel-container/template",
       "only": [
         "link-rel-noopener",
+        "link-href-attributes",
+        "no-action",
+        "no-curly-component-invocation",
+        "no-implicit-this"
+      ]
+    },
+    {
+      "moduleId": "hyperchannel/components/channel-nav/template",
+      "only": [
         "no-action",
         "no-curly-component-invocation",
         "no-implicit-this"
