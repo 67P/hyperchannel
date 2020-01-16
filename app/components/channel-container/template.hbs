@@ -3,10 +3,10 @@
     <h2 id="channel-name"
         class={{if this.channel.connected "connected" "disconnected"}}
         {{action "menu" "global" "toggle"}}>
-      {{this.channelname}}
+      {{this.channel.name}}
     </h2>
     <p id="channel-title">
-      {{this.channelformattedTopic}}
+      {{this.channel.formattedTopic}}
     </p>
     <nav>
       <LinkTo @route="index" class="active"><IconUsers /></LinkTo><a><IconPaperclip /></a><a><IconSettings /></a><a {{action "leaveChannel" this.space this.channel}} title="Leave {{this.channelname}}"><IconLogOut /></a>
