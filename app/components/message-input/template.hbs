@@ -1,4 +1,6 @@
-<section id="new-message" {{did-insert this.didInsertNode}} {{will-destroy this.willDestroyNode}}>
+<section id="new-message"
+         {{did-insert this.bindKeyboardShortcuts}}
+         {{will-destroy this.unbindKeyboardShortcuts}}>
   <form {{on "submit" @sendMessage}}>
     <ChannelInputField @value={{@message}}
                        @placeholder="Type a message and hit enter"

@@ -19,12 +19,12 @@ export default class MessageInputComponent extends Component {
   }
 
   @action
-  didInsertNode (element) {
+  bindKeyboardShortcuts (element) {
     bindKeyboardShortcuts(this, element);
   }
 
   @action
-  willDestroyNode (element) {
+  unbindKeyboardShortcuts (element) {
     unbindKeyboardShortcuts(this, element);
   }
 

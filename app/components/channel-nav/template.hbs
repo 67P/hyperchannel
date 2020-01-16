@@ -1,5 +1,5 @@
-<ul {{did-insert this.didInsertNode}} {{will-destroy this.willDestroyNode}}>
-  {{#each this.spaces as |space|}}
+<ul {{did-insert this.bindKeyboardShortcuts}}
+    {{will-destroy this.unbindKeyboardShortcuts}}>
   {{#each @spaces as |space|}}
     <li>
       <h2><LinkTo @route="space" @model={{space}}>{{space.name}}</LinkTo></h2>
