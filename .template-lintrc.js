@@ -4,7 +4,8 @@ module.exports = {
   extends: 'octane',
 
   rules: {
-    'no-invalid-interactive': false
+    'no-invalid-interactive': false,
+    'link-href-attributes': false
   },
 
   ignore: [
@@ -22,16 +23,6 @@ module.exports = {
     {
       "moduleId": "app/components/channel-container/template",
       "only": [
-        "link-href-attributes",
-        "no-action",
-        "no-curly-component-invocation",
-        "no-implicit-this"
-      ]
-    },
-    {
-      "moduleId": "app/components/channel-nav/template",
-      "only": [
-        "link-href-attributes",
         "no-action",
         "no-curly-component-invocation",
         "no-implicit-this"
@@ -62,14 +53,6 @@ module.exports = {
     {
       "moduleId": "app/components/message-chat-me/template",
       "only": [
-        "no-curly-component-invocation",
-        "no-implicit-this"
-      ]
-    },
-    {
-      "moduleId": "app/components/message-input/template",
-      "only": [
-        "no-action",
         "no-curly-component-invocation",
         "no-implicit-this"
       ]
@@ -129,16 +112,6 @@ module.exports = {
     {
       "moduleId": "hyperchannel/components/channel-container/template",
       "only": [
-        "link-href-attributes",
-        "no-action",
-        "no-curly-component-invocation",
-        "no-implicit-this"
-      ]
-    },
-    {
-      "moduleId": "hyperchannel/components/channel-nav/template",
-      "only": [
-        "link-href-attributes",
         "no-action",
         "no-curly-component-invocation",
         "no-implicit-this"
@@ -167,14 +140,6 @@ module.exports = {
     },
     {
       "moduleId": "hyperchannel/components/message-chat/template",
-      "only": [
-        "no-action",
-        "no-curly-component-invocation",
-        "no-implicit-this"
-      ]
-    },
-    {
-      "moduleId": "hyperchannel/components/message-input/template",
       "only": [
         "no-action",
         "no-curly-component-invocation",

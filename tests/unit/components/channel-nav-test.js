@@ -1,16 +1,18 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
+import { run } from '@ember/runloop';
 import Service from '@ember/service';
 import Channel from 'hyperchannel/models/channel';
 import Space from 'hyperchannel/models/space';
-import { run } from '@ember/runloop';
+import createComponent from 'hyperchannel/tests/helpers/create-component';
 
 const routerStub = Service.extend({
+  foo: 'bar',
+
   transitionTo (route, space, channel) {
     this.set('currentRoute', route);
     this.set('currentSpace', space);
     this.set('currentChannel', channel);
-
     return true;
   }
 });
@@ -25,7 +27,7 @@ module('Unit | Component | channel-nav', function (hooks) {
     space.channels.pushObject(channel);
     space.channels.pushObject(channel2);
 
-    const component = this.owner.factoryFor('component:channel-nav').create({ spaces: [space] });
+    const component = createComponent('component:channel-nav', { spaces: [space] });
 
     assert.equal(component.activeChannel, channel2);
   });
@@ -38,13 +40,10 @@ module('Unit | Component | channel-nav', function (hooks) {
     space.set('channels', [channel2, channel1, channel3]);
 
     const routerService = routerStub.create();
+    const component = createComponent('component:channel-nav', { spaces: [space] });
+    component.router = routerService;
 
-    const component = this.owner.factoryFor('component:channel-nav').create({
-      router: routerService,
-      spaces: [space]
-    });
-
-    run(() => component.send('goNextChannel'));
+    run(() => component.goNextChannel());
 
     assert.equal(routerService.currentRoute, 'space.channel');
     assert.equal(routerService.currentSpace, space);
@@ -52,7 +51,7 @@ module('Unit | Component | channel-nav', function (hooks) {
 
     channel2.set('visible', false);
     channel3.set('visible', true);
-    run(() => component.send('goNextChannel'));
+    run(() => component.goNextChannel());
 
     assert.equal(routerService.currentChannel.name, channel1.name);
   });
@@ -65,13 +64,10 @@ module('Unit | Component | channel-nav', function (hooks) {
     space.set('channels', [channel1, channel3, channel2]);
 
     const routerService = routerStub.create();
+    const component = createComponent('component:channel-nav', { spaces: [space] });
+    component.router = routerService;
 
-    const component = this.owner.factoryFor('component:channel-nav').create({
-      router: routerService,
-      spaces: [space]
-    });
-
-    run(() => component.send('goPreviousChannel'));
+    run(() => component.goPreviousChannel());
 
     assert.equal(routerService.currentRoute, 'space.channel');
     assert.equal(routerService.currentSpace, space);
@@ -79,7 +75,7 @@ module('Unit | Component | channel-nav', function (hooks) {
 
     channel1.set('visible', true);
     channel2.set('visible', false);
-    run(() => component.send('goPreviousChannel'));
+    run(() => component.goPreviousChannel());
 
     assert.equal(routerService.currentChannel.name, channel3.name);
   });

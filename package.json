@@ -39,6 +39,7 @@
   "devDependencies": {
     "@67p/ember-service-worker-hubot-web-push-notifications": "^1.0.1",
     "@ember/optional-features": "^1.1.0",
+    "@ember/render-modifiers": "^1.0.2",
     "@glimmer/component": "^1.0.0",
     "autoprefixer": "^7.2.6",
     "babel-eslint": "^10.0.3",
@@ -65,7 +66,7 @@
     "ember-fetch": "^7.0.0",
     "ember-gestures": "^1.1.5",
     "ember-hammertime": "1.6.0",
-    "ember-keyboard-shortcuts": "^1.2.0",
+    "ember-keyboard-shortcuts": "github:67P/ember-keyboard-shortcuts#feature/octane_classes",
     "ember-load-initializers": "^2.1.1",
     "ember-local-storage": "^1.7.1",
     "ember-maybe-import-regenerator": "^0.1.6",
