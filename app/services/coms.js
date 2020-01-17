@@ -183,7 +183,7 @@ export default class ComsService extends Service {
 
   removeUserFromChannelUserList (message) {
     // TODO handle user quit leaves (multiple channels)
-    // e.g. target is `{ @type: 'service', @id: 'irc://irc.freenode.net' }`
+    // e.g. target is `{ @type: 'service', @id: 'irc.freenode.net' }`
     const channel = this.getChannelById(message.target['@id']);
     if (channel) {
       channel.removeUser(message.actor.displayName);
@@ -195,7 +195,7 @@ export default class ComsService extends Service {
     // This method should return an array of channels for all spaces with the
     // same hostname
 
-    const hostname = channelId.match(/(?:irc:\/\/)?(?:.+@)?(.+?)(?:\/|$)/)[1];
+    const hostname = channelId.match(/(?:.+@)?(.+?)(?:\/|$)/)[1];
 
     const space = this.spaces.findBy('server.hostname', hostname);
 
@@ -246,9 +246,9 @@ export default class ComsService extends Service {
   updateChannelTopic (message) {
     let hostname;
     if (typeof message.target === 'object') {
-      hostname = message.target['@id'].match(/irc:\/\/(.+)\//)[1];
+      hostname = message.target['@id'].match(/(.+)\//)[1];
     } else if (typeof message.actor === 'string') {
-      hostname = message.actor.match(/irc:\/\/.+@(.+)/)[1];
+      hostname = message.actor.match(/.+@(.+)/)[1];
     }
 
     let space = this.spaces.findBy('server.hostname', hostname);
@@ -292,13 +292,17 @@ export default class ComsService extends Service {
     });
   }
 
-  createChannel (space, channelName) {
+  createChannel (space, channelName, channelId = null) {
     const platform = this.getServiceForSockethubPlatform(space.protocol);
+
+    if (isEmpty(channelId)) {
+      channelId = platform.generateChannelId(space, channelName);
+    }
 
     const channel = Channel.create({
       space: space,
       name: channelName,
-      sockethubChannelId: platform.generateChannelId(space, channelName)
+      sockethubChannelId: channelId
     });
 
     this.joinChannel(space, channel, "room");
@@ -411,7 +415,7 @@ export default class ComsService extends Service {
           });
         }
 
-        if (!isEmpty(space)) {
+        if (isPresent(space)) {
           this[message.context].handleJoinCompleted(space, message);
         } else {
           console.warn('Could not find space for join message', message);
@@ -462,7 +466,8 @@ export default class ComsService extends Service {
             this.updateUsername(message);
             break;
           case 'presence':
-            this.xmpp.handlePresenceUpdate(message);
+            this.getServiceForSockethubPlatform(message.context)
+                .handlePresenceUpdate(message)
             break;
           case 'error':
             console.warn('Got error update message', message.actor['@id'], message.object.content);

@@ -144,7 +144,7 @@ export default class SockethubIrcService extends Service {
    * @public
    */
   addMessageToChannel (message) {
-    const hostname = message.actor['@id'].match(/irc:\/\/.+@(.+)/)[1];
+    const hostname = message.actor['@id'].match(/.+@(.+)/)[1];
     const space = this.coms.spaces.findBy('server.hostname', hostname);
 
     if (isEmpty(space)) {
@@ -226,7 +226,7 @@ export default class SockethubIrcService extends Service {
    * @public
    */
   generateChannelId (space, channelName) {
-    return `irc://${space.server.hostname}/${channelName}`;
+    return `${space.server.hostname}/${channelName}`;
   }
 
   /**

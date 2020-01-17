@@ -68,11 +68,15 @@ module('Unit | Service | coms', function(hooks) {
     const observeMessage = {
       "@type": "observe",
       "actor": {
-          "@id": "irc://irc.freenode.net/#kosmos",
+          "@id": "kosmos@kosmos.chat",
           "@type": "room",
-          "displayName": "#kosmos"
+          "displayName": "kosmos"
       },
-      "context": "irc",
+      "target": {
+        "@id": "galfert@kosmos.org/hyperchannel",
+        "@type": "person"
+      },
+      "context": "xmpp",
       "object": {
           "@type": "attendance",
           "members": [
@@ -88,13 +92,13 @@ module('Unit | Service | coms', function(hooks) {
 
     const space = Space.create();
     space.setProperties({
-      protocol: 'IRC',
-      name: 'Freenode',
-      server: { hostname: 'irc.freenode.net' }
+      protocol: 'XMPP',
+      name: 'Kosmos',
+      server: { hostname: 'xmpp.kosmos.org', username: 'galfert@kosmos.org' }
     });
     const channel = Channel.create({
-      name: '#kosmos',
-      sockethubChannelId: 'irc://irc.freenode.net/#kosmos',
+      name: 'kosmos',
+      sockethubChannelId: 'kosmos@kosmos.chat',
       space: space,
       connected: false
     });
@@ -105,7 +109,7 @@ module('Unit | Service | coms', function(hooks) {
 
     service.updateChannelUserList(observeMessage);
 
-    assert.ok(channel.get('connected'));
-    assert.equal(channel.get('userList').length, 5);
+    assert.ok(channel.connected);
+    assert.equal(channel.userList.length, 5);
   });
 });
