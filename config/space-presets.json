@@ -70,7 +70,7 @@
     "server": {
       "hostname": "xmpp.5apps.com",
       "secure": true,
-      "port": 5223
+      "port": 5222
     }
   }
 ]
