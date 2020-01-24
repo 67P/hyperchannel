@@ -13,6 +13,7 @@ export default Controller.extend({
   storage: service('remotestorage'),
 
   currentSpace: alias('space.model'),
+  showChannelMenu: alias('application.showChannelMenu'),
 
   createMessage(message, type) {
     return Message.create({
@@ -26,7 +27,7 @@ export default Controller.extend({
   actions: {
     menu(which, what) {
       // Do not toggle sidebav on desktop
-      if (which === 'global' && window.innerWidth > 900) return;
+      if (which.match(/(global|channel)/) && window.innerWidth > 900) return;
 
       let menuProp = `show${which.capitalize()}Menu`;
 

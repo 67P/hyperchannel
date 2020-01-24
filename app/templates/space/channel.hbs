@@ -1,6 +1,7 @@
 <ChannelContainer @channel={{this.model}}
                   @space={{this.currentSpace}}
                   @newMessage={{this.newMessage}}
+                  @showChannelMenu={{this.showChannelMenu}}
                   @onMessage={{action "sendMessage"}}
                   @onCommand={{action "executeCommand"}}
                   @onLeaveChannel={{route-action "leaveChannel"}}
