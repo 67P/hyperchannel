@@ -1,0 +1,16 @@
+section#new-message {
+  color: #333;
+  padding: 0 14px;
+  color: #fff;
+  border-radius: 3px;
+
+  input[name=chat-message] {
+    width: 100%;
+    background: none;
+    border: none;
+    height: $headerHeight;
+    line-height: $headerHeight;
+    // Ember seems to add a hardcoded `cursor: pointer` to its text fields
+    cursor: text !important;
+  }
+}
