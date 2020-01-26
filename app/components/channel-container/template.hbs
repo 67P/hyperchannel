@@ -9,12 +9,18 @@
       {{this.channel.formattedTopic}}
     </p>
     <nav>
-      <LinkTo @route="space.channel.index"
-              @models={{array space channel}}
-              {{action "menu" "channel" "show"}}>
+      <LinkTo @route="space.channel.index" @models={{array space channel}} {{action "menu" "channel" "show"}}>
         <IconUsers />
       </LinkTo>
-      <a><IconPaperclip /></a><a><IconSettings /></a><a {{action "leaveChannel" this.space this.channel}} title="Leave {{this.channelname}}"><IconLogOut /></a>
+      <LinkTo @route="space.channel.shares" @models={{array space channel}} {{action "menu" "channel" "show"}}>
+        <IconPaperclip />
+      </LinkTo>
+      <LinkTo @route="space.channel.settings" @models={{array space channel}} {{action "menu" "channel" "show"}}>
+        <IconSettings />
+      </LinkTo>
+      <a {{action "leaveChannel" this.space this.channel}} title="Leave {{this.channelname}}">
+        <IconLogOut />
+      </a>
     </nav>
   </header>
 
