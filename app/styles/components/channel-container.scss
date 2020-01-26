@@ -147,3 +147,21 @@
   }
 
 }
+
+@include media("<desktop") {
+  .app-container:not(.channel-menu-open) {
+    #channel {
+      main {
+        header {
+          nav {
+            a, button {
+              &.active {
+                border-bottom: none;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

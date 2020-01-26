@@ -9,11 +9,11 @@
       {{this.channel.formattedTopic}}
     </p>
     <nav>
-      <button type="button"
-              {{action "menu" "channel" "toggle"}}
-              class={{if this.headerNavButtonUsersActive "active"}}>
+      <LinkTo @route="space.channel.index"
+              @models={{array space channel}}
+              {{action "menu" "channel" "show"}}>
         <IconUsers />
-      </button>
+      </LinkTo>
       <a><IconPaperclip /></a><a><IconSettings /></a><a {{action "leaveChannel" this.space this.channel}} title="Leave {{this.channelname}}"><IconLogOut /></a>
     </nav>
   </header>
@@ -64,8 +64,8 @@
       </footer>
     </div>
 
-    <aside>
-      <UserList @users={{this.channel.sortedUserList}} />
+    <aside id="channel-sidebar">
+      {{outlet}}
     </aside>
   </div>
 </main>
