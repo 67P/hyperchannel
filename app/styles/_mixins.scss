@@ -3,3 +3,14 @@
   text-transform: uppercase;
   opacity: 0.8;
 }
+
+@mixin channel_sidebar_item {
+  margin: 0.6rem 1rem;
+  padding: 1rem;
+  border: 1px solid #fff;
+  border-radius: 3px;
+
+  &:first-of-type {
+    margin-top: 1.5rem;
+  }
+}

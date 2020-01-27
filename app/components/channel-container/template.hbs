@@ -24,7 +24,7 @@
     </nav>
   </header>
 
-  <div class="content-container {{if this.showChannelMenu "channel-menu-open"}}">
+  <div class="content-container {{this.sidebarClass}} {{if this.showChannelMenu "channel-menu-open"}}">
     <div class="content">
       <section id="channel-content" class="main">
         {{#if this.channel.isLogged}}

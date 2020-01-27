@@ -117,12 +117,11 @@ div#channel {
       }
 
       > aside {
-        section {
-          padding: 1.5rem 0;
+        @include app-column;
 
-          h2 {
-            padding: 0 1rem;
-          }
+        @include media(">desktop") {
+          flex: 0 0 $sidebarWidth;
+          transition: flex 0.4s;
         }
 
         @include media("<desktop") {
@@ -136,6 +135,14 @@ div#channel {
           transform: translate3d($sidebarWidth, 0, 0);
           transition: transform 0.4s;
         }
+
+        section {
+          padding: 1.5rem 0;
+
+          h2 {
+            padding: 0 1rem;
+          }
+        }
       }
 
       &.channel-menu-open {
@@ -147,12 +154,30 @@ div#channel {
           transform: translate3d(0, 0, 0);
         }
       }
-    }
-  }
 
-  aside {
-    flex: 0 0 $sidebarWidth;
-    @include app-column;
+      &.sidebar-wide {
+        > aside {
+          @include media(">desktop") {
+            flex: 0 0 $sidebarWideWidth;
+          }
+
+          @include media("<desktop") {
+            width: $sidebarWideWidth;
+            transform: translate3d($sidebarWideWidth, 0, 0);
+          }
+        }
+
+        &.channel-menu-open {
+          > .content {
+            transform: translate3d(-$sidebarWideWidth, 0, 0);
+          }
+
+          > aside {
+            transform: translate3d(0, 0, 0);
+          }
+        }
+      }
+    }
   }
 }
 
