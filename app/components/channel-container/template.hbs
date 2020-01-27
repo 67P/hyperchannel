@@ -9,11 +9,16 @@
       {{this.channel.formattedTopic}}
     </p>
     <nav>
-      <LinkTo @route="index" class="active"><IconUsers /></LinkTo><a><IconPaperclip /></a><a><IconSettings /></a><a {{action "leaveChannel" this.space this.channel}} title="Leave {{this.channelname}}"><IconLogOut /></a>
+      <button type="button"
+              {{action "menu" "channel" "toggle"}}
+              class={{if this.headerNavButtonUsersActive "active"}}>
+        <IconUsers />
+      </button>
+      <a><IconPaperclip /></a><a><IconSettings /></a><a {{action "leaveChannel" this.space this.channel}} title="Leave {{this.channelname}}"><IconLogOut /></a>
     </nav>
   </header>
 
-  <div class="content-container">
+  <div class="content-container {{if this.showChannelMenu "channel-menu-open"}}">
     <div class="content">
       <section id="channel-content" class="main">
         {{#if this.channel.isLogged}}

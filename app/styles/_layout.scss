@@ -108,11 +108,36 @@ div#channel {
 
       > .content {
         flex: 1;
+        z-index: 1;
         @include app-column;
+
+        @include media("<desktop") {
+          transition: transform 0.4s;
+        }
       }
 
       > aside {
-        flex: 0 0 $sidebarWidth;
+        @include media("<desktop") {
+          flex: 0;
+          position: absolute;
+          top: $headerHeight;
+          right: 0;
+          bottom: 0;
+          z-index: 0;
+          width: $sidebarWidth;
+          transform: translate3d($sidebarWidth, 0, 0);
+          transition: transform 0.4s;
+        }
+      }
+
+      &.channel-menu-open {
+        > .content {
+          transform: translate3d(-$sidebarWidth, 0, 0);
+        }
+
+        > aside {
+          transform: translate3d(0, 0, 0);
+        }
       }
     }
   }
@@ -141,7 +166,12 @@ section#settings, section#space {
 
 header, footer {
   nav {
-    a {
+    button {
+      border: none;
+      color: #fff;
+    }
+
+    a, button {
       display: flex;
       float: left;
       align-items: center;

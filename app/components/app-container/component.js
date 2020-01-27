@@ -25,11 +25,19 @@ export default Component.extend(RecognizerMixin, {
   }),
 
   swipeLeft() {
-    this.set('showGlobalMenu', false);
+    if (this.showGlobalMenu) {
+      this.set('showGlobalMenu', false);
+    } else {
+      this.set('showChannelMenu', true);
+    }
   },
 
   swipeRight() {
-    this.set('showGlobalMenu', true);
+    if (this.showChannelMenu) {
+      this.set('showChannelMenu', false);
+    } else {
+      this.set('showGlobalMenu', true);
+    }
   },
 
   tap(e) {

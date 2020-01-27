@@ -1,4 +1,6 @@
 <ChannelContainer @channel={{this.model}}
+                  @showChannelMenu={{this.showChannelMenu}}
                   @newMessage={{this.newMessage}}
                   @onMessage={{action "sendMessage"}}
-                  @onCommand={{action "executeCommand"}} />
+                  @onCommand={{action "executeCommand"}}
+                  @menu={{action "menu"}} />

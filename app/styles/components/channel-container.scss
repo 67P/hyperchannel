@@ -1,6 +1,7 @@
 #channel {
 
   main {
+    // TODO move to channel header component
     header {
       display: flex;
       align-items: stretch;
@@ -56,14 +57,22 @@
       nav {
         flex: 0 0 $sidebarWidth;
 
-        a {
-          background-color: $background-color-yellow;
-          &:hover  { background-color: rgba(255,255,255,0.3); }
-          &.active { background-color: $background-color-cyan; }
+        a, button {
+          @include media(">desktop") {
+            background-color: $background-color-yellow;
+            &:hover  { background-color: rgba(255,255,255,0.3); }
+            &.active { background-color: $background-color-cyan; }
+          }
 
           @include media("<desktop") {
             background-color: $background-color-magenta;
-            &.active { background-color: $background-color-magenta; }
+            border-bottom: none;
+            transition: all 0.2s;
+
+            &.active {
+              border-bottom: 2px solid yellowgreen;
+              background-color: $background-color-magenta;
+            }
           }
         }
       }
@@ -71,10 +80,6 @@
 
     aside {
       background-color: $background-color-cyan;
-
-      @include media("<desktop") {
-        display: none;
-      }
     }
 
     footer {

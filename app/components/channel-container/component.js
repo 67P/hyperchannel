@@ -12,6 +12,9 @@ function scrollToBottom () {
 
 export default Component.extend({
 
+  router: service(),
+  coms: service(),
+
   elementId: 'channel',
   newMessage: '',
   channel: null,
@@ -22,9 +25,6 @@ export default Component.extend({
 
   renderedMessagesCount: 0, // maximum number of messages to render
   renderedMessagesAddendumAmount: 30, // number of messages to increase rendering count by
-
-  router: service(),
-  coms: service(),
 
   renderedMessages: computed('channel.sortedMessages.[]', 'renderedMessagesCount', function () {
     if (this.partialRenderingEnabled) {
@@ -76,6 +76,12 @@ export default Component.extend({
       this.get('channel.searchedPreviousLogsUntilDate')
     );
   }).drop(),
+
+  // TODO make dynamic based on active sidebar content
+  headerNavButtonUsersActive: computed('showChannelMenu', function(){
+    if (window.innerWidth > 900) return true;
+    return this.showChannelMenu;
+  }),
 
   actions: {
 
