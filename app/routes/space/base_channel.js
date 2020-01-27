@@ -12,6 +12,7 @@ function focusMessageInput() {
 }
 
 export default Route.extend({
+
   coms: service(),
   userSettings: localStorageFor('user-settings'),
 
@@ -52,8 +53,11 @@ export default Route.extend({
       // Mark unread messages as read
       channel.set('unreadMessages', false);
       channel.set('unreadMentions', false);
-    }
+    },
 
+    menu (which, what) {
+      this.controller.send('menu', which, what);
+    }
   }
 
 });

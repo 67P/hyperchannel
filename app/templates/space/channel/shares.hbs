@@ -1,5 +1,11 @@
 <section id="channel-shared-items" class="main">
-  <h2>Shared items</h2>
+  <div class="header">
+    <button type="button" class="back"
+            {{on "click" (route-action "menu" "channel" "hide")}}>
+      <IconArrowLeft />
+    </button>
+    <h2>Shared items</h2>
+  </div>
 
   <div class="item">item</div>
   <div class="item">item</div>

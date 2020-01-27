@@ -33,7 +33,8 @@ export default Controller.extend({
   }),
 
   actions: {
-    menu(which, what) {
+
+    menu (which, what) {
       // Do not toggle sidebav on desktop
       if (which.match(/(global|channel)/) && window.innerWidth > 900) return;
 
@@ -142,6 +143,7 @@ export default Controller.extend({
 
       this.coms.changeTopic(this.currentSpace, channel, topic);
     }
+
   }
 
 });
