@@ -162,14 +162,14 @@ div#channel {
           }
 
           @include media("<desktop") {
-            width: $sidebarWideWidth;
+            width: 100vw;
             transform: translate3d($sidebarWideWidth, 0, 0);
           }
         }
 
         &.channel-menu-open {
           > .content {
-            transform: translate3d(-$sidebarWideWidth, 0, 0);
+            transform: translate3d(-100vw, 0, 0);
           }
 
           > aside {
