@@ -80,6 +80,53 @@
 
     aside {
       background-color: $background-color-cyan;
+
+      // TODO move to component file when components have been created1
+      section {
+        .item {
+          @include channel_sidebar_item;
+        }
+
+        .header {
+          margin-bottom: 1.5rem;
+        }
+
+        @include media(">desktop") {
+          .header {
+            button.back {
+              display: none;
+            }
+          }
+        }
+
+        @include media("<desktop") {
+          .header {
+            display: flex;
+            padding: 0 1rem;
+            line-height: 1.4rem;
+
+            button.back {
+              display: inline-block;
+              flex: 0 0 1.4rem;
+              padding: 0;
+              color: #fff;
+              background: none;
+              border: none;
+
+              svg {
+                width: 1.4rem;
+                height: 1.4rem;
+              }
+            }
+
+            h2 {
+              display: inline-block;
+              flex: 1;
+              font-size: 1.4rem;
+            }
+          }
+        }
+      }
     }
 
     footer {
@@ -131,4 +178,22 @@
     }
   }
 
+}
+
+@include media("<desktop") {
+  .app-container:not(.channel-menu-open) {
+    #channel {
+      main {
+        header {
+          nav {
+            a, button {
+              &.active {
+                border-bottom: none;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

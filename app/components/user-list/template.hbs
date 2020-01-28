@@ -1,3 +1,6 @@
+{{#if this.users}}
+  <h2>{{this.users.length}} Online</h2>
+{{/if}}
 <ul>
   {{#each this.renderedUsers as |username|}}
     <li><LinkToUsername @username={{username}} /></li>

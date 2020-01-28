@@ -3,6 +3,7 @@ import { alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import Message from 'hyperchannel/models/message';
+import { computed } from '@ember/object';
 
 export default Controller.extend({
 
@@ -10,6 +11,7 @@ export default Controller.extend({
   application: controller(),
   space: controller(),
   coms: service(),
+  router: service(),
   storage: service('remotestorage'),
 
   currentSpace: alias('space.model'),
@@ -24,8 +26,15 @@ export default Controller.extend({
     });
   },
 
+  sidebarClass: computed('router.currentRouteName', function(){
+    const route = this.router.currentRouteName;
+    const wideBars = ['shares', 'settings'].map(r => `space.channel.${r}`);
+    return wideBars.includes(route) ? 'sidebar-wide' : 'sidebar-normal';
+  }),
+
   actions: {
-    menu(which, what) {
+
+    menu (which, what) {
       // Do not toggle sidebav on desktop
       if (which.match(/(global|channel)/) && window.innerWidth > 900) return;
 
@@ -134,6 +143,7 @@ export default Controller.extend({
 
       this.coms.changeTopic(this.currentSpace, channel, topic);
     }
+
   }
 
 });

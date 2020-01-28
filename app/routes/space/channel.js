@@ -8,7 +8,7 @@ export default BaseChannel.extend({
 
   actions: {
 
-    willTransition() {
+    willTransition () {
       this.controllerFor('application')
           .set('showChannelMenu', false);
     }

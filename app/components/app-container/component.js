@@ -45,6 +45,9 @@ export default Component.extend(RecognizerMixin, {
         !isDescendantOf('channel-header', e.target) &&
         !isDescendantOf('global', e.target)) {
       this.set('showGlobalMenu', false);
+    } else if (this.showChannelMenu &&
+        !isDescendantOf('channel-sidebar', e.target)) {
+      this.set('showChannelMenu', false);
     }
   }
 

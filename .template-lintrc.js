@@ -25,7 +25,8 @@ module.exports = {
       "only": [
         "no-action",
         "no-curly-component-invocation",
-        "no-implicit-this"
+        "no-implicit-this",
+        "no-outlet-outside-routes"
       ]
     },
     {
@@ -114,7 +115,8 @@ module.exports = {
       "only": [
         "no-action",
         "no-curly-component-invocation",
-        "no-implicit-this"
+        "no-implicit-this",
+        "no-outlet-outside-routes"
       ]
     },
     {

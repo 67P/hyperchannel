@@ -9,16 +9,22 @@
       {{this.channel.formattedTopic}}
     </p>
     <nav>
-      <button type="button"
-              {{action "menu" "channel" "toggle"}}
-              class={{if this.headerNavButtonUsersActive "active"}}>
+      <LinkTo @route="space.channel.index" @models={{array space channel}} {{action "menu" "channel" "show"}}>
         <IconUsers />
-      </button>
-      <a><IconPaperclip /></a><a><IconSettings /></a><a {{action "leaveChannel" this.space this.channel}} title="Leave {{this.channelname}}"><IconLogOut /></a>
+      </LinkTo>
+      <LinkTo @route="space.channel.shares" @models={{array space channel}} {{action "menu" "channel" "show"}}>
+        <IconPaperclip />
+      </LinkTo>
+      <LinkTo @route="space.channel.settings" @models={{array space channel}} {{action "menu" "channel" "show"}}>
+        <IconSettings />
+      </LinkTo>
+      <a {{action "leaveChannel" this.space this.channel}} title="Leave {{this.channelname}}">
+        <IconLogOut />
+      </a>
     </nav>
   </header>
 
-  <div class="content-container {{if this.showChannelMenu "channel-menu-open"}}">
+  <div class="content-container {{this.sidebarClass}} {{if this.showChannelMenu "channel-menu-open"}}">
     <div class="content">
       <section id="channel-content" class="main">
         {{#if this.channel.isLogged}}
@@ -64,8 +70,8 @@
       </footer>
     </div>
 
-    <aside>
-      <UserList @users={{this.channel.sortedUserList}} />
+    <aside id="channel-sidebar">
+      {{outlet}}
     </aside>
   </div>
 </main>
