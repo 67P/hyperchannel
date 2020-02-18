@@ -29,7 +29,7 @@
     "version": "npm run build-prod && git add release/",
     "postversion": "git push origin master",
     "deploy": "git push 5apps master",
-    "sockethub": "DEBUG=sockethub* ./node_modules/sockethub/bin/sockethub"
+    "sockethub": "DEBUG=sockethub* sockethub"
   },
   "engines": {
     "node": "8.* || >= 10.*"
