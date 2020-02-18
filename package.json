@@ -28,7 +28,8 @@
     "preversion": "npm test",
     "version": "npm run build-prod && git add release/",
     "postversion": "git push origin master",
-    "deploy": "git push 5apps master"
+    "deploy": "git push 5apps master",
+    "sockethub": "DEBUG=sockethub* ./node_modules/sockethub/bin/sockethub"
   },
   "engines": {
     "node": "8.* || >= 10.*"
@@ -87,7 +88,8 @@
     "qunit-dom": "^0.9.2",
     "remotestorage-module-kosmos": "^1.1.0",
     "remotestoragejs": "^1.2.2",
-    "sass": "^1.24.4"
+    "sass": "^1.24.4",
+    "sockethub": "^3.1.4"
   },
   "dependencies": {
     "extend": "^3.0.2"
