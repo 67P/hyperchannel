@@ -70,7 +70,19 @@
     "server": {
       "hostname": "xmpp.5apps.com",
       "secure": true,
-      "port": 5223
+      "port": 5222
+    }
+  },
+  {
+    "id": "xmpp-kosmos",
+    "name": "XMPP Kosmos",
+    "description": "Kosmos XMPP server",
+    "website": "https://kosmos.org",
+    "protocol": "XMPP",
+    "server": {
+      "hostname": "xmpp.kosmos.org",
+      "secure": true,
+      "port": 5222
     }
   }
 ]

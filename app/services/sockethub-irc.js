@@ -88,6 +88,37 @@ export default class SockethubIrcService extends Service {
     }
   }
 
+  handlePresenceUpdate (message) {
+    let hostname;
+    if (typeof message.target === 'object') {
+      hostname = message.target['@id'].match(/(.+)\//)[1];
+    }
+
+    let space = this.coms.spaces.findBy('server.hostname', hostname);
+
+    if (isEmpty(space)) {
+      console.warn('No space for presence update message found.', message);
+      return;
+    }
+
+    let channel = space.channels.findBy('sockethubChannelId', message.target['@id']);
+
+    if (isEmpty(channel)) {
+      console.warn('No channel for presence update message found. Creating it.', message);
+      channel = this.coms.createChannel(space, message.target['displayName'], message.target['@id']);
+    }
+
+    // Hotfix for adding one's own user to the channel and marking it as
+    // connected.
+    // ATM, Sockethub doesn't send any events or information that we
+    // successfully joined a channel. So for now we just assume, if we receive
+    // presence updates from other users, we should be in the channel, too.
+    channel.addUser(space.userNickname);
+    channel.set('connected', true);
+
+    channel.addUser(message.actor.displayName);
+  }
+
   /**
    * Join a channel/room
    * @public
@@ -144,7 +175,7 @@ export default class SockethubIrcService extends Service {
    * @public
    */
   addMessageToChannel (message) {
-    const hostname = message.actor['@id'].match(/irc:\/\/.+@(.+)/)[1];
+    const hostname = message.actor['@id'].match(/.+@(.+)/)[1];
     const space = this.coms.spaces.findBy('server.hostname', hostname);
 
     if (isEmpty(space)) {
@@ -226,7 +257,7 @@ export default class SockethubIrcService extends Service {
    * @public
    */
   generateChannelId (space, channelName) {
-    return `irc://${space.server.hostname}/${channelName}`;
+    return `${space.server.hostname}/${channelName}`;
   }
 
   /**

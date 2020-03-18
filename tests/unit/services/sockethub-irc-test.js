@@ -50,7 +50,7 @@ module('Unit | Service | sockethub irc', function(hooks) {
       }
     });
 
-    assert.equal(service.generateChannelId(space, '#random-channel'), 'irc://freenode.net/#random-channel');
+    assert.equal(service.generateChannelId(space, '#random-channel'), 'freenode.net/#random-channel');
   });
 });
 

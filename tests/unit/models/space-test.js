@@ -52,11 +52,11 @@ module('Unit | Model | space', function(hooks) {
     const space = Space.create();
 
     space.set('channels', [
-      Channel.create({ sockethubChannelId: 'irc://freenode.net/#kosmos' }),
-      Channel.create({ sockethubChannelId: 'irc://freenode.net/#kosmos-dev' }),
-      Channel.create({ sockethubChannelId: 'irc://freenode.net/#remotestorage' }),
+      Channel.create({ sockethubChannelId: 'freenode.net/#kosmos' }),
+      Channel.create({ sockethubChannelId: 'freenode.net/#kosmos-dev' }),
+      Channel.create({ sockethubChannelId: 'freenode.net/#remotestorage' }),
     ]);
 
-    assert.deepEqual(space.get('sockethubChannelIds'), ['irc://freenode.net/#kosmos', 'irc://freenode.net/#kosmos-dev', 'irc://freenode.net/#remotestorage']);
+    assert.deepEqual(space.get('sockethubChannelIds'), ['freenode.net/#kosmos', 'freenode.net/#kosmos-dev', 'freenode.net/#remotestorage']);
   });
 });
