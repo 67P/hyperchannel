@@ -4,8 +4,8 @@
 </p>
 <p>
   {{#if subscribed}}
-    <button {{action "unsubscribe"}}>Disable push notifications</button>
+    <button {{action "unsubscribe"}} type="button">Disable push notifications</button>
   {{else}}
-    <button {{action "subscribe"}}>Receive push notifications</button>
+    <button {{action "subscribe"}} type="button">Receive push notifications</button>
   {{/if}}
 </p>
