@@ -2,8 +2,11 @@
                   @space={{this.currentSpace}}
                   @newMessage={{this.newMessage}}
                   @showChannelMenu={{this.showChannelMenu}}
-                  @onMessage={{action "sendMessage"}}
-                  @onCommand={{action "executeCommand"}}
+                  @onMessage={{fn this.sendMessage}}
+                  @onCommand={{fn this.executeCommand}}
                   @onLeaveChannel={{route-action "leaveChannel"}}
-                  @menu={{action "menu"}}
-                  @sidebarClass={{this.sidebarClass}} />
+                  @onMenu={{fn this.menu}}
+                  @sidebarClass={{this.sidebarClass}}>
+
+  {{outlet}}
+</ChannelContainer>

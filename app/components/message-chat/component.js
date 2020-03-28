@@ -1,26 +1,21 @@
 /* global linkifyStr */
-import Component from '@ember/component';
-
-import { computed } from '@ember/object';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
 import { htmlSafe } from '@ember/string';
 import moment from 'moment';
 
-export default Component.extend({
-  tagName: 'div',
-  classNames: ['chat-message'],
+export default class MessageChatComponent extends Component {
 
-  message: null,
+  get datetime () {
+    return moment(this.args.message.date).format('YYYY-MM-DD[T]HH:mm');
+  }
 
-  datetime: computed('message.date', function() {
-    return moment(this.get('message.date')).format('YYYY-MM-DD[T]HH:mm');
-  }),
+  get dateTitle () {
+    return moment(this.args.message.date).format('YYYY-MM-DD [at] HH:mm');
+  }
 
-  dateTitle: computed('message.date', function() {
-    return moment(this.get('message.date')).format('YYYY-MM-DD [at] HH:mm');
-  }),
-
-  formattedContent: computed('message.content', function() {
-    const content = this.get('message.content');
+  get formattedContent () {
+    const content = this.args.message.content;
     let out;
 
     // Images
@@ -50,13 +45,10 @@ export default Component.extend({
              .replace(/\u000f/g,  '</span>');
 
     return htmlSafe(out);
-  }),
-
-  actions: {
-
-    usernameClick (username) {
-      this.onUsernameClick(username);
-    }
-
   }
-});
+
+  @action
+  usernameClick (username) {
+    this.onUsernameClick(username);
+  }
+}

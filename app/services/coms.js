@@ -1,6 +1,7 @@
 import Service, { inject as service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
 import { get } from '@ember/object';
+import { A } from '@ember/array';
 import RSVP from 'rsvp';
 import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
@@ -50,7 +51,7 @@ export default class ComsService extends Service {
    * @public
    */
   instantiateSpacesAndChannels () {
-    this.spaces = [];
+    this.spaces = A([]);
     let rs = this.storage.rs;
 
     return new RSVP.Promise((resolve, reject) => {
@@ -167,9 +168,9 @@ export default class ComsService extends Service {
     }
 
     if (channel) {
-      channel.set('connected', true);
+      channel.connected = true;
       if (Array.isArray(message.object.members)) {
-        channel.set('userList', message.object.members);
+        channel.userList = message.object.members;
       }
     }
   }
@@ -264,7 +265,7 @@ export default class ComsService extends Service {
       let currentTopic = channel.topic;
       let newTopic = message.object.topic;
 
-      channel.set('topic', newTopic);
+      channel.topic = newTopic;
 
       if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.visible) {
         Notification.requestPermission(function() {
@@ -327,7 +328,7 @@ export default class ComsService extends Service {
     }
 
     if (date.isBefore(searchUntilDate, 'day')) {
-      channel.set('searchedPreviousLogsUntilDate', date);
+      channel.searchedPreviousLogsUntilDate = date;
       return;
     }
 
@@ -355,7 +356,7 @@ export default class ComsService extends Service {
         channel.addMessage(channelMessage);
       });
       let previous = get(archive, 'today.previous');
-      channel.set('searchedPreviousLogsUntilDate', moment.utc(previous.replace(/\//g, '-')));
+      channel.searchedPreviousLogsUntilDate = moment.utc(previous.replace(/\//g, '-'));
     }).catch(error => {
       this.log('fetch-error', 'couldn\'t load archive document', error);
       throw(error);
@@ -487,7 +488,7 @@ export default class ComsService extends Service {
       const channel = this.getChannel(message.target['@id'], message.actor['@id']);
 
       if (isPresent(channel)) {
-        channel.set('connected', false);
+        channel.connected = false;
       } else {
         console.warn('Could not find channel for error message', message);
       }

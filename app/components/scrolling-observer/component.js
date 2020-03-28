@@ -1,37 +1,55 @@
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { scheduleOnce } from '@ember/runloop';
-import { observer } from '@ember/object';
+import { action, observer } from '@ember/object';
 
-export default Component.extend({
+export default class ScrollingObserverComponent extends Component {
 
-  rootElement: null,
-  rootMargin: '100px',
-  threshold: 0,
-  enabled: true,
-  retriggeringEnabled: true,
-  observer: null,
+  observer = null;
+  element = null;
 
-  didInsertElement () {
-    this._super(...arguments);
+  get enabled () {
+    if (typeof this.args.enabled === 'undefined') {
+      return true;
+    } else {
+      return this.args.enabled;
+    }
+  }
 
-    scheduleOnce('afterRender', this, this.createIntersectionObserver);
-  },
+  get retriggeringEnabled () {
+    if (typeof this.args.retriggeringEnabled === 'undefined') {
+      return true;
+    } else {
+      return this.args.retriggeringEnabled;
+    }
+  }
 
-  willDestroyElement () {
-    this._super(...arguments);
+  get rootMargin () {
+    return this.args.rootMargin || '0px';
+  }
 
+  get threshold () {
+    return this.args.threshold || 0;
+  }
+
+  @action
+  createObserver (element) {
+    scheduleOnce('afterRender', this, this.createIntersectionObserver, element);
+  }
+
+  @action
+  disconnectObserver () {
     if (this.observer) {
       this.observer.disconnect();
     }
-  },
+  }
 
   retriggerObservation (observer, target) {
     observer.unobserve(target);
     observer.observe(target);
-  },
+  }
 
-  createIntersectionObserver () {
-    let rootElement = this.rootElement;
+  createIntersectionObserver (element) {
+    let rootElement = this.args.rootElement;
     if (typeof rootElement === 'string') {
       rootElement = document.querySelector(rootElement);
     }
@@ -45,8 +63,8 @@ export default Component.extend({
     let observer = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          if (this.onIntersect) {
-            this.onIntersect();
+          if (this.args.onIntersect) {
+            this.args.onIntersect();
           }
           if (this.enabled && this.retriggeringEnabled) {
             scheduleOnce('afterRender', this, 'retriggerObservation', observer, entry.target);
@@ -59,24 +77,25 @@ export default Component.extend({
       });
     }, config);
 
-    observer.observe(this.element);
+    observer.observe(element);
 
-    this.set('observer', observer);
-  },
+    this.observer = observer;
+    this.element = element;
+  }
 
-  rootMarginChanged: observer('rootMargin', function () {
+  rootMarginChanged = observer('rootMargin', function () {
     if (this.enabled && this.observer) {
       this.observer.disconnect();
       this.createIntersectionObserver();
     }
-  }),
+  });
 
-  enabledChanged: observer('enabled', function () {
+  enabledChanged = observer('enabled', function () {
     if (this.enabled) {
       this.observer.observe(this.element);
     } else {
       this.observer.disconnect();
     }
-  })
+  });
 
-});
+}

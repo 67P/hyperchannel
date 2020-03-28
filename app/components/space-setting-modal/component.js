@@ -1,28 +1,29 @@
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 import Space from 'hyperchannel/models/space';
 
-export default Component.extend({
+export default class SpaceSettingModal extends Component {
 
-  settings: null,
-  space: null,
+  @tracked space = null;
 
-  init() {
-    this._super(...arguments);
+  constructor () {
+    super(...arguments);
 
     // create a clone of the settings that we can operate on
     const space = Space.create();
-    space.setProperties(this.settings.serialize());
-    this.set('space', space);
-  },
-
-  actions: {
-    save() {
-      this.onSave(this.space);
-    },
-
-    cancel() {
-      this.onCancel();
-    }
+    space.setProperties(this.args.settings.serialize());
+    this.space = space;
   }
 
-});
+  @action
+  save() {
+    this.onSave(this.space);
+  }
+
+  @action
+  cancel() {
+    this.onCancel();
+  }
+
+}

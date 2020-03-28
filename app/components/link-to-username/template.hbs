@@ -1,1 +1,1 @@
-{{#link-to "space.user-channel" usernameWithoutPrefix class=role}}{{username}}{{/link-to}}
+<LinkTo @route="space.user-channel" @model={{this.usernameWithoutPrefix}} class={{this.role}}>{{@username}}</LinkTo>

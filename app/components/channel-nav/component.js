@@ -66,7 +66,7 @@ export default class ChannelNavComponent extends Component {
       return;
     }
 
-    if (space.get('protocol') === 'IRC' && !channelName.match(/^#/)) {
+    if (space.protocol === 'IRC' && !channelName.match(/^#/)) {
       channelName = `#${channelName}`;
     }
     let channel = this.coms.createChannel(space, channelName);

@@ -12,7 +12,7 @@ module('Integration | Component | link to username', function(hooks) {
     const link = this.element.querySelector('a');
 
     assert.equal(link.innerText, 'test_user');
-    assert.equal(link.className, 'normal ember-view');
+    assert.equal(link.className, 'ember-view normal');
   });
 
   test('it renders for an op user', async function(assert) {
@@ -21,7 +21,7 @@ module('Integration | Component | link to username', function(hooks) {
     const link = this.element.querySelector('a');
 
     assert.equal(link.innerText, '@op');
-    assert.equal(link.className, 'op ember-view');
+    assert.equal(link.className, 'ember-view op');
   });
 
   test('it renders for a half-op user', async function(assert) {
@@ -30,6 +30,6 @@ module('Integration | Component | link to username', function(hooks) {
     const link = this.element.querySelector('a');
 
     assert.equal(link.innerText, '%wannabe_op');
-    assert.equal(link.className, 'half-op ember-view');
+    assert.equal(link.className, 'ember-view half-op');
   });
 });

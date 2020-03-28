@@ -31,7 +31,7 @@ export default class SettingsController extends Controller {
 
   @action
   addSpace() {
-    const newSpace = this.controller.get('newSpace');
+    const newSpace = this.controller.newSpace;
     newSpace.id = newSpace.name.dasherize();
 
     this.storage.saveSpace(newSpace)

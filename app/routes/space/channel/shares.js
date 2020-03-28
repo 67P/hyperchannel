@@ -4,8 +4,7 @@ export default class SpaceChannelSharesRoute extends Route {
 
   activate () {
     if (window.innerWidth < 900) {
-      this.controllerFor('application')
-          .set('showChannelMenu', true);
+      this.controllerFor('application').showChannelMenu = true;
     }
   }
 
