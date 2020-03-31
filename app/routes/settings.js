@@ -5,13 +5,13 @@ import RSVP from 'rsvp';
 import Space from 'hyperchannel/models/space';
 import config from 'hyperchannel/config/environment';
 
-export default Route.extend({
+export default class SettingsRoute extends Route {
 
-  storage: service('remotestorage'),
-  coms: service(),
+  @service('remotestorage') storage;
+  @service() coms;
 
-  model() {
-    let rsKosmos = this.get('storage.rs').kosmos;
+  model () {
+    let rsKosmos = this.storage.rs.kosmos;
 
     let spaces = rsKosmos.spaces.getAll().then(
       res => {
@@ -35,11 +35,11 @@ export default Route.extend({
         return space;
       })
     });
-  },
+  }
 
   setupController(controller) {
-    this._super(...arguments);
+    super.setupController(...arguments);
     controller.newSpace = new Space();
   }
 
-});
+}

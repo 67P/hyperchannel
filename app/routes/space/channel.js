@@ -1,18 +1,15 @@
 import BaseChannel from 'hyperchannel/routes/space/base_channel';
+import { action } from '@ember/object';
 
-export default BaseChannel.extend({
+export default class ChannelRoute extends BaseChannel {
 
   createChannelOrUserChannel (space, channelName) {
     return this.coms.createChannel(space, "#" + channelName);
-  },
-
-  actions: {
-
-    willTransition () {
-      this.controllerFor('application')
-          .set('showChannelMenu', false);
-    }
-
   }
 
-});
+  @action
+  willTransition () {
+    this.controllerFor('application').showChannelMenu = false;
+  }
+
+}

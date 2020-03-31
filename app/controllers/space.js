@@ -1,6 +1,4 @@
 import Controller from '@ember/controller';
 
-export default Controller.extend({
-
-
-});
+export default class SpaceController extends Controller {
+}
