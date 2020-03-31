@@ -19,7 +19,7 @@ export default class BaseChannelController extends Controller {
   @alias('application.showChannelMenu') showChannelMenu;
 
   createMessage (message, type) {
-    return Message.create({
+    return new Message({
       type: type,
       date: new Date(),
       nickname: this.currentSpace.server.nickname,

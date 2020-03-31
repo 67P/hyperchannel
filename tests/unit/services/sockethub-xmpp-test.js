@@ -8,12 +8,12 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
   setupTest(hooks);
 
   test('#handlePresenceUpdate adds new users to the channel', function(assert) {
-    const channel = Channel.create({ sockethubChannelId: 'some-channel' });
-    const space = Space.create();
+    const channel = new Channel({ sockethubChannelId: 'some-channel' });
+    const space = new Space();
     const comsStub = Service.create({ spaces: [space] });
     const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsStub });
 
-    space.get('channels').pushObject(channel);
+    space.channels.pushObject(channel);
 
     const presenceUpdate = {
       actor: {
@@ -30,16 +30,16 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     service.handlePresenceUpdate(presenceUpdate);
 
-    assert.ok(channel.get('userList').includes('new_user'));
+    assert.ok(channel.userList.includes('new_user'));
   });
 
   test('#handlePresenceUpdate removes offline users from the channel', function(assert) {
-    const channel = Channel.create({ sockethubChannelId: 'some-channel' });
-    const space = Space.create();
+    const channel = new Channel({ sockethubChannelId: 'some-channel' });
+    const space = new Space();
     const comsStub = Service.create({ spaces: [space] });
 
     channel.addUser('some_user');
-    space.get('channels').pushObject(channel);
+    space.channels.pushObject(channel);
 
     const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsStub });
 
@@ -58,23 +58,23 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     service.handlePresenceUpdate(presenceUpdate);
 
-    assert.notOk(channel.get('userList').includes('some_user'));
+    assert.notOk(channel.userList.includes('some_user'));
   });
 
   test('#generateChannelId returns a Sockethub channel ID', function(assert) {
     const service = this.owner.lookup('service:sockethub-xmpp');
-    const space = Space.create();
+    const space = new Space();
 
     assert.equal(service.generateChannelId(space, 'random-channel'), 'random-channel');
   });
 
   test('#getSpaceForMessage returns the space for a given message', function(assert) {
-    const space = Space.create();
-    const channel = Channel.create({ sockethubChannelId: 'some-channel@some-server.com' });
+    const space = new Space();
+    const channel = new Channel({ sockethubChannelId: 'some-channel@some-server.com' });
     const comsStub = Service.create({ spaces: [space] });
     const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsStub });
 
-    space.get('channels').pushObject(channel);
+    space.channels.pushObject(channel);
 
     const message = {
       actor: {
@@ -97,12 +97,12 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
   });
 
   test('#getChannelForMessage returns the channel for a given message', function(assert) {
-    const space = Space.create();
-    const channel = Channel.create({ sockethubChannelId: 'some-channel@some-server.com' });
+    const space = new Space();
+    const channel = new Channel({ sockethubChannelId: 'some-channel@some-server.com' });
     const comsStub = Service.create({ spaces: [space] });
     const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsStub });
 
-    space.get('channels').pushObject(channel);
+    space.channels.pushObject(channel);
 
     const message = {
       actor: {
@@ -125,12 +125,12 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
   });
 
   test('#addMessageToChannel adds the message to the channel', function(assert) {
-    const space = Space.create();
-    const channel = Channel.create({ sockethubChannelId: 'some-channel@some-server.com' });
+    const space = new Space();
+    const channel = new Channel({ space: space, sockethubChannelId: 'some-channel@some-server.com' });
     const comsStub = Service.create({ spaces: [space] });
     const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsStub });
 
-    space.get('channels').pushObject(channel);
+    space.channels.pushObject(channel);
 
     const message = {
       actor: {
@@ -151,6 +151,6 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     service.addMessageToChannel(message);
 
-    assert.equal(channel.get('messages.lastObject.content'), 'hello world');
+    assert.equal(channel.messages.lastObject.content, 'hello world');
   });
 });

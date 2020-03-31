@@ -1,10 +1,14 @@
-import EmberObject from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 
-export default EmberObject.extend({
+export default class Message {
 
-  type: null,
-  date: null,
-  nickname: null,
-  content: null
+  @tracked type = null;
+  @tracked date = null;
+  @tracked nickname = null;
+  @tracked content = null;
 
-});
+  constructor (props) {
+    Object.assign(this, props);
+  }
+
+}

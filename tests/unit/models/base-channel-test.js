@@ -9,15 +9,14 @@ module('Unit | Model | base-channel', function(hooks) {
   setupTest(hooks);
 
   test('it exists', function(assert) {
-    const model = BaseChannel.create();
+    const model = new BaseChannel();
     assert.ok(!!model);
   });
 
   test('#slug', function(assert) {
-    const model = BaseChannel.create();
-    model.set('name', '#kosmos-dev');
+    const model = new BaseChannel({ name: '#kosmos-dev' });
 
-    assert.ok(model.get('slug') === 'kosmos-dev');
+    assert.ok(model.slug === 'kosmos-dev');
   });
 
 
@@ -26,37 +25,37 @@ module('Unit | Model | base-channel', function(hooks) {
   //
 
   test('#unreadMessagesClass is null when channel is visible', function(assert) {
-    const channel = BaseChannel.create();
-    channel.set('unreadMessages', true);
-    channel.set('visible', true);
+    const channel = new BaseChannel();
+    channel.unreadMessages = true;
+    channel.visible = true;
 
-    assert.equal(channel.get('unreadMessagesClass'), null);
+    assert.equal(channel.unreadMessagesClass, null);
   });
 
   test('#unreadMessagesClass is null when channel has no unread messages', function(assert) {
-    const channel = BaseChannel.create();
-    channel.set('unreadMessages', false);
-    channel.set('visible', false);
+    const channel = new BaseChannel();
+    channel.unreadMessages = false;
+    channel.visible = false;
 
-    assert.equal(channel.get('unreadMessagesClass'), null);
+    assert.equal(channel.unreadMessagesClass, null);
   });
 
   test('#unreadMessagesClass is correct for unread messages', function(assert) {
-    const channel = BaseChannel.create();
-    channel.set('unreadMessages', true);
-    channel.set('unreadMentions', false);
-    channel.set('visible', false);
+    const channel = new BaseChannel();
+    channel.unreadMessages = true;
+    channel.unreadMentions = false;
+    channel.visible = false;
 
-    assert.equal(channel.get('unreadMessagesClass'), 'unread-messages');
+    assert.equal(channel.unreadMessagesClass, 'unread-messages');
   });
 
   test('#unreadMessagesClass is correct for unread mentions', function(assert) {
-    const channel = BaseChannel.create();
-    channel.set('unreadMessages', true);
-    channel.set('unreadMentions', true);
-    channel.set('visible', false);
+    const channel = new BaseChannel();
+    channel.unreadMessages = true;
+    channel.unreadMentions = true;
+    channel.visible = false;
 
-    assert.equal(channel.get('unreadMessagesClass'), 'unread-mentions');
+    assert.equal(channel.unreadMessagesClass, 'unread-mentions');
   });
 
   //
@@ -64,10 +63,10 @@ module('Unit | Model | base-channel', function(hooks) {
   //
 
   test('#sortedMessages returns an empty array if there are no messages', function(assert) {
-    const channel = BaseChannel.create();
+    const channel = new BaseChannel();
 
-    assert.ok(Array.isArray(channel.get('sortedMessages')));
-    assert.equal(channel.get('sortedMessages').length, 0);
+    assert.ok(Array.isArray(channel.sortedMessages));
+    assert.equal(channel.sortedMessages.length, 0);
   });
 
   //
@@ -75,23 +74,23 @@ module('Unit | Model | base-channel', function(hooks) {
   //
 
   test('#sortedUserList returns an empty array if there are no users', function(assert) {
-    const channel = BaseChannel.create();
+    const channel = new BaseChannel();
 
-    assert.ok(Array.isArray(channel.get('sortedUserList')));
-    assert.equal(channel.get('sortedUserList').length, 0);
+    assert.ok(Array.isArray(channel.sortedUserList));
+    assert.equal(channel.sortedUserList.length, 0);
   });
 
   test('#sortedUserList returns a list of sorted usernames', function(assert) {
-    const channel = BaseChannel.create();
+    const channel = new BaseChannel();
 
-    channel.set('userList', ['silverbucket', 'XioNox', 'raucau', '@operator',
-                             'gregkare', 'galfert', '@MrOps', '~TheOwner',
-                             '&DaAdmin', '%HalfOp', '+TheVoice']);
+    channel.userList = ['silverbucket', 'XioNox', 'raucau', '@operator',
+                        'gregkare', 'galfert', '@MrOps', '~TheOwner',
+                        '&DaAdmin', '%HalfOp', '+TheVoice'];
 
-    assert.deepEqual(channel.get('sortedUserList'), ['@MrOps', '@operator', '&DaAdmin',
-                                                     '%HalfOp', '+TheVoice', '~TheOwner',
-                                                     'galfert', 'gregkare', 'raucau',
-                                                     'silverbucket', 'XioNox']);
+    assert.deepEqual(channel.sortedUserList, ['@MrOps', '@operator', '&DaAdmin',
+                                              '%HalfOp', '+TheVoice', '~TheOwner',
+                                              'galfert', 'gregkare', 'raucau',
+                                              'silverbucket', 'XioNox']);
   });
 
   //
@@ -99,25 +98,25 @@ module('Unit | Model | base-channel', function(hooks) {
   //
 
   test('#addDateHeadline adds a date-headline when none exists yet', function(assert) {
-    const channel = BaseChannel.create();
+    const channel = new BaseChannel();
     channel.addDateHeadline(
-      Message.create({
+      new Message({
         type: 'message-chat',
         date: new Date(),
         message: 'hi'
       })
     );
 
-    assert.equal(channel.get('sortedMessages').length, 1, 'has no messages');
-    let firstMessage = channel.get('sortedMessages.firstObject');
-    assert.equal(firstMessage.get('type'), 'date-headline', 'has the wrong type');
+    assert.equal(channel.sortedMessages.length, 1, 'has no messages');
+    let firstMessage = channel.sortedMessages.firstObject;
+    assert.equal(firstMessage.type, 'date-headline', 'has the wrong type');
   });
 
   test('#addDateHeadline does not add a date-headline when one exists already', function(assert) {
-    const channel = BaseChannel.create();
+    const channel = new BaseChannel();
 
-    channel.get('messages').pushObject(
-      Message.create({
+    channel.messages.pushObject(
+      new Message({
         type: 'date-headline',
         date: moment().startOf('day').toDate(),
         message: 'old message'
@@ -125,14 +124,14 @@ module('Unit | Model | base-channel', function(hooks) {
     );
 
     channel.addDateHeadline(
-      Message.create({
+      new Message({
         type: 'message-chat',
         date: new Date(),
         message: 'new message'
       })
     );
 
-    assert.equal(channel.get('sortedMessages').length, 1);
+    assert.equal(channel.sortedMessages.length, 1);
   });
 
   //
@@ -140,25 +139,23 @@ module('Unit | Model | base-channel', function(hooks) {
   //
 
   test('#isLogged returns true when channel is logged', function(assert) {
-    const space = Space.create();
-    space.set('name', 'Freenode');
-    const channel = BaseChannel.create({
+    const space = new Space({ name: 'Freenode' });
+    const channel = new BaseChannel({
       space: space,
       name: '#kosmos'
     });
 
-    assert.ok(channel.get('isLogged'));
+    assert.ok(channel.isLogged);
   });
 
   test('#isLogged returns false when channel is not logged', function(assert) {
-    const space = Space.create();
-    space.set('name', 'Freenode');
-    const channel = BaseChannel.create({
+    const space = new Space({ name: 'Freenode' });
+    const channel = new BaseChannel({
       space: space,
       name: '#some-random-chan'
     });
 
-    assert.notOk(channel.get('isLogged'));
+    assert.notOk(channel.isLogged);
   });
 
   //
@@ -166,22 +163,20 @@ module('Unit | Model | base-channel', function(hooks) {
   //
 
   test('#addUser adds a user to the list', function(assert) {
-    const space = Space.create();
-    space.set('name', 'Freenode');
-    const channel = BaseChannel.create({
+    const space = new Space({ name: 'Freenode' });
+    const channel = new BaseChannel({
       space: space,
       name: '#some-random-chan'
     });
 
     channel.addUser('some-random-user');
 
-    assert.ok(channel.get('userList').includes('some-random-user'));
+    assert.ok(channel.userList.includes('some-random-user'));
   });
 
   test('#addUser does not add duplicates', function(assert) {
-    const space = Space.create();
-    space.set('name', 'Freenode');
-    const channel = BaseChannel.create({
+    const space = new Space({ name: 'Freenode' });
+    const channel = new BaseChannel({
       space: space,
       name: '#some-random-chan'
     });
@@ -189,6 +184,6 @@ module('Unit | Model | base-channel', function(hooks) {
     channel.addUser('some-random-user');
     channel.addUser('some-random-user');
 
-    assert.deepEqual(channel.get('userList'), ['some-random-user']);
+    assert.deepEqual(channel.userList, ['some-random-user']);
   });
 });

@@ -1,51 +1,63 @@
 import { alias, sort } from '@ember/object/computed';
-import EmberObject, { computed } from '@ember/object';
+import { computed } from '@ember/object';
+import { A } from '@ember/array';
 import { isPresent } from '@ember/utils';
+import { tracked } from '@glimmer/tracking';
 
-export default EmberObject.extend({
+class Server {
+  @tracked hostname = null;
+  @tracked port = 7000;
+  @tracked secure = true;
+  @tracked username = null;
+  @tracked password = null;
+  @tracked nickname = null;
+  @tracked nickServ = {
+    password: null
+  };
+}
 
-  name    : null,
-  protocol: 'IRC',
-  server  : null,
-  channels: null, // Channel instances
-  botkaURL: null, // Kosmos bot
+export default class Space {
+
+  @tracked name = null;
+  @tracked protocol = 'IRC';
+  @tracked server = new Server({
+                      hostname: null,
+                      port: 7000,
+                      secure: true,
+                      username: null,
+                      password: null,
+                      nickname: null,
+                      nickServ: {
+                        password: null
+                      }
+                    });
+  @tracked channels = A([]); // Channel instances
+  botkaURL = null; // Kosmos bot
 
   // Keep a list of all old sockethubPersonIds, because there might
   // still be coming events from Sockethub for those.
-  previousSockethubPersonIds: null,
+  previousSockethubPersonIds = A([]);
 
-  channelSorting: null,
-  sortedChannels: sort('channels', 'channelSorting'),
+  channelSorting = ['name'];
+  @sort('channels', 'channelSorting') sortedChannels;
 
-  init () {
-    this.set('channelSorting', ['name']);
-    this.set('channels', []);
-    this.set('previousSockethubPersonIds', []);
+  @alias('server.nickname') userNickname;
 
-    this.set('server', {
-      hostname: null,
-      port: 7000,
-      secure: true,
-      username: null,
-      password: null,
-      nickname: null,
-      nickServ: {
-        password: null
-      }
-    });
+  constructor (props) {
+    Object.assign(this, props);
+  }
 
-    this._super(...arguments);
-  },
-
-  channelNames: computed('channels.@each.name', function() {
+  @computed('channels.@each.name')
+  get channelNames () {
     return this.channels.mapBy('name');
-  }),
+  }
 
-  sockethubChannelIds: computed('channels.@each.sockethubChannelId', function() {
+  @computed('channels.@each.sockethubChannelId')
+  get sockethubChannelIds () {
     return this.channels.mapBy('sockethubChannelId');
-  }),
+  }
 
-  loggedChannels: computed('name', 'protocol', function() {
+  get loggedChannels () {
     if (this.name === 'Freenode' && this.protocol === 'IRC') {
       return ['#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',
               '#unhosted','#sockethub','#opensourcedesign','#openknot','#emberjs',
@@ -53,29 +65,28 @@ export default EmberObject.extend({
     } else {
       return [];
     }
-  }),
+  }
 
-  activeChannel: computed('channels.@each.visible', function () {
+  @computed('channels.@each.visible')
+  get activeChannel () {
     return this.channels.findBy('visible', true);
-  }),
+  }
 
-  userNickname: alias('server.nickname'),
-
-  updateUsername(username) {
+  updateUsername (username) {
     // keep track of old name for later reference
     this.previousSockethubPersonIds.pushObject(this.sockethubPersonId);
 
     switch (this.protocol) {
       case 'IRC':
-        this.set('server.nickname', username);
+        this.server.nickname = username;
         break;
       case 'XMPP':
-        this.set('server.username', username);
+        this.server.username = username;
         break;
     }
-  },
+  }
 
-  sockethubPersonId: computed('protocol', 'server.{hostname,username,nickname}', function () {
+  get sockethubPersonId () {
     let personID;
     switch (this.protocol) {
       case 'IRC':
@@ -87,18 +98,18 @@ export default EmberObject.extend({
         break;
     }
     return personID;
-  }),
+  }
 
-  serialize() {
+  serialize () {
     let serialized = {
       id: this.id || this.name.dasherize(),
       name: this.name,
       protocol: this.protocol,
       server: {
-        hostname: this.get('server.hostname'),
-        port: parseInt(this.get('server.port'), 10),
-        secure: this.get('server.secure'),
-        nickname: this.get('server.nickname')
+        hostname: this.server.hostname,
+        port: parseInt(this.server.port, 10),
+        secure: this.server.secure,
+        nickname: this.server.nickname
       },
       channels: this.channelNames || []
     };
@@ -107,12 +118,12 @@ export default EmberObject.extend({
 
     ['username', 'password', 'nickname'].forEach(prop => {
       // TODO credentials need to be encrypted and probably stored elsewhere
-      if (isPresent(this.get(`server.${prop}`))) {
-        serialized.server[prop] = this.get(`server.${prop}`);
+      if (isPresent(this.server[prop])) {
+        serialized.server[prop] = this.server[prop];
       }
     });
 
     return serialized;
   }
 
-});
+}

@@ -6,7 +6,7 @@ module('Unit | Model | channel', function(hooks) {
   setupTest(hooks);
 
   test('it exists', function(assert) {
-    const model = Channel.create();
+    const model = new Channel();
     assert.ok(!!model);
   });
 
@@ -16,17 +16,17 @@ module('Unit | Model | channel', function(hooks) {
   //
 
   test('#formattedTopic turns URLs into links', function(assert) {
-    const channel = Channel.create();
-    channel.set('topic', 'visit kosmos.org for more info');
+    const channel = new Channel();
+    channel.topic = 'visit kosmos.org for more info';
 
-    assert.equal(channel.get('formattedTopic').toString(), 'visit <a href="https://kosmos.org" class="linkified" target="_blank" rel="nofollow">kosmos.org</a> for more info');
+    assert.equal(channel.formattedTopic.toString(), 'visit <a href="https://kosmos.org" class="linkified" target="_blank" rel="nofollow">kosmos.org</a> for more info');
   });
 
   test('#formattedTopic escapes HTML', function(assert) {
-    const channel = Channel.create();
-    channel.set('topic', 'never gonna <marquee>give you up</marquee>');
+    const channel = new Channel();
+    channel.topic = 'never gonna <marquee>give you up</marquee>';
 
-    assert.equal(channel.get('formattedTopic').toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
+    assert.equal(channel.formattedTopic.toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
   });
 });
 

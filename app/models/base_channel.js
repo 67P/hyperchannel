@@ -1,95 +1,96 @@
-import EmberObject, { computed } from '@ember/object';
+import { computed } from '@ember/object';
 import { isPresent } from '@ember/utils';
+import { A } from '@ember/array';
+import { tracked } from '@glimmer/tracking';
 import Message from 'hyperchannel/models/message';
 import moment from 'moment';
 
-export default EmberObject.extend({
+export default class BaseChannel {
 
-  space: null,
-  name: '',
-  userList: null,
-  messages: null,
-  connected: false,
-  sockethubChannelId: null,
-  topic: null,
-  unreadMessages: false,
-  unreadMentions: false,
-  visible: false, // Current/active channel
+  @tracked space = null;
+  @tracked name = '';
+  @tracked userList = A([]);
+  @tracked messages = A([]);
+  @tracked connected = false;
+  @tracked sockethubChannelId = null;
+  @tracked topic = null;
+  @tracked unreadMessages = false;
+  @tracked unreadMentions = false;
+  @tracked visible = false; // Current/active channel
 
-  init() {
-    this._super(...arguments);
+  constructor (props) {
+    Object.assign(this, props);
+  }
 
-    this.set('messages', []);
-    this.set('userList', []);
-  },
-
-  isLogged: computed('space.loggedChannels.[]', 'name', function() {
-    let loggedChannel = this.get('space.loggedChannels').find((channelName) => {
+  @computed('space.loggedChannels.[]', 'name')
+  get isLogged () {
+    let loggedChannel = this.space.loggedChannels.find((channelName) => {
       return channelName === this.name;
     });
 
     return isPresent(loggedChannel);
-  }),
+  }
 
-  slug: computed('name', function() {
+  get slug () {
     // This could be based on server type in the future. E.g. IRC would be
     // server URL, while Campfire would be another id.
     return this.name.replace(/#/g,'');
-  }),
+  }
 
-  unreadMessagesClass: computed('visible', 'unreadMessages', 'unreadMentions', function() {
+  get unreadMessagesClass () {
     if (this.visible || !this.unreadMessages) {
       return null;
     }
     return this.unreadMentions ? 'unread-mentions' : 'unread-messages';
-  }),
+  }
 
-  sortedMessages: computed('messages.@each.date', function() {
+  @computed('messages.@each.date')
+  get sortedMessages () {
     return this.messages.sortBy('date');
-  }),
+  }
 
-  sortedUserList: computed('userList.[]', function () {
+  @computed('userList.[]')
+  get sortedUserList () {
     return this.userList.sort(function (a, b) {
       return a.toLowerCase().localeCompare(b.toLowerCase());
     });
-  }),
+  }
 
-  addDateHeadline(newMessage) {
-    let headlineDate = moment(newMessage.get('date')).startOf('day').toDate();
+  addDateHeadline (newMessage) {
+    let headlineDate = moment(newMessage.date).startOf('day').toDate();
 
-    let existingDateHeadline = this.messages.find(function(message) {
-      return message.get('type') === 'date-headline' &&
-             message.get('date').toString() === headlineDate.toString();
+    let existingDateHeadline = this.messages.find(function (message) {
+      return message.type === 'date-headline' &&
+             message.date.toString() === headlineDate.toString();
     });
 
     if (existingDateHeadline) { return; }
 
-    let dateMessage = Message.create({ type: 'date-headline', date: headlineDate });
+    let dateMessage = new Message({ type: 'date-headline', date: headlineDate });
     this.messages.pushObject(dateMessage);
-  },
+  }
 
-  addMessage(message) {
+  addMessage (message) {
     this.addDateHeadline(message);
 
     this.messages.pushObject(message);
 
     if (!this.visible) {
-      this.set('unreadMessages', true);
-      if (message.get('content').match(this.get('space.userNickname'))) {
-        this.set('unreadMentions', true);
+      this.unreadMessages = true;
+      if (message.content.match(this.space.userNickname)) {
+        this.unreadMentions = true;
       }
     }
-  },
+  }
 
   addUser(username) {
     if (!this.userList.includes(username)) {
       this.userList.pushObject(username);
     }
-  },
+  }
 
   removeUser(username) {
     this.userList.removeObject(username);
   }
 
-});
-
+}

@@ -42,8 +42,7 @@ export default class RemotestorageService extends Service {
         let channels = params.channels;
         delete params.channels;
 
-        const space = Space.create();
-        space.setProperties(params);
+        const space = new Space(params);
 
         return { space, channels };
       });

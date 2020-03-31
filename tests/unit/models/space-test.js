@@ -7,56 +7,56 @@ module('Unit | Model | space', function(hooks) {
   setupTest(hooks);
 
   test('#sortedChannels returns channels sorted by name', function(assert) {
-    const space = Space.create();
+    const space = new Space({
+      channels: [
+        new Channel({name: 'dominica'}),
+        new Channel({name: 'phu quoc'}),
+        new Channel({name: 'lamu'}),
+        new Channel({name: 'canoa'}),
+        new Channel({name: 'flores'})
+      ]
+    });
 
-    space.set('channels', [
-      Channel.create({name: 'dominica'}),
-      Channel.create({name: 'phu quoc'}),
-      Channel.create({name: 'lamu'}),
-      Channel.create({name: 'canoa'}),
-      Channel.create({name: 'flores'})
-    ]);
-
-    let sortedChannels = space.get('sortedChannels');
+    let sortedChannels = space.sortedChannels;
     assert.deepEqual(sortedChannels.mapBy('name'), ['canoa', 'dominica', 'flores', 'lamu', 'phu quoc']);
   });
 
   test('#loggedChannels returns list of channels when space is Freenode', function(assert) {
-    const space = Space.create({ name: 'Freenode' });
+    const space = new Space({ name: 'Freenode' });
 
-    let loggedChannels = space.get('loggedChannels');
+    let loggedChannels = space.loggedChannels;
 
     assert.ok(loggedChannels.length > 0);
     assert.ok(loggedChannels.find(function(name) { return name === '#kosmos'; }));
   });
 
   test('#loggedChannels returns empty list when space is not Freenode', function(assert) {
-    const space = Space.create({ name: 'Quakenet' });
+    const space = new Space({ name: 'Quakenet' });
 
-    assert.equal(space.get('loggedChannels').length, 0);
+    assert.equal(space.loggedChannels.length, 0);
   });
 
   test('#channelNames returns names of the channels', function(assert) {
-    const space = Space.create();
+    const space = new Space();
 
-    space.set('channels', [
-      Channel.create({ name: '#kosmos' }),
-      Channel.create({ name: '#kosmos-dev' }),
-      Channel.create({ name: '#remotestorage' }),
-    ]);
+    space.channels = [
+      new Channel({ name: '#kosmos' }),
+      new Channel({ name: '#kosmos-dev' }),
+      new Channel({ name: '#remotestorage' }),
+    ];
 
-    assert.deepEqual(space.get('channelNames'), ['#kosmos', '#kosmos-dev', '#remotestorage']);
+    assert.deepEqual(space.channelNames, ['#kosmos', '#kosmos-dev', '#remotestorage']);
   });
 
   test('#sockethubChannelIds returns IDs of the channels', function(assert) {
-    const space = Space.create();
+    const space = new Space();
 
-    space.set('channels', [
-      Channel.create({ sockethubChannelId: 'freenode.net/#kosmos' }),
-      Channel.create({ sockethubChannelId: 'freenode.net/#kosmos-dev' }),
-      Channel.create({ sockethubChannelId: 'freenode.net/#remotestorage' }),
-    ]);
+    space.channels = [
+      new Channel({ sockethubChannelId: 'freenode.net/#kosmos' }),
+      new Channel({ sockethubChannelId: 'freenode.net/#kosmos-dev' }),
+      new Channel({ sockethubChannelId: 'freenode.net/#remotestorage' }),
+    ];
 
-    assert.deepEqual(space.get('sockethubChannelIds'), ['freenode.net/#kosmos', 'freenode.net/#kosmos-dev', 'freenode.net/#remotestorage']);
+    assert.deepEqual(space.sockethubChannelIds, ['freenode.net/#kosmos', 'freenode.net/#kosmos-dev', 'freenode.net/#remotestorage']);
   });
 });

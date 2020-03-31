@@ -18,8 +18,7 @@ export default Route.extend({
         let col = [];
         if (isEmpty(res)) { return col; }
         Object.keys(res).forEach(id => {
-          const space = Space.create();
-          space.setProperties(res[id]);
+          const space = new Space(res[id]);
           col.push(space);
         });
         return col;
@@ -32,8 +31,7 @@ export default Route.extend({
     return RSVP.hash({
       spaces: spaces,
       spacePresets: config.spacePresets.map((preset) => {
-        const space = Space.create();
-        space.setProperties(preset);
+        const space = new Space(preset);
         return space;
       })
     });
@@ -41,7 +39,7 @@ export default Route.extend({
 
   setupController(controller) {
     this._super(...arguments);
-    controller.newSpace = Space.create();
+    controller.newSpace = new Space();
   }
 
 });

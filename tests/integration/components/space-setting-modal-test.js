@@ -8,8 +8,7 @@ module('Integration | Component | space setting modal', function(hooks) {
   setupRenderingTest(hooks);
 
   test('it renders the form with preset values', async function(assert) {
-    const space = Space.create();
-    space.setProperties({
+    const space = new Space({
       "id": "moznet",
       "name": "Mozilla",
       "description": "Mozilla's public IRC network",
@@ -22,7 +21,7 @@ module('Integration | Component | space setting modal', function(hooks) {
       }
     });
 
-    this.set('preset', space);
+    this.preset = space;
 
     await render(hbs`<SpaceSettingModal @settings={{this.preset}} />`);
 

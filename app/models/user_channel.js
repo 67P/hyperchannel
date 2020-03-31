@@ -1,7 +1,8 @@
+import { tracked } from '@glimmer/tracking';
 import BaseChannel from 'hyperchannel/models/base_channel';
 
-export default BaseChannel.extend({
+export default class UserChannel extends BaseChannel {
 
-  isUserChannel: true
+  @tracked isUserChannel = true;
 
-});
+}

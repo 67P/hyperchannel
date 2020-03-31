@@ -65,8 +65,7 @@ export default class ComsService extends Service {
           });
         } else {
           Object.keys(spaceData).forEach((id) => {
-            const space = Space.create();
-            space.setProperties({
+            const space = new Space({
               id: id,
               name: spaceData[id].name,
               protocol: spaceData[id].protocol,
@@ -275,7 +274,7 @@ export default class ComsService extends Service {
         });
       }
 
-      // let notification = Message.create({
+      // let notification = new Message({
       //   type: 'notification-topic-change',
       //   date: new Date(message.published),
       //   nickname: message.actor.displayName,
@@ -300,7 +299,7 @@ export default class ComsService extends Service {
       channelId = platform.generateChannelId(space, channelName);
     }
 
-    const channel = Channel.create({
+    const channel = new Channel({
       space: space,
       name: channelName,
       sockethubChannelId: channelId
@@ -346,7 +345,7 @@ export default class ComsService extends Service {
       get(archive, 'today.messages').forEach((message) => {
         this.log('chat_message', message);
 
-        let channelMessage = Message.create({
+        let channelMessage = new Message({
           type: 'message-chat',
           date: new Date(message.timestamp),
           nickname: message.from,
@@ -366,7 +365,7 @@ export default class ComsService extends Service {
   createUserChannel (space, userName) {
     const platform = this.getServiceForSockethubPlatform(space.protocol);
 
-    const channel = UserChannel.create({
+    const channel = new UserChannel({
       space: space,
       name: userName,
       sockethubChannelId: platform.generateChannelId(space, userName)

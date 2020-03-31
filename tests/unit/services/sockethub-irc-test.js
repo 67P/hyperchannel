@@ -8,12 +8,12 @@ module('Unit | Service | sockethub irc', function(hooks) {
 
   test('#join directly connects a person channel', function(assert) {
     const service = this.owner.lookup('service:sockethub-irc');
-    const space = Space.create();
-    const channel = Channel.create({ isUserChannel: true });
+    const space = new Space();
+    const channel = new Channel({ isUserChannel: true });
 
     service.join(space, channel, 'person');
 
-    assert.ok(channel.get('connected'));
+    assert.ok(channel.connected);
   });
 
   // FIXME this test randomly fails with error "Assertion occured after test had finished."
@@ -35,16 +35,15 @@ module('Unit | Service | sockethub irc', function(hooks) {
   //   };
   //
   //   const service = this.subject({ sockethub: sockethubStub });
-  //   const space = Space.create();
-  //   const channel = Channel.create({ sockethubChannelId: 'testchannel' });
+  //   const space = new Space();
+  //   const channel = new Channel({ sockethubChannelId: 'testchannel' });
   //
   //   service.join(space, channel, 'room');
   // });
 
   test('#generateChannelId returns a Sockethub channel ID', function(assert) {
     const service = this.owner.lookup('service:sockethub-irc');
-    const space = Space.create();
-    space.setProperties({
+    const space = new Space({
       server: {
         hostname: 'freenode.net'
       }
@@ -53,4 +52,3 @@ module('Unit | Service | sockethub irc', function(hooks) {
     assert.equal(service.generateChannelId(space, '#random-channel'), 'freenode.net/#random-channel');
   });
 });
-
