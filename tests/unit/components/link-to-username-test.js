@@ -1,5 +1,6 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
+import createComponent from 'hyperchannel/tests/helpers/create-component';
 
 module('Unit | Component | link-to-username', function(hooks) {
   setupTest(hooks);
@@ -7,31 +8,31 @@ module('Unit | Component | link-to-username', function(hooks) {
   test('role returns the IRC role of the user', function(assert) {
     assert.expect(3);
 
-    const component = this.owner.factoryFor('component:link-to-username').create();
+    const component = createComponent('component:link-to-username');
 
-    component.set('username', '@smooth_operator');
-    assert.equal(component.get('role'), 'op');
+    component.args.username = '@smooth_operator';
+    assert.equal(component.role, 'op');
 
-    component.set('username', '%wannabe_operator');
-    assert.equal(component.get('role'), 'half-op');
+    component.args.username = '%wannabe_operator';
+    assert.equal(component.role, 'half-op');
 
-    component.set('username', '+frank_sinatra');
-    assert.equal(component.get('role'), 'voice');
+    component.args.username = '+frank_sinatra';
+    assert.equal(component.role, 'voice');
   });
 
   test('usernameWithoutPrefix removes IRC role prefixes', function(assert) {
     assert.expect(3);
 
-    const component = this.owner.factoryFor('component:link-to-username').create();
+    const component = createComponent('component:link-to-username');
 
-    component.set('username', '@smooth_operator');
-    assert.equal(component.get('usernameWithoutPrefix'), 'smooth_operator');
+    component.args.username = '@smooth_operator';
+    assert.equal(component.usernameWithoutPrefix, 'smooth_operator');
 
-    component.set('username', '%wannabe_operator');
-    assert.equal(component.get('usernameWithoutPrefix'), 'wannabe_operator');
+    component.args.username = '%wannabe_operator';
+    assert.equal(component.usernameWithoutPrefix, 'wannabe_operator');
 
-    component.set('username', '+frank_sinatra');
-    assert.equal(component.get('usernameWithoutPrefix'), 'frank_sinatra');
+    component.args.username = '+frank_sinatra';
+    assert.equal(component.usernameWithoutPrefix, 'frank_sinatra');
   });
 });
 

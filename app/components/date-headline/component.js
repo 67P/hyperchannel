@@ -1,23 +1,23 @@
+import Component from '@glimmer/component';
 import { later } from '@ember/runloop';
-import { computed } from '@ember/object';
-import Component from '@ember/component';
 import moment from 'moment';
 import config from '../../config/environment';
 
-export default Component.extend({
+export default class DateHeadlineComponent extends Component {
 
-  classNames: ['date-headline'],
+  updateInterval = 120000; // 2 minutes
 
-  updateInterval: 120000, // 2 minutes
+  get headline () {
+    const date = moment(this.args.message.date);
 
-  headline: computed('message.date', function() {
-    let date = moment(this.get('message.date'));
-
-    let scheduleUpdate = () => {
+    const scheduleUpdate = () => {
       // don't schedule updates during testing, because it makes the tests time out
       if (!config.environment === 'testing') {
         later(() => {
-          this.notifyPropertyChange('message.date');
+          // invalidate the date field to re-compute the headline property
+          let messageDate = this.args.message.date;
+          this.args.message.date = messageDate;
+          // this.notifyPropertyChange('message.date');
         }, this.updateInterval);
       }
     };
@@ -32,7 +32,7 @@ export default Component.extend({
       return 'Yesterday';
     }
 
-    return this.get('message.date').toLocaleDateString();
-  })
+    return this.args.message.date.toLocaleDateString();
+  }
 
-});
+}

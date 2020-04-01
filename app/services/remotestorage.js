@@ -42,8 +42,7 @@ export default class RemotestorageService extends Service {
         let channels = params.channels;
         delete params.channels;
 
-        const space = Space.create();
-        space.setProperties(params);
+        const space = new Space(params);
 
         return { space, channels };
       });
@@ -51,13 +50,13 @@ export default class RemotestorageService extends Service {
 
   saveSpace (space) {
     return this.rs.kosmos.spaces.store(space.serialize())
-      .then(() => console.debug('[remotestorage]', `saved space ${space.get('name')}`))
+      .then(() => console.debug('[remotestorage]', `saved space ${space.name}`))
       .catch(err => console.error('saving space failed:', err));
   }
 
   removeSpace (space) {
-    return this.rs.kosmos.spaces.remove(space.get('id'))
-      .then(() => console.debug('[remotestorage]', `removed space ${space.get('name')} from RS`));
+    return this.rs.kosmos.spaces.remove(space.id)
+      .then(() => console.debug('[remotestorage]', `removed space ${space.name} from RS`));
   }
 
 }

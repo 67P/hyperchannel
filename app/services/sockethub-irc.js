@@ -114,7 +114,7 @@ export default class SockethubIrcService extends Service {
     // successfully joined a channel. So for now we just assume, if we receive
     // presence updates from other users, we should be in the channel, too.
     channel.addUser(space.userNickname);
-    channel.set('connected', true);
+    channel.connected = true;
 
     channel.addUser(message.actor.displayName);
   }
@@ -142,7 +142,7 @@ export default class SockethubIrcService extends Service {
         this.sockethub.socket.emit('message', joinMsg);
         break;
       case 'person':
-        channel.set('connected', true);
+        channel.connected = true;
         break;
     }
   }

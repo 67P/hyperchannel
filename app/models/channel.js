@@ -1,13 +1,12 @@
 /* global linkifyStr */
 import { htmlSafe } from '@ember/string';
-import { computed } from '@ember/object';
 import BaseChannel from 'hyperchannel/models/base_channel';
 
-export default BaseChannel.extend({
+export default class Channel extends BaseChannel {
 
-  searchedPreviousLogsUntilDate: null,
+  searchedPreviousLogsUntilDate = null;
 
-  formattedTopic: computed('topic', function() {
+  get formattedTopic () {
     if (this.topic !== null) {
       let topic = linkifyStr(this.topic, {
         defaultProtocol: 'https',
@@ -17,6 +16,6 @@ export default BaseChannel.extend({
     } else {
       return '';
     }
-  })
+  }
 
-});
+}

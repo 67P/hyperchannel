@@ -1,13 +1,14 @@
 import Controller from '@ember/controller';
 import { alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
 
-export default Controller.extend({
+export default class ApplicationController extends Controller {
 
-  coms: service(),
-  spaces: alias('coms.spaces'),
+  @service coms;
+  @alias('coms.spaces') spaces;
 
-  showGlobalMenu: false,
-  showChannelMenu: false
+  @tracked showGlobalMenu = false;
+  @tracked showChannelMenu = false;
 
-});
+}

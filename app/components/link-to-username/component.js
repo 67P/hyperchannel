@@ -1,34 +1,27 @@
-import Component from '@ember/component';
-import { computed } from '@ember/object';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
 import { isPresent, isEmpty } from '@ember/utils';
 
-export default Component.extend({
+export default class LinkToUsernameComponent extends Component {
 
-  username: null,
-  roles: null,
+  @tracked roles = {
+    '@': 'op',
+    '%': 'half-op',
+    '+': 'voice'
+  };
 
-  init () {
-    this._super(...arguments);
+  get role () {
+    if (isEmpty(this.args.username)) return 'normal';
 
-    this.set('roles', {
-      '@': 'op',
-      '%': 'half-op',
-      '+': 'voice'
-    });
-  },
-
-  role: computed('username', 'roles', function() {
-    if (isEmpty(this.username)) return 'normal';
-
-    const role = this.roles[this.username[0]];
+    const role = this.roles[this.args.username[0]];
     return isPresent(role) ? role : 'normal';
-  }),
+  }
 
-  usernameWithoutPrefix: computed('username', 'roles', function() {
-    if (isEmpty(this.username)) return null;
+  get usernameWithoutPrefix () {
+    if (isEmpty(this.args.username)) return null;
 
     const regex = RegExp(`^[\\${Object.keys(this.roles).join('\\')}]`);
-    return this.username.replace(regex, '');
-  })
+    return this.args.username.replace(regex, '');
+  }
 
-});
+}

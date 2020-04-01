@@ -1,14 +1,16 @@
-{{#if this.users}}
-  <h2>{{this.users.length}} Online</h2>
-{{/if}}
-<ul>
-  {{#each this.renderedUsers as |username|}}
-    <li><LinkToUsername @username={{username}} /></li>
-  {{/each}}
+<section id="user-list" class="main">
+  {{#if @users}}
+    <h2>{{@users.length}} Online</h2>
+  {{/if}}
+  <ul>
+    {{#each this.renderedUsers as |username|}}
+      <li><LinkToUsername @username={{username}} /></li>
+    {{/each}}
 
-  <li class="last-element"></li>
-  {{scrolling-observer rootElement=this.element
-                       rootMargin="200px"
-                       enabled=this.partialRenderingEnabled
-                       onIntersect=(action "increaseRenderedUsersCount")}}
-</ul>
+    <li class="last-element"></li>
+    <ScrollingObserver @rootElement="#user-list"
+                       @rootMargin="200px"
+                       @enabled={{this.partialRenderingEnabled}}
+                       @onIntersect={{fn this.increaseRenderedUsersCount}} />
+  </ul>
+</section>

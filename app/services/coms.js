@@ -1,6 +1,7 @@
 import Service, { inject as service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
 import { get } from '@ember/object';
+import { A } from '@ember/array';
 import RSVP from 'rsvp';
 import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
@@ -50,7 +51,7 @@ export default class ComsService extends Service {
    * @public
    */
   instantiateSpacesAndChannels () {
-    this.spaces = [];
+    this.spaces = A([]);
     let rs = this.storage.rs;
 
     return new RSVP.Promise((resolve, reject) => {
@@ -64,8 +65,7 @@ export default class ComsService extends Service {
           });
         } else {
           Object.keys(spaceData).forEach((id) => {
-            const space = Space.create();
-            space.setProperties({
+            const space = new Space({
               id: id,
               name: spaceData[id].name,
               protocol: spaceData[id].protocol,
@@ -167,9 +167,9 @@ export default class ComsService extends Service {
     }
 
     if (channel) {
-      channel.set('connected', true);
+      channel.connected = true;
       if (Array.isArray(message.object.members)) {
-        channel.set('userList', message.object.members);
+        channel.userList = message.object.members;
       }
     }
   }
@@ -264,7 +264,7 @@ export default class ComsService extends Service {
       let currentTopic = channel.topic;
       let newTopic = message.object.topic;
 
-      channel.set('topic', newTopic);
+      channel.topic = newTopic;
 
       if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.visible) {
         Notification.requestPermission(function() {
@@ -274,7 +274,7 @@ export default class ComsService extends Service {
         });
       }
 
-      // let notification = Message.create({
+      // let notification = new Message({
       //   type: 'notification-topic-change',
       //   date: new Date(message.published),
       //   nickname: message.actor.displayName,
@@ -299,7 +299,7 @@ export default class ComsService extends Service {
       channelId = platform.generateChannelId(space, channelName);
     }
 
-    const channel = Channel.create({
+    const channel = new Channel({
       space: space,
       name: channelName,
       sockethubChannelId: channelId
@@ -327,7 +327,7 @@ export default class ComsService extends Service {
     }
 
     if (date.isBefore(searchUntilDate, 'day')) {
-      channel.set('searchedPreviousLogsUntilDate', date);
+      channel.searchedPreviousLogsUntilDate = date;
       return;
     }
 
@@ -345,7 +345,7 @@ export default class ComsService extends Service {
       get(archive, 'today.messages').forEach((message) => {
         this.log('chat_message', message);
 
-        let channelMessage = Message.create({
+        let channelMessage = new Message({
           type: 'message-chat',
           date: new Date(message.timestamp),
           nickname: message.from,
@@ -355,7 +355,7 @@ export default class ComsService extends Service {
         channel.addMessage(channelMessage);
       });
       let previous = get(archive, 'today.previous');
-      channel.set('searchedPreviousLogsUntilDate', moment.utc(previous.replace(/\//g, '-')));
+      channel.searchedPreviousLogsUntilDate = moment.utc(previous.replace(/\//g, '-'));
     }).catch(error => {
       this.log('fetch-error', 'couldn\'t load archive document', error);
       throw(error);
@@ -365,7 +365,7 @@ export default class ComsService extends Service {
   createUserChannel (space, userName) {
     const platform = this.getServiceForSockethubPlatform(space.protocol);
 
-    const channel = UserChannel.create({
+    const channel = new UserChannel({
       space: space,
       name: userName,
       sockethubChannelId: platform.generateChannelId(space, userName)
@@ -487,7 +487,7 @@ export default class ComsService extends Service {
       const channel = this.getChannel(message.target['@id'], message.actor['@id']);
 
       if (isPresent(channel)) {
-        channel.set('connected', false);
+        channel.connected = false;
       } else {
         console.warn('Could not find channel for error message', message);
       }

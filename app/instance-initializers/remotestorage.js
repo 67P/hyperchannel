@@ -1,6 +1,6 @@
 export function initialize(appInstance) {
   let storage = appInstance.lookup('service:remotestorage');
-  let remoteStorage = storage.get('rs');
+  let remoteStorage = storage.rs;
 
   // Add to window global for debugging/development
   window.remoteStorage = remoteStorage;

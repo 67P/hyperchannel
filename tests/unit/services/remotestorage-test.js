@@ -6,7 +6,7 @@ module('Unit | Service | remotestorage', function(hooks) {
 
   test('#rs returns a remoteStorage instance', function(assert) {
     let service = this.owner.lookup('service:remotestorage');
-    let remoteStorage = service.get('rs');
+    let remoteStorage = service.rs;
 
     assert.equal(typeof remoteStorage.scope, 'function');
   });

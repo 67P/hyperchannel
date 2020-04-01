@@ -2,7 +2,7 @@ import { isEmpty } from '@ember/utils';
 import Message from 'hyperchannel/models/message';
 
 export default function channelMessageFromSockethubObject(message) {
-  let channelMessage = Message.create({
+  let channelMessage = new Message({
     type: message.object['@type'] === 'me' ? 'message-chat-me' : 'message-chat',
     date: extractDate(message.published),
     nickname: message.actor.displayName || message.actor['@id'],

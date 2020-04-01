@@ -20,12 +20,13 @@ module('Unit | Utility | channel message from sockethub object', function() {
     let result = channelMessageFromSockethubObject(sockethubMessageObject);
 
     assert.ok(result instanceof Message);
-    assert.deepEqual(result.getProperties('type', 'nickname', 'content'), {
+    let { type, nickname, content } = result;
+    assert.deepEqual({ type, nickname, content }, {
       type: 'message-chat',
       nickname: 'raucao',
       content: 'airberlin flight AB 1234 is ready for boarding'
     });
-    assert.equal(new Date(result.get('date')).toISOString(),
+    assert.equal(new Date(result.date).toISOString(),
                  new Date('2017-06-14T06:32:42.025Z').toISOString());
   });
 
@@ -35,12 +36,13 @@ module('Unit | Utility | channel message from sockethub object', function() {
     let result = channelMessageFromSockethubObject(sockethubMessageObject);
 
     assert.ok(result instanceof Message);
-    assert.deepEqual(result.getProperties('type', 'nickname', 'content'), {
+    let { type, nickname, content } = result;
+    assert.deepEqual({ type, nickname, content }, {
       type: 'message-chat-me',
       nickname: 'raucao',
       content: 'boards the plane'
     });
-    assert.equal(new Date(result.get('date')).toISOString(),
+    assert.equal(new Date(result.date).toISOString(),
                  new Date('2017-06-14T06:32:42.025Z').toISOString());
   });
 
@@ -50,7 +52,7 @@ module('Unit | Utility | channel message from sockethub object', function() {
     let result = channelMessageFromSockethubObject(sockethubMessageObject);
 
     assert.ok(result instanceof Message);
-    assert.equal(new Date(result.get('date')).toISOString(),
+    assert.equal(new Date(result.date).toISOString(),
                  new Date('2017-06-14T06:32:42.025Z').toISOString());
   });
 });

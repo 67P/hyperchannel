@@ -1,8 +1,8 @@
 import TextField from '@ember/component/text-field';
 
-export default TextField.extend({
+export default class ChannelInputFieldComponent extends TextField {
 
-  keyUp: function(ev) {
+  keyUp (ev) {
     // console.debug('keyUp', ev);
 
     if (ev.altKey) {
@@ -12,9 +12,9 @@ export default TextField.extend({
           break;
       }
     }
-  },
+  }
 
-  _insertAtCaret: function(myValue) {
+  _insertAtCaret (myValue) {
     let el = this.element;
 
     if (document.selection) {
@@ -38,4 +38,4 @@ export default TextField.extend({
     }
   }
 
-});
+}

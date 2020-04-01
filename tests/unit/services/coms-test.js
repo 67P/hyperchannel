@@ -14,9 +14,8 @@ module('Unit | Service | coms', function(hooks) {
     const connectStub = this.stub(ircStub, 'connect');
     const service = this.owner.factoryFor('service:coms').create({ irc: ircStub });
 
-    const space = Space.create();
-    space.set('protocol', 'IRC');
-
+    const space = new Space();
+    space.protocol = 'IRC';
     service.connectServer(space);
 
     assert.ok(connectStub.calledOnce);
@@ -30,9 +29,9 @@ module('Unit | Service | coms', function(hooks) {
     const joinStub = this.stub(xmppStub, 'join');
     const service = this.owner.factoryFor('service:coms').create({ xmpp: xmppStub });
 
-    const space = Space.create();
-    space.set('protocol', 'XMPP');
-    const channel = Channel.create({});
+    const space = new Space();
+    space.protocol = 'XMPP';
+    const channel = new Channel();
 
     service.joinChannel(space, channel, 'room');
 
@@ -43,7 +42,7 @@ module('Unit | Service | coms', function(hooks) {
   test('#transferMessage calls transferMessage on the appropriate transport service', function(assert) {
     const xmppStub = {
       transferMessage: function(space, target, content) {
-        assert.equal(space.get('name'), 'Testspace');
+        assert.equal(space.name, 'Testspace');
         assert.equal(target['@id'], 'testspace-testchannel');
         assert.equal(target['@type'], 'room');
         assert.equal(target.displayName, 'testchannel');
@@ -53,9 +52,8 @@ module('Unit | Service | coms', function(hooks) {
 
     const service = this.owner.factoryFor('service:coms').create({ xmpp: xmppStub });
 
-    const space = Space.create();
-    space.setProperties({ protocol: 'XMPP', name: 'Testspace' });
-    const channel = Channel.create({
+    const space = new Space({ protocol: 'XMPP', name: 'Testspace' });
+    const channel = new Channel({
       name: 'testchannel',
       sockethubChannelId: 'testspace-testchannel',
       isUserChannel: false
@@ -90,20 +88,19 @@ module('Unit | Service | coms', function(hooks) {
       "published": "2017-06-23T15:44:54.383Z"
     };
 
-    const space = Space.create();
-    space.setProperties({
+    const space = new Space({
       protocol: 'XMPP',
       name: 'Kosmos',
       server: { hostname: 'xmpp.kosmos.org', username: 'galfert@kosmos.org' }
     });
-    const channel = Channel.create({
+    const channel = new Channel({
       name: 'kosmos',
       sockethubChannelId: 'kosmos@kosmos.chat',
       space: space,
       connected: false
     });
 
-    space.get('channels').pushObject(channel);
+    space.channels.pushObject(channel);
 
     const service = this.owner.factoryFor('service:coms').create({ spaces: [space] });
 

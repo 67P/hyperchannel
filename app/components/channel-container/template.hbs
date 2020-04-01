@@ -1,77 +1,79 @@
-<main>
-  <header id="channel-header">
-    <h2 id="channel-name"
-        class={{if this.channel.connected "connected" "disconnected"}}
-        {{action "menu" "global" "toggle"}}>
-      {{this.channel.name}}
-    </h2>
-    <p id="channel-title">
-      {{this.channel.formattedTopic}}
-    </p>
-    <nav>
-      <LinkTo @route="space.channel.index" @models={{array space channel}} {{action "menu" "channel" "show"}}>
-        <IconUsers />
-      </LinkTo>
-      <LinkTo @route="space.channel.shares" @models={{array space channel}} {{action "menu" "channel" "show"}}>
-        <IconPaperclip />
-      </LinkTo>
-      <LinkTo @route="space.channel.settings" @models={{array space channel}} {{action "menu" "channel" "show"}}>
-        <IconSettings />
-      </LinkTo>
-      <a {{action "leaveChannel" this.space this.channel}} title="Leave {{this.channelname}}">
-        <IconLogOut />
-      </a>
-    </nav>
-  </header>
+<div id="channel" {{did-insert this.scheduleOnAfterRender}}>
+  <main>
+    <header id="channel-header">
+      <h2 id="channel-name"
+          class={{if @channel.connected "connected" "disconnected"}}
+          {{on "click" (fn this.menu "global" "toggle")}}>
+        {{@channel.name}}
+      </h2>
+      <p id="channel-title">
+        {{@channel.formattedTopic}}
+      </p>
+      <nav>
+        <LinkTo @route="space.channel.index" @models={{array @space @channel}} {{on "click" (fn this.menu "channel" "show")}}>
+          <IconUsers />
+        </LinkTo>
+        <LinkTo @route="space.channel.shares" @models={{array @space @channel}} {{on "click" (fn this.menu "channel" "show")}}>
+          <IconPaperclip />
+        </LinkTo>
+        <LinkTo @route="space.channel.settings" @models={{array @space @channel}} {{on "click" (fn this.menu "channel" "show")}}>
+          <IconSettings />
+        </LinkTo>
+        <a {{on "click" (fn this.leaveChannel @space @channel)}} title="Leave {{@channel.name}}">
+          <IconLogOut />
+        </a>
+      </nav>
+    </header>
 
-  <div class="content-container {{this.sidebarClass}} {{if this.showChannelMenu "channel-menu-open"}}">
-    <div class="content">
-      <section id="channel-content" class="main">
-        {{#if this.channel.isLogged}}
-          <a onclick={{perform loadPreviousMessages}} class="load-previous" role="button">
-            Load previous messages
-          </a>
-        {{/if}}
+    <div class="content-container {{@sidebarClass}} {{if @showChannelMenu "channel-menu-open"}}">
+      <div class="content">
+        <section id="channel-content" class="main">
+          {{#if @channel.isLogged}}
+            <a onclick={{perform this.loadPreviousMessages}} class="load-previous" role="button">
+              Load previous messages
+            </a>
+          {{/if}}
 
-        <ul>
-          <li>
-            {{scrolling-observer rootElement="#channel-content"
-                                 rootMargin=this.partialRenderingObserverMargin
-                                 enabled=this.partialRenderingEnabled
-                                 onIntersect=(action "increaseRenderedMessagesCount")}}
-          </li>
-          {{#each this.renderedMessages as |message|}}
+          <ul>
             <li>
-              {{component message.type message=message
-                          onUsernameClick=(action "addUsernameMentionToMessage")}}
+              <ScrollingObserver @rootElement="#channel-content"
+                                 @rootMargin={{this.partialRenderingObserverMargin}}
+                                 @enabled={{this.partialRenderingEnabled}}
+                                 @onIntersect={{fn this.increaseRenderedMessagesCount}} />
             </li>
-          {{else}}
-            {{#if this.channel.isLogged}}
-              <li class="no-messages discreet">No recent messages to display.</li>
+            {{#each this.renderedMessages as |message|}}
+              <li>
+                {{component message.type message=message
+                            onUsernameClick=(fn this.addUsernameMentionToMessage)}}
+              </li>
             {{else}}
-              <li class="no-messages discreet">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank" rel="noopener noreferrer">Learn more</a></li>
-            {{/if}}
-          {{/each}}
-          <li>
-            {{scrolling-observer rootElement=this.element
-                                 rootMargin="0px"
-                                 threshold=1
-                                 retriggeringEnabled=false
-                                 onIntersect=(action "setAutomaticScrolling" true)
-                                 onDiverge=(action "setAutomaticScrolling" false)}}
-          </li>
-        </ul>
-      </section>
+              {{#if @channel.isLogged}}
+                <li class="no-messages discreet">No recent messages to display.</li>
+              {{else}}
+                <li class="no-messages discreet">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank" rel="noopener noreferrer">Learn more</a></li>
+              {{/if}}
+            {{/each}}
+            <li>
+            <ScrollingObserver @rootElement="#channel"
+                               @rootMargin="0px"
+                               @threshold={{1}}
+                               @retriggeringEnabled={{false}}
+                               @onIntersect={{fn this.setAutomaticScrolling true}}
+                               @onDiverge={{fn this.setAutomaticScrolling false}} />
+            </li>
+          </ul>
+        </section>
 
-      <footer>
-        <MessageInput @message={{this.newMessage}}
-                      @sendMessage={{action "processMessageOrCommand"}}
-                      @usernames={{this.channel.userList}} />
-      </footer>
+        <footer>
+          <MessageInput @message={{@newMessage}}
+                        @sendMessage={{fn this.processMessageOrCommand}}
+                        @usernames={{@channel.userList}} />
+        </footer>
+      </div>
+
+      <aside id="channel-sidebar">
+        {{yield}}
+      </aside>
     </div>
-
-    <aside id="channel-sidebar">
-      {{outlet}}
-    </aside>
-  </div>
-</main>
+  </main>
+</div>

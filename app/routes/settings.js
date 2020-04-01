@@ -5,21 +5,20 @@ import RSVP from 'rsvp';
 import Space from 'hyperchannel/models/space';
 import config from 'hyperchannel/config/environment';
 
-export default Route.extend({
+export default class SettingsRoute extends Route {
 
-  storage: service('remotestorage'),
-  coms: service(),
+  @service('remotestorage') storage;
+  @service() coms;
 
-  model() {
-    let rsKosmos = this.get('storage.rs').kosmos;
+  model () {
+    let rsKosmos = this.storage.rs.kosmos;
 
     let spaces = rsKosmos.spaces.getAll().then(
       res => {
         let col = [];
         if (isEmpty(res)) { return col; }
         Object.keys(res).forEach(id => {
-          const space = Space.create();
-          space.setProperties(res[id]);
+          const space = new Space(res[id]);
           col.push(space);
         });
         return col;
@@ -32,16 +31,15 @@ export default Route.extend({
     return RSVP.hash({
       spaces: spaces,
       spacePresets: config.spacePresets.map((preset) => {
-        const space = Space.create();
-        space.setProperties(preset);
+        const space = new Space(preset);
         return space;
       })
     });
-  },
-
-  setupController(controller) {
-    this._super(...arguments);
-    controller.newSpace = Space.create();
   }
 
-});
+  setupController(controller) {
+    super.setupController(...arguments);
+    controller.newSpace = new Space();
+  }
+
+}
