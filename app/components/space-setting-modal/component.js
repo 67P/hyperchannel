@@ -11,18 +11,18 @@ export default class SpaceSettingModal extends Component {
     super(...arguments);
 
     // create a clone of the settings that we can operate on
-    const space = new Space(this.args.settings.serialize());
-    this.space = space;
+    this.space = new Space(this.args.settings.serialize());
   }
 
   @action
-  save() {
-    this.onSave(this.space);
+  save(event) {
+    event.preventDefault();
+    this.args.onSave(this.space);
   }
 
   @action
   cancel() {
-    this.onCancel();
+    this.args.onCancel();
   }
 
 }

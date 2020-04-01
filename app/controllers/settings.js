@@ -3,6 +3,7 @@ import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { notEmpty } from '@ember/object/computed';
 import { tracked } from '@glimmer/tracking';
+import Space from 'hyperchannel/models/space';
 
 export default class SettingsController extends Controller {
 
@@ -10,7 +11,7 @@ export default class SettingsController extends Controller {
   @service coms;
   @service('remotestorage') storage;
 
-  @tracked newSpace = null;
+  @tracked newSpace = new Space();
   @tracked selectedSpacePreset = null;
 
   @notEmpty('selectedSpacePreset') showSpaceSettingModal;
@@ -30,14 +31,17 @@ export default class SettingsController extends Controller {
   }
 
   @action
-  addSpace() {
-    const newSpace = this.controller.newSpace;
+  addSpace(event) {
+    event.preventDefault();
+
+    const newSpace = this.newSpace;
     newSpace.id = newSpace.name.dasherize();
 
     this.storage.saveSpace(newSpace)
       .then(() => {
           this.coms.connectAndAddSpace(newSpace);
           this.model.spaces.pushObject(newSpace);
+          this.newSpace = new Space(); // reset form
         })
       .catch(e => console.error('Could not store space in RS', newSpace, e));
   }
