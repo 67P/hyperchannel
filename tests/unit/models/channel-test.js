@@ -1,5 +1,6 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
+import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 
 module('Unit | Model | channel', function(hooks) {
@@ -18,5 +19,20 @@ module('Unit | Model | channel', function(hooks) {
 
     assert.equal(channel.formattedTopic.toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
   });
+
+  test('#shortName for IRC returns name without hash', function(assert) {
+    const space = new Space({ protocol: 'IRC' });
+    const channel = new Channel({ space: space, name: '#kosmos-dev' });
+
+    assert.equal(channel.shortName, 'kosmos-dev');
+  });
+
+  test('#shortName for XMPP returns name without MUC domain', function(assert) {
+    const space = new Space({ protocol: 'XMPP' });
+    const channel = new Channel({ space: space, name: 'kosmos-dev@kosmos.chat' });
+
+    assert.equal(channel.shortName, 'kosmos-dev');
+  });
+
 });
 

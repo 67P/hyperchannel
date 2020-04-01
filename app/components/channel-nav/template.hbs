@@ -17,7 +17,7 @@
             {{#if channel.isUserChannel}}
               <LinkTo @route="space.user-channel" @models={{array space channel}}>{{channel.name}}</LinkTo>
             {{else}}
-              <LinkTo @route="space.channel" @models={{array space channel}}>{{channel.name}}</LinkTo>
+            <LinkTo @route="space.channel" @models={{array space channel}}>#&thinsp;{{channel.shortName}}</LinkTo>
             {{/if}}
             <a {{on "click" (fn @onLeaveChannel space channel)}} class="leave-channel" title="Leave {{channel.name}}">x</a>
           </li>
