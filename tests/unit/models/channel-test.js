@@ -5,16 +5,6 @@ import Channel from 'hyperchannel/models/channel';
 module('Unit | Model | channel', function(hooks) {
   setupTest(hooks);
 
-  test('it exists', function(assert) {
-    const model = new Channel();
-    assert.ok(!!model);
-  });
-
-
-  //
-  // formattedTopic
-  //
-
   test('#formattedTopic turns URLs into links', function(assert) {
     const channel = new Channel();
     channel.topic = 'visit kosmos.org for more info';
