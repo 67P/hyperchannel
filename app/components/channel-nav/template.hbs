@@ -2,7 +2,15 @@
     {{will-destroy this.unbindKeyboardShortcuts}}>
   {{#each @spaces as |space|}}
     <li>
-      <h2><LinkTo @route="space" @model={{space}}>{{space.name}}</LinkTo></h2>
+      <h2>
+        <LinkTo @route="space" @model={{space}}>
+          {{#if (eq space.protocol "XMPP")}}
+            {{space.server.username}}
+          {{else}}
+            {{space.name}}
+          {{/if}}
+        </LinkTo>
+      </h2>
       <ul>
         {{#each space.sortedChannels as |channel|}}
           <li class="{{if channel.connected "connected" "disconnected"}} {{channel.unreadMessagesClass}} {{if channel.visible "active" ""}}">
