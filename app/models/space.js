@@ -72,6 +72,20 @@ export default class Space {
     return this.channels.findBy('visible', true);
   }
 
+  @computed('channels.@each.mucDomain')
+  get mucDomains () {
+    return this.channels.mapBy('mucDomain').uniq().sort();
+  }
+
+  get groupedChannelsByMUCDomain () {
+    return this.mucDomains.map(domain => {
+      return {
+        domain: domain,
+        channels: this.channels.filterBy('mucDomain', domain).sortBy('name')
+      }
+    });
+  }
+
   updateUsername (username) {
     // keep track of old name for later reference
     this.previousSockethubPersonIds.pushObject(this.sockethubPersonId);

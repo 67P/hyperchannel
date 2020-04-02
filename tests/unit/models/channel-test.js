@@ -34,5 +34,14 @@ module('Unit | Model | channel', function(hooks) {
     assert.equal(channel.shortName, 'kosmos-dev');
   });
 
+  test('#mucDomain', function(assert) {
+    let space = new Space({ protocol: 'XMPP' });
+    let channel = new Channel({ space: space, name: 'kosmos-dev@kosmos.chat' });
+    assert.equal(channel.mucDomain, 'kosmos.chat', 'returns the MUC domain for XMPP channels');
+
+    space = new Space({ protocol: 'IRC' });
+    channel = new Channel({ space: space, name: '#kosmos-dev' });
+    assert.equal(channel.mucDomain, null, 'returns null for other channels');
+  });
 });
 
