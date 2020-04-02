@@ -20,7 +20,7 @@ nav#channels {
       margin-bottom: 1.6em;
 
       > ul {
-        padding: 0.6em 0 0 0;
+        padding: 0 0 0 0;
         list-style: none;
 
         li {
@@ -87,5 +87,23 @@ nav#channels {
         color: #fff;
       }
     }
+  }
+
+  h2 {
+    margin-bottom: 0.6rem;
+  }
+
+  h3 {
+    display: block;
+    height: 1.6rem;
+    line-height: 1.6rem;
+    padding: 0 1rem;
+    margin: 0.4rem 0 0.2rem 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
+  h2 + h3 {
+    margin-top: -0.2rem;
   }
 }

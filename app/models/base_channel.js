@@ -8,7 +8,8 @@ import moment from 'moment';
 export default class BaseChannel {
 
   @tracked space = null;
-  @tracked name = '';
+  @tracked name = ''; // e.g. kosmos-dev@kosmos.chat
+  @tracked displayName = ''; // e.g. Kosmos Dev
   @tracked userList = A([]);
   @tracked messages = A([]);
   @tracked connected = false;
@@ -35,6 +36,26 @@ export default class BaseChannel {
     // This could be based on server type in the future. E.g. IRC would be
     // server URL, while Campfire would be another id.
     return this.name.replace(/#/g,'');
+  }
+
+  get shortName () {
+    switch (this.space.protocol) {
+      case 'IRC':
+        return this.name.replace(/#/g,'');
+      case 'XMPP':
+        return this.name.match(/^(.+)@/)[1];
+      default:
+        return this.name;
+    }
+  }
+
+  get mucDomain () {
+    switch (this.space.protocol) {
+      case 'XMPP':
+        return this.name.match(/@(.+)$/)[1];
+      default:
+        return null;
+    }
   }
 
   get unreadMessagesClass () {
