@@ -1,11 +1,11 @@
+/* eslint ember/no-observers: "off" */
 import Component from '@glimmer/component';
 import { scheduleOnce } from '@ember/runloop';
-import { action, observer } from '@ember/object';
+import { action } from '@ember/object';
 
 export default class ScrollingObserverComponent extends Component {
 
   observer = null;
-  element = null;
 
   get enabled () {
     if (typeof this.args.enabled === 'undefined') {
@@ -70,8 +70,8 @@ export default class ScrollingObserverComponent extends Component {
             scheduleOnce('afterRender', this, 'retriggerObservation', observer, entry.target);
           }
         } else {
-          if (this.onDiverge) {
-            this.onDiverge();
+          if (this.args.onDiverge) {
+            this.args.onDiverge();
           }
         }
       });
@@ -80,22 +80,23 @@ export default class ScrollingObserverComponent extends Component {
     observer.observe(element);
 
     this.observer = observer;
-    this.element = element;
   }
 
-  rootMarginChanged = observer('rootMargin', function () {
+  @action
+  rootMarginChanged (element) {
     if (this.enabled && this.observer) {
       this.observer.disconnect();
-      this.createIntersectionObserver();
+      this.createIntersectionObserver(element);
     }
-  });
+  }
 
-  enabledChanged = observer('enabled', function () {
+  @action
+  enabledChanged  (element) {
     if (this.enabled) {
-      this.observer.observe(this.element);
+      this.observer.observe(element);
     } else {
       this.observer.disconnect();
     }
-  });
+  }
 
 }

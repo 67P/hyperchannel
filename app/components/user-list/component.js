@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
-import { action, observer } from '@ember/object';
+import { action } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 
 export default class UserListComponent extends Component {
@@ -17,16 +17,17 @@ export default class UserListComponent extends Component {
     }
   }
 
+  scrollToTop (element) {
+    element.scrollTop = 0;
+  }
+
   // called when changing list of users (i.e. when switching channels)
-  usersChanged = observer('users', function () {
+  @action
+  usersChanged (element) {
     this.renderedUsersCount = this.renderedUsersAddendumAmount;
     this.partialRenderingEnabled = true;
 
-    scheduleOnce('afterRender', this, this.scrollToTop);
-  })
-
-  scrollToTop () {
-    this.element.scrollTop = 0;
+    scheduleOnce('afterRender', this, this.scrollToTop, element);
   }
 
   @action

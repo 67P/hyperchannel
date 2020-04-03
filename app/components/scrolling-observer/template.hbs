@@ -1,1 +1,4 @@
-<div {{did-insert this.createObserver}} {{will-destroy this.disconnectObserver}}></div>
+<div {{did-insert this.createObserver}}
+     {{will-destroy this.disconnectObserver}}
+     {{did-update this.enabledChanged @enabled}}
+     {{did-update this.rootMarginChanged @rootMargin}}></div>

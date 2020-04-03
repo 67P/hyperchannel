@@ -4,7 +4,7 @@ import { later, scheduleOnce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { task } from 'ember-concurrency';
-import { action, observer } from '@ember/object';
+import { action } from '@ember/object';
 
 function scrollToBottom () {
   let elem = document.getElementById('channel-content');
@@ -32,18 +32,20 @@ export default class ChannelContainerComponent extends Component {
     }
   }
 
-  channelChanged = observer('channel', function () {
+  @action
+  channelChanged () {
     this.renderedMessagesCount = this.renderedMessagesAddendumAmount;
     this.partialRenderingEnabled = true;
     this.automaticScrollingEnabled = true;
-    later(this, () => this.send('menu', 'global', 'hide'), 500);
-  });
+    later(this, () => this.menu('global', 'hide'), 500);
+  }
 
-  messagesUpdated = observer('renderedMessages.[]', function () {
+  @action
+  messagesUpdated () {
     if (this.automaticScrollingEnabled) {
       scheduleOnce('afterRender', scrollToBottom);
     }
-  });
+  }
 
   @action
   scheduleOnAfterRender () {
