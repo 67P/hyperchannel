@@ -1,4 +1,4 @@
-<section id="user-list" class="main">
+<section id="user-list" class="main" {{did-update this.usersChanged @users}}>
   {{#if @users}}
     <h2>{{@users.length}} Online</h2>
   {{/if}}
