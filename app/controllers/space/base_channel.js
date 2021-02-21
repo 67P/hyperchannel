@@ -154,4 +154,12 @@ export default class BaseChannelController extends Controller {
     this.coms.changeTopic(this.currentSpace, channel, topic);
   }
 
+  @action
+  addUsernameMentionToMessage (username) {
+    const msg = this.newMessage || '';
+    if (!msg.match(new RegExp(`^${username}`))) {
+      this.newMessage = `${username}: ${msg}`;
+    }
+  }
+
 }
