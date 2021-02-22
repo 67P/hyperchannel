@@ -2,6 +2,7 @@
                   @space={{this.currentSpace}}
                   @newMessage={{this.newMessage}}
                   @showChannelMenu={{this.showChannelMenu}}
+                  @addUsernameMentionToMessage={{fn this.addUsernameMentionToMessage}}
                   @onMessage={{fn this.sendMessage}}
                   @onCommand={{fn this.executeCommand}}
                   @onLeaveChannel={{route-action "leaveChannel"}}

@@ -102,10 +102,7 @@ export default class ChannelContainerComponent extends Component {
 
   @action
   addUsernameMentionToMessage (username) {
-    const msg = this.args.newMessage || '';
-    if (!msg.match(new RegExp(`^${username}`))) {
-      this.args.newMessage = `${username}: ${msg}`;
-    }
+    this.args.addUsernameMentionToMessage(username);
     this.focusMessageInputField();
   }
 

@@ -49,6 +49,6 @@ export default class MessageChatComponent extends Component {
 
   @action
   usernameClick (username) {
-    this.onUsernameClick(username);
+    this.args.onUsernameClick(username);
   }
 }
