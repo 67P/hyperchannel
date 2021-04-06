@@ -1,5 +1,6 @@
-<AppContainer @showGlobalMenu={{this.showGlobalMenu}}
-              @showChannelMenu={{this.showChannelMenu}}>
+<div class="app-container {{if this.showGlobalMenu "global-menu-open"}} {{if this.showChannelMenu "channel-menu-open"}}"
+     {{recognize-gesture "swipeleft" "swiperight" "tap" domEvents=true touchAction="auto" inputClass=this.hammerInputClass}}
+     {{on "swipeleft" this.swipeLeft}} {{on "swiperight" this.swipeRight}} {{on "tap" this.tap}}>
   <div id="global">
     <header id="sitename">
       <h1>Kosmos</h1>
@@ -20,6 +21,6 @@
   </div>
 
   {{outlet}}
-</AppContainer>
+</div>
 
 <ModalTarget />
