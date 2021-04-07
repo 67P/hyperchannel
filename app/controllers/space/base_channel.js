@@ -43,10 +43,10 @@ export default class BaseChannelController extends Controller {
 
     switch(what) {
       case 'show':
-        this.application.menuProp = true;
+        this.application.set(menuProp, true);
         break;
       case 'hide':
-        this.application.menuProp = false;
+        this.application.set(menuProp, false);
         break;
       case 'toggle':
         this.application.toggleProperty(menuProp);
