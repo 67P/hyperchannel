@@ -41,6 +41,7 @@ export default class ApplicationController extends Controller {
         !isDescendantOf('global', e.target)) {
       this.showGlobalMenu = false;
     } else if (this.showChannelMenu &&
+        !isDescendantOf('channel-nav', e.target) &&
         !isDescendantOf('channel-sidebar', e.target)) {
       this.showChannelMenu = false;
     }

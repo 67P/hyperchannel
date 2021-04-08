@@ -10,7 +10,7 @@
       <p id="channel-title">
         {{@channel.formattedTopic}}
       </p>
-      <nav>
+      <nav id="channel-nav">
         <LinkTo @route="space.channel.index" @models={{array @space @channel}} {{on "click" (fn this.menu "channel" "show")}}>
           <IconUsers />
         </LinkTo>
