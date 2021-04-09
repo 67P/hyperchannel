@@ -1,6 +1,10 @@
 <ChannelContainer @channel={{this.model}}
-                  @showChannelMenu={{this.showChannelMenu}}
+                  @space={{this.currentSpace}}
                   @newMessage={{this.newMessage}}
+                  @showChannelMenu={{this.showChannelMenu}}
+                  @addUsernameMentionToMessage={{fn this.addUsernameMentionToMessage}}
                   @onMessage={{fn this.sendMessage}}
                   @onCommand={{fn this.executeCommand}}
-                  @onMenu={{fn this.menu}} />
+                  @onLeaveChannel={{route-action "leaveChannel"}}
+                  @onMenu={{fn this.menu}}
+                  @sidebarClass={{this.sidebarClass}} />
