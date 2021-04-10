@@ -5,6 +5,20 @@ engines:
     checks:
       ember/no-observers:
         enabled: false
+      ember/no-string-prototype-extensions:
+        enabled: false
+      ember/no-controller-access-in-routes:
+        enabled: false
+      ember/no-classic-classes:
+        enabled: false
+      ember/no-computed-properties-in-native-classes:
+        enabled: false
+      ember/require-tagless-components:
+        enabled: false
+      ember/no-assignment-of-untracked-properties-used-in-tracking-contexts:
+        enabled: false
+      ember/no-side-effects:
+        enabled: false
   duplication:
     enabled: true
     config:
