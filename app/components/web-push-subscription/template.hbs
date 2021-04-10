@@ -4,8 +4,8 @@
 </p>
 <p>
   {{#if this.subscribed}}
-    <button {{on "click" (fn this.unsubscribe)}} type="button">Disable push notifications</button>
+    <button {{on "click" this.unsubscribe}} type="button">Disable push notifications</button>
   {{else}}
-    <button {{on "click" (fn this.subscribe)}} type="button">Receive push notifications</button>
+    <button {{on "click" this.subscribe}} type="button">Receive push notifications</button>
   {{/if}}
 </p>

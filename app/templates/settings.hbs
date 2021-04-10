@@ -30,7 +30,7 @@
         <Input @value={{this.newSpace.server.port}} required="required" placeholder="6667" />
       </p>
       <p>
-        <Input @type="checkbox" @checked={{this.newSpace.server.secure}} @id="tls-enabled" />
+        <Input @type="checkbox" @checked={{this.newSpace.server.secure}} id="tls-enabled" />
         <label for="tls-enabled">Secure (TLS)</label>
       </p>
       <p>
@@ -54,7 +54,7 @@
   <ToElsewhere @named="modal"
                @send={{hash body=(component "space-setting-modal"
                                   settings=this.selectedSpacePreset
-                                  onSave=(fn this.saveSpace)
+                                  onSave=this.saveSpace
                                   onCancel=(fn (mut this.selectedSpacePreset) null))
                onOutsideClick=(fn (mut this.selectedSpacePreset) null)}} />
 {{/if}}

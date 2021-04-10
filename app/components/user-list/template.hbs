@@ -11,6 +11,6 @@
     <ScrollingObserver @rootElement="#user-list"
                        @rootMargin="200px"
                        @enabled={{this.partialRenderingEnabled}}
-                       @onIntersect={{fn this.increaseRenderedUsersCount}} />
+                       @onIntersect={{this.increaseRenderedUsersCount}} />
   </ul>
 </section>

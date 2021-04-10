@@ -2,9 +2,9 @@
                   @space={{this.currentSpace}}
                   @newMessage={{this.newMessage}}
                   @showChannelMenu={{this.showChannelMenu}}
-                  @addUsernameMentionToMessage={{fn this.addUsernameMentionToMessage}}
-                  @onMessage={{fn this.sendMessage}}
-                  @onCommand={{fn this.executeCommand}}
+                  @addUsernameMentionToMessage={{this.addUsernameMentionToMessage}}
+                  @onMessage={{this.sendMessage}}
+                  @onCommand={{this.executeCommand}}
                   @onLeaveChannel={{route-action "leaveChannel"}}
-                  @onMenu={{fn this.menu}}
+                  @onMenu={{this.menu}}
                   @sidebarClass={{this.sidebarClass}} />

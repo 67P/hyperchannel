@@ -1,6 +1,6 @@
 <h1>Space Setting</h1>
 
-<form {{on "submit" (fn this.save)}} name="add-space">
+<form {{on "submit" this.save}} name="add-space">
   <p>
     <Input @value={{this.space.protocol}} required="required" placeholder="IRC" />
   </p>
@@ -31,4 +31,4 @@
   </p>
 </form>
 
-<button {{on "click" (fn this.cancel)}} type="button">Cancel</button>
+<button {{on "click" this.cancel}} type="button">Cancel</button>

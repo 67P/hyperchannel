@@ -40,12 +40,12 @@
               <ScrollingObserver @rootElement="#channel-content"
                                  @rootMargin={{this.partialRenderingObserverMargin}}
                                  @enabled={{this.partialRenderingEnabled}}
-                                 @onIntersect={{fn this.increaseRenderedMessagesCount}} />
+                                 @onIntersect={{this.increaseRenderedMessagesCount}} />
             </li>
             {{#each this.renderedMessages as |message|}}
               <li {{did-insert this.messagesUpdated}}>
                 {{component message.type message=message
-                            onUsernameClick=(fn this.addUsernameMentionToMessage)}}
+                            onUsernameClick=this.addUsernameMentionToMessage}}
               </li>
             {{else}}
               {{#if @channel.isLogged}}
@@ -67,7 +67,7 @@
 
         <footer>
           <MessageInput @message={{@newMessage}}
-                        @sendMessage={{fn this.processMessageOrCommand}}
+                        @sendMessage={{this.processMessageOrCommand}}
                         @usernames={{@channel.userList}} />
         </footer>
       </div>
