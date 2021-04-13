@@ -48,7 +48,6 @@
     "@ember/test-helpers": "^2.2.5",
     "@glimmer/component": "^1.0.1",
     "@glimmer/tracking": "^1.0.4",
-    "autoprefixer": "^10.2.5",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-auto-import": "^1.11.2",
