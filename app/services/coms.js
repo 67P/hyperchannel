@@ -353,7 +353,7 @@ export default class ComsService extends Service {
 
         channel.addMessage(channelMessage);
       });
-      let previous = archive.today.previous;
+      let previous = archive.today?.previous;
       channel.searchedPreviousLogsUntilDate = moment.utc(previous.replace(/\//g, '-'));
     }).catch(error => {
       this.log('fetch-error', 'couldn\'t load archive document', error);
