@@ -341,7 +341,7 @@ export default class ComsService extends Service {
         logsUrl += date.format('YYYY/MM/DD');
 
     return fetch(logsUrl).then(res => res.json()).then(archive => {
-      archive.today.messages.forEach((message) => {
+      archive.today?.messages?.forEach((message) => {
         this.log('chat_message', message);
 
         let channelMessage = new Message({
