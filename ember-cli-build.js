@@ -20,11 +20,11 @@ module.exports = function(defaults) {
       enabled: true,
       extensions: ['js']
     },
-    sassOptions: {
-      includePaths: [
-        'node_modules/bourbon/app/assets/stylesheets'
-      ]
-    },
+    // sassOptions: {
+    //   includePaths: [
+    //     'node_modules/bourbon/app/assets/stylesheets'
+    //   ]
+    // },
     postcssOptions: {
       compile: {
         enabled: false
