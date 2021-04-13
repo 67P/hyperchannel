@@ -1,6 +1,5 @@
 import Service, { inject as service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
-import { get } from '@ember/object';
 import { A } from '@ember/array';
 import RSVP from 'rsvp';
 import Space from 'hyperchannel/models/space';
@@ -342,7 +341,7 @@ export default class ComsService extends Service {
         logsUrl += date.format('YYYY/MM/DD');
 
     return fetch(logsUrl).then(res => res.json()).then(archive => {
-      get(archive, 'today.messages').forEach((message) => {
+      archive.today?.messages?.forEach((message) => {
         this.log('chat_message', message);
 
         let channelMessage = new Message({
@@ -354,7 +353,7 @@ export default class ComsService extends Service {
 
         channel.addMessage(channelMessage);
       });
-      let previous = get(archive, 'today.previous');
+      let previous = archive.today?.previous;
       channel.searchedPreviousLogsUntilDate = moment.utc(previous.replace(/\//g, '-'));
     }).catch(error => {
       this.log('fetch-error', 'couldn\'t load archive document', error);

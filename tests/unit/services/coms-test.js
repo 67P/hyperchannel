@@ -1,6 +1,6 @@
-import { module } from 'qunit';
+import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
-import test from 'ember-sinon-qunit/test-support/test';
+import sinon from 'sinon';
 import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 
@@ -11,7 +11,7 @@ module('Unit | Service | coms', function(hooks) {
     const ircStub = {
       connect: function() { }
     };
-    const connectStub = this.stub(ircStub, 'connect');
+    const connectStub = sinon.stub(ircStub, 'connect');
     const service = this.owner.factoryFor('service:coms').create({ irc: ircStub });
 
     const space = new Space();
@@ -26,7 +26,7 @@ module('Unit | Service | coms', function(hooks) {
     const xmppStub = {
       join: function() { }
     };
-    const joinStub = this.stub(xmppStub, 'join');
+    const joinStub = sinon.stub(xmppStub, 'join');
     const service = this.owner.factoryFor('service:coms').create({ xmpp: xmppStub });
 
     const space = new Space();
