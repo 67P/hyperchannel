@@ -23,7 +23,7 @@
     "lint": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*",
     "lint:hbs": "ember-template-lint .",
     "lint:js": "eslint ./*.js app config tests",
-    "start": "ember serve",
+    "start": "NODE_ENV=development ember serve",
     "test": "npm-run-all lint:* test:*",
     "test:ember": "ember test",
     "build": "NODE_ENV=production ember build --environment=production",

@@ -21,18 +21,13 @@ module.exports = function(defaults) {
       enabled: true,
       extensions: ['js']
     },
-    // sassOptions: {
-    //   includePaths: [
-    //     'node_modules/bourbon/app/assets/stylesheets'
-    //   ]
-    // },
     postcssOptions: {
       compile: {
         enabled: true,
         extension: 'scss',
         parser: require('postcss-scss'),
         cacheExclude: [],
-        cacheInclude: [/.*\.(css|scss|sass)$/, /tailwindcss-config\.js$/],
+        cacheInclude: [/.*\.(css|scss|sass|hbs|html)$/, /tailwindcss-config\.js$/],
         plugins: [
           {
             module: require('@csstools/postcss-sass'),
@@ -50,17 +45,17 @@ module.exports = function(defaults) {
           }
         ],
       },
-      filter: {
-        enabled: true,
-        include: ['*.css'],
-        exclude: ['assets/vendor.css', '*.map'],
-        plugins: [
-          {
-            module: autoprefixer,
-            options: {}
-          },
-        ]
-      }
+      // filter: {
+      //   enabled: true,
+      //   include: ['*.css'],
+      //   exclude: ['assets/vendor.css', '*.map'],
+      //   plugins: [
+      //     {
+      //       module: autoprefixer,
+      //       options: {}
+      //     },
+      //   ]
+      // }
     },
     // 'ember-service-worker': {
     //   enabled: false
