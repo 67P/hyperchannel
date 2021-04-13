@@ -2,6 +2,10 @@
 @import "mixins";
 @import "vendor/include_media";
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 $headerHeight: 42px;
 $sidebarWidth: 168px;
 $sidebarWideWidth: 320px;
