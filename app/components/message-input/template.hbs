@@ -1,4 +1,4 @@
-<section id="new-message"
+<section id="new-message" class="py-0 px-4"
          {{did-insert this.bindKeyboardShortcuts}}
          {{will-destroy this.unbindKeyboardShortcuts}}>
   <form {{on "submit" @sendMessage}}>
@@ -6,6 +6,7 @@
                        @placeholder="Type a message and hit enter"
                        @name="chat-message"
                        @id="message-field"
-                       @autocomplete="off" />
+                       @autocomplete="off"
+                       @classNames="w-full" />
   </form>
 </section>
