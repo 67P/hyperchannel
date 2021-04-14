@@ -38,3 +38,4 @@ exclude_paths:
   - ".eslintrc.js"
   - ".template-lintrc.js"
   - "scripts/**/*"
+  - "config/tailwindcss-config.js"

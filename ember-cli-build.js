@@ -1,7 +1,7 @@
 'use strict';
 
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
-var autoprefixer = require('autoprefixer');
+const tailwind = require('tailwindcss');
 
 module.exports = function(defaults) {
 
@@ -20,27 +20,41 @@ module.exports = function(defaults) {
       enabled: true,
       extensions: ['js']
     },
-    sassOptions: {
-      includePaths: [
-        'node_modules/bourbon/app/assets/stylesheets'
-      ]
-    },
     postcssOptions: {
       compile: {
-        enabled: false
-      },
-      filter: {
         enabled: true,
-        exclude: ['assets/vendor.css'],
+        extension: 'scss',
+        parser: require('postcss-scss'),
+        cacheExclude: [],
+        cacheInclude: [/.*\.(css|scss|sass|hbs|html)$/, /tailwindcss-config\.js$/],
         plugins: [
           {
-            module: autoprefixer,
+            module: require('@csstools/postcss-sass'),
             options: {
-              browsers: ['last 4 versions']
+              // includePaths: [
+              //   'node_modules/tachyons-sass',
+              // ],
+            },
+          },
+          {
+            module: tailwind,
+            options: {
+              config: './config/tailwindcss-config.js'
             }
           }
-        ]
-      }
+        ],
+      },
+      // filter: {
+      //   enabled: true,
+      //   include: ['*.css'],
+      //   exclude: ['assets/vendor.css', '*.map'],
+      //   plugins: [
+      //     {
+      //       module: autoprefixer,
+      //       options: {}
+      //     },
+      //   ]
+      // }
     },
     // 'ember-service-worker': {
     //   enabled: false

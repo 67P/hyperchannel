@@ -211,7 +211,8 @@ header, footer {
       float: left;
       align-items: center;
       justify-content: center;
-      @include size($headerHeight);
+      height: $headerHeight;
+      width: $headerHeight;
       text-align: center;
       text-decoration: none;
 
