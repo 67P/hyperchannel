@@ -1,14 +1,18 @@
 import Route from '@ember/routing/route';
-import { storageFor as localStorageFor } from 'ember-local-storage';
+import { inject as service } from '@ember/service';
 import config from 'hyperchannel/config/environment';
+import { alias } from '@ember/object/computed';
 
 export default class IndexRoute extends Route {
 
-  userSettings = localStorageFor('user-settings');
+  @service coms;
+  @service localData;
+  @alias('localData.stores.userSettings') userSettings;
 
-  redirect () {
-    let currentSpace = this.userSettings.currentSpace || config.defaultSpaceId;
-    let currentChannel = this.userSettings.currentChannel || 'kosmos';
+  async redirect () {
+    const currentSpace = await this.userSettings.getItem('currentSpace') || config.defaultSpaceId;
+    const currentChannel = await this.userSettings.getItem('currentChannel') || 'kosmos';
+    // TODO if current space from setting is not available, use first available space and channel
 
     if (currentSpace && currentChannel) {
       this.transitionTo('space.channel', currentSpace, currentChannel);
