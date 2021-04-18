@@ -5,7 +5,6 @@ import { alias } from '@ember/object/computed';
 
 export default class IndexRoute extends Route {
 
-  @service coms;
   @service localData;
   @alias('localData.stores.userSettings') userSettings;
 
