@@ -66,13 +66,13 @@ module('Unit | Service | coms', function(hooks) {
     const observeMessage = {
       "@type": "observe",
       "actor": {
+        "@id": "galfert@kosmos.org/hyperchannel",
+        "@type": "person"
+      },
+      "target": {
           "@id": "kosmos@kosmos.chat",
           "@type": "room",
           "displayName": "kosmos"
-      },
-      "target": {
-        "@id": "galfert@kosmos.org/hyperchannel",
-        "@type": "person"
       },
       "context": "xmpp",
       "object": {
