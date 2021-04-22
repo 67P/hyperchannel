@@ -8,7 +8,6 @@ import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
 import config from 'hyperchannel/config/environment';
 import moment from 'moment';
-import { storageFor as localStorageFor } from 'ember-local-storage';
 import { tracked } from '@glimmer/tracking';
 
 /**
@@ -21,7 +20,6 @@ export default class ComsService extends Service {
   // Utils
   @service logger;
   // Data storage
-  @localStorageFor('user-settings') userSettings;
   @service('remotestorage') storage;
   // Message transport
   @service('sockethub-irc') irc;
