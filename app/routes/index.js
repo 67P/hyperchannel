@@ -9,8 +9,8 @@ export default class IndexRoute extends Route {
   @alias('localData.stores.userSettings') userSettings;
 
   async redirect () {
-    const currentSpace = await this.userSettings.getItem('currentSpace') || config.defaultSpaceId;
-    const currentChannel = await this.userSettings.getItem('currentChannel') || 'kosmos';
+    const currentSpace = await this.userSettings.getItem('currentSpace');
+    const currentChannel = await this.userSettings.getItem('currentChannel');
     // TODO if current space from setting is not available, use first available space and channel
 
     if (currentSpace && currentChannel) {
