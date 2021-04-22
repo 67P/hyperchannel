@@ -15,7 +15,6 @@ export default class LocalDataService extends Service {
 
   constructor () {
     super(...arguments);
-    window.localforage = localforage;
     this.stores = {
       userSettings: localforage.createInstance({
         name: 'hyperchannel', storeName: 'userSettings'
