@@ -213,10 +213,10 @@ export default class ComsService extends Service {
   }
 
   /**
-   * @param {String} personId
    * @param {String} channelId
+   * @param {String} personId
    */
-  getChannel (personId, channelId) {
+  getChannel (channelId, personId) {
     const space = this.spaces.findBy('sockethubPersonId', personId);
     if (isEmpty(space)) {
       console.warn('Could not find space by sockethubPersonId', personId);
