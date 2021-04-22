@@ -15,22 +15,25 @@ export default class LocalDataService extends Service {
 
   constructor () {
     super(...arguments);
+    window.localforage = localforage;
     this.stores = {
-      userSettings: localforage.createInstance({ name: `hyperchannel:user-settings` })
+      userSettings: localforage.createInstance({
+        name: 'hyperchannel', storeName: 'userSettings'
+      })
     }
-    this.setDefaultValues();
   }
 
   async setDefaultValues () {
-    Object.keys(defaultValues).forEach(async storeName => {
+    for (const storeName of Object.keys(defaultValues)) {
       const store = this.stores[storeName];
 
-      Object.keys(defaultValues[storeName]).forEach(async key => {
+      for (const key of Object.keys(defaultValues[storeName])) {
         const value = await store.getItem(key);
-        const defaultValue = defaultValues[storeName][key];
-        if (isEmpty(value)) { await store.setItem(key, defaultValue); }
-      });
-    });
+        if (isEmpty(value)) {
+          await store.setItem(key, defaultValues[storeName][key]);
+        }
+      }
+    }
   }
 
 }
