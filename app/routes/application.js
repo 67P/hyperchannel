@@ -4,14 +4,17 @@ import { action } from '@ember/object';
 
 export default class ApplicationRoute extends Route {
 
+  @service('remotestorage') storage;
   @service localData;
   @service logger;
   @service coms;
 
   async beforeModel () {
     super.beforeModel(...arguments);
-    await this.localData.setDefaultValues();
 
+    await this.storage.ensureReadiness();
+
+    await this.localData.setDefaultValues();
     // See a list of allowed types in logger.js
     // Add or remove all your log types here:
     // this.logger.add('message');
