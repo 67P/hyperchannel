@@ -10,14 +10,6 @@
     "test": "tests"
   },
   "private": true,
-  "contributors": [
-    "Garret Alfert <alfert@wevelop.de>",
-    "Sebastian Kippe <sebastian@kip.pe>",
-    "Jan Lelis <mail@janlelis.de>",
-    "Grégory Karékinian <greg@karekinian.com>",
-    "Nick Jennings <nick@silverbucket.net>",
-    "Ben Kero <ben.kero@gmail.com>"
-  ],
   "scripts": {
     "lint": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*",
     "lint:hbs": "ember-template-lint .",
