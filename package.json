@@ -22,8 +22,7 @@
     "preversion": "npm test",
     "version": "npm run build-prod && git add release/",
     "postversion": "git push origin master",
-    "deploy": "git push 5apps master",
-    "sockethub": "DEBUG=sockethub* sockethub"
+    "deploy": "git push 5apps master"
   },
   "engines": {
     "node": "10.* || >= 12"
