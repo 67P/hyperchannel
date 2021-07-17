@@ -19,7 +19,6 @@
     "Ben Kero <ben.kero@gmail.com>"
   ],
   "scripts": {
-    "postinstall": "node scripts/fix-git-urls.js",
     "lint": "npm-run-all --aggregate-output --continue-on-error --parallel lint:*",
     "lint:hbs": "ember-template-lint .",
     "lint:js": "eslint ./*.js app config tests",
