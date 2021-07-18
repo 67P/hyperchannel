@@ -13,19 +13,20 @@ export default class ApplicationRoute extends Route {
     super.beforeModel(...arguments);
 
     await this.storage.ensureReadiness();
-
     await this.localData.setDefaultValues();
+    await this.coms.instantiateSpacesAndChannels();
+    this.coms.setupListeners();
+
+    if (!this.coms.onboardingComplete) {
+      this.transitionTo('welcome');
+    }
+
     // See a list of allowed types in logger.js
     // Add or remove all your log types here:
     // this.logger.add('message');
     // this.logger.remove('join');
     // this.logger.disable();
     // this.logger.enable();
-  }
-
-  model () {
-    this.coms.setupListeners();
-    return this.coms.instantiateSpacesAndChannels();
   }
 
   @action

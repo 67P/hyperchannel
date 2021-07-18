@@ -1,3 +1,42 @@
-button, input[type=submit] {
+button:not(.btn), input[type=submit] {
   padding: 0.3rem 0.6rem;
+}
+
+@layer components {
+  .btn {
+    @apply font-semibold rounded-md leading-none cursor-pointer
+           transition-colors duration-75 focus:outline-none focus:ring-4
+           text-center;
+  }
+
+  .btn-md {
+    @apply btn;
+    @apply py-2.5 px-5 shadow-sm;
+  }
+
+  .btn-sm {
+    @apply btn;
+    @apply py-1 px-2 text-sm shadow-sm;
+  }
+
+  .btn-gray {
+    @apply bg-gray-100 hover:bg-gray-200
+           focus:ring-gray-300 focus:ring-opacity-75;
+  }
+
+  .btn-blue {
+    @apply bg-blue-500 hover:bg-blue-600 text-white
+           focus:ring-blue-400 focus:ring-opacity-75;
+  }
+
+  .btn-red {
+    @apply bg-red-600 hover:bg-red-700 text-white
+           focus:ring-red-500 focus:ring-opacity-75;
+  }
+
+  .btn:disabled {
+    @apply btn-gray text-gray-400;
+    box-shadow: none;
+  }
+
 }

@@ -1,6 +1,5 @@
 /* global Hammer */
 import Controller from '@ember/controller';
-import { alias } from '@ember/object/computed';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
@@ -9,10 +8,11 @@ import isDescendantOf from 'hyperchannel/utils/dom/is-descendant-of';
 export default class ApplicationController extends Controller {
 
   @service coms;
-  @alias('coms.spaces') spaces;
 
   @tracked showGlobalMenu = false;
   @tracked showChannelMenu = false;
+
+  get spaces () { return this.coms.spaces; }
 
   hammerInputClass = Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput;
 
