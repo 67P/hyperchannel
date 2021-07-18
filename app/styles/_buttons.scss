@@ -1,4 +1,4 @@
-button:not(.btn), input[type=submit] {
+button:not(.btn-md):not(.btn-sm), input[type=submit] {
   padding: 0.3rem 0.6rem;
 }
 

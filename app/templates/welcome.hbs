@@ -1,4 +1,4 @@
-<div class="max-w-3xl mx-auto mt-8 lg:mt-40 sm:px-6 lg:px-8">
+<div class="max-w-3xl mx-auto mt-10 lg:mt-40 sm:px-6 lg:px-8">
   <div class="bg-white overflow-hidden shadow sm:rounded-lg">
     <div class="px-4 py-10 sm:p-10 text-gray-800">
       <h2 class="mb-8 text-center text-3xl font-light">Welcome!</h2>
@@ -16,9 +16,9 @@
           target="_blank" class="text-gray-500 underline"> join our open-source
           co-operative</a> and help with any aspect of the development process!
       </p>
-      <div class="w-full grid grid-cols-2 gap-4">
+      <div class="w-full grid grid-cols-1 gap-4 md:grid-cols-2">
         <LinkTo @route="index" class="btn-md btn-blue">Add a chat account</LinkTo>
-        <button class="btn-md btn-gray text-gray-400" disabled="disabled">Connect storage</button>
+        <button class="btn-md" disabled="disabled">Connect storage</button>
       </div>
       {{!-- {{outlet}} --}}
     </div>
