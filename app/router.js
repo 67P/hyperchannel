@@ -17,4 +17,5 @@ Router.map(function() {
 
   this.route('settings');
   this.route('welcome');
+  this.route('add-account', function() {});
 });

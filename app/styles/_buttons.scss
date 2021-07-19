@@ -1,7 +1,3 @@
-button:not(.btn-md):not(.btn-sm), input[type=submit] {
-  padding: 0.3rem 0.6rem;
-}
-
 @layer components {
   .btn {
     @apply font-semibold rounded-md leading-none cursor-pointer

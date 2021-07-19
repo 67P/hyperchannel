@@ -35,7 +35,7 @@ body {
     background-size: cover;
   }
 
-  &.welcome {
+  &.welcome, &.add-account {
     background-image: linear-gradient(90deg, $background-color-cyan 0, rgba(13,79,153,0.8) 100%),
     // background-image: linear-gradient(90deg, rgba(255,0,255,0.2) 0, rgba(13,79,153,0.8) 100%),
                       url('/img/bg.jpg');
@@ -85,8 +85,22 @@ header {
   color: #aaa;
 }
 
+// TODO create actual nav-tabs ember components, move directives to templates
+@layer components {
+  nav.tabs {
+    a, button {
+      @apply border-transparent text-gray-500 hover:text-gray-800 hover:border-gray-300 w-1/2 py-4 px-1 text-center border-b-2;
+    }
+
+    a.active, button.active {
+      @apply border-blue-600 text-blue-600;
+    }
+  }
+}
+
 @import "layout";
 @import "buttons";
+@import "forms";
 @import "components/channel-nav";
 @import "components/channel-container";
 @import "components/date-headline";
