@@ -49,6 +49,37 @@ export default class SockethubXmppService extends Service {
   @service logger;
   @service coms;
 
+  connectWithCredentials (userAddress, password) {
+    console.debug(userAddress.split('@')[0]);
+
+    this.sockethub.ActivityStreams.Object.create({
+      '@id': userAddress,
+      '@type': "person",
+      displayName: userAddress.split('@')[0],
+    });
+
+    const credentialsJob = {
+      actor: userAddress,
+      context: 'xmpp',
+      object: {
+        '@type': 'credentials',
+        username: userAddress,
+        password: password,
+        resource: 'hyperchannel'
+      }
+    };
+
+    const connectJob = {
+      '@type': 'connect',
+      context: 'xmpp',
+      actor: userAddress
+    };
+
+    this.log('xmpp', 'connecting to XMPP server...');
+    this.sockethub.socket.emit('credentials', credentialsJob);
+    this.sockethub.socket.emit('message', connectJob);
+  }
+
   /**
    * @public
    */

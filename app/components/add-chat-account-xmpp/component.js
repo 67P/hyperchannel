@@ -1,8 +1,11 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
+import { inject as service } from '@ember/service';
 
 export default class AddChatAccountXmppComponent extends Component {
+
+  @service('sockethub-xmpp') xmpp;
 
   @tracked username;
   @tracked host = 'kosmos.org';
@@ -15,7 +18,7 @@ export default class AddChatAccountXmppComponent extends Component {
   @action
   submitForm (e) {
     e.preventDefault();
-    console.debug('Connecting XMPP account', this.userAddress);
+    this.xmpp.connectWithCredentials(this.userAddress, this.password);
   }
 
 }
