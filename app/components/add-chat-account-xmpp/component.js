@@ -2,11 +2,14 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
-import { isPresent } from '@ember/utils';
+import Space from 'hyperchannel/models/space';
 
 export default class AddChatAccountXmppComponent extends Component {
 
+  @service router;
+  @service coms;
   @service('sockethub-xmpp') xmpp;
+  @service('remotestorage') storage;
 
   @tracked username;
   @tracked host = 'kosmos.org';
@@ -35,9 +38,40 @@ export default class AddChatAccountXmppComponent extends Component {
 
     if (message['@type'] === 'connect' &&
         message.actor['@id'] === this.userAddress) {
-      console.debug('[add-chat-account-xmpp] connected successfully') // TODO remove
+      // Connected successfully
       this.xmpp.sockethub.socket.offAny();
+
+      this.addSpace().then(space => {
+        this.router.transitionTo('space.channel', space, space.channels.firstObject);
+      });
     }
+  }
+
+  // TODO Turn into `addAccount()`
+  async addSpace () {
+    const space = new Space({
+      id: this.userAddress,
+      name: this.userAddress,
+      protocol: 'XMPP',
+      server: {
+        hostname: this.host, // TODO remove when not required by RS module anymore
+        port: 1234,  // TODO remove when not required by RS module anymore
+        secure: true, // TODO remove when not required by RS module anymore
+        username: this.userAddress,
+        password: this.password,
+        nickname: this.username
+      },
+    });
+
+    const defaultChannels = [
+      'kosmos@kosmos.chat',
+      'kosmos-random@kosmos.chat'
+    ];
+
+    this.coms.spaces.pushObject(space);
+    this.coms.instantiateChannels(space, defaultChannels);
+
+    return this.storage.saveSpace(space).then(() => space);
   }
 
   @action

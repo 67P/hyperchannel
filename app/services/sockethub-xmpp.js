@@ -95,16 +95,12 @@ export default class SockethubXmppService extends Service {
         '@type': 'credentials',
         username: space.server.username,
         password: space.server.password,
-        server: space.server.hostname,
-        port: parseInt(space.server.port, 10),
         resource: 'hyperchannel'
       }
     };
 
     const connectJob = {
-      '@type': 'connect',
-      context: 'xmpp',
-      actor: actor
+      '@type': 'connect', context: 'xmpp', actor: actor
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
