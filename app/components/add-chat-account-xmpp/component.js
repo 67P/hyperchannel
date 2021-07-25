@@ -17,47 +17,32 @@ export default class AddChatAccountXmppComponent extends Component {
     return `${this.username}@${this.host}`
   }
 
-  handleConnectError (message) {
-    console.debug('[add-chat-account-xmpp] handleConnectError called'); // TODO remove when unregistering handlers is fixed
+  handleConnectStatus (eventName, message) {
+    console.debug('[add-chat-account-xmpp] handleConnectStatus called') // TODO remove
 
-    if (message.context === 'xmpp' && message['@type'] === 'error' &&
+    if (message.context !== 'xmpp' ||
+        !['message', 'completed'].includes(eventName)) { return; }
+
+    if (message['@type'] === 'error' &&
         message.object.condition === 'not-authorized'
-    /* && TODO message.actor['@id'] === actor */) {
+        /* && TODO message.actor['@id'] === actor */) {
       this.connectError = {
         title: 'Account connection failed',
         content: message.object.content
       }
-      this.unregisterConnectHandlers();
+      this.xmpp.sockethub.socket.offAny();
     }
-  }
 
-  handleConnectSuccess (message) {
-    console.debug('[add-chat-account-xmpp] handleConnectSuccess called'); // TODO remove when unregistering handlers is fixed
-
-    if (message.context === 'xmpp' && message['@type'] === 'connect' &&
+    if (message['@type'] === 'connect' &&
         message.actor['@id'] === this.userAddress) {
       console.debug('[add-chat-account-xmpp] connected successfully') // TODO remove
-
-      this.unregisterConnectHandlers();
+      this.xmpp.sockethub.socket.offAny();
     }
-  }
-
-  registerConnectHandlers () {
-    this.xmpp.sockethub.socket._on('message', this.handleConnectError.bind(this));
-    this.xmpp.sockethub.socket._on('completed', this.handleConnectSuccess.bind(this));
-  }
-
-  unregisterConnectHandlers () {
-    // FIXME listeners are not being removed
-    this.xmpp.sockethub.socket.off('message', this.handleConnectError.bind(this));
-    this.xmpp.sockethub.socket.off('completed', this.handleConnectSuccess.bind(this));
   }
 
   @action
   submitForm (e) {
-    e.preventDefault();
-    this.connectError = null;
-    this.registerConnectHandlers();
+    e.preventDefault(); this.connectError = null; this.xmpp.sockethub.socket.onAny(this.handleConnectStatus.bind(this));
     this.xmpp.connectWithCredentials(this.userAddress, this.password);
   }
 
