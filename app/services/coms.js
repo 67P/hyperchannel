@@ -472,6 +472,13 @@ export default class ComsService extends Service {
             break;
         }
         break;
+      // case 'error':
+      //   switch(message.context) {
+      //     case 'xmpp':
+      //       this.xmpp.handleErrorMessage(message);
+      //       break;
+      //   }
+      //   break;
     }
   }
 

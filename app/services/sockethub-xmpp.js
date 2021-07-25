@@ -50,8 +50,6 @@ export default class SockethubXmppService extends Service {
   @service coms;
 
   connectWithCredentials (userAddress, password) {
-    console.debug(userAddress.split('@')[0]);
-
     this.sockethub.ActivityStreams.Object.create({
       '@id': userAddress,
       '@type': "person",
@@ -70,9 +68,7 @@ export default class SockethubXmppService extends Service {
     };
 
     const connectJob = {
-      '@type': 'connect',
-      context: 'xmpp',
-      actor: userAddress
+      '@type': 'connect', context: 'xmpp', actor: userAddress
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
