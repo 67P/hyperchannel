@@ -17,7 +17,7 @@ export default class AddChatAccountXmppComponent extends Component {
   @tracked connectError = null;
 
   get userAddress () {
-    return `${this.username}@${this.host}`
+    return `${this.username}@${this.host}`;
   }
 
   handleConnectStatus (eventName, message) {
