@@ -54,16 +54,19 @@ export default class ComsService extends Service {
     this.spaces = A([]);
 
     return new Promise((resolve, reject) => {
-      this.storage.rs.kosmos.spaces.getAll().then(spaceData => {
-        if (isEmpty(Object.keys(spaceData))) {
-          console.debug('No space data found in RS');
+      this.storage.rs.kosmos.accounts.getIds().then(accountIds => {
+        if (isEmpty(accountIds)) {
+          console.debug('No accounts found in RS');
           // this.storage.addDefaultSpace().then((data) => {
           //   this.connectAndAddSpace(data.space);
           //   this.instantiateChannels(data.space, data.channels);
           resolve();
           // });
         } else {
-          Object.keys(spaceData).forEach((id) => {
+          accountIds.forEach((id) => {
+
+            // TODO load account metadata from remotestorage
+
             const space = new Space({
               id: id,
               name: spaceData[id].name,

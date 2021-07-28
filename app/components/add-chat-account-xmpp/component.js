@@ -51,16 +51,15 @@ export default class AddChatAccountXmppComponent extends Component {
   async addSpace () {
     const space = new Space({
       id: this.userAddress,
-      name: this.userAddress,
       protocol: 'XMPP',
+      username: this.userAddress,
+      password: this.password,
+      nickname: this.username,
       server: {
         hostname: this.host, // TODO remove when not required by RS module anymore
         port: 1234,  // TODO remove when not required by RS module anymore
         secure: true, // TODO remove when not required by RS module anymore
-        username: this.userAddress,
-        password: this.password,
-        nickname: this.username
-      },
+      }
     });
 
     const defaultChannels = [

@@ -59,8 +59,8 @@ export default class RemotestorageService extends Service {
   }
 
   saveSpace (space) {
-    return this.rs.kosmos.spaces.store(space.serialize())
-      .then(() => console.debug('[remotestorage]', `saved space ${space.name}`))
+    return this.rs.kosmos.accounts.storeConfig(space.serialize())
+      .then(() => console.debug('[remotestorage]', `saved space ${space.username}`))
       .catch(err => console.error('saving space failed:', err));
   }
 
