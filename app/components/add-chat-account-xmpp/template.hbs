@@ -4,22 +4,22 @@
       User address (JID)
     </label>
     <div class="mb-4 sm:mb-0 sm:col-span-7 flex justify-center items-center">
-      <Input @id="username" @type="text" @value={{this.username}} name="username"
+      <Input id="username" @type="text" @value={{this.username}} name="username"
              required class="min-w-0" />
       <span class="flex-0 mx-1 text-xl">@</span>
-      <Input @id="host" @type="text" @value={{this.host}} name="host"
+      <Input id="host" @type="text" @value={{this.host}} name="host"
              required class="min-w-0" />
     </div>
     <label for="password" class="sm:col-span-3">
       Password
     </label>
-    <Input @id="password" @type="password" @value={{this.password}} name="password"
+    <Input id="password" @type="password" @value={{this.password}} name="password"
            required class="sm:col-span-7" />
   </div>
 
-  {{#if connectError}}
-    <FlashMessageError @title={{connectError.title}}
-                       @content={{connectError.content}}
+  {{#if this.connectError}}
+    <FlashMessageError @title={{this.connectError.title}}
+                       @content={{this.connectError.content}}
                        class="mt-4" />
   {{/if}}
 
