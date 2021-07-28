@@ -4,13 +4,22 @@ import { action } from '@ember/object';
 
 export default class ApplicationRoute extends Route {
 
+  @service('remotestorage') storage;
   @service localData;
   @service logger;
   @service coms;
 
   async beforeModel () {
     super.beforeModel(...arguments);
+
+    await this.storage.ensureReadiness();
     await this.localData.setDefaultValues();
+    await this.coms.instantiateSpacesAndChannels();
+    this.coms.setupListeners();
+
+    if (!this.coms.onboardingComplete) {
+      this.transitionTo('welcome');
+    }
 
     // See a list of allowed types in logger.js
     // Add or remove all your log types here:
@@ -18,11 +27,6 @@ export default class ApplicationRoute extends Route {
     // this.logger.remove('join');
     // this.logger.disable();
     // this.logger.enable();
-  }
-
-  model () {
-    this.coms.setupListeners();
-    return this.coms.instantiateSpacesAndChannels();
   }
 
   @action

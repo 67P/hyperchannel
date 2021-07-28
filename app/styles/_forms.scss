@@ -1,0 +1,13 @@
+@layer components {
+  form {
+    label {
+      @apply font-bold;
+    }
+
+    input[type=text], input[type=email], input[type=password],
+    input[type=number], select {
+      @apply rounded-md bg-gray-100 text-gray-800 border-transparent
+             focus:border-blue-500 focus:ring-0;
+    }
+  }
+}

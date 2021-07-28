@@ -57,6 +57,7 @@ export default class Space {
     return this.channels.mapBy('sockethubChannelId');
   }
 
+  // TODO get from bot API
   get loggedChannels () {
     if (this.name === 'Freenode' && this.protocol === 'IRC') {
       return ['#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',

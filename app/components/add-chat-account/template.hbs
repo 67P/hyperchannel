@@ -1,0 +1,14 @@
+<div class="mb-10 border-b border-gray-200">
+  <nav class="tabs -mb-px flex" aria-label="Account type">
+    <button {{on "click" (fn this.chooseAccountType "xmpp")}}
+      class={{if (eq this.accountType "xmpp") "active"}}>
+      XMPP
+    </button>
+    <button {{on "click" (fn this.chooseAccountType "irc")}}
+      class={{if (eq this.accountType "irc") "active"}}>
+      IRC
+    </button>
+  </nav>
+</div>
+
+{{component (concat "add-chat-account-" this.accountType)}}

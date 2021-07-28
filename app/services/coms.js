@@ -1,7 +1,6 @@
 import Service, { inject as service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
 import { A } from '@ember/array';
-import RSVP from 'rsvp';
 import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
 import UserChannel from 'hyperchannel/models/user_channel';
@@ -31,6 +30,10 @@ export default class ComsService extends Service {
    */
   @tracked spaces = null;
 
+  get onboardingComplete() {
+    return isPresent(this.spaces);
+  }
+
   /**
    * This is called from the application route on app startup. Sets up all
    * listeners for incoming Sockethub messages.
@@ -47,19 +50,18 @@ export default class ComsService extends Service {
    * connects, and joins all either configured/saved or default spaces/channels
    * @public
    */
-  instantiateSpacesAndChannels () {
+  async instantiateSpacesAndChannels () {
     this.spaces = A([]);
-    let rs = this.storage.rs;
 
-    return new RSVP.Promise((resolve, reject) => {
-      rs.kosmos.spaces.getAll().then(spaceData => {
+    return new Promise((resolve, reject) => {
+      this.storage.rs.kosmos.spaces.getAll().then(spaceData => {
         if (isEmpty(Object.keys(spaceData))) {
-          console.debug('No space data found in RS. Adding default space...');
-          this.storage.addDefaultSpace().then((data) => {
-            this.connectAndAddSpace(data.space);
-            this.instantiateChannels(data.space, data.channels);
-            resolve();
-          });
+          console.debug('No space data found in RS');
+          // this.storage.addDefaultSpace().then((data) => {
+          //   this.connectAndAddSpace(data.space);
+          //   this.instantiateChannels(data.space, data.channels);
+          resolve();
+          // });
         } else {
           Object.keys(spaceData).forEach((id) => {
             const space = new Space({
@@ -284,9 +286,7 @@ export default class ComsService extends Service {
   }
 
   instantiateChannels (space, channels) {
-    channels.forEach((channelName) => {
-      this.createChannel(space, channelName);
-    });
+    channels.forEach(channelName => this.createChannel(space, channelName));
   }
 
   createChannel (space, channelName, channelId = null) {
@@ -302,14 +302,15 @@ export default class ComsService extends Service {
       sockethubChannelId: channelId
     });
 
-    this.joinChannel(space, channel, "room");
+    this.joinChannel(space, channel, 'room');
     space.channels.pushObject(channel);
 
     // TODO Do we need this on startup? Could overwrite updates from remote.
     this.storage.saveSpace(space);
 
     if (channel.isLogged) {
-      this.loadLastMessages(space, channel, moment.utc(), 2).catch(() => {});
+      this.loadLastMessages(space, channel, moment.utc(), 2)
+          .catch(() => { /* TODO nothing to do here? */ });
     }
 
     return channel;
@@ -471,6 +472,13 @@ export default class ComsService extends Service {
             break;
         }
         break;
+      // case 'error':
+      //   switch(message.context) {
+      //     case 'xmpp':
+      //       this.xmpp.handleErrorMessage(message);
+      //       break;
+      //   }
+      //   break;
     }
   }
 

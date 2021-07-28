@@ -1,26 +1,34 @@
-<div class="app-container {{if this.showGlobalMenu "global-menu-open"}} {{if this.showChannelMenu "channel-menu-open"}}"
-     {{recognize-gesture "swipeleft" "swiperight" "tap" domEvents=true touchAction="auto" inputClass=this.hammerInputClass}}
-     {{on "swipeleft" this.swipeLeft}} {{on "swiperight" this.swipeRight}} {{on "tap" this.tap}}>
-  <div id="global">
-    <header id="sitename">
-      <h1>Kosmos</h1>
-    </header>
+{{#if this.coms.onboardingComplete}}
 
-    <div class="main">
-      <nav id="channels">
-        <ChannelNav @spaces={{this.spaces}}
-                    @onLeaveChannel={{route-action "leaveChannel"}} />
-      </nav>
+  <div class="app-container {{if this.showGlobalMenu "global-menu-open"}} {{if this.showChannelMenu "channel-menu-open"}}"
+       {{recognize-gesture "swipeleft" "swiperight" "tap" domEvents=true touchAction="auto" inputClass=this.hammerInputClass}}
+       {{on "swipeleft" this.swipeLeft}} {{on "swiperight" this.swipeRight}} {{on "tap" this.tap}}>
+    <div id="global">
+      <header id="sitename">
+        <h1>Kosmos</h1>
+      </header>
+
+      <div class="main">
+        <nav id="channels">
+          <ChannelNav @spaces={{this.spaces}}
+                      @onLeaveChannel={{route-action "leaveChannel"}} />
+        </nav>
+      </div>
+
+      <footer>
+        <nav>
+          <LinkTo @route="settings"><IconSettings /></LinkTo>
+        </nav>
+      </footer>
     </div>
 
-    <footer>
-      <nav>
-        <LinkTo @route="settings"><IconSettings /></LinkTo>
-      </nav>
-    </footer>
+    {{outlet}}
   </div>
 
+{{else}}
+
   {{outlet}}
-</div>
+
+{{/if}}
 
 <ModalTarget />
