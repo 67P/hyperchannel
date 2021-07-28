@@ -86,7 +86,7 @@
     "postcss-scss": "4.0.0",
     "qunit": "^2.16.0",
     "qunit-dom": "^1.2.0",
-    "remotestorage-module-kosmos": "^1.1.0",
+    "remotestorage-module-kosmos": "github:67P/remotestorage-module-kosmos#feature/spaces_to_accounts",
     "remotestoragejs": "^2.0.0-beta.0",
     "tailwindcss": "^2.2.4"
   },
