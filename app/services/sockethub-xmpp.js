@@ -79,13 +79,13 @@ export default class SockethubXmppService extends Service {
   /**
    * @public
    */
-  connect (space) {
-    let actor = space.sockethubPersonId;
+  connect (account) {
+    const actor = account.sockethubPersonId;
 
     this.sockethub.ActivityStreams.Object.create({
       '@id': actor,
       '@type': "person",
-      displayName: space.nickname,
+      displayName: account.nickname,
     });
 
     const credentialsJob = {
@@ -93,8 +93,8 @@ export default class SockethubXmppService extends Service {
       context: 'xmpp',
       object: {
         '@type': 'credentials',
-        username: space.username,
-        password: space.password,
+        username: account.username, // JID
+        password: account.password,
         resource: 'hyperchannel'
       }
     };

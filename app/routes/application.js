@@ -14,7 +14,7 @@ export default class ApplicationRoute extends Route {
 
     await this.storage.ensureReadiness();
     await this.localData.setDefaultValues();
-    await this.coms.instantiateSpacesAndChannels();
+    await this.coms.instantiateAccountsAndChannels();
     this.coms.setupListeners();
 
     if (!this.coms.onboardingComplete) {

@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
-import Space from 'hyperchannel/models/space';
+import XmppAccount from 'hyperchannel/models/account/xmpp';
 
 export default class AddChatAccountXmppComponent extends Component {
 
@@ -20,7 +20,7 @@ export default class AddChatAccountXmppComponent extends Component {
     return `${this.username}@${this.host}`;
   }
 
-  handleConnectStatus (eventName, message) {
+  async handleConnectStatus (eventName, message) {
     console.debug('[add-chat-account-xmpp] handleConnectStatus called') // TODO remove
 
     if (message.context !== 'xmpp' ||
@@ -41,37 +41,33 @@ export default class AddChatAccountXmppComponent extends Component {
       // Connected successfully
       this.xmpp.sockethub.socket.offAny();
 
-      this.addSpace().then(space => {
-        // this.router.transitionTo('space.channel', space, space.channels.firstObject);
-        this.router.transitionTo('space', space);
-      });
+      const account = await this.addAccount();
+      await this.addDefaultChannels(account);
+
+      // this.router.transitionTo('channel', /* welcome channel */);
     }
   }
 
-  // TODO Turn into `addAccount()`
-  async addSpace () {
-    const space = new Space({
-      id: this.userAddress,
-      protocol: 'XMPP',
+  async addAccount () {
+    const account = new XmppAccount({
       username: this.userAddress,
       password: this.password,
       nickname: this.username,
-      server: {
-        hostname: this.host, // TODO remove when not required by RS module anymore
-        port: 1234,  // TODO remove when not required by RS module anymore
-        secure: true, // TODO remove when not required by RS module anymore
-      }
     });
 
-    const defaultChannels = [
-      'kosmos@kosmos.chat',
-      'kosmos-random@kosmos.chat'
-    ];
+    this.coms.accounts.pushObject(account);
+    return this.storage.saveAccount(account).then(() => account);
+  }
 
-    this.coms.spaces.pushObject(space);
+  async addDefaultChannels (account) {
+    // const defaultChannels = [
+    //   'kosmos@kosmos.chat',
+    //   'kosmos-random@kosmos.chat'
+    // ];
+
     // this.coms.instantiateChannels(space, defaultChannels);
 
-    return this.storage.saveSpace(space).then(() => space);
+    return true;
   }
 
   @action

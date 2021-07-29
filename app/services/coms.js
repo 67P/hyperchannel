@@ -1,7 +1,8 @@
 import Service, { inject as service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
 import { A } from '@ember/array';
-import Space from 'hyperchannel/models/space';
+import XmppAccount from 'hyperchannel/models/account/xmpp';
+import IrcAccount from 'hyperchannel/models/account/irc';
 import Channel from 'hyperchannel/models/channel';
 import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
@@ -25,13 +26,13 @@ export default class ComsService extends Service {
   @service('sockethub-xmpp') xmpp;
 
   /**
-   * A collection of all space model instances
-   * @type {Space[]}
+   * A collection of all account model instances
+   * @type {Account[]}
    */
-  @tracked spaces = null;
+  @tracked accounts = A([]);
 
   get onboardingComplete() {
-    return isPresent(this.spaces);
+    return isPresent(this.accounts);
   }
 
   /**
@@ -47,12 +48,10 @@ export default class ComsService extends Service {
 
   /**
    * This is called from the application route on app startup. Instantiates,
-   * connects, and joins all either configured/saved or default spaces/channels
+   * connects, and joins all configured/saved or default accounts and channels
    * @public
    */
-  async instantiateSpacesAndChannels () {
-    this.spaces = A([]);
-
+  async instantiateAccountsAndChannels () {
     return new Promise((resolve, reject) => {
       this.storage.rs.kosmos.accounts.getIds().then(accountIds => {
         if (isEmpty(accountIds)) {
@@ -63,25 +62,38 @@ export default class ComsService extends Service {
           resolve();
           // });
         } else {
-          const allAccounts = accountIds.map((id) => {
+          const allAccounts = accountIds.map(id => {
             return this.storage.rs.kosmos.accounts.getConfig(id).then(config => {
-              const space = new Space({
-                id: id,
-                protocol: config.protocol,
-                username: config.username,
-                nickname: config.nickname,
-                password: config.password,
-                server: config.server,
-                botkaURL: config.botkaURL
-              });
-              this.connectAndAddSpace(space);
-              // this.instantiateChannels(space, spaceData[id].channels);
+              let account;
+              switch(config.protocol) {
+                case 'XMPP':
+                  account = new XmppAccount({
+                    username: config.username,
+                    password: config.password,
+                    nickname: config.nickname,
+                    botkaURL: config.botkaURL,
+                    server: config.server
+                  });
+                  break;
+                case 'IRC':
+                  account = new IrcAccount({
+                    username: config.username,
+                    password: config.password,
+                    nickname: config.nickname,
+                    botkaURL: config.botkaURL,
+                    server: config.server
+                  });
+                  break;
+              }
+              this.connectServer(account);
+              this.accounts.pushObject(account);
+              // TODO this.instantiateChannels(space, spaceData[id].channels);
             });
           });
           Promise.all(allAccounts).then(resolve);
         }
       }, e => {
-        this.log('error', 'couldn\'d load spaces from RS', e);
+        this.log('error', 'couldn\'d load account from RS', e);
         reject();
       });
     });
@@ -91,14 +103,9 @@ export default class ComsService extends Service {
    * Invokes the connect function on the appropriate transport service
    * @public
    */
-  connectServer (space) {
-    this.getServiceForSockethubPlatform(space.protocol)
-        .connect(space);
-  }
-
-  connectAndAddSpace (space) {
-    this.connectServer(space);
-    this.spaces.pushObject(space);
+  connectServer (account) { // JID
+    this.getServiceForSockethubPlatform(account.protocol)
+        .connect(account);
   }
 
   /**
@@ -239,10 +246,11 @@ export default class ComsService extends Service {
   updateUsername (message) {
     if (typeof message.actor === 'object') {
       const actorId = message.actor['@id'];
-      const space = this.spaces.findBy('sockethubPersonId', actorId);
-      if (isPresent(space)) {
-        space.updateUsername(message.target.displayName);
+      const account = this.accounts.findBy('sockethubPersonId', actorId);
+      if (isPresent(account)) {
+        account.updateUsername(message.target.displayName);
       }
+      // TODO update nickname in channels
     }
   }
 

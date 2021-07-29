@@ -1,7 +1,6 @@
 import { alias, sort } from '@ember/object/computed';
 import { computed } from '@ember/object';
 import { A } from '@ember/array';
-import { isPresent } from '@ember/utils';
 import { tracked } from '@glimmer/tracking';
 
 class Server {
@@ -19,12 +18,7 @@ export default class Space {
   @tracked protocol = 'IRC';
   @tracked nickname = null;
   @tracked password = null;
-
-  @tracked server = new Server({
-                      hostname: null,
-                      port: 7000,
-                      secure: true
-                    });
+  @tracked server = null;
   @tracked channels = A([]); // Channel instances
   botkaURL = null; // Kosmos bot
 
@@ -93,44 +87,6 @@ export default class Space {
         this.username = username;
         break;
     }
-  }
-
-  get sockethubPersonId () {
-    let personID;
-    switch (this.protocol) {
-      case 'IRC':
-        personID = `${this.server.nickname}@${this.server.hostname}`;
-        break;
-      case 'XMPP':
-        // TODO - why isn't the full JID user+host+resource?
-        personID = `${this.username}/hyperchannel`;
-        break;
-    }
-    return personID;
-  }
-
-  serialize () {
-    let serialized = {
-      id: this.id || this.username.dasherize(),
-      protocol: this.protocol,
-      server: {
-        hostname: this.server.hostname,
-        port: parseInt(this.server.port, 10),
-        secure: this.server.secure,
-      },
-      // channels: this.channelNames || []
-    };
-
-    if (isPresent(this.botkaURL)) { serialized.botkaURL = this.botkaURL; }
-
-    ['username', 'password', 'nickname'].forEach(prop => {
-      // TODO credentials need to be encrypted and probably stored elsewhere
-      if (isPresent(this[prop])) {
-        serialized[prop] = this[prop];
-      }
-    });
-
-    return serialized;
   }
 
 }
