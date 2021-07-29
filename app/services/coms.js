@@ -63,21 +63,22 @@ export default class ComsService extends Service {
           resolve();
           // });
         } else {
-          accountIds.forEach((id) => {
-
-            // TODO load account metadata from remotestorage
-
-            const space = new Space({
-              id: id,
-              name: spaceData[id].name,
-              protocol: spaceData[id].protocol,
-              server: spaceData[id].server,
-              botkaURL: spaceData[id].botkaURL
+          const allAccounts = accountIds.map((id) => {
+            return this.storage.rs.kosmos.accounts.getConfig(id).then(config => {
+              const space = new Space({
+                id: id,
+                protocol: config.protocol,
+                username: config.username,
+                nickname: config.nickname,
+                password: config.password,
+                server: config.server,
+                botkaURL: config.botkaURL
+              });
+              this.connectAndAddSpace(space);
+              // this.instantiateChannels(space, spaceData[id].channels);
             });
-            this.connectAndAddSpace(space);
-            this.instantiateChannels(space, spaceData[id].channels);
           });
-          resolve();
+          Promise.all(allAccounts).then(resolve);
         }
       }, e => {
         this.log('error', 'couldn\'d load spaces from RS', e);

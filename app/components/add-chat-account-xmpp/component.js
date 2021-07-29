@@ -42,7 +42,8 @@ export default class AddChatAccountXmppComponent extends Component {
       this.xmpp.sockethub.socket.offAny();
 
       this.addSpace().then(space => {
-        this.router.transitionTo('space.channel', space, space.channels.firstObject);
+        // this.router.transitionTo('space.channel', space, space.channels.firstObject);
+        this.router.transitionTo('space', space);
       });
     }
   }
@@ -68,7 +69,7 @@ export default class AddChatAccountXmppComponent extends Component {
     ];
 
     this.coms.spaces.pushObject(space);
-    this.coms.instantiateChannels(space, defaultChannels);
+    // this.coms.instantiateChannels(space, defaultChannels);
 
     return this.storage.saveSpace(space).then(() => space);
   }
