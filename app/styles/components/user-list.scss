@@ -1,15 +1,5 @@
 section#user-list {
-  // TODO unify with other sidebar nav
-  margin-bottom: 1.5rem;
-
-  h2 {
-    @include discreet_heading;
-  }
-
   > ul {
-    padding-top: 0.6rem;
-    list-style: none;
-
     li {
       a {
         display: block;

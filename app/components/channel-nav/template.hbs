@@ -1,11 +1,12 @@
 <ul {{did-insert this.bindKeyboardShortcuts}}
-    {{will-destroy this.unbindKeyboardShortcuts}}>
-  <li>
-    {{#each this.coms.groupedChannelsByDomain as |subspace|}}
-      <h3>{{subspace.domain}}</h3>
+    {{will-destroy this.unbindKeyboardShortcuts}}
+    class="pt-6">
+  {{#each this.coms.groupedChannelsByDomain as |subspace|}}
+    <li class="block relative width-full mb-6">
+      <h3 class="px-4 mb-2 text-sm opacity-80">{{subspace.domain}}</h3>
       <ul>
         {{#each subspace.channels as |channel|}}
-          <li class="{{if channel.connected "connected" "disconnected"}} {{channel.unreadMessagesClass}} {{if channel.visible "active" ""}}">
+          <li class="channel {{if channel.connected "connected" "disconnected"}} {{channel.unreadMessagesClass}} {{if channel.visible "active" ""}}">
             {{#if channel.isUserChannel}}
               <LinkTo @route="user-channel" @model={{channel}}>{{channel.name}}</LinkTo>
             {{else}}
@@ -15,7 +16,9 @@
           </li>
         {{/each}}
       </ul>
-    {{/each}}
-    <a {{on "click" (fn this.joinChannel)}} class="join-channel" role="button">+</a>
-  </li>
+    </li>
+  {{/each}}
 </ul>
+<p>
+  <a {{on "click" (fn this.joinChannel)}} class="join-channel" role="button">+</a>
+</p>

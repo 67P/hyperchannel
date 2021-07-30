@@ -1,10 +1,5 @@
 nav#channels {
-  padding: 1.5rem 0;
-
   li {
-    display: block;
-    position: relative;
-    width: 100%;
     transition: opacity 0.2s linear;
 
     &.disconnected {
@@ -14,15 +9,8 @@ nav#channels {
   }
 
   > ul {
-    list-style: none;
-
     > li {
-      margin-bottom: 1.6em;
-
       > ul {
-        padding: 0 0 0 0;
-        list-style: none;
-
         li {
           width: 168px;
           overflow: hidden;
@@ -87,23 +75,5 @@ nav#channels {
         color: #fff;
       }
     }
-  }
-
-  h2 {
-    margin-bottom: 0.6rem;
-  }
-
-  h3 {
-    display: block;
-    height: 1.6rem;
-    line-height: 1.6rem;
-    padding: 0 1rem;
-    margin: 0.4rem 0 0.2rem 0;
-    font-size: 0.9rem;
-    opacity: 0.8;
-  }
-
-  h2 + h3 {
-    margin-top: -0.2rem;
   }
 }
