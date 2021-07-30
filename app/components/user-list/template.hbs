@@ -4,7 +4,11 @@
   {{/if}}
   <ul>
     {{#each this.renderedUsers as |username|}}
-      <li><LinkToUsername @username={{username}} /></li>
+      {{#if @allowUserChannels}}
+        <li><LinkToUsername @username={{username}} /></li>
+      {{else}}
+        <li><a>{{username}}</a></li>
+      {{/if}}
     {{/each}}
 
     <li class="last-element"></li>
