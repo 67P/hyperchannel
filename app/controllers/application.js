@@ -12,8 +12,6 @@ export default class ApplicationController extends Controller {
   @tracked showGlobalMenu = false;
   @tracked showChannelMenu = false;
 
-  get spaces () { return this.coms.spaces; }
-
   hammerInputClass = Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput;
 
   @action

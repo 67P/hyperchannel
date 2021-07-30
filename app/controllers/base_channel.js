@@ -10,19 +10,18 @@ export default class BaseChannelController extends Controller {
 
   @tracked newMessage = null;
   @controller application;
-  @controller space;
   @service coms;
   @service router;
   @service('remotestorage') storage;
 
-  @alias('space.model') currentSpace;
   @alias('application.showChannelMenu') showChannelMenu;
 
   createMessage (message, type) {
     return new Message({
       type: type,
       date: new Date(),
-      nickname: this.currentSpace.server.nickname,
+      // TODO  nickname per channel
+      nickname: this.model.account.nickname,
       content: message
     });
   }
@@ -30,7 +29,7 @@ export default class BaseChannelController extends Controller {
   @computed('router.currentRouteName')
   get sidebarClass () {
     const route = this.router.currentRouteName;
-    const wideBars = ['shares', 'settings'].map(r => `space.channel.${r}`);
+    const wideBars = ['shares', 'settings'].map(r => `channel.${r}`);
     return wideBars.includes(route) ? 'sidebar-wide' : 'sidebar-normal';
   }
 
@@ -56,10 +55,9 @@ export default class BaseChannelController extends Controller {
 
   @action
   sendMessage (newMessage) {
-    let message = this.createMessage(newMessage, 'message-chat');
+    const message = this.createMessage(newMessage, 'message-chat');
 
     this.coms.transferMessage(
-      this.currentSpace,
       this.model,
       message.content
     );
@@ -94,22 +92,22 @@ export default class BaseChannelController extends Controller {
 
   @action
   joinCommand (args) {
-    let space = this.currentSpace;
-    let channel = this.coms.createChannel(space, args[0]);
-    this.storage.saveSpace(space);
-    this.transitionToRoute('space.channel', space, channel);
+    const channel = this.coms.createChannel(this.model.account, args[0]);
+    // TODO this.storage.saveChannel(channel);
+    this.transitionToRoute('channel', channel);
   }
 
   @action
   partCommand () {
-    let space = this.currentSpace;
-    let channelName = this.model.name;
-    this.coms.removeChannel(space, channelName);
-    let lastChannel = space.channels.lastObject;
+    const channelName = this.model.name;
+    this.coms.removeChannel(channelName);
+    const lastChannel = this.coms.channels.lastObject;
     if (isPresent(lastChannel)) {
-      this.transitionToRoute('space.channel', space, lastChannel);
+      this.transitionToRoute('channel', lastChannel);
     } else {
-      this.transitionToRoute('space', space);
+      // TODO handle zero channels left
+      console.warn('No channels left to transition to');
+      this.transitionToRoute('index');
     }
   }
 
@@ -129,7 +127,7 @@ export default class BaseChannelController extends Controller {
     let message = this.createMessage(newMessage, 'message-chat-me');
 
     this.coms.transferMeMessage(
-      this.currentSpace,
+      this.model.account,
       this.model.sockethubChannelId,
       message.content
     );
@@ -140,10 +138,10 @@ export default class BaseChannelController extends Controller {
   @action
   msgCommand (args) {
     let username = args.shift();
-    this.coms.createUserChannel(this.currentSpace, username);
+    this.coms.createUserChannel(this.model.account, username);
     // TODO fix this, sockethub sends a failure event with error
     // "TypeError: Cannot read property 'indexOf' of undefined"
-    // this.coms.transferMessage(this.currentSpace, username, args.join(' '));
+    // this.coms.transferMessage(username, args.join(' '));
   }
 
   @action
@@ -151,7 +149,7 @@ export default class BaseChannelController extends Controller {
     let channel = this.model;
     let topic = args.join(' ');
 
-    this.coms.changeTopic(this.currentSpace, channel, topic);
+    this.coms.changeTopic(channel, topic);
   }
 
   @action

@@ -72,13 +72,8 @@ export default class BaseChannel {
     }
   }
 
-  get mucDomain () {
-    switch (this.protocol) {
-      case 'XMPP':
-        return this.name.match(/@(.+)$/)[1];
-      default:
-        return null;
-    }
+  get domain () {
+    return this.id.match(/@(.+)$/)[1];
   }
 
   get unreadMessagesClass () {

@@ -5,6 +5,7 @@ import { alias } from '@ember/object/computed';
 export default class IndexRoute extends Route {
 
   @service localData;
+  @service coms;
   @alias('localData.stores.userSettings') userSettings;
 
   async redirect () {
@@ -13,7 +14,7 @@ export default class IndexRoute extends Route {
     if (currentChannel) {
       this.transitionTo('channel', currentChannel);
     } else {
-      // TODO if current space from setting is not available, use first available space and channel
+      this.transitionTo('channel', this.coms.channels.firstObject);
     }
   }
 

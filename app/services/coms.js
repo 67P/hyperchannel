@@ -9,6 +9,8 @@ import Message from 'hyperchannel/models/message';
 import config from 'hyperchannel/config/environment';
 import moment from 'moment';
 import { tracked } from '@glimmer/tracking';
+import { computed } from '@ember/object';
+import { sort } from '@ember/object/computed';
 
 /**
  * This service provides the central command interface for communicating with
@@ -31,6 +33,28 @@ export default class ComsService extends Service {
    */
   @tracked accounts = A([]);
   @tracked channels = A([]);
+
+  channelSorting = ['name'];
+  @sort('channels', 'channelSorting') sortedChannels;
+
+  @computed('channels.@each.domain')
+  get channelDomains () {
+    return this.channels.mapBy('domain').uniq().sort();
+  }
+
+  get groupedChannelsByDomain () {
+    return this.channelDomains.map(domain => {
+      return {
+        domain: domain,
+        channels: this.channels.filterBy('domain', domain).sortBy('name')
+      }
+    });
+  }
+
+  @computed('channels.@each.visible')
+  get activeChannel () {
+    return this.channels.findBy('visible');
+  }
 
   get onboardingComplete() {
     return isPresent(this.accounts);
@@ -85,7 +109,7 @@ export default class ComsService extends Service {
               this.connectServer(account);
               this.accounts.pushObject(account);
               // TODO wait for successful server connection before joining
-              this.instantiateChannels(account);
+              return this.instantiateChannels(account);
             });
           });
           Promise.all(allAccounts).then(resolve);
@@ -198,7 +222,7 @@ export default class ComsService extends Service {
   }
 
   /**
-   * @param {String} channelId
+   * @param {String} channelId - a Sockethub channel ID
    */
   getChannel (channelId) {
     const channel = this.channels.findBy('sockethubChannelId', channelId);
@@ -253,8 +277,8 @@ export default class ComsService extends Service {
     // channel.messages.pushObject(notification);
   }
 
-  instantiateChannels (account) {
-    this.storage.rs.kosmos.channels.getAll(account.id).then(channelData => {
+  async instantiateChannels (account) {
+    return this.storage.rs.kosmos.channels.getAll(account.id).then(channelData => {
       for (const channelName in channelData) {
         // Additional props in channelData[channelName]
         this.createChannel(account, channelName);

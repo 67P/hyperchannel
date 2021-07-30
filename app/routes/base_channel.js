@@ -14,17 +14,18 @@ function focusMessageInput() {
 
 export default class BaseChannelRoute extends Route {
 
+  @service router;
   @service coms;
   @service localData;
   @alias('localData.stores.userSettings') userSettings;
 
   model (params) {
-    let space = this.modelFor('space');
-    let channel = space.channels.findBy('slug', params.slug);
+    const channel = this.coms.channels.findBy('slug', params.slug);
 
-    if (!channel) {
-      channel = this.createChannelOrUserChannel(space, params.slug);
-    }
+    // TODO must select acccount automatically (for IRC)
+    // if (!channel) {
+    //   channel = this.createChannelOrUserChannel(account, params.slug);
+    // }
 
     return channel;
   }
@@ -37,16 +38,12 @@ export default class BaseChannelRoute extends Route {
 
   @action
   async didTransition () {
-    let space = this.modelFor('space');
-    let channel = this.controller.model;
+    const channel = this.controller.model;
 
-    await this.userSettings.setItem('currentSpace', space.id);
     await this.userSettings.setItem('currentChannel', channel.slug);
 
     // Mark all other channels as inactive/invisible
-    this.coms.spaces.forEach((space) => {
-      space.channels.setEach('visible', false);
-    });
+    this.coms.channels.setEach('visible', false);
 
     // Mark channel as active/visible
     channel.visible = true;

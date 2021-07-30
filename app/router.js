@@ -7,13 +7,11 @@ export default class Router extends EmberRouter {
 }
 
 Router.map(function() {
-  this.route('space', { path: '/:id' }, function() {
-    this.route('channel', { path: '/channel/:slug' }, function() {
-      this.route('settings');
-      this.route('shares');
-    });
-    this.route('user-channel', { path: '/user/:slug' });
+  this.route('channel', { path: '/channel/:slug' }, function() {
+    this.route('settings');
+    this.route('shares');
   });
+  this.route('user-channel', { path: '/user/:slug' });
 
   this.route('settings');
   this.route('welcome');

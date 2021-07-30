@@ -154,7 +154,7 @@ export default class SockethubXmppService extends Service {
    * @public
    */
   transferMessage (target, content) {
-    const channel = this.coms.getChannel(target);
+    const channel = this.coms.getChannel(target['@id']);
     const message = buildMessageObject(channel.account, target, content);
 
     this.log('send', 'sending message job', message);
@@ -227,7 +227,7 @@ export default class SockethubXmppService extends Service {
 
     if (message.target['@type'] === 'room') {
       channel = this.coms.channels.findBy('sockethubChannelId', targetChannelId);
-      // TODO
+      // TODO Find account for new channel by sockerhubPersonId
       console.warn('Received message for unknown channel', message);
       // if (!channel) {
       //   channel = this.coms.createChannel(space, targetChannelId);

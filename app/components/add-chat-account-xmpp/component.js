@@ -65,7 +65,9 @@ export default class AddChatAccountXmppComponent extends Component {
       'kosmos-random@kosmos.chat'
     ];
 
-    defaultChannels.forEach(name => this.coms.createChannel(account, name));
+    defaultChannels.forEach(name => {
+      this.coms.createChannel(account, name, { saveConfig: true })
+    });
   }
 
   @action
