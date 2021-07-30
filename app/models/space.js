@@ -1,15 +1,13 @@
-import { alias, sort } from '@ember/object/computed';
 import { A } from '@ember/array';
-import { tracked } from '@glimmer/tracking';
 
-class Server {
-  @tracked hostname = null;
-  @tracked port = 7000;
-  @tracked secure = true;
-  @tracked nickServ = {
-    password: null
-  };
-}
+// class Server {
+//   @tracked hostname = null;
+//   @tracked port = 7000;
+//   @tracked secure = true;
+//   @tracked nickServ = {
+//     password: null
+//   };
+// }
 
 export default class Space {
 
