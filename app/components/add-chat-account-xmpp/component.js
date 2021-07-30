@@ -42,7 +42,7 @@ export default class AddChatAccountXmppComponent extends Component {
       this.xmpp.sockethub.socket.offAny();
 
       const account = await this.addAccount();
-      await this.addDefaultChannels(account);
+      this.addDefaultChannels(account);
 
       // this.router.transitionTo('channel', /* welcome channel */);
     }
@@ -59,15 +59,13 @@ export default class AddChatAccountXmppComponent extends Component {
     return this.storage.saveAccount(account).then(() => account);
   }
 
-  async addDefaultChannels (account) {
-    // const defaultChannels = [
-    //   'kosmos@kosmos.chat',
-    //   'kosmos-random@kosmos.chat'
-    // ];
+  addDefaultChannels (account) {
+    const defaultChannels = [
+      'kosmos@kosmos.chat',
+      'kosmos-random@kosmos.chat'
+    ];
 
-    // this.coms.instantiateChannels(space, defaultChannels);
-
-    return true;
+    defaultChannels.forEach(name => this.coms.createChannel(account, name));
   }
 
   @action

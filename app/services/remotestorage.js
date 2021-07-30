@@ -60,13 +60,19 @@ export default class RemotestorageService extends Service {
 
   saveAccount (account) {
     return this.rs.kosmos.accounts.storeConfig(account.serialize())
-      .then(() => console.debug('[remotestorage]', `saved account ${account.id}`))
+      .then(() => console.debug(`saved account ${account.id}`))
       .catch(err => console.error('saving account failed:', err));
   }
 
   removeAccount (account) {
     return this.rs.kosmos.accounts.remove(account.id)
-      .then(() => console.debug('[remotestorage]', `removed account ${account.id} from RS`));
+      .then(() => console.debug(`removed account ${account.id}`));
+  }
+
+  saveChannel (channel) {
+    return this.rs.kosmos.channels.store(channel.serialize())
+      .then(() => console.debug(`saved channel ${channel.id}`))
+      .catch(err => console.error('saving channel failed:', err));
   }
 
 }

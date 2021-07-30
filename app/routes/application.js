@@ -30,13 +30,13 @@ export default class ApplicationRoute extends Route {
   }
 
   @action
-  leaveChannel (space, channel) {
-    this.coms.removeChannel(space, channel.name);
+  leaveChannel (channel) {
+    this.coms.removeChannel(channel.name);
 
     // Switch to last channel if the channel parted was currently open
     if (channel.visible) {
-      let lastChannel = space.sortedChannels.lastObject;
-      this.transitionTo('space.channel', space, lastChannel);
+      let lastChannel = this.coms.sortedChannels.lastObject;
+      this.transitionTo('channel', lastChannel);
     }
   }
 

@@ -1,5 +1,5 @@
 import { computed } from '@ember/object';
-import { isPresent } from '@ember/utils';
+import { isEmpty, isPresent } from '@ember/utils';
 import { A } from '@ember/array';
 import { tracked } from '@glimmer/tracking';
 import Message from 'hyperchannel/models/message';
@@ -7,39 +7,62 @@ import moment from 'moment';
 
 export default class BaseChannel {
 
-  @tracked space = null;
+  @tracked account = null;
+  @tracked id = '';
   @tracked name = ''; // e.g. kosmos-dev@kosmos.chat
   @tracked displayName = ''; // e.g. Kosmos Dev
+  @tracked connected = false;
+  @tracked topic = null;
   @tracked userList = A([]);
   @tracked messages = A([]);
-  @tracked connected = false;
-  @tracked sockethubChannelId = null;
-  @tracked topic = null;
   @tracked unreadMessages = false;
   @tracked unreadMentions = false;
   @tracked visible = false; // Current/active channel
 
   constructor (props) {
     Object.assign(this, props);
+
+    if (isEmpty(this.id)) {
+      switch(this.protocol) {
+        case 'XMPP':
+          this.id = this.name;
+          break;
+        case 'IRC':
+          this.id = `${this.name}@${this.account.server.hostname}`;
+          break;
+      }
+    }
   }
 
-  @computed('space.loggedChannels.[]', 'name')
-  get isLogged () {
-    let loggedChannel = this.space.loggedChannels.find((channelName) => {
-      return channelName === this.name;
-    });
+  get protocol () {
+    return this.account.protocol;
+  }
 
-    return isPresent(loggedChannel);
+  get sockethubPersonId () {
+    return this.account.sockethubPersonId;
+  }
+
+  get sockethubChannelId () {
+    let id;
+    switch (this.protocol) {
+      case 'XMPP':
+        id = this.name;
+        break;
+      case 'IRC':
+        id = `${this.account.server.hostname}/${this.name}`;
+        break;
+    }
+    return id;
   }
 
   get slug () {
     // This could be based on server type in the future. E.g. IRC would be
     // server URL, while Campfire would be another id.
-    return this.name.replace(/#/g,'');
+    return this.id.replace(/#/g,'');
   }
 
   get shortName () {
-    switch (this.space.protocol) {
+    switch (this.protocol) {
       case 'IRC':
         return this.name.replace(/#/g,'');
       case 'XMPP':
@@ -50,7 +73,7 @@ export default class BaseChannel {
   }
 
   get mucDomain () {
-    switch (this.space.protocol) {
+    switch (this.protocol) {
       case 'XMPP':
         return this.name.match(/@(.+)$/)[1];
       default:
@@ -77,6 +100,15 @@ export default class BaseChannel {
     });
   }
 
+  @computed('account.loggedChannels.[]', 'name')
+  get isLogged () {
+    let loggedChannel = this.account.loggedChannels.find((channelName) => {
+      return channelName === this.name;
+    });
+
+    return isPresent(loggedChannel);
+  }
+
   addDateHeadline (newMessage) {
     let headlineDate = moment(newMessage.date).startOf('day').toDate();
 
@@ -98,7 +130,7 @@ export default class BaseChannel {
 
     if (!this.visible) {
       this.unreadMessages = true;
-      if (message.content.match(this.space.userNickname)) {
+      if (message.content.match(this.account.nickname)) {
         this.unreadMentions = true;
       }
     }
@@ -112,6 +144,15 @@ export default class BaseChannel {
 
   removeUser(username) {
     this.userList.removeObject(username);
+  }
+
+  serialize () {
+    return {
+      accountId: this.account.id,
+      id: this.id,
+      name: this.name,
+      displayName: this.displayName
+    }
   }
 
 }

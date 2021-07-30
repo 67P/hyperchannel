@@ -81,10 +81,10 @@ export default class SockethubIrcService extends Service {
     this.sockethub.socket.emit('credentials', credentials);
   }
 
-  handleJoinCompleted (space, message) {
-    const channel = space.channels.findBy('sockethubChannelId', message.target['@id']);
+  handleJoinCompleted (message) {
+    const channel = this.coms.channels.findBy('sockethubChannelId', message.target['@id']);
     if (channel) {
-      this.observeChannel(space, channel);
+      this.observeChannel(channel);
     }
   }
 
@@ -246,18 +246,6 @@ export default class SockethubIrcService extends Service {
 
     this.log('irc', 'asking for attendance list', observeMsg);
     this.sockethub.socket.emit('message', observeMsg);
-  }
-
-  /**
-   * Generate a Sockethub Channel ID.
-   *
-   * @param {Space} space
-   * @param {String} channelName - name of the channel
-   * @returns {String} Sockethub channel ID
-   * @public
-   */
-  generateChannelId (space, channelName) {
-    return `${space.server.hostname}/${channelName}`;
   }
 
   /**
