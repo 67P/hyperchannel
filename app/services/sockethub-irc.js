@@ -86,7 +86,7 @@ export default class SockethubIrcService extends Service {
 
   handlePresenceUpdate (message) {
     const hostname = message.target['@id'].match(/(.+)\//)[1];
-    const account = this.coms.account.findBy('server.hostname', hostname);
+    const account = this.coms.accounts.findBy('server.hostname', hostname);
     if (isEmpty(account)) { console.warn('No account for presence update message found.', message); return; }
 
     let channel = this.coms.channels.findBy('sockethubChannelId', message.target['@id']);
