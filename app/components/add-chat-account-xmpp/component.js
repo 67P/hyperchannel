@@ -12,16 +12,22 @@ export default class AddChatAccountXmppComponent extends Component {
   @service('remotestorage') storage;
 
   @tracked username;
-  @tracked host = 'kosmos.org';
+  @tracked hostname = 'kosmos.org';
   @tracked password;
   @tracked connectError = null;
+  @tracked finishedSetup = false;
 
   get userAddress () {
-    return `${this.username}@${this.host}`;
+    return `${this.username}@${this.hostname}`;
   }
 
   async handleConnectStatus (eventName, message) {
-    console.debug('[add-chat-account-xmpp] handleConnectStatus called') // TODO remove
+    console.debug('handleConnectStatus called') // TODO remove
+    if (this.finishedSetup) {
+      // TODO remove when double events fixed
+      console.debug('Account setup already finished, nothing to do')
+      return;
+    }
 
     if (message.context !== 'xmpp' ||
         !['message', 'completed'].includes(eventName)) { return; }
@@ -43,6 +49,7 @@ export default class AddChatAccountXmppComponent extends Component {
 
       const account = await this.addAccount();
       this.addDefaultChannels(account);
+      this.finishedSetup = true;
 
       // this.router.transitionTo('channel', /* welcome channel */);
     }
@@ -72,7 +79,9 @@ export default class AddChatAccountXmppComponent extends Component {
 
   @action
   submitForm (e) {
-    e.preventDefault(); this.connectError = null; this.xmpp.sockethub.socket.onAny(this.handleConnectStatus.bind(this));
+    e.preventDefault();
+    this.connectError = null;
+    this.xmpp.sockethub.socket.onAny(this.handleConnectStatus.bind(this));
     this.xmpp.connectWithCredentials(this.userAddress, this.password);
   }
 

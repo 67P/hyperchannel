@@ -5,10 +5,10 @@
     </label>
     <div class="mb-4 sm:mb-0 sm:col-span-7 flex justify-center items-center">
       <Input id="username" @type="text" @value={{this.username}} name="username"
-             required class="min-w-0" />
+             placeholder="Username" required class="flex-grow min-w-0" />
       <span class="flex-0 mx-1 text-xl">@</span>
-      <Input id="host" @type="text" @value={{this.host}} name="host"
-             required class="min-w-0" />
+      <Input id="hostname" @type="text" @value={{this.hostname}} name="hostname"
+             placeholder="Hostname" required class="flex-grow min-w-0" />
     </div>
     <label for="password" class="sm:col-span-3">
       Password
