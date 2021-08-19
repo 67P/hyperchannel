@@ -9,7 +9,7 @@ export default class ApplicationRoute extends Route {
   @service logger;
   @service coms;
 
-  async beforeModel () {
+  async beforeModel (transition) {
     super.beforeModel(...arguments);
 
     await this.storage.ensureReadiness();
@@ -17,7 +17,8 @@ export default class ApplicationRoute extends Route {
     await this.coms.instantiateAccountsAndChannels();
     this.coms.setupListeners();
 
-    if (!this.coms.onboardingComplete) {
+    if (!this.coms.onboardingComplete &&
+        !transition.intent.url.includes('add-account')) {
       this.transitionTo('welcome');
     }
 
