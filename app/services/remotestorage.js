@@ -75,4 +75,10 @@ export default class RemotestorageService extends Service {
       .catch(err => console.error('saving channel failed:', err));
   }
 
+  removeChannel (channel) {
+    return this.rs.kosmos.channels.remove(channel.account.id, channel.id)
+      .then(() => console.debug(`removed channel ${channel.id}`))
+      .catch(err => console.error('removing channel failed:', err));
+  }
+
 }
