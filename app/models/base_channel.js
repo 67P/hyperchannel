@@ -9,7 +9,7 @@ export default class BaseChannel {
 
   @tracked account = null;
   @tracked id = '';
-  @tracked name = ''; // e.g. kosmos-dev@kosmos.chat
+  @tracked name = ''; // e.g. kosmos-dev@kosmos.chat or #kosmos-dev
   @tracked displayName = ''; // e.g. Kosmos Dev
   @tracked connected = false;
   @tracked topic = null;

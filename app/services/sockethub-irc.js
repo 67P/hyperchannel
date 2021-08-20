@@ -59,7 +59,7 @@ export default class SockethubIrcService extends Service {
   connect (account) {
     this.sockethub.ActivityStreams.Object.create({
       '@id': account.sockethubPersonId,
-      '@type': "person",
+      '@type': 'person',
       displayName: account.nickname
     });
 
@@ -73,8 +73,15 @@ export default class SockethubIrcService extends Service {
       }
     });
 
-    this.log('irc', 'connecting to IRC network', credentials);
+    console.debug('Connecting to IRC network', credentials);
     this.sockethub.socket.emit('credentials', credentials);
+
+    // TODO This is how it should work at some point. At the moment you need
+    // to join a channel in order to connect to a server automatically.
+    // const connectJob = {
+    //   '@type': 'connect', context: 'irc', actor: account.sockethubPersonId
+    // };
+    // this.sockethub.socket.emit('message', connectJob);
   }
 
   handleJoinCompleted (message) {
