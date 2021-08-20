@@ -6,15 +6,15 @@ import extend from 'extend';
 /**
  * Build an activity object for sending to Sockethub
  *
- * @param {Space} space - space model the activity belongs to
+ * @param {Account} account - account model the activity belongs to
  * @param {Object} details - the activity details
  * @returns {Object} the activity object
  * @private
  */
-function buildActivityObject(space, details) {
+function buildActivityObject(account, details) {
   let baseObject = {
     context: 'irc',
-    actor: space.sockethubPersonId
+    actor: account.sockethubPersonId
   };
 
   return extend({}, baseObject, details);
@@ -23,14 +23,14 @@ function buildActivityObject(space, details) {
 /**
  * Build a message object
  *
- * @param space {Space} space model instance
+ * @param account {Account} account instance
  * @param target {String} where to send the message to (channelId)
  * @param content {String} the message itself
  * @param type {String} can be either 'message' or 'me'
  * @returns {Object} the activity object
  */
-function buildMessageObject(space, target, content, type='message') {
-  return buildActivityObject(space, {
+function buildMessageObject(account, target, content, type='message') {
+  return buildActivityObject(account, {
     '@type': 'send',
     target: target,
     object: {
@@ -56,29 +56,32 @@ export default class SockethubIrcService extends Service {
    *   like e.g. `join`
    * @public
    */
-  connect (space) {
-    const actorObject = {
-      '@id': space.sockethubPersonId,
-      '@type': "person",
-      displayName: space.server.nickname
-    };
+  connect (account) {
+    this.sockethub.ActivityStreams.Object.create({
+      '@id': account.sockethubPersonId,
+      '@type': 'person',
+      displayName: account.nickname
+    });
 
-    this.sockethub.ActivityStreams.Object.create(
-      actorObject
-    );
-
-    let credentials = buildActivityObject(space, {
+    const credentials = buildActivityObject(account, {
       object: {
         '@type': 'credentials',
-        nick: space.server.nickname,
-        server: space.server.hostname,
-        port: parseInt(space.server.port, 10),
-        secure: space.server.secure
+        nick: account.nickname,
+        server: account.server.hostname,
+        port: parseInt(account.server.port, 10),
+        secure: account.server.secure
       }
     });
 
-    this.log('irc', 'connecting to IRC network', credentials);
+    console.debug('Connecting to IRC network', credentials);
     this.sockethub.socket.emit('credentials', credentials);
+
+    // TODO This is how it should work at some point. At the moment you need
+    // to join a channel in order to connect to a server automatically.
+    // const connectJob = {
+    //   '@type': 'connect', context: 'irc', actor: account.sockethubPersonId
+    // };
+    // this.sockethub.socket.emit('message', connectJob);
   }
 
   handleJoinCompleted (message) {
@@ -89,23 +92,16 @@ export default class SockethubIrcService extends Service {
   }
 
   handlePresenceUpdate (message) {
-    let hostname;
-    if (typeof message.target === 'object') {
-      hostname = message.target['@id'].match(/(.+)\//)[1];
-    }
+    const hostname = message.target['@id'].match(/(.+)\//)[1];
+    const account = this.coms.accounts.findBy('server.hostname', hostname);
+    if (isEmpty(account)) { console.warn('No account for presence update message found.', message); return; }
 
-    let space = this.coms.spaces.findBy('server.hostname', hostname);
+    let channel = this.coms.channels.findBy('sockethubChannelId', message.target['@id']);
 
-    if (isEmpty(space)) {
-      console.warn('No space for presence update message found.', message);
-      return;
-    }
-
-    let channel = space.channels.findBy('sockethubChannelId', message.target['@id']);
-
+    // TODO document why there might be no channel instance, or remove
     if (isEmpty(channel)) {
-      console.warn('No channel for presence update message found. Creating it.', message);
-      channel = this.coms.createChannel(space, message.target['displayName'], message.target['@id']);
+      console.debug('No channel for presence update message found. Creating it.', message);
+      channel = this.coms.createChannel(account, message.target.displayName, message.target['@id']);
     }
 
     // Hotfix for adding one's own user to the channel and marking it as
@@ -113,7 +109,7 @@ export default class SockethubIrcService extends Service {
     // ATM, Sockethub doesn't send any events or information that we
     // successfully joined a channel. So for now we just assume, if we receive
     // presence updates from other users, we should be in the channel, too.
-    channel.addUser(space.userNickname);
+    channel.addUser(account.nickname);
     channel.connected = true;
 
     channel.addUser(message.actor.displayName);
@@ -123,7 +119,7 @@ export default class SockethubIrcService extends Service {
    * Join a channel/room
    * @public
    */
-  join (space, channel, type) {
+  join (channel, type) {
     switch(type) {
       case 'room':
         this.sockethub.ActivityStreams.Object.create({
@@ -132,7 +128,7 @@ export default class SockethubIrcService extends Service {
           displayName: channel.name
         });
 
-        var joinMsg = buildActivityObject(space, {
+        var joinMsg = buildActivityObject(channel.account, {
           '@type': 'join',
           target: channel.sockethubChannelId,
           object: {}
@@ -151,8 +147,9 @@ export default class SockethubIrcService extends Service {
    * Send a chat message to a channel
    * @public
    */
-  transferMessage (space, target, content) {
-    let message = buildMessageObject(space, target, content);
+  transferMessage (target, content) {
+    const channel = this.coms.getChannel(target['@id']);
+    const message = buildMessageObject(channel.account, target, content);
 
     this.log('send', 'sending message job', message);
     this.sockethub.socket.emit('message', message);
@@ -162,8 +159,9 @@ export default class SockethubIrcService extends Service {
    * Send an action chat message to a channel
    * @public
    */
-  transferMeMessage (space, target, content) {
-    let message = buildMessageObject(space, target, content, 'me');
+  transferMeMessage (target, content) {
+    const channel = this.coms.getChannel(target['@id']);
+    const message = buildMessageObject(channel.account, target, content, 'me');
 
     this.log('send', 'sending message job', message);
     this.sockethub.socket.emit('message', message);
@@ -176,14 +174,14 @@ export default class SockethubIrcService extends Service {
    */
   addMessageToChannel (message) {
     const hostname = message.actor['@id'].match(/.+@(.+)/)[1];
-    const space = this.coms.spaces.findBy('server.hostname', hostname);
+    const account = this.coms.accounts.findBy('server.hostname', hostname);
 
-    if (isEmpty(space)) {
-      console.warn('Could not find space for message', message);
+    if (isEmpty(account)) {
+      console.warn('Could not find account for message', message);
       return;
     }
 
-    const channel = this.getChannelForMessage(space, message);
+    const channel = this.getChannelForMessage(account, message);
     const channelMessage = channelMessageFromSockethubObject(message);
 
     channel.addMessage(channelMessage);
@@ -193,7 +191,7 @@ export default class SockethubIrcService extends Service {
    * Leave a channel
    * @public
    */
-  leave (space, channel) {
+  leave (channel) {
     if (!channel.isUserChannel) {
       // TODO Do we really need to create this room for leaving? It should
       // already have been created when joining.
@@ -203,7 +201,7 @@ export default class SockethubIrcService extends Service {
         displayName: channel.name
       });
 
-      let leaveMsg = buildActivityObject(space, {
+      let leaveMsg = buildActivityObject(channel.account, {
         '@type': 'leave',
         target: channel.sockethubChannelId,
         object: {}
@@ -218,8 +216,8 @@ export default class SockethubIrcService extends Service {
    * Send a channel topic change
    * @public
    */
-  changeTopic (space, channel, topic) {
-    let topicMsg = buildActivityObject(space, {
+  changeTopic (channel, topic) {
+    let topicMsg = buildActivityObject(channel.account, {
       '@type': 'update',
       target: channel.sockethubChannelId,
       object: {
@@ -235,8 +233,8 @@ export default class SockethubIrcService extends Service {
    * Ask for a channel's attendance list (users currently joined)
    * @public
    */
-  observeChannel (space, channel) {
-    let observeMsg = buildActivityObject(space, {
+  observeChannel (channel) {
+    let observeMsg = buildActivityObject(channel.account, {
       '@type': 'observe',
       target: channel.sockethubChannelId,
       object: {
@@ -249,31 +247,31 @@ export default class SockethubIrcService extends Service {
   }
 
   /**
-   * Get the channel for the given space and message.
+   * Get the channel for the given account and message.
    *
-   * @param {Space} space
+   * @param {Account} account
    * @param {Object} message
    * @returns {Channel} channel
    * @public
    */
-  getChannelForMessage (space, message) {
+  getChannelForMessage (account, message) {
     let targetChannelName, channel;
 
-    if (space.userNickname === message.target.displayName) {
-      // direct message
+    if (account.nickname === message.target.displayName) {
+      // Direct message
       targetChannelName = message.actor.displayName || message.actor['@id'];
-
-      channel = space.channels.findBy('name', targetChannelName);
+      channel = this.coms.channels.filterBy('account', account)
+                                  .findBy('name', targetChannelName);
       if (!channel) {
-        channel = this.coms.createUserChannel(space, targetChannelName);
+        channel = this.coms.createUserChannel(account, targetChannelName);
       }
     } else {
-      // channel message
+      // Channel message
       targetChannelName = message.target.displayName;
-
-      channel = space.channels.findBy('name', targetChannelName);
+      channel = this.coms.channels.filterBy('account', account)
+                                  .findBy('name', targetChannelName);
       if (!channel) {
-        channel = this.coms.createChannel(space, targetChannelName);
+        channel = this.coms.createChannel(account, targetChannelName);
       }
     }
 
