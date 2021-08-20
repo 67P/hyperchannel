@@ -1,6 +1,7 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
+import { isPresent } from '@ember/utils';
 
 export default class ApplicationRoute extends Route {
 
@@ -17,8 +18,12 @@ export default class ApplicationRoute extends Route {
     await this.coms.instantiateAccountsAndChannels();
     this.coms.setupListeners();
 
-    if (!this.coms.onboardingComplete &&
-        !transition.intent.url.includes('add-account')) {
+    if (isPresent(transition.intent.url) &&
+        transition.intent.url.includes('add-account')) {
+      return;
+    }
+
+    if (!this.coms.onboardingComplete) {
       this.transitionTo('welcome');
     }
 
