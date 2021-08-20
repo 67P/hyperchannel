@@ -174,7 +174,7 @@ export default class SockethubIrcService extends Service {
    */
   addMessageToChannel (message) {
     const hostname = message.actor['@id'].match(/.+@(.+)/)[1];
-    const account = this.coms.account.findBy('server.hostname', hostname);
+    const account = this.coms.accounts.findBy('server.hostname', hostname);
 
     if (isEmpty(account)) {
       console.warn('Could not find account for message', message);
