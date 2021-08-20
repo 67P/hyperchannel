@@ -369,11 +369,8 @@ export default class ComsService extends Service {
   removeChannel (channelName) {
     const channel = this.channels.findBy('name', channelName);
     this.leaveChannel(channel);
-
     this.channels.removeObject(channel);
-
-    // TODO delete from RS?
-
+    this.storage.removeChannel(channel);
     return channel;
   }
 
