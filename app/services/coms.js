@@ -371,6 +371,17 @@ export default class ComsService extends Service {
     await this.storage.removeChannel(channel);
     return;
   }
+
+  async removeAccount (account) {
+    const channels = this.channels.filterBy('account', account);
+    console.debug(`Removing ${channels.length} channels before removing account:`, channels);
+    for (const channel of channels) {
+      await this.removeChannel(channel);
+    }
+
+    this.accounts.removeObject(account);
+    await this.storage.removeAccount(account);
+    return;
   }
 
   getServiceForSockethubPlatform (protocol) {

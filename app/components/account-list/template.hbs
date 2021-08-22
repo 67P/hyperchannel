@@ -13,6 +13,7 @@
         <h3 class="font-bold">{{account.id}}</h3>
         <p class="text-gray-500 text-sm">{{account.protocol}}</p>
       </div>
+      <button {{on "click" (fn this.deleteAccount account)}} title="Delete"
               class="btn-icon-sm btn-red-hover mr-3">
         <IconTrash />
       </button>
