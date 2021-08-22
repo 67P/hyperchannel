@@ -9,7 +9,7 @@
              class="modal-background fixed top-0 left-0 w-screen h-screen z-10
                     bg-black opacity-50"></div>
         <div class="modal-dialog z-30 my-0 mx-auto rounded-md
-                    bg-white text-gray-800">
+                    bg-white text-gray-800 shadow-2xl">
           {{#if currentModal.body}}
             {{component currentModal.body closeModal=modal.onOutsideClick}}
           {{else}}

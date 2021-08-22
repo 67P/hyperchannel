@@ -8,8 +8,14 @@
 
 <div class="w-full divide-y divide-gray-300">
   {{#each this.coms.accounts as |account|}}
-    <div class="">
-      <h3 class="px-6 py-5">{{account.id}}</h3>
+    <div class="flex items-center">
+      <h3 class="flex-grow px-6 py-5 font-bold">
+        {{account.id}}
+      </h3>
+      <button title="Delete"
+              class="btn-icon-sm btn-red-hover mr-3">
+        <IconTrash />
+      </button>
     </div>
   {{/each}}
 </div>
