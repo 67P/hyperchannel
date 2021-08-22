@@ -11,7 +11,7 @@
         <div class="modal-dialog z-30 my-0 mx-auto rounded-md
                     bg-white text-gray-800">
           {{#if currentModal.body}}
-            {{component currentModal.body}}
+            {{component currentModal.body closeModal=modal.onOutsideClick}}
           {{else}}
             {{component currentModal}}
           {{/if}}
