@@ -16,7 +16,7 @@
 
       <footer>
         <nav>
-          <LinkTo @route="settings"><IconSettings /></LinkTo>
+          <button {{on "click" this.openSettingsModal}}><IconSettings /></button>
         </nav>
       </footer>
     </div>
@@ -28,6 +28,12 @@
 
   {{outlet}}
 
+{{/if}}
+
+{{#if this.showSettingsModal}}
+  <ToElsewhere @named="modal"
+               @send={{hash body=(component "settings-container" onCancel=(fn (mut this.showSettingsModal) false))
+                            onOutsideClick=(fn (mut this.showSettingsModal) false)}} />
 {{/if}}
 
 <ModalTarget />
