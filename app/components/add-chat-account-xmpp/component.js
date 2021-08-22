@@ -51,7 +51,8 @@ export default class AddChatAccountXmppComponent extends Component {
       this.addDefaultChannels(account);
       this.finishedSetup = true;
 
-      // this.router.transitionTo('channel', /* welcome channel */);
+      const firstChannel = this.coms.channels.filterBy('account', account).firstObject;
+      this.router.transitionTo('channel', firstChannel);
     }
   }
 
