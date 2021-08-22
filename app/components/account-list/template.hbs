@@ -9,10 +9,10 @@
 <div class="w-full divide-y divide-gray-300">
   {{#each this.coms.accounts as |account|}}
     <div class="flex items-center">
-      <h3 class="flex-grow px-6 py-5 font-bold">
-        {{account.id}}
-      </h3>
-      <button title="Delete"
+      <div class="flex-grow px-6 py-5">
+        <h3 class="font-bold">{{account.id}}</h3>
+        <p class="text-gray-500 text-sm">{{account.protocol}}</p>
+      </div>
               class="btn-icon-sm btn-red-hover mr-3">
         <IconTrash />
       </button>
