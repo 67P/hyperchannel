@@ -1,0 +1,14 @@
+<div class="flex bg-gray-800 text-white pl-6 pr-3 py-3 rounded-t-md">
+  <h2 class="flex-grow">Accounts</h2>
+  <LinkTo @route="add-account" class="inline-block btn-sm btn-blue flex-none">
+    Add
+  </LinkTo>
+</div>
+
+<div class="w-full divide-y divide-gray-300">
+  {{#each this.coms.accounts as |account|}}
+    <div class="">
+      <h3 class="px-6 py-5">{{account.id}}</h3>
+    </div>
+  {{/each}}
+</div>
