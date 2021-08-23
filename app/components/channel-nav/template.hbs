@@ -2,17 +2,24 @@
     {{will-destroy this.unbindKeyboardShortcuts}}
     class="pt-6">
   {{#each this.coms.groupedChannelsByDomain as |subspace|}}
-    <li class="block relative width-full mb-6">
+    <li class="block relative width-full mb-6 overflow-hidden whitespace-nowrap">
       <h3 class="px-4 mb-2 text-sm opacity-80">{{subspace.domain}}</h3>
       <ul>
         {{#each subspace.channels as |channel|}}
-          <li class="channel {{if channel.connected "connected" "disconnected"}} {{channel.unreadMessagesClass}} {{if channel.visible "active" ""}}">
+          <li class="channel group relative {{if channel.connected "connected" "disconnected"}} {{channel.unreadMessagesClass}} {{if channel.visible "active bg-white bg-opacity-20" ""}}">
             {{#if channel.isUserChannel}}
-              <LinkTo @route="user-channel" @model={{channel}}>{{channel.name}}</LinkTo>
+              <LinkTo @route="user-channel" @model={{channel}} class="hc-sidebar-item">
+                {{channel.name}}
+              </LinkTo>
             {{else}}
-              <LinkTo @route="channel" @model={{channel}}>#&thinsp;{{channel.shortName}}</LinkTo>
+              <LinkTo @route="channel" @model={{channel}} class="hc-sidebar-item">
+                #&thinsp;{{channel.shortName}}
+              </LinkTo>
             {{/if}}
-            <a {{on "click" (fn @onLeaveChannel channel)}} class="leave-channel" title="Leave {{channel.name}}">x</a>
+            <a {{on "click" (fn @onLeaveChannel channel)}} title="Leave {{channel.name}}"
+               class="leave-channel hidden absolute w-7 h-7 leading-7
+                      top-0 right-0 text-center text-white
+                      group-hover:inline-block hover:bg-red-800">x</a>
           </li>
         {{/each}}
       </ul>
@@ -20,5 +27,8 @@
   {{/each}}
 </ul>
 <p>
-  <a {{on "click" this.joinChannel}} class="join-channel" role="button">+</a>
+  <a {{on "click" this.joinChannel}} role="button"
+    class="hc-sidebar-item text-sm cursor-pointer opacity-80 hover:opacity-100">
+    + Add channel
+  </a>
 </p>

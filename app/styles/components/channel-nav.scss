@@ -12,24 +12,6 @@ nav#channels {
     > li {
       > ul {
         li {
-          width: 168px;
-          overflow: hidden;
-          white-space: nowrap;
-
-          &:hover {
-            background-color: rgba(255,255,255,0.2);
-
-            a {
-              &.leave-channel {
-                display: inline-block;
-              }
-            }
-          }
-
-          &.active {
-            background-color: rgba(255,255,255,0.2);
-          }
-
           &.unread-messages {
             a {
               color: lightblue;
@@ -41,38 +23,6 @@ nav#channels {
             }
           }
         }
-      }
-    }
-  }
-
-  a {
-    display: block;
-    padding: 0 1em;
-    height: 1.6em;
-    line-height: 1.6em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    &.join-channel {
-      cursor: pointer;
-      opacity: 0.5;
-    }
-
-    &.leave-channel {
-      position: absolute;
-      display: none;
-      width: 1.6em;
-      height: 1.6em;
-      line-height: 1.6em;
-      right: 0;
-      top: 0;
-      padding: 0;
-      text-align: center;
-      color: #fff;
-
-      &:hover {
-        background-color: darkred;
-        color: #fff;
       }
     }
   }
