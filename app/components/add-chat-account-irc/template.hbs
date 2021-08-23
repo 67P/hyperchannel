@@ -1,30 +1,24 @@
 <form {{on "submit" this.submitForm}}>
   <div class="grid grid-cols-1 gap-2 sm:grid-cols-10 sm:gap-4 sm:items-center mb-8">
-    <label for="hostname" class="sm:col-span-3">
-      Host
-    </label>
+    <label class="sm:col-span-3">Host</label>
     <div class="mb-4 sm:mb-0 sm:col-span-7 flex justify-center items-center">
       <Input id="hostname" @type="text" @value={{this.hostname}} name="hostname"
-             placeholder="Hostname" required class="flex-grow min-w-0" />
+             aria-label="Hostname" placeholder="Hostname" required
+             class="flex-grow min-w-0" />
       <span class="flex-0 mx-1 text-xl">:</span>
       <Input id="port" @type="text" @value={{this.port}} name="port"
-             placeholder="Port" required class="flex-shrink w-40 min-w-0" />
+             aria-label="Port number" placeholder="Port" required
+             class="flex-shrink w-40 min-w-0" />
     </div>
-    <label for="nickname" class="sm:col-span-3">
-      Nickname
-    </label>
+    <label for="nickname" class="sm:col-span-3">Nickname</label>
     <Input id="nickname" @type="text" @value={{this.nickname}} name="nickname"
            required class="sm:col-span-7" />
 
     {{#if this.showCredentialFields}}
-      <label for="username" class="sm:col-span-3">
-        Username
-      </label>
+      <label for="username" class="sm:col-span-3">Username</label>
       <Input id="username" @type="text" @value={{this.username}} name="nickname"
              class="sm:col-span-7" />
-      <label for="password" class="sm:col-span-3">
-        Password
-      </label>
+      <label for="password" class="sm:col-span-3">Password</label>
       <Input id="password" @type="password" @value={{this.password}} name="password"
              class="sm:col-span-7" />
     {{/if}}
@@ -37,7 +31,7 @@
   {{/if}}
 
   <div class="w-full mt-10 sm:flex sm:justify-center">
-    <input type="submit" value="Continue"
+    <input type="submit" value="Continue" aria-label="Continue"
            class="w-full sm:w-1/2 btn-md btn-blue" />
   </div>
 </form>
