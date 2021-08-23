@@ -41,9 +41,9 @@ before_script:
   - cd $HOME/sockethub
   - yarn start 2> /dev/null &
 
-branches:
-  only:
-    - master
+# branches:
+#   only:
+#     - master
 
 script:
   - cd $TRAVIS_BUILD_DIR
