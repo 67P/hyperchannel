@@ -2,11 +2,11 @@ import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { run } from '@ember/runloop';
 
-module('Unit | Controller | space/base_channel', function(hooks) {
+module('Unit | Controller | base_channel', function(hooks) {
   setupTest(hooks);
 
   test('add username mention to message, with empty message', function(assert) {
-    const controller = this.owner.lookup('controller:space/base_channel');
+    const controller = this.owner.lookup('controller:base_channel');
     controller.focusMessageInputField = function () { return true; }
     assert.equal(controller.newMessage, null);
 
@@ -16,7 +16,7 @@ module('Unit | Controller | space/base_channel', function(hooks) {
   });
 
   test('add username mention to message, with existing message', function(assert) {
-    const controller = this.owner.lookup('controller:space/base_channel');
+    const controller = this.owner.lookup('controller:base_channel');
     controller.focusMessageInputField = function () { return true; }
     controller.newMessage = 'hey, wasup?';
 
@@ -27,7 +27,7 @@ module('Unit | Controller | space/base_channel', function(hooks) {
   });
 
   test('add username mention to message, with existing message with username', function(assert) {
-    const controller = this.owner.lookup('controller:space/base_channel');
+    const controller = this.owner.lookup('controller:base_channel');
     controller.focusMessageInputField = function () { return true; }
     controller.newMessage ='toshi: hey, wasup?';
 

@@ -27,16 +27,17 @@ module('Unit | Service | local data', function(hooks) {
     assert.ok(userSettingsStore.getItem instanceof Function);
   });
 
-  test('default values', async function(assert) {
-    const service = this.owner.lookup('service:local-data');
-
-    await service.setDefaultValues();
-
-    const userSettingsStore = service.stores.userSettings;
-    const currentChannel = await userSettingsStore.getItem('currentChannel');
-
-    assert.equal(currentChannel, 'kosmos');
-  });
+  // TODO Re-add when we add new default configs
+  // test('default values', async function(assert) {
+  //   const service = this.owner.lookup('service:local-data');
+  //
+  //   await service.setDefaultValues();
+  //
+  //   const userSettingsStore = service.stores.userSettings;
+  //   const currentChannel = await userSettingsStore.getItem('currentChannel');
+  //
+  //   assert.equal(currentChannel, 'kosmos');
+  // });
 
   test('storing and retrieving values', async function(assert) {
     const service = this.owner.lookup('service:local-data');
