@@ -34,7 +34,8 @@ install:
   - cd sockethub
   - yarn install
   - cd $TRAVIS_BUILD_DIR
-  - npm ci
+  - echo $(pwd)
+  - npm ci --verbose
 
 before_script:
   - cd $HOME/sockethub
