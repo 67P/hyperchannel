@@ -1,31 +1,28 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import Message from 'hyperchannel/models/message';
-import Space from 'hyperchannel/models/space';
 import BaseChannel from 'hyperchannel/models/base_channel';
+import { ircAccount, xmppAccount } from '../../fixtures/accounts';
 import moment from 'moment';
 
 module('Unit | Model | base-channel', function(hooks) {
   setupTest(hooks);
 
-  test('it exists', function(assert) {
-    const model = new BaseChannel();
-    assert.ok(!!model);
-  });
-
   test('#slug', function(assert) {
-    const model = new BaseChannel({ name: '#kosmos-dev' });
+    const model = new BaseChannel({
+      account: ircAccount,
+      name: '#kosmos-dev'
+    });
 
-    assert.ok(model.slug === 'kosmos-dev');
+    assert.equal(model.slug, 'kosmos-dev@irc.libera.chat');
   });
-
 
   //
   // unreadMessagesClass
   //
 
   test('#unreadMessagesClass is null when channel is visible', function(assert) {
-    const channel = new BaseChannel();
+    const channel = new BaseChannel({ account: xmppAccount });
     channel.unreadMessages = true;
     channel.visible = true;
 
@@ -33,7 +30,7 @@ module('Unit | Model | base-channel', function(hooks) {
   });
 
   test('#unreadMessagesClass is null when channel has no unread messages', function(assert) {
-    const channel = new BaseChannel();
+    const channel = new BaseChannel({ account: xmppAccount });
     channel.unreadMessages = false;
     channel.visible = false;
 
@@ -41,7 +38,7 @@ module('Unit | Model | base-channel', function(hooks) {
   });
 
   test('#unreadMessagesClass is correct for unread messages', function(assert) {
-    const channel = new BaseChannel();
+    const channel = new BaseChannel({ account: xmppAccount });
     channel.unreadMessages = true;
     channel.unreadMentions = false;
     channel.visible = false;
@@ -50,7 +47,7 @@ module('Unit | Model | base-channel', function(hooks) {
   });
 
   test('#unreadMessagesClass is correct for unread mentions', function(assert) {
-    const channel = new BaseChannel();
+    const channel = new BaseChannel({ account: xmppAccount });
     channel.unreadMessages = true;
     channel.unreadMentions = true;
     channel.visible = false;
@@ -63,7 +60,7 @@ module('Unit | Model | base-channel', function(hooks) {
   //
 
   test('#sortedMessages returns an empty array if there are no messages', function(assert) {
-    const channel = new BaseChannel();
+    const channel = new BaseChannel({ account: xmppAccount });
 
     assert.ok(Array.isArray(channel.sortedMessages));
     assert.equal(channel.sortedMessages.length, 0);
@@ -74,14 +71,14 @@ module('Unit | Model | base-channel', function(hooks) {
   //
 
   test('#sortedUserList returns an empty array if there are no users', function(assert) {
-    const channel = new BaseChannel();
+    const channel = new BaseChannel({ account: xmppAccount });
 
     assert.ok(Array.isArray(channel.sortedUserList));
     assert.equal(channel.sortedUserList.length, 0);
   });
 
   test('#sortedUserList returns a list of sorted usernames', function(assert) {
-    const channel = new BaseChannel();
+    const channel = new BaseChannel({ account: xmppAccount });
 
     channel.userList = ['silverbucket', 'XioNox', 'raucau', '@operator',
                         'gregkare', 'galfert', '@MrOps', '~TheOwner',
@@ -98,7 +95,7 @@ module('Unit | Model | base-channel', function(hooks) {
   //
 
   test('#addDateHeadline adds a date-headline when none exists yet', function(assert) {
-    const channel = new BaseChannel();
+    const channel = new BaseChannel({ account: xmppAccount });
     channel.addDateHeadline(
       new Message({
         type: 'message-chat',
@@ -113,7 +110,7 @@ module('Unit | Model | base-channel', function(hooks) {
   });
 
   test('#addDateHeadline does not add a date-headline when one exists already', function(assert) {
-    const channel = new BaseChannel();
+    const channel = new BaseChannel({ account: xmppAccount });
 
     channel.messages.pushObject(
       new Message({
@@ -136,54 +133,57 @@ module('Unit | Model | base-channel', function(hooks) {
 
   //
   // isLogged
+  // TODO Re-implement without custom space/network IDs
   //
 
-  test('#isLogged returns true when channel is logged', function(assert) {
-    const space = new Space({ name: 'Freenode' });
-    const channel = new BaseChannel({
-      space: space,
-      name: '#kosmos'
-    });
-
-    assert.ok(channel.isLogged);
-  });
-
-  test('#isLogged returns false when channel is not logged', function(assert) {
-    const space = new Space({ name: 'Freenode' });
-    const channel = new BaseChannel({
-      space: space,
-      name: '#some-random-chan'
-    });
-
-    assert.notOk(channel.isLogged);
-  });
+  // test('#isLogged returns true when channel is logged', function(assert) {
+  //   const channel = new BaseChannel({
+  //     account: xmppAccount,
+  //     name: '#kosmos'
+  //   });
+  //
+  //   assert.ok(channel.isLogged);
+  // });
+  //
+  // test('#isLogged returns false when channel is not logged', function(assert) {
+  //   const channel = new BaseChannel({
+  //     account: xmppAccount,
+  //     name: '#some-random-chan'
+  //   });
+  //
+  //   assert.notOk(channel.isLogged);
+  // });
 
   //
   // addUser
   //
 
   test('#addUser adds a user to the list', function(assert) {
-    const space = new Space({ name: 'Freenode' });
-    const channel = new BaseChannel({
-      space: space,
-      name: '#some-random-chan'
-    });
-
+    const channel = new BaseChannel({ account: xmppAccount });
     channel.addUser('some-random-user');
 
     assert.ok(channel.userList.includes('some-random-user'));
   });
 
   test('#addUser does not add duplicates', function(assert) {
-    const space = new Space({ name: 'Freenode' });
-    const channel = new BaseChannel({
-      space: space,
-      name: '#some-random-chan'
-    });
-
+    const channel = new BaseChannel({ account: xmppAccount });
     channel.addUser('some-random-user');
     channel.addUser('some-random-user');
 
     assert.deepEqual(channel.userList, ['some-random-user']);
+  });
+
+  test('#domain', function(assert) {
+    let channel = new BaseChannel({
+      account: xmppAccount,
+      name: 'kosmos-dev@kosmos.chat'
+    });
+    assert.equal(channel.domain, 'kosmos.chat', 'returns the MUC domain for XMPP channels');
+
+    channel = new BaseChannel({
+      account: ircAccount,
+      name: '#kosmos-dev'
+    });
+    assert.equal(channel.domain, 'irc.libera.chat', 'returns the network/account domain for IRC channels');
   });
 });
