@@ -17,9 +17,7 @@ export default class ChannelNavComponent extends Component {
 
   transitionToRelativeChannel (relativePosition) {
     if (isPresent(this.coms.activeChannel)) {
-      // FIXME Find by MUC/server domain
-      // OLD CODE: const channels = this.coms.activeChannel.space.sortedChannels;
-      const channels = this.coms.sortedChannels;
+      const channels = this.coms.channels.filterBy('account', this.coms.activeChannel.account);
       const currentPosition = channels.indexOf(this.coms.activeChannel);
 
       let edge = channels.length-1;
