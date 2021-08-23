@@ -22,12 +22,14 @@ export default class BaseChannelRoute extends Route {
   model (params) {
     const channel = this.coms.channels.findBy('slug', params.slug);
 
-    // TODO must select acccount automatically (for IRC)
-    // if (!channel) {
-    //   channel = this.createChannelOrUserChannel(account, params.slug);
-    // }
-
-    return channel;
+    if (channel) {
+      return channel;
+      // TODO must select acccount automatically (for IRC)
+      // channel = this.createChannelOrUserChannel(account, params.slug);
+    } else {
+      const firstChannel = this.coms.channels.firstObject;
+      this.router.transitionTo('channel', firstChannel);
+    }
   }
 
   setupController () {

@@ -365,12 +365,23 @@ export default class ComsService extends Service {
     return channel;
   }
 
-  removeChannel (channelName) {
-    const channel = this.channels.findBy('name', channelName);
+  async removeChannel (channel) {
     this.leaveChannel(channel);
     this.channels.removeObject(channel);
-    this.storage.removeChannel(channel);
-    return channel;
+    await this.storage.removeChannel(channel);
+    return;
+  }
+
+  async removeAccount (account) {
+    const channels = this.channels.filterBy('account', account);
+    console.debug(`Removing ${channels.length} channels before removing account:`, channels);
+    for (const channel of channels) {
+      await this.removeChannel(channel);
+    }
+
+    this.accounts.removeObject(account);
+    await this.storage.removeAccount(account);
+    return;
   }
 
   getServiceForSockethubPlatform (protocol) {

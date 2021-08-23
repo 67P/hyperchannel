@@ -37,7 +37,7 @@ export default class ApplicationRoute extends Route {
 
   @action
   leaveChannel (channel) {
-    this.coms.removeChannel(channel.name);
+    this.coms.removeChannel(channel);
 
     // Switch to last channel if the channel parted was currently open
     if (channel.visible) {

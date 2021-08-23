@@ -11,8 +11,13 @@ export default class ApplicationController extends Controller {
 
   @tracked showGlobalMenu = false;
   @tracked showChannelMenu = false;
+  @tracked showSettingsModal = false;
 
   hammerInputClass = Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput;
+
+  get showChatInterface () {
+    return this.currentPath.includes('channel');
+  }
 
   @action
   swipeLeft () {
@@ -45,4 +50,8 @@ export default class ApplicationController extends Controller {
     }
   }
 
+  @action
+  openSettingsModal () {
+    this.showSettingsModal = true;
+  }
 }

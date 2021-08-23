@@ -95,7 +95,7 @@ export default class AddChatAccountIrcComponent extends Component {
     e.preventDefault();
     this.connectError = null;
 
-    this.irc.sockethub.socket.onAny(() => console.debug(...arguments));
+    // this.irc.sockethub.socket.onAny(() => console.debug(...arguments));
 
     // TODO Handle connect status once implemented in Sockethub
     // this.irc.sockethub.socket.on('failure', this.handleConnectFailure.bind(this));

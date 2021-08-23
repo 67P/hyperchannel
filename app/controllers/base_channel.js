@@ -99,8 +99,7 @@ export default class BaseChannelController extends Controller {
 
   @action
   partCommand () {
-    const channelName = this.model.name;
-    this.coms.removeChannel(channelName);
+    this.coms.removeChannel(this.model);
     const lastChannel = this.coms.channels.lastObject;
     if (isPresent(lastChannel)) {
       this.transitionToRoute('channel', lastChannel);
