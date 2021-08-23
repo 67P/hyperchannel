@@ -279,9 +279,8 @@ export default class ComsService extends Service {
 
   async instantiateChannels (account) {
     return this.storage.rs.kosmos.channels.getAll(account.id).then(channelData => {
-      for (const channelName in channelData) {
-        // Additional props in channelData[channelName]
-        this.createChannel(account, channelName);
+      for (const cid in channelData) {
+        this.createChannel(account, channelData[cid].name);
       }
     });
   }
@@ -366,15 +365,23 @@ export default class ComsService extends Service {
     return channel;
   }
 
-  removeChannel (channelName) {
-    const channel = this.channels.findBy('name', channelName);
+  async removeChannel (channel) {
     this.leaveChannel(channel);
-
     this.channels.removeObject(channel);
+    await this.storage.removeChannel(channel);
+    return;
+  }
 
-    // TODO delete from RS?
+  async removeAccount (account) {
+    const channels = this.channels.filterBy('account', account);
+    console.debug(`Removing ${channels.length} channels before removing account:`, channels);
+    for (const channel of channels) {
+      await this.removeChannel(channel);
+    }
 
-    return channel;
+    this.accounts.removeObject(account);
+    await this.storage.removeAccount(account);
+    return;
   }
 
   getServiceForSockethubPlatform (protocol) {
@@ -433,7 +440,12 @@ export default class ComsService extends Service {
       case 'update':
         switch(message.object['@type']) {
           case 'topic':
-            this.updateChannelTopic(message);
+            if (message.actor['@type'] === 'service') {
+              // TODO (could also create a special service room)
+              // this.handleServiceAnnouncement()
+            } else {
+              this.updateChannelTopic(message);
+            }
             break;
           case 'address':
             this.updateUsername(message);

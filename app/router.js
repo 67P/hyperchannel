@@ -13,7 +13,6 @@ Router.map(function() {
   });
   this.route('user-channel', { path: '/user/:slug' });
 
-  this.route('settings');
   this.route('welcome');
   this.route('add-account', function() {});
 });
