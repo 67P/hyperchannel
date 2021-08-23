@@ -5,7 +5,7 @@
 # Hyperchannel (pre-alpha!)
 
 **Hyperchannel** is the unhosted client application of the
-[Kosmos](https://kosmos.org) project. It is based on
+[Kosmos](https://kosmos.org) Chat project. It is based on
 [Ember.js](https://emberjs.com), connecting to IRC/XMPP/etc. via
 [Sockethub](http://sockethub.org) (WebSockets + ActivityStreams), and
 optionally syncing configuration and user data via
@@ -16,6 +16,9 @@ welcome. If you know JavaScript, and ideally even have experience with
 Ember.js, it is easy to hack on any feature imaginable. Check the [GitHub
 issues](https://github.com/67P/hyperchannel/issues) to find things you could
 start implementing right away.
+
+If you have any questions, please feel free to ask
+[in one of our chatrooms](https://wiki.kosmos.org/Main_Page#Chat).
 
 ## Prerequisites
 
@@ -33,12 +36,6 @@ You will need the following things properly installed on your computer.
 * change into the new directory
 * `npm install`
 * https://github.com/sockethub/sockethub/wiki/Installing-Sockethub
-
-### Libsass Bindings
-
-You might need to manually execute:
-
-    node node_modules/broccoli-sass/node_modules/node-sass/scripts/install.js
 
 ## Running / Development
 
