@@ -30,6 +30,8 @@ engines:
     checks:
       TODO:
         enabled: false
+      FIXME:
+        enabled: false
 ratings:
   paths:
     - "app/**/*"
