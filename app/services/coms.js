@@ -85,25 +85,20 @@ export default class ComsService extends Service {
         } else {
           const allAccounts = accountIds.map(id => {
             return this.storage.rs.kosmos.accounts.getConfig(id).then(config => {
+              const properties = {
+                username: config.username,
+                password: config.password,
+                nickname: config.nickname,
+                botkaURL: config.botkaURL,
+                server: config.server
+              }
               let account;
               switch(config.protocol) {
                 case 'XMPP':
-                  account = new XmppAccount({
-                    username: config.username,
-                    password: config.password,
-                    nickname: config.nickname,
-                    botkaURL: config.botkaURL,
-                    server: config.server
-                  });
+                  account = new XmppAccount(properties);
                   break;
                 case 'IRC':
-                  account = new IrcAccount({
-                    username: config.username,
-                    password: config.password,
-                    nickname: config.nickname,
-                    botkaURL: config.botkaURL,
-                    server: config.server
-                  });
+                  account = new IrcAccount(properties);
                   break;
               }
               this.connectServer(account);
