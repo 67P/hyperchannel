@@ -1,4 +1,4 @@
-{{#if this.coms.onboardingComplete}}
+{{#if this.showChatInterface}}
 
   <div class="app-container {{if this.showGlobalMenu "global-menu-open"}} {{if this.showChannelMenu "channel-menu-open"}}"
        {{recognize-gesture "swipeleft" "swiperight" "tap" domEvents=true touchAction="auto" inputClass=this.hammerInputClass}}
@@ -10,14 +10,15 @@
 
       <div class="main">
         <nav id="channels">
-          <ChannelNav @spaces={{this.spaces}}
-                      @onLeaveChannel={{route-action "leaveChannel"}} />
+          <ChannelNav @onLeaveChannel={{route-action "leaveChannel"}} />
         </nav>
       </div>
 
       <footer>
         <nav>
-          <LinkTo @route="settings"><IconSettings /></LinkTo>
+          <button {{on "click" this.openSettingsModal}} type="button">
+            <IconSettings />
+          </button>
         </nav>
       </footer>
     </div>
@@ -29,6 +30,12 @@
 
   {{outlet}}
 
+{{/if}}
+
+{{#if this.showSettingsModal}}
+  <ToElsewhere @named="modal"
+               @send={{hash body=(component "settings-container" onCancel=(fn (mut this.showSettingsModal) false))
+                            onOutsideClick=(fn (mut this.showSettingsModal) false)}} />
 {{/if}}
 
 <ModalTarget />

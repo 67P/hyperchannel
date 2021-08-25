@@ -1,14 +1,15 @@
 <div class="mb-10 border-b border-gray-200">
-  <nav class="tabs -mb-px flex" aria-label="Account type">
-    <button {{on "click" (fn this.chooseAccountType "xmpp")}}
-      class={{if (eq this.accountType "xmpp") "active"}}>
+  <nav class="hc-tabs -mb-px flex" aria-label="Account type">
+    <button class={{if (eq this.accountType "xmpp") "active"}} type="button"
+            {{on "click" (fn this.chooseAccountType "xmpp")}}>
       XMPP
     </button>
-    <button {{on "click" (fn this.chooseAccountType "irc")}}
-      class={{if (eq this.accountType "irc") "active"}}>
+    <button class={{if (eq this.accountType "irc") "active"}} type="button"
+      {{on "click" (fn this.chooseAccountType "irc")}}>
       IRC
     </button>
   </nav>
 </div>
 
-{{component (concat "add-chat-account-" this.accountType)}}
+{{component (concat "add-chat-account-" this.accountType)
+            showCancelButton=this.showCancelButton}}

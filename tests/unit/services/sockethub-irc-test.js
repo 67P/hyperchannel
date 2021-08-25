@@ -1,17 +1,16 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
-import Space from 'hyperchannel/models/space';
 import Channel from 'hyperchannel/models/channel';
+import { ircAccount } from '../../fixtures/accounts';
 
 module('Unit | Service | sockethub irc', function(hooks) {
   setupTest(hooks);
 
   test('#join directly connects a person channel', function(assert) {
     const service = this.owner.lookup('service:sockethub-irc');
-    const space = new Space();
-    const channel = new Channel({ isUserChannel: true });
+    const channel = new Channel({ account: ircAccount, isUserChannel: true });
 
-    service.join(space, channel, 'person');
+    service.join(channel, 'person');
 
     assert.ok(channel.connected);
   });
@@ -40,15 +39,4 @@ module('Unit | Service | sockethub irc', function(hooks) {
   //
   //   service.join(space, channel, 'room');
   // });
-
-  test('#generateChannelId returns a Sockethub channel ID', function(assert) {
-    const service = this.owner.lookup('service:sockethub-irc');
-    const space = new Space({
-      server: {
-        hostname: 'freenode.net'
-      }
-    });
-
-    assert.equal(service.generateChannelId(space, '#random-channel'), 'freenode.net/#random-channel');
-  });
 });

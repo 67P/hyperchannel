@@ -1,10 +1,5 @@
 nav#channels {
-  padding: 1.5rem 0;
-
   li {
-    display: block;
-    position: relative;
-    width: 100%;
     transition: opacity 0.2s linear;
 
     &.disconnected {
@@ -14,34 +9,9 @@ nav#channels {
   }
 
   > ul {
-    list-style: none;
-
     > li {
-      margin-bottom: 1.6em;
-
       > ul {
-        padding: 0 0 0 0;
-        list-style: none;
-
         li {
-          width: 168px;
-          overflow: hidden;
-          white-space: nowrap;
-
-          &:hover {
-            background-color: rgba(255,255,255,0.2);
-
-            a {
-              &.leave-channel {
-                display: inline-block;
-              }
-            }
-          }
-
-          &.active {
-            background-color: rgba(255,255,255,0.2);
-          }
-
           &.unread-messages {
             a {
               color: lightblue;
@@ -55,55 +25,5 @@ nav#channels {
         }
       }
     }
-  }
-
-  a {
-    display: block;
-    padding: 0 1em;
-    height: 1.6em;
-    line-height: 1.6em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    &.join-channel {
-      cursor: pointer;
-      opacity: 0.5;
-    }
-
-    &.leave-channel {
-      position: absolute;
-      display: none;
-      width: 1.6em;
-      height: 1.6em;
-      line-height: 1.6em;
-      right: 0;
-      top: 0;
-      padding: 0;
-      text-align: center;
-      color: #fff;
-
-      &:hover {
-        background-color: darkred;
-        color: #fff;
-      }
-    }
-  }
-
-  h2 {
-    margin-bottom: 0.6rem;
-  }
-
-  h3 {
-    display: block;
-    height: 1.6rem;
-    line-height: 1.6rem;
-    padding: 0 1rem;
-    margin: 0.4rem 0 0.2rem 0;
-    font-size: 0.9rem;
-    opacity: 0.8;
-  }
-
-  h2 + h3 {
-    margin-top: -0.2rem;
   }
 }

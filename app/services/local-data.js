@@ -1,13 +1,11 @@
 import Service from '@ember/service';
 import { isEmpty } from '@ember/utils';
-import config from 'hyperchannel/config/environment';
 import * as localforage from 'localforage';
+// import config from 'hyperchannel/config/environment';
 
 const defaultValues = {
   userSettings: {
-    nickname: null,
-    currentSpace: config.defaultSpaceId,
-    currentChannel: 'kosmos'
+    // nickname: null
   }
 };
 

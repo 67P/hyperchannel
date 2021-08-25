@@ -137,14 +137,6 @@ div#channel {
           transform: translate3d($sidebarWidth, 0, 0);
           transition: transform 0.4s;
         }
-
-        section {
-          padding: 1.5rem 0;
-
-          h2 {
-            padding: 0 1rem;
-          }
-        }
       }
 
       &.channel-menu-open {

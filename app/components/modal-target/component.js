@@ -6,10 +6,10 @@ export default class ModalTargetComponent extends Component {
   modalAnimation () {
     return this.lookup('explode').call(this, {
       pick: '.modal-background',
-      use: ['fade', { maxOpacity: 0.5, duration: 200 }]
+      use: ['fade', { maxOpacity: 0.5, duration: 150 }]
     }, {
       pick: '.modal-dialog',
-      use: ['scale', { duration: 200 }]
+      use: ['scale', { duration: 150 }]
     });
   }
 

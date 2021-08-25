@@ -71,7 +71,6 @@ export default class ChannelContainerComponent extends Component {
   @(task(function * () {
     this.automaticScrollingEnabled = false;
     yield this.coms.loadLastMessages(
-      this.args.channel.space,
       this.args.channel,
       this.args.channel.searchedPreviousLogsUntilDate
     );
@@ -119,8 +118,8 @@ export default class ChannelContainerComponent extends Component {
   }
 
   @action
-  leaveChannel (space, channel) {
-    this.args.onLeaveChannel(space, channel);
+  leaveChannel (channel) {
+    this.args.onLeaveChannel(channel);
   }
 
 }

@@ -15,23 +15,10 @@ export default class ChannelNavComponent extends Component {
     'ctrl+shift+down': 'goNextChannel'
   })
 
-  get activeChannel () {
-    let activeChannel;
-
-    this.args.spaces.forEach(space => {
-      let channel = space.activeChannel;
-      if (isPresent(channel)) {
-        activeChannel = channel;
-      }
-    });
-
-    return activeChannel;
-  }
-
   transitionToRelativeChannel (relativePosition) {
-    if (isPresent(this.activeChannel)) {
-      let channels = this.activeChannel.space.sortedChannels;
-      let currentPosition = channels.indexOf(this.activeChannel);
+    if (isPresent(this.coms.activeChannel)) {
+      const channels = this.coms.channels.filterBy('account', this.coms.activeChannel.account);
+      const currentPosition = channels.indexOf(this.coms.activeChannel);
 
       let edge = channels.length-1;
       let edgeOpposite = 0;
@@ -41,10 +28,10 @@ export default class ChannelNavComponent extends Component {
         [edge, edgeOpposite] = [edgeOpposite, edge];
       }
 
-      let newPosition = currentPosition === edge ? edgeOpposite : currentPosition + relativePosition;
-      let newChannel = channels[newPosition];
+      const newPosition = currentPosition === edge ? edgeOpposite : currentPosition + relativePosition;
+      const newChannel = channels[newPosition];
 
-      this.router.transitionTo('space.channel', newChannel.space, newChannel);
+      this.router.transitionTo('channel', newChannel);
     }
   }
 
@@ -59,19 +46,20 @@ export default class ChannelNavComponent extends Component {
   }
 
   @action
-  joinChannel (space) {
+  joinChannel () {
     let channelName = window.prompt('Join channel');
+    if (isEmpty(channelName)) return;
 
-    if (isEmpty(channelName)) {
-      return;
-    }
+    // TODO let user choose account
+    // (new, proper join-channel dialog)
+    const account = this.coms.activeChannel.account;
 
-    if (space.protocol === 'IRC' && !channelName.match(/^#/)) {
+    if (account.protocol === 'IRC' && !channelName.match(/^#/)) {
       channelName = `#${channelName}`;
     }
-    let channel = this.coms.createChannel(space, channelName);
-    this.storage.saveSpace(space);
-    this.router.transitionTo('space.channel', space, channel);
+
+    const channel = this.coms.createChannel(account, channelName, { saveConfig: true });
+    this.router.transitionTo('channel', channel);
   }
 
   @action

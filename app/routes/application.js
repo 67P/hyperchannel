@@ -1,6 +1,7 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
+import { isPresent } from '@ember/utils';
 
 export default class ApplicationRoute extends Route {
 
@@ -9,13 +10,18 @@ export default class ApplicationRoute extends Route {
   @service logger;
   @service coms;
 
-  async beforeModel () {
+  async beforeModel (transition) {
     super.beforeModel(...arguments);
 
     await this.storage.ensureReadiness();
     await this.localData.setDefaultValues();
-    await this.coms.instantiateSpacesAndChannels();
+    await this.coms.instantiateAccountsAndChannels();
     this.coms.setupListeners();
+
+    if (isPresent(transition.intent.url) &&
+        transition.intent.url.includes('add-account')) {
+      return;
+    }
 
     if (!this.coms.onboardingComplete) {
       this.transitionTo('welcome');
@@ -30,13 +36,13 @@ export default class ApplicationRoute extends Route {
   }
 
   @action
-  leaveChannel (space, channel) {
-    this.coms.removeChannel(space, channel.name);
+  leaveChannel (channel) {
+    this.coms.removeChannel(channel);
 
     // Switch to last channel if the channel parted was currently open
     if (channel.visible) {
-      let lastChannel = space.sortedChannels.lastObject;
-      this.transitionTo('space.channel', space, lastChannel);
+      let lastChannel = this.coms.sortedChannels.lastObject;
+      this.transitionTo('channel', lastChannel);
     }
   }
 

@@ -6,15 +6,15 @@ import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-messag
 /**
  * Build an activity object for sending to Sockethub
  *
- * @param space {Space} space model the activity belongs to
+ * @param account {Account} account model the activity belongs to
  * @param details {Object} the activity details
  * @returns {Object} the activity object
  * @private
  */
-function buildActivityObject(space, details) {
+function buildActivityObject(account, details) {
   let baseObject = {
     context: 'xmpp',
-    actor: space.sockethubPersonId
+    actor: account.sockethubPersonId
   };
 
   return extend({}, baseObject, details);
@@ -23,14 +23,14 @@ function buildActivityObject(space, details) {
 /**
  * Build a message object
  *
- * @param space {Space} space model instance
+ * @param account {Account} account model instance
  * @param target {String} where to send the message to (channelId)
  * @param content {String} the message itself
  * @param type {String} can be either 'message' or 'me'
  * @returns {Object} the activity object
  */
-function buildMessageObject(space, target, content, type='message') {
-  return buildActivityObject(space, {
+function buildMessageObject(account, target, content, type='message') {
+  return buildActivityObject(account, {
     '@type': 'send',
     target: target,
     object: {
@@ -79,13 +79,13 @@ export default class SockethubXmppService extends Service {
   /**
    * @public
    */
-  connect (space) {
-    let actor = space.sockethubPersonId;
+  connect (account) {
+    const actor = account.sockethubPersonId;
 
     this.sockethub.ActivityStreams.Object.create({
       '@id': actor,
       '@type': "person",
-      displayName: space.server.nickname,
+      displayName: account.nickname,
     });
 
     const credentialsJob = {
@@ -93,8 +93,8 @@ export default class SockethubXmppService extends Service {
       context: 'xmpp',
       object: {
         '@type': 'credentials',
-        username: space.server.username,
-        password: space.server.password,
+        username: account.username, // JID
+        password: account.password,
         resource: 'hyperchannel'
       }
     };
@@ -108,11 +108,11 @@ export default class SockethubXmppService extends Service {
     this.sockethub.socket.emit('message', connectJob);
   }
 
-  handleJoinCompleted (space, message) {
+  handleJoinCompleted (message) {
     const channelId = message.target['@id'].split('/')[0];
-    const channel = space.channels.findBy('sockethubChannelId', channelId);
+    const channel = this.coms.channels.findBy('sockethubChannelId', channelId);
     if (channel) {
-      this.observeChannel(space, channel);
+      this.observeChannel(channel);
     } else {
       console.warn('Could not find channel for join message', message);
     }
@@ -121,24 +121,23 @@ export default class SockethubXmppService extends Service {
   /**
    * Join a channel/room
    *
-   * @param {Space} space
    * @param {Channel} channel
    * @param {String} type - Type of channel. Can be "room" or "person".
    * @public
    */
-  join (space, channel, type) {
+  join (channel, type) {
     this.sockethub.ActivityStreams.Object.create({
       '@type': type,
       '@id': channel.sockethubChannelId,
       displayName: channel.name
     });
 
-    let joinMsg = buildActivityObject(space, {
+    let joinMsg = buildActivityObject(channel.account, {
       '@type': 'join',
       actor: {
         '@type': 'person',
-        '@id': space.sockethubPersonId,
-        displayName: space.server.nickname
+        '@id': channel.sockethubPersonId,
+        displayName: channel.account.nickname
       },
       target: {
         '@id': channel.sockethubChannelId,
@@ -154,8 +153,9 @@ export default class SockethubXmppService extends Service {
    * Send a chat message to a channel
    * @public
    */
-  transferMessage (space, target, content) {
-    let message = buildMessageObject(space, target, content);
+  transferMessage (target, content) {
+    const channel = this.coms.getChannel(target['@id']);
+    const message = buildMessageObject(channel.account, target, content);
 
     this.log('send', 'sending message job', message);
     this.sockethub.socket.emit('message', message);
@@ -164,10 +164,7 @@ export default class SockethubXmppService extends Service {
   handlePresenceUpdate (message) {
     if (message.target['@type'] === 'room') {
       const targetChannelId = message.target['@id'];
-      const space = this.coms.spaces.find(function(space) {
-        return space.sockethubChannelIds.includes(targetChannelId);
-      });
-      const channel = space.channels.findBy('sockethubChannelId', targetChannelId);
+      const channel = this.coms.getChannel(targetChannelId);
 
       if (channel) {
         if (message.object.presence === 'offline') {
@@ -187,22 +184,13 @@ export default class SockethubXmppService extends Service {
    * @public
    */
   addMessageToChannel (message) {
-    if (isEmpty(message.object.content)) {
-      return;
-    }
+    if (isEmpty(message.object.content)) return;
 
-    const space = this.getSpaceForMessage(message);
-
-    if (isEmpty(space)) {
-      console.warn('Could not find space for message', message);
-      return;
-    }
-
-    const channel = this.getChannelForMessage(space, message);
+    const channel = this.getChannelForMessage(message);
     const channelMessage = channelMessageFromSockethubObject(message);
 
     // TODO should check for message and update sent status if exists
-    if (channelMessage.nickname !== space.userNickname) {
+    if (channelMessage.nickname !== channel.account.nickname) {
       channel.addMessage(channelMessage);
     }
   }
@@ -210,12 +198,11 @@ export default class SockethubXmppService extends Service {
   /**
    * Ask for a channel's attendance list (users currently joined)
    *
-   * @param {Space} space
    * @param {Channel} channel
    * @public
    */
-  observeChannel (space, channel) {
-    let observeMsg = buildActivityObject(space, {
+  observeChannel (channel) {
+    let observeMsg = buildActivityObject(channel.account, {
       '@type': 'observe',
       target: channel.sockethubChannelId,
       object: {
@@ -228,58 +215,30 @@ export default class SockethubXmppService extends Service {
   }
 
   /**
-   * Generate a Sockethub Channel ID.
+   * Get the channel for the given message.
    *
-   * @param {Space} space
-   * @param {String} channelName - name of the channel
-   * @returns {String} Sockethub channel ID
-   * @public
-   */
-  generateChannelId (space, channelName) {
-    return channelName;
-  }
-
-  /**
-   * Get the space for a given message.
-   *
-   * @param {Object} message
-   * @returns {Space} space
-   * @public
-   */
-  getSpaceForMessage (message) {
-    const targetChannelId = message.target['@id'];
-
-    if (message.target['@type'] === 'room') {
-      return this.coms.spaces.find(function(space) {
-        return space.sockethubChannelIds.includes(targetChannelId);
-      });
-    } else {
-      return this.coms.spaces.findBy('sockethubPersonId', targetChannelId);
-    }
-  }
-
-  /**
-   * Get the channel for the given space and message.
-   *
-   * @param {Space} space
    * @param {Object} message
    * @returns {Channel} channel
    * @public
    */
-  getChannelForMessage (space, message) {
+  getChannelForMessage (message) {
     const targetChannelId = message.target['@id'];
     let channel;
 
     if (message.target['@type'] === 'room') {
-      channel = space.channels.findBy('sockethubChannelId', targetChannelId);
-      if (!channel) {
-        channel = this.coms.createChannel(space, targetChannelId);
-      }
+      channel = this.coms.channels.findBy('sockethubChannelId', targetChannelId);
+      // TODO Find account for new channel by sockerhubPersonId
+      console.warn('Received message for unknown channel', message);
+      // if (!channel) {
+      //   channel = this.coms.createChannel(space, targetChannelId);
+      // }
     } else {
-      channel = space.channels.findBy('sockethubChannelId', message.actor['@id']);
-      if (!channel) {
-        channel = this.coms.createUserChannel(space, message.actor['@id']);
-      }
+      channel = this.coms.channels.findBy('sockethubChannelId', message.actor['@id']);
+      // TODO
+      console.warn('Received message for unknown user channel', message);
+      // if (!channel) {
+      //   channel = this.coms.createUserChannel(space, message.actor['@id']);
+      // }
     }
 
     return channel;

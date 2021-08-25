@@ -1,10 +1,14 @@
-<section id="user-list" class="main" {{did-update this.usersChanged @users}}>
+<section id="user-list" class="main py-6" {{did-update this.usersChanged @users}}>
   {{#if @users}}
-    <h2>{{@users.length}} Online</h2>
+    <h2 class="px-4 mb-2 text-xs uppercase opacity-80">{{@users.length}} Online</h2>
   {{/if}}
   <ul>
     {{#each this.renderedUsers as |username|}}
-      <li><LinkToUsername @username={{username}} /></li>
+      {{#if @allowUserChannels}}
+        <li><LinkToUsername @username={{username}} /></li>
+      {{else}}
+        <li><a class="hc-sidebar-item">{{username}}</a></li>
+      {{/if}}
     {{/each}}
 
     <li class="last-element"></li>

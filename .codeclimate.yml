@@ -30,12 +30,15 @@ engines:
     checks:
       TODO:
         enabled: false
+      FIXME:
+        enabled: false
 ratings:
   paths:
     - "app/**/*"
 exclude_paths:
-  - "tests/**/*"
   - ".eslintrc.js"
   - ".template-lintrc.js"
-  - "scripts/**/*"
   - "config/tailwindcss-config.js"
+  - "release/**/*"
+  - "scripts/**/*"
+  - "tests/**/*"

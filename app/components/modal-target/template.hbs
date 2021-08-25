@@ -1,11 +1,17 @@
 <FromElsewhere @name="modal" as |modal|>
-  <LiquidBind @value={{modal}} @containerless={{true}} @use={{this.modalAnimation}} as |currentModal|>
+  <LiquidBind @value={{modal}}
+              @containerless={{true}}
+              @use={{this.modalAnimation}} as |currentModal|>
     {{#if currentModal}}
-      <div class="modal-container">
-        <div class="modal-background" {{on "click" (fn this.outsideClick currentModal)}} role="button"></div>
-        <div class="modal-dialog">
+      <div class="modal-container fixed top-0 left-0 w-screen h-screen z-20
+                  flex flex-col justify-center">
+        <div {{on "click" (fn this.outsideClick currentModal)}} role="button"
+             class="modal-background fixed top-0 left-0 w-screen h-screen z-10
+                    bg-black opacity-50"></div>
+        <div class="modal-dialog z-30 my-0 mx-auto rounded-md
+                    bg-white text-gray-800 shadow-2xl">
           {{#if currentModal.body}}
-            {{component currentModal.body}}
+            {{component currentModal.body closeModal=modal.onOutsideClick}}
           {{else}}
             {{component currentModal}}
           {{/if}}

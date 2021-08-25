@@ -1,13 +1,16 @@
 import Service, { inject as service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
 import { A } from '@ember/array';
-import Space from 'hyperchannel/models/space';
+import XmppAccount from 'hyperchannel/models/account/xmpp';
+import IrcAccount from 'hyperchannel/models/account/irc';
 import Channel from 'hyperchannel/models/channel';
 import UserChannel from 'hyperchannel/models/user_channel';
 import Message from 'hyperchannel/models/message';
 import config from 'hyperchannel/config/environment';
 import moment from 'moment';
 import { tracked } from '@glimmer/tracking';
+import { computed } from '@ember/object';
+import { sort } from '@ember/object/computed';
 
 /**
  * This service provides the central command interface for communicating with
@@ -25,13 +28,36 @@ export default class ComsService extends Service {
   @service('sockethub-xmpp') xmpp;
 
   /**
-   * A collection of all space model instances
-   * @type {Space[]}
+   * A collection of all account model instances
+   * @type {Account[]}
    */
-  @tracked spaces = null;
+  @tracked accounts = A([]);
+  @tracked channels = A([]);
+
+  channelSorting = ['name'];
+  @sort('channels', 'channelSorting') sortedChannels;
+
+  @computed('channels.@each.domain')
+  get channelDomains () {
+    return this.channels.mapBy('domain').uniq().sort();
+  }
+
+  get groupedChannelsByDomain () {
+    return this.channelDomains.map(domain => {
+      return {
+        domain: domain,
+        channels: this.channels.filterBy('domain', domain).sortBy('name')
+      }
+    });
+  }
+
+  @computed('channels.@each.visible')
+  get activeChannel () {
+    return this.channels.findBy('visible');
+  }
 
   get onboardingComplete() {
-    return isPresent(this.spaces);
+    return isPresent(this.accounts);
   }
 
   /**
@@ -47,37 +73,44 @@ export default class ComsService extends Service {
 
   /**
    * This is called from the application route on app startup. Instantiates,
-   * connects, and joins all either configured/saved or default spaces/channels
+   * connects, and joins all configured/saved or default accounts and channels
    * @public
    */
-  async instantiateSpacesAndChannels () {
-    this.spaces = A([]);
-
+  async instantiateAccountsAndChannels () {
     return new Promise((resolve, reject) => {
-      this.storage.rs.kosmos.spaces.getAll().then(spaceData => {
-        if (isEmpty(Object.keys(spaceData))) {
-          console.debug('No space data found in RS');
-          // this.storage.addDefaultSpace().then((data) => {
-          //   this.connectAndAddSpace(data.space);
-          //   this.instantiateChannels(data.space, data.channels);
+      this.storage.rs.kosmos.accounts.getIds().then(accountIds => {
+        if (isEmpty(accountIds)) {
+          console.debug('No accounts found in RS');
           resolve();
-          // });
         } else {
-          Object.keys(spaceData).forEach((id) => {
-            const space = new Space({
-              id: id,
-              name: spaceData[id].name,
-              protocol: spaceData[id].protocol,
-              server: spaceData[id].server,
-              botkaURL: spaceData[id].botkaURL
+          const allAccounts = accountIds.map(id => {
+            return this.storage.rs.kosmos.accounts.getConfig(id).then(config => {
+              const properties = {
+                username: config.username,
+                password: config.password,
+                nickname: config.nickname,
+                botkaURL: config.botkaURL,
+                server: config.server
+              }
+              let account;
+              switch(config.protocol) {
+                case 'XMPP':
+                  account = new XmppAccount(properties);
+                  break;
+                case 'IRC':
+                  account = new IrcAccount(properties);
+                  break;
+              }
+              this.connectServer(account);
+              this.accounts.pushObject(account);
+              // TODO wait for successful server connection before joining
+              return this.instantiateChannels(account);
             });
-            this.connectAndAddSpace(space);
-            this.instantiateChannels(space, spaceData[id].channels);
           });
-          resolve();
+          Promise.all(allAccounts).then(resolve);
         }
       }, e => {
-        this.log('error', 'couldn\'d load spaces from RS', e);
+        this.log('error', 'couldn\'d load account from RS', e);
         reject();
       });
     });
@@ -87,83 +120,77 @@ export default class ComsService extends Service {
    * Invokes the connect function on the appropriate transport service
    * @public
    */
-  connectServer (space) {
-    this.getServiceForSockethubPlatform(space.protocol)
-        .connect(space);
-  }
-
-  connectAndAddSpace (space) {
-    this.connectServer(space);
-    this.spaces.pushObject(space);
+  connectServer (account) { // JID
+    this.getServiceForSockethubPlatform(account.protocol)
+        .connect(account);
   }
 
   /**
    * Invokes the channel-join function on the appropriate transport service
-   * @param {Space} space
    * @param {Channel} channel
    * @param {String} type - Type of channel. Can be "room" or "person"
    * @public
    */
-  joinChannel (space, channel, type) {
-    this.getServiceForSockethubPlatform(space.protocol)
-        .join(space, channel, type);
+  joinChannel (channel, type) {
+    this.getServiceForSockethubPlatform(channel.protocol)
+        .join(channel, type);
   }
 
   /**
    * Invokes the send-message function on the appropriate transport service
-   * @param {Space} space
    * @param {Channel} channel
    * @param {String} content
    * @public
    */
-  transferMessage (space, channel, content) {
+  transferMessage (channel, content) {
     const target = {
       '@id': channel.sockethubChannelId,
       '@type': channel.isUserChannel ? 'person' : 'room',
       displayName: channel.name
     };
-    this.getServiceForSockethubPlatform(space.protocol)
-        .transferMessage(space, target, content);
+    this.getServiceForSockethubPlatform(channel.protocol)
+        .transferMessage(target, content);
   }
 
   /**
    * Invokes the send-action-message function on the appropriate transport service
    * @public
    */
-  transferMeMessage (space, target, content) {
-    switch (space.protocol) {
+  transferMeMessage (account, target, content) {
+    switch (account.protocol) {
+      case 'XMPP':
+        // TODO implement
+        break;
       case 'IRC':
-        this.irc.transferMeMessage(space, target, content);
+        this.irc.transferMeMessage(target, content);
         break;
     }
   }
 
-  leaveChannel (space, channel) {
-    switch (space.protocol) {
+  leaveChannel (channel) {
+    switch (channel.protocol) {
+      case 'XMPP':
+        // TODO implement
+        break;
       case 'IRC':
-        this.irc.leave(space, channel);
+        this.irc.leave(channel);
         break;
     }
   }
 
-  changeTopic (space, channel, topic) {
-    switch (space.protocol) {
+  changeTopic (channel, topic) {
+    switch (channel.protocol) {
+      case 'XMPP':
+        // TODO implement
+        break;
       case 'IRC':
-        this.irc.changeTopic(space, channel, topic);
+        this.irc.changeTopic(channel, topic);
         break;
     }
   }
 
   updateChannelUserList (message) {
-    let channel;
-    switch(message.context) {
-      case 'irc':
-        channel = this.getChannelById(message.actor['@id']);
-        break;
-      case 'xmpp':
-        channel = this.getChannel(message.target['@id'], message.actor['@id']);
-        break;
-    }
+    const channel = this.getChannel(message.actor['@id']);
 
     if (channel) {
       channel.connected = true;
@@ -174,7 +201,7 @@ export default class ComsService extends Service {
   }
 
   addUserToChannelUserList (message) {
-    const channel = this.getChannelById(message.target['@id']);
+    const channel = this.getChannel(message.target['@id']);
     if (channel) {
       channel.addUser(message.actor.displayName);
     }
@@ -183,47 +210,18 @@ export default class ComsService extends Service {
   removeUserFromChannelUserList (message) {
     // TODO handle user quit leaves (multiple channels)
     // e.g. target is `{ @type: 'service', @id: 'irc.freenode.net' }`
-    const channel = this.getChannelById(message.target['@id']);
+    const channel = this.getChannel(message.target['@id']);
     if (channel) {
       channel.removeUser(message.actor.displayName);
     }
   }
 
-  getChannelById(channelId) {
-    // TODO handle multiple spaces with same hostname:
-    // This method should return an array of channels for all spaces with the
-    // same hostname
-
-    const hostname = channelId.match(/(?:.+@)?(.+?)(?:\/|$)/)[1];
-
-    const space = this.spaces.findBy('server.hostname', hostname);
-
-    if (isEmpty(space)) {
-      console.warn('Could not find space by hostname', hostname);
-      return;
-    }
-
-    const channel = space.channels.findBy('sockethubChannelId', channelId);
-    if (isEmpty(channel)) {
-      console.warn('Could not find channel by sockethubChannelId', channelId);
-      return;
-    }
-
-    return channel;
-  }
-
   /**
-   * @param {String} personId
-   * @param {String} channelId
+   * @param {String} channelId - a Sockethub channel ID
    */
-  getChannel (personId, channelId) {
-    const space = this.spaces.findBy('sockethubPersonId', personId);
-    if (isEmpty(space)) {
-      console.warn('Could not find space by sockethubPersonId', personId);
-      return;
-    }
+  getChannel (channelId) {
+    const channel = this.channels.findBy('sockethubChannelId', channelId);
 
-    const channel = space.channels.findBy('sockethubChannelId', channelId);
     if (isEmpty(channel)) {
       console.warn('Could not find channel by sockethubChannelId', channelId);
       return;
@@ -235,88 +233,75 @@ export default class ComsService extends Service {
   updateUsername (message) {
     if (typeof message.actor === 'object') {
       const actorId = message.actor['@id'];
-      const space = this.spaces.findBy('sockethubPersonId', actorId);
-      if (isPresent(space)) {
-        space.updateUsername(message.target.displayName);
+      const account = this.accounts.findBy('sockethubPersonId', actorId);
+      if (isPresent(account)) {
+        account.updateUsername(message.target.displayName);
       }
+      // TODO update nickname in channels
     }
   }
 
   updateChannelTopic (message) {
-    let hostname;
-    if (typeof message.target === 'object') {
-      hostname = message.target['@id'].match(/(.+)\//)[1];
-    } else if (typeof message.actor === 'string') {
-      hostname = message.actor.match(/.+@(.+)/)[1];
+    let channel = this.getChannel(message.target['@id']);
+
+    if (isEmpty(channel)) {
+      console.warn('No channel for update topic message found.', message);
+      return;
     }
 
-    let space = this.spaces.findBy('server.hostname', hostname);
+    const currentTopic = channel.topic;
+    const newTopic = message.object.topic;
 
-    if (!isEmpty(space)) {
-      let channel = space.channels.findBy('sockethubChannelId', message.target['@id']);
+    channel.topic = newTopic;
 
-      if (isEmpty(channel)) {
-        console.warn('No channel for update topic message found. Creating it.', message);
-        channel = this.createChannel(space, message.target['displayName']);
-      }
-
-      let currentTopic = channel.topic;
-      let newTopic = message.object.topic;
-
-      channel.topic = newTopic;
-
-      if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.visible) {
-        Notification.requestPermission(function() {
-          new Notification(channel.name, {
-            body: `New Topic: ${newTopic}`
-          });
+    if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.visible) {
+      Notification.requestPermission(function() {
+        new Notification(channel.name, {
+          body: `New Topic: ${newTopic}`
         });
+      });
+    }
+
+    // TODO obsolete? if not, name a function for it
+    // let notification = new Message({
+    //   type: 'notification-topic-change',
+    //   date: new Date(message.published),
+    //   nickname: message.actor.displayName,
+    //   content: message.object.topic
+    // });
+    // channel.messages.pushObject(notification);
+  }
+
+  async instantiateChannels (account) {
+    return this.storage.rs.kosmos.channels.getAll(account.id).then(channelData => {
+      for (const cid in channelData) {
+        this.createChannel(account, channelData[cid].name);
       }
-
-      // let notification = new Message({
-      //   type: 'notification-topic-change',
-      //   date: new Date(message.published),
-      //   nickname: message.actor.displayName,
-      //   content: message.object.topic
-      // });
-
-      // channel.messages.pushObject(notification);
-
-    }
-  }
-
-  instantiateChannels (space, channels) {
-    channels.forEach(channelName => this.createChannel(space, channelName));
-  }
-
-  createChannel (space, channelName, channelId = null) {
-    const platform = this.getServiceForSockethubPlatform(space.protocol);
-
-    if (isEmpty(channelId)) {
-      channelId = platform.generateChannelId(space, channelName);
-    }
-
-    const channel = new Channel({
-      space: space,
-      name: channelName,
-      sockethubChannelId: channelId
     });
+  }
 
-    this.joinChannel(space, channel, 'room');
-    space.channels.pushObject(channel);
+  createChannel (account, channelName, options = {}) {
+    const channel = new Channel({
+      account: account,
+      name: channelName,
+      displayName: channelName
+    });
+    this.channels.pushObject(channel);
+    this.joinChannel(channel, 'room');
 
-    // TODO Do we need this on startup? Could overwrite updates from remote.
-    this.storage.saveSpace(space);
+    if (options.saveConfig) {
+      this.storage.saveChannel(channel);
+    }
 
     if (channel.isLogged) {
-      this.loadLastMessages(space, channel, moment.utc(), 2)
+      this.loadLastMessages(channel, moment.utc(), 2)
           .catch(() => { /* TODO nothing to do here? */ });
     }
 
     return channel;
   }
 
-  loadLastMessages (space, channel, date, maximumDays = 14) {
+  loadLastMessages (channel, date, maximumDays = 14) {
     let searchUntilDate;
     if (channel.searchedPreviousLogsUntilDate) {
       searchUntilDate = moment(channel.searchedPreviousLogsUntilDate).subtract(maximumDays, 'days');
@@ -329,14 +314,15 @@ export default class ComsService extends Service {
       return;
     }
 
-    return this.loadArchiveMessages(space, channel, date).catch(() => {
+    return this.loadArchiveMessages(channel, date).catch(() => {
       // didn't find any archive for this day, restart searching for the previous day
-      return this.loadLastMessages(space, channel, date.subtract(1, 'day'));
+      return this.loadLastMessages(channel, date.subtract(1, 'day'));
     });
   }
 
-  loadArchiveMessages (space, channel, date) {
-    let logsUrl = `${config.publicLogsUrl}/${space.name.toLowerCase()}/channels/${channel.slug}/`;
+  async loadArchiveMessages (channel, date) {
+    // TODO move RS documents, make compatible
+    let logsUrl = `${config.publicLogsUrl}/${channel.account.server.hostname.toLowerCase()}/channels/${channel.slug}/`;
         logsUrl += date.format('YYYY/MM/DD');
 
     return fetch(logsUrl).then(res => res.json()).then(archive => {
@@ -360,64 +346,55 @@ export default class ComsService extends Service {
     });
   }
 
-  createUserChannel (space, userName) {
-    const platform = this.getServiceForSockethubPlatform(space.protocol);
-
+  createUserChannel (account, userName) {
     const channel = new UserChannel({
-      space: space,
-      name: userName,
-      sockethubChannelId: platform.generateChannelId(space, userName)
+      account: account,
+      name: userName
     });
 
     // TODO check if this is necesarry for XMPP,
     // because for IRC it is not
-    this.joinChannel(space, channel, "person");
-    space.channels.pushObject(channel);
+    this.joinChannel(channel, "person");
+    this.channels.pushObject(channel);
 
     return channel;
   }
 
-  removeChannel (space, channelName) {
-    const channel = space.channels.findBy('name', channelName);
-    this.leaveChannel(space, channel);
+  async removeChannel (channel) {
+    this.leaveChannel(channel);
+    this.channels.removeObject(channel);
+    await this.storage.removeChannel(channel);
+    return;
+  }
 
-    space.channels.removeObject(channel);
+  async removeAccount (account) {
+    const channels = this.channels.filterBy('account', account);
+    console.debug(`Removing ${channels.length} channels before removing account:`, channels);
+    for (const channel of channels) {
+      await this.removeChannel(channel);
+    }
 
-    this.storage.saveSpace(space);
-
-    return channel;
+    this.accounts.removeObject(account);
+    await this.storage.removeAccount(account);
+    return;
   }
 
   getServiceForSockethubPlatform (protocol) {
-    return this[protocol.dasherize()];
+    return this[protocol.toLowerCase()];
   }
 
   /*
    * @private
    *
    * Handles completed Sockethub actions:
-   *
-   *     - Successfully joined a channel
+   * - Successfully joined a channel
    */
   handleSockethubCompleted (message) {
     this.log(`${message.context}_completed`, message);
 
     switch(message['@type']) {
       case 'join':
-        var space = this.spaces.findBy('sockethubPersonId', message.actor['@id']);
-
-        // try to find space by older sockethubPersonId
-        if (isEmpty(space)) {
-          space = this.spaces.find((space) => {
-            return space.previousSockethubPersonIds.includes(message.actor['@id']);
-          });
-        }
-
-        if (isPresent(space)) {
-          this[message.context].handleJoinCompleted(space, message);
-        } else {
-          console.warn('Could not find space for join message', message);
-        }
+        this[message.context].handleJoinCompleted(message);
         break;
     }
   }
@@ -458,7 +435,12 @@ export default class ComsService extends Service {
       case 'update':
         switch(message.object['@type']) {
           case 'topic':
-            this.updateChannelTopic(message);
+            if (message.actor['@type'] === 'service') {
+              // TODO (could also create a special service room)
+              // this.handleServiceAnnouncement()
+            } else {
+              this.updateChannelTopic(message);
+            }
             break;
           case 'address':
             this.updateUsername(message);

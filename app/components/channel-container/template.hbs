@@ -11,16 +11,16 @@
         {{@channel.formattedTopic}}
       </p>
       <nav id="channel-nav">
-        <LinkTo @route="space.channel.index" @models={{array @space @channel}} {{on "click" (fn this.menu "channel" "show")}}>
+        <LinkTo @route="channel.index" @model={{@channel}} {{on "click" (fn this.menu "channel" "show")}}>
           <IconUsers />
         </LinkTo>
-        <LinkTo @route="space.channel.shares" @models={{array @space @channel}} {{on "click" (fn this.menu "channel" "show")}}>
+        <LinkTo @route="channel.shares" @model={{@channel}} {{on "click" (fn this.menu "channel" "show")}}>
           <IconPaperclip />
         </LinkTo>
-        <LinkTo @route="space.channel.settings" @models={{array @space @channel}} {{on "click" (fn this.menu "channel" "show")}}>
+        <LinkTo @route="channel.settings" @model={{@channel}} {{on "click" (fn this.menu "channel" "show")}}>
           <IconSettings />
         </LinkTo>
-        <a {{on "click" (fn this.leaveChannel @space @channel)}} title="Leave {{@channel.name}}">
+        <a {{on "click" (fn this.leaveChannel @channel)}} title="Leave {{@channel.name}}">
           <IconLogOut />
         </a>
       </nav>
