@@ -1,16 +1,16 @@
 import Service, { inject as service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
 import { A } from '@ember/array';
-import XmppAccount from 'hyperchannel/models/account/xmpp';
-import IrcAccount from 'hyperchannel/models/account/irc';
-import Channel from 'hyperchannel/models/channel';
-import UserChannel from 'hyperchannel/models/user_channel';
-import Message from 'hyperchannel/models/message';
-import config from 'hyperchannel/config/environment';
 import moment from 'moment';
 import { tracked } from '@glimmer/tracking';
 import { computed } from '@ember/object';
 import { sort } from '@ember/object/computed';
+import IrcAccount from 'hyperchannel/models/account/irc';
+import XmppAccount from 'hyperchannel/models/account/xmpp';
+import Channel from 'hyperchannel/models/channel';
+import UserChannel from 'hyperchannel/models/user_channel';
+import Message from 'hyperchannel/models/message';
+import config from 'hyperchannel/config/environment';
 
 /**
  * This service provides the central command interface for communicating with
@@ -32,6 +32,10 @@ export default class ComsService extends Service {
    * @type {Account[]}
    */
   @tracked accounts = A([]);
+  /**
+   * A collection of all channel instances
+   * @type {Channel[] | UserChannel}
+   */
   @tracked channels = A([]);
 
   channelSorting = ['name'];
