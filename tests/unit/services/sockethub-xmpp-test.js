@@ -43,7 +43,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.notOk(channel.userList.includes('walter'));
   });
 
-  test('#getChannelForMessage returns the channel for a given message', function(assert) {
+  test('#findOrCreateChannelForMessage returns the channel for a given message', function(assert) {
     const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
@@ -67,7 +67,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
       }
     };
 
-    assert.equal(service.getChannelForMessage(message), channel);
+    assert.equal(service.findOrCreateChannelForMessage(message), channel);
   });
 
   test('#addMessageToChannel adds the message to the channel', function(assert) {
@@ -97,5 +97,19 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     service.addMessageToChannel(message);
 
     assert.equal(channel.messages.lastObject.content, 'hello world');
+  });
+
+  test('#createUserChannel', function(assert) {
+    const comsService = this.owner.factoryFor('service:coms').create({
+      accounts: [ xmppAccount ]
+    });
+    const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
+
+    const channel = service.createUserChannel(xmppAccount, 'kosmos-dev@kosmos.chat/walter');
+
+    assert.equal(channel.name, 'kosmos-dev@kosmos.chat/walter');
+    assert.equal(channel.displayName, 'walter');
+    assert.ok(channel.isUserChannel);
+    assert.ok(channel.connected);
   });
 });

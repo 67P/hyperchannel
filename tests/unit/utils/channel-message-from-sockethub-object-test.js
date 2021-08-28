@@ -46,6 +46,26 @@ module('Unit | Utility | channel message from sockethub object', function() {
                  new Date('2017-06-14T06:32:42.025Z').toISOString());
   });
 
+  test('it uses the whole JID for XMPP messages without displayName', function(assert) {
+    const message = {
+      actor: { '@id': 'walter@kosmos.org', '@type': 'person' },
+      object: { '@type': 'message', content: 'this is a direct message' }
+    };
+    const result = channelMessageFromSockethubObject(message);
+
+    assert.equal(result.nickname, 'walter@kosmos.org');
+  });
+
+  test('it extracts the nickname from XMPP channel DM actor IDs', function(assert) {
+    const message = {
+      actor: { '@id': 'kosmos-dev@kosmos.chat/walter', '@type': 'person' },
+      object: { '@type': 'message', content: 'this is a direct message' }
+    };
+    const result = channelMessageFromSockethubObject(message);
+
+    assert.equal(result.nickname, 'walter');
+  });
+
   test('it works with the published field being a unix timestamp', function(assert) {
     sockethubMessageObject.published = '1497421962025';
 

@@ -4,13 +4,8 @@
   {{/if}}
   <ul>
     {{#each this.renderedUsers as |username|}}
-      {{#if @allowUserChannels}}
-        <li><LinkToUsername @username={{username}} /></li>
-      {{else}}
-        <li><a class="hc-sidebar-item">{{username}}</a></li>
-      {{/if}}
+      <li><LinkToUsername @username={{username}} @channel={{@channel}}/></li>
     {{/each}}
-
     <li class="last-element"></li>
     <ScrollingObserver @rootElement="#user-list"
                        @rootMargin="200px"

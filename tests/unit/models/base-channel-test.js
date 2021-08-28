@@ -173,17 +173,26 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.deepEqual(channel.userList, ['some-random-user']);
   });
 
-  test('#domain', function(assert) {
+  test('#domain (XMPP)', function(assert) {
     let channel = new BaseChannel({
       account: xmppAccount,
       name: 'kosmos-dev@kosmos.chat'
     });
-    assert.equal(channel.domain, 'kosmos.chat', 'returns the MUC domain for XMPP channels');
+    assert.equal(channel.domain, 'kosmos.chat', 'returns the MUC domain for rooms');
 
     channel = new BaseChannel({
+      account: xmppAccount,
+      isUserChannel: true,
+      name: 'kosmos-dev@kosmos.chat/jimmy'
+    });
+    assert.equal(channel.domain, 'kosmos.chat', 'returns the MUC domain for direct message channels');
+  });
+
+  test('#domain (IRC)', function(assert) {
+    const channel = new BaseChannel({
       account: ircAccount,
       name: '#kosmos-dev'
     });
-    assert.equal(channel.domain, 'irc.libera.chat', 'returns the network/account domain for IRC channels');
+    assert.equal(channel.domain, 'irc.libera.chat', 'returns the network/account domain');
   });
 });

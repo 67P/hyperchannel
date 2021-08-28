@@ -1,17 +1,17 @@
 // import { module, test } from 'qunit';
 // import { setupRenderingTest } from 'ember-qunit';
 // import { render } from '@ember/test-helpers';
-// import hbs from 'htmlbars-inline-precompile';
+// import { hbs } from 'ember-cli-htmlbars';
 //
 // module('Integration | Component | channel-nav', function(hooks) {
 //   setupRenderingTest(hooks);
 //
 //   test('it renders', async function(assert) {
-//     assert.expect(1);
+//     // Set any properties with this.set('myProperty', 'value');
+//     // Handle any actions with this.set('myAction', function(val) { ... });
 //
-//     await render(hbs`{{channel-nav}}`);
+//     await render(hbs`<ChannelNav />`);
 //
-//     assert.dom(this.element).hasText('');
+//     assert.equal(this.element.textContent.trim(), '');
 //   });
 // });
-//

@@ -2,14 +2,22 @@ import { isEmpty } from '@ember/utils';
 import Message from 'hyperchannel/models/message';
 
 export default function channelMessageFromSockethubObject(message) {
-  let channelMessage = new Message({
+  const channelMessage = new Message({
     type: message.object['@type'] === 'me' ? 'message-chat-me' : 'message-chat',
     date: extractDate(message.published),
-    nickname: message.actor.displayName || message.actor['@id'],
+    nickname: extractNickname(message.actor),
     content: message.object.content
   });
-
   return channelMessage;
+}
+
+function extractNickname (actor) {
+  if (actor.displayName) {
+    return actor.displayName;
+  } else {
+    const matchChannelUser = actor['@id'].match(/^.+@.+\/(.*)$/);
+    return matchChannelUser ? matchChannelUser[1] : actor['@id'];
+  }
 }
 
 function extractDate(dateField) {

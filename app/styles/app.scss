@@ -104,6 +104,10 @@ header {
     @apply block px-4 h-7 leading-7
            overflow-hidden overflow-ellipsis
            hover:bg-white hover:bg-opacity-20;
+
+    svg {
+      @apply inline-block h-4 w-4 -mt-0.5;
+    }
   }
 }
 
