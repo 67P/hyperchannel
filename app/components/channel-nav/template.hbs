@@ -10,7 +10,7 @@
             {{#if channel.isUserChannel}}
               {{#if (eq channel.protocol "XMPP")}}
                 <LinkTo @route="user-channel" @model={{channel}} class="hc-sidebar-item">
-                 <IconCornerDownRight @class="ml-2" />&thinsp;{{channel.displayName}}
+                  <IconCornerDownRight @class="ml-2" />&thinsp;{{channel.displayName}}
                 </LinkTo>
               {{else}}
                 <LinkTo @route="user-channel" @model={{channel}} class="hc-sidebar-item">
