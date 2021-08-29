@@ -7,5 +7,6 @@ export const ircAccount = new IrcAccount({
 });
 
 export const xmppAccount = new XmppAccount({
+  nickname: 'jimmy',
   username: 'jimmy@kosmos.org'
 });

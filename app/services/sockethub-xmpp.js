@@ -188,12 +188,17 @@ export default class SockethubXmppService extends Service {
     if (isEmpty(message.object.content)) return;
 
     const channel = this.findOrCreateChannelForMessage(message);
-    const channelMessage = channelMessageFromSockethubObject(message);
 
-    // TODO should check for message and update sent status if exists
-    if (channelMessage.nickname !== channel.account.nickname) {
-      channel.addMessage(channelMessage);
+    // TODO implement message carbons
+    // https://xmpp.org/extensions/xep-0280.html
+    if (message.actor.displayName &&
+       (message.actor.displayName === channel.account.nickname)) {
+      const pendingConfirmed = channel.confirmPendingMessage(message.object.content);
+      if (pendingConfirmed) return;
     }
+
+    const channelMessage = channelMessageFromSockethubObject(message);
+    channel.addMessage(channelMessage);
   }
 
   /**
