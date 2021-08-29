@@ -63,12 +63,10 @@ export default class BaseChannelController extends Controller {
   sendMessage (newMessage) {
     const message = this.createMessage(newMessage, 'message-chat');
 
-    this.coms.transferMessage(
-      this.model,
-      message.content
-    );
+    this.coms.transferMessage(this.model, message.content);
 
     this.model.addMessage(message);
+
     this.newMessage = null;
   }
 
