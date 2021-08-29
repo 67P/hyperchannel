@@ -1,11 +1,12 @@
-<div class="chat-message">
-  <span class="chat-message__username"
-        data-username={{@message.nickname}}
-        onclick={{fn this.usernameClick @message.nickname}}>
+<div class="chat-message break-words">
+  <span data-username={{@message.nickname}}
+        onclick={{fn this.usernameClick @message.nickname}}
+        class="mr-1 font-bold" >
     {{@message.nickname}}:
   </span>
 
-  <time class="chat-message__date" datetime={{this.datetime}} title={{this.dateTitle}}>
+  <time datetime={{this.datetime}} title={{this.dateTitle}}
+        class="block float-right text-sm text-gray-300" >
     {{moment-format @message.date "HH:mm"}}
   </time>
 
