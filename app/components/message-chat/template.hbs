@@ -1,7 +1,7 @@
 <div class="chat-message break-words">
   <span data-username={{@message.nickname}}
         onclick={{fn this.usernameClick @message.nickname}}
-        class="mr-1 font-bold" >
+        class="mr-1 font-bold {{this.pendingClass}}" >
     {{@message.nickname}}:
   </span>
 
@@ -10,7 +10,7 @@
     {{moment-format @message.date "HH:mm"}}
   </time>
 
-  <span class="chat-message__message">
+    <span class="{{this.pendingClass}}">
     {{this.formattedContent}}
   </span>
 </div>

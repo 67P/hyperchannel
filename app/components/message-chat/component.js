@@ -47,6 +47,10 @@ export default class MessageChatComponent extends Component {
     return htmlSafe(out);
   }
 
+  get pendingClass () {
+    return this.args.message.pending ? 'text-gray-500' : '';
+  }
+
   @action
   usernameClick (username) {
     this.args.onUsernameClick(username);
