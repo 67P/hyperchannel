@@ -16,14 +16,20 @@ export default class BaseChannelController extends Controller {
 
   @alias('application.showChannelMenu') showChannelMenu;
 
-  createMessage (message, type) {
-    return new Message({
+  createMessage (content, type) {
+    const message = new Message({
       type: type,
       date: new Date(),
       // TODO  nickname per channel
       nickname: this.model.account.nickname,
-      content: message
+      content: content
     });
+
+    if (this.model.protocol === 'XMPP') {
+      message.pending = true;
+    }
+
+    return message;
   }
 
   @computed('router.currentRouteName')
