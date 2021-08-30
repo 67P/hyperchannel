@@ -1,6 +1,7 @@
 import Service, { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
 import extend from 'extend';
+import UserChannel from 'hyperchannel/models/user_channel';
 import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
 
 /**
@@ -186,7 +187,7 @@ export default class SockethubXmppService extends Service {
   addMessageToChannel (message) {
     if (isEmpty(message.object.content)) return;
 
-    const channel = this.getChannelForMessage(message);
+    const channel = this.findOrCreateChannelForMessage(message);
     const channelMessage = channelMessageFromSockethubObject(message);
 
     // TODO should check for message and update sent status if exists
@@ -221,26 +222,46 @@ export default class SockethubXmppService extends Service {
    * @returns {Channel} channel
    * @public
    */
-  getChannelForMessage (message) {
+  findOrCreateChannelForMessage (message) {
     const targetChannelId = message.target['@id'];
     let channel;
 
     if (message.target['@type'] === 'room') {
       channel = this.coms.channels.findBy('sockethubChannelId', targetChannelId);
+
       // TODO Find account for new channel by sockerhubPersonId
-      console.warn('Received message for unknown channel', message);
-      // if (!channel) {
-      //   channel = this.coms.createChannel(space, targetChannelId);
-      // }
+      if (!channel) {
+        console.warn('Received message for unknown channel', message);
+        // channel = this.coms.createChannel(space, targetChannelId);
+      }
     } else {
       channel = this.coms.channels.findBy('sockethubChannelId', message.actor['@id']);
-      // TODO
-      console.warn('Received message for unknown user channel', message);
-      // if (!channel) {
-      //   channel = this.coms.createUserChannel(space, message.actor['@id']);
-      // }
+
+      if (!channel) {
+        const account = this.coms.accounts.findBy('sockethubPersonId', message.target['@id']);
+        if (!account) console.warn('Received direct message for unknown account', message);
+        channel = this.coms.createUserChannel(account, message.actor['@id']);
+      }
     }
 
+    return channel;
+  }
+
+  /**
+   * Create a direct-message channel
+   *
+   * @param {Account} account
+   * @param {String} sockethub actor ID
+   * @returns {UserChannel} user channel
+   * @public
+   */
+  createUserChannel (account, sockethubActorId) {
+    const channel = new UserChannel({
+      account: account,
+      name: sockethubActorId, // e.g. kosmos-dev@kosmos.chat/jimmy
+      displayName: sockethubActorId.match(/\/(.+)$/)[1],
+      connected: true
+    });
     return channel;
   }
 

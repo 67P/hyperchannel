@@ -1,5 +1,6 @@
 import Service, { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
+import UserChannel from 'hyperchannel/models/user_channel';
 import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
 import extend from 'extend';
 
@@ -275,6 +276,24 @@ export default class SockethubIrcService extends Service {
       }
     }
 
+    return channel;
+  }
+
+  /**
+   * Create a direct-message channel
+   *
+   * @param {Account} account
+   * @param {String} nickname
+   * @returns {UserChannel} user channel
+   * @public
+   */
+  createUserChannel (account, nickname) {
+    const channel = new UserChannel({
+      account: account,
+      name: nickname,
+      displayName: nickname,
+      connected: true
+    });
     return channel;
   }
 

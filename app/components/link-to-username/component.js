@@ -24,4 +24,17 @@ export default class LinkToUsernameComponent extends Component {
     return this.args.username.replace(regex, '');
   }
 
+  get userChannelId () {
+    let id;
+    switch (this.args.channel.protocol) {
+      case 'IRC':
+        id = `${this.usernameWithoutPrefix}@${this.args.channel.domain}`;
+        break;
+      case 'XMPP':
+        id = `${this.args.channel.id}${encodeURIComponent('/')}${this.usernameWithoutPrefix}`;
+        break;
+    }
+    return id;
+  }
+
 }

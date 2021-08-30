@@ -73,7 +73,8 @@ export default class BaseChannel {
   }
 
   get domain () {
-    return this.id.match(/@(.+)$/)[1];
+    const match = this.id.match(/@([^/]+)/);
+    return match[1];
   }
 
   get unreadMessagesClass () {

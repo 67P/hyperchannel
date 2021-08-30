@@ -1,16 +1,15 @@
 import Service, { inject as service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
 import { A } from '@ember/array';
-import XmppAccount from 'hyperchannel/models/account/xmpp';
-import IrcAccount from 'hyperchannel/models/account/irc';
-import Channel from 'hyperchannel/models/channel';
-import UserChannel from 'hyperchannel/models/user_channel';
-import Message from 'hyperchannel/models/message';
-import config from 'hyperchannel/config/environment';
 import moment from 'moment';
 import { tracked } from '@glimmer/tracking';
 import { computed } from '@ember/object';
 import { sort } from '@ember/object/computed';
+import IrcAccount from 'hyperchannel/models/account/irc';
+import XmppAccount from 'hyperchannel/models/account/xmpp';
+import Channel from 'hyperchannel/models/channel';
+import Message from 'hyperchannel/models/message';
+import config from 'hyperchannel/config/environment';
 
 /**
  * This service provides the central command interface for communicating with
@@ -32,6 +31,10 @@ export default class ComsService extends Service {
    * @type {Account[]}
    */
   @tracked accounts = A([]);
+  /**
+   * A collection of all channel instances
+   * @type {Channel[] | UserChannel}
+   */
   @tracked channels = A([]);
 
   channelSorting = ['name'];
@@ -346,24 +349,20 @@ export default class ComsService extends Service {
     });
   }
 
-  createUserChannel (account, userName) {
-    const channel = new UserChannel({
-      account: account,
-      name: userName
-    });
+  createUserChannel (account, name) {
+    const channel = this.getServiceForSockethubPlatform(account.protocol)
+                        .createUserChannel(account, name);
 
-    // TODO check if this is necesarry for XMPP,
-    // because for IRC it is not
-    this.joinChannel(channel, "person");
     this.channels.pushObject(channel);
-
     return channel;
   }
 
   async removeChannel (channel) {
     this.leaveChannel(channel);
     this.channels.removeObject(channel);
-    await this.storage.removeChannel(channel);
+    if (!channel.isUserChannel) {
+      await this.storage.removeChannel(channel);
+    }
     return;
   }
 

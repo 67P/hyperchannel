@@ -8,9 +8,15 @@
         {{#each subspace.channels as |channel|}}
           <li class="channel group relative {{if channel.connected "connected" "disconnected"}} {{channel.unreadMessagesClass}} {{if channel.visible "active bg-white bg-opacity-20" ""}}">
             {{#if channel.isUserChannel}}
-              <LinkTo @route="user-channel" @model={{channel}} class="hc-sidebar-item">
-                {{channel.name}}
-              </LinkTo>
+              {{#if (eq channel.protocol "XMPP")}}
+                <LinkTo @route="user-channel" @model={{channel}} class="hc-sidebar-item">
+                  <IconCornerDownRight @class="ml-2" />&thinsp;{{channel.displayName}}
+                </LinkTo>
+              {{else}}
+                <LinkTo @route="user-channel" @model={{channel}} class="hc-sidebar-item">
+                  {{channel.displayName}}
+                </LinkTo>
+              {{/if}}
             {{else}}
               <LinkTo @route="channel" @model={{channel}} class="hc-sidebar-item">
                 #&thinsp;{{channel.shortName}}

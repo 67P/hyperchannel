@@ -20,12 +20,16 @@ export default class BaseChannelRoute extends Route {
   @alias('localData.stores.userSettings') userSettings;
 
   model (params) {
-    const channel = this.coms.channels.findBy('slug', params.slug);
+    let channel = this.coms.channels.findBy('slug', params.slug);
+    if (channel) return channel;
 
-    if (channel) {
+    const channelId = decodeURIComponent(params.slug);
+    const domain = channelId.match(/@([^/]+)/)[1];
+    const randomChannelForDomain = this.coms.channels.findBy('domain', domain);
+
+    if (randomChannelForDomain) {
+      channel = this.createChannelOrUserChannel(randomChannelForDomain.account, channelId);
       return channel;
-      // TODO must select acccount automatically (for IRC)
-      // channel = this.createChannelOrUserChannel(account, params.slug);
     } else {
       const firstChannel = this.coms.channels.firstObject;
       this.router.transitionTo('channel', firstChannel);
