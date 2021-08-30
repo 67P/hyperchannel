@@ -4,6 +4,7 @@ import { alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import { tracked } from '@glimmer/tracking';
+import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
 
 export default class BaseChannelController extends Controller {
@@ -16,14 +17,23 @@ export default class BaseChannelController extends Controller {
 
   @alias('application.showChannelMenu') showChannelMenu;
 
-  createMessage (message, type) {
-    return new Message({
+  createMessage (content, type) {
+    const message = new Message({
       type: type,
       date: new Date(),
       // TODO  nickname per channel
       nickname: this.model.account.nickname,
-      content: message
+      content: content
     });
+
+    // We only receive our own message from XMPP MUCs (but not DMs)
+    // TODO implement message carbons or another way of verifying sent status
+    if (this.model.protocol === 'XMPP' &&
+       (this.model instanceof Channel)) {
+      message.pending = true;
+    }
+
+    return message;
   }
 
   @computed('router.currentRouteName')
@@ -57,12 +67,10 @@ export default class BaseChannelController extends Controller {
   sendMessage (newMessage) {
     const message = this.createMessage(newMessage, 'message-chat');
 
-    this.coms.transferMessage(
-      this.model,
-      message.content
-    );
+    this.coms.transferMessage(this.model, message.content);
 
     this.model.addMessage(message);
+
     this.newMessage = null;
   }
 

@@ -1,6 +1,7 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import Channel from 'hyperchannel/models/channel';
+import Message from 'hyperchannel/models/message';
 import { xmppAccount } from '../../fixtures/accounts';
 
 module('Unit | Service | sockethub xmpp', function(hooks) {
@@ -97,6 +98,35 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     service.addMessageToChannel(message);
 
     assert.equal(channel.messages.lastObject.content, 'hello world');
+  });
+
+  test('#addMessageToChannel updates pending status when receiving an outgoing message', function(assert) {
+    const channel = new Channel({ account: xmppAccount, name: 'kosmos-dev@kosmos.chat' });
+    const outgoingMessage = new Message({
+      type: 'message-chat',
+      date: new Date(),
+      nickname: 'jimmy',
+      content: 'yo, gang!',
+      pending: true
+    });
+    channel.messages.pushObject(outgoingMessage);
+
+    const comsService = this.owner.factoryFor('service:coms').create({
+      accounts: [ xmppAccount ], channels: [ channel ]
+    });
+    const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
+
+    const message = {
+      actor: { '@id': 'kosmos-dev@kosmos.chat/jimmy', '@type': 'person', displayName: 'jimmy' },
+      target: { '@id': 'kosmos-dev@kosmos.chat', '@type': 'room' },
+      object: { '@type': 'message', content: 'yo, gang!' }
+    };
+
+    service.addMessageToChannel(message);
+
+    assert.equal(channel.messages.filterBy('nickname', 'jimmy').length, 1);
+    assert.equal(channel.messages.lastObject.content, 'yo, gang!');
+    assert.notOk(channel.messages.lastObject.pending);
   });
 
   test('#createUserChannel', function(assert) {

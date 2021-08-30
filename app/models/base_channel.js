@@ -132,6 +132,18 @@ export default class BaseChannel {
     }
   }
 
+  confirmPendingMessage (content) {
+    const message = this.messages.filterBy('pending')
+                                 .findBy('content', content);
+
+    if (isPresent(message)) {
+      message.pending = false;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   addUser(username) {
     if (!this.userList.includes(username)) {
       this.userList.pushObject(username);
