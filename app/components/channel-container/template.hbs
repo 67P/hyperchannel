@@ -18,7 +18,7 @@
           <IconPaperclip />
         </LinkTo>
         <LinkTo @route="channel.settings" @model={{@channel}} {{on "click" (fn this.menu "channel" "show")}}>
-          <IconSettings />
+          <IconInfo />
         </LinkTo>
         <a {{on "click" (fn this.leaveChannel @channel)}} title="Leave {{@channel.name}}">
           <IconLogOut />
