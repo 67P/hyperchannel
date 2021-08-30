@@ -4,6 +4,7 @@ import { alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import { tracked } from '@glimmer/tracking';
+import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
 
 export default class BaseChannelController extends Controller {
@@ -25,7 +26,10 @@ export default class BaseChannelController extends Controller {
       content: content
     });
 
-    if (this.model.protocol === 'XMPP') {
+    // We only receive our own message from XMPP MUCs (but not DMs)
+    // TODO implement message carbons or another way of verifying sent status
+    if (this.model.protocol === 'XMPP' &&
+       (this.model instanceof Channel)) {
       message.pending = true;
     }
 
