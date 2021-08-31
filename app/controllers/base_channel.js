@@ -1,6 +1,5 @@
 import Controller, { inject as controller } from '@ember/controller';
-import { action, computed } from '@ember/object';
-import { alias } from '@ember/object/computed';
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import { tracked } from '@glimmer/tracking';
@@ -15,7 +14,9 @@ export default class BaseChannelController extends Controller {
   @service router;
   @service('remotestorage') storage;
 
-  @alias('application.showChannelMenu') showChannelMenu;
+  get showChannelMenu () {
+    return this.application.showChannelMenu;
+  }
 
   createMessage (content, type) {
     const message = new Message({
@@ -36,7 +37,6 @@ export default class BaseChannelController extends Controller {
     return message;
   }
 
-  @computed('router.currentRouteName')
   get sidebarClass () {
     const route = this.router.currentRouteName;
     const wideBars = ['shares', 'settings'].map(r => `channel.${r}`);
