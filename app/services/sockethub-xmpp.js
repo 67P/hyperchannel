@@ -201,6 +201,19 @@ export default class SockethubXmppService extends Service {
     channel.addMessage(channelMessage);
   }
 
+  leave (channel) {
+    if (!channel.isUserChannel) {
+      const leaveMsg = buildActivityObject(channel.account, {
+        '@type': 'leave',
+        target: channel.sockethubChannelId,
+        object: {}
+      });
+
+      this.log('leave', 'leaving channel', leaveMsg);
+      this.sockethub.socket.emit('message', leaveMsg);
+    }
+  }
+
   /**
    * Ask for a channel's attendance list (users currently joined)
    *

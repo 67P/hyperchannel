@@ -173,7 +173,7 @@ export default class ComsService extends Service {
   leaveChannel (channel) {
     switch (channel.protocol) {
       case 'XMPP':
-        // TODO implement
+        this.xmpp.leave(channel);
         break;
       case 'IRC':
         this.irc.leave(channel);
