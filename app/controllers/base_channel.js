@@ -5,6 +5,7 @@ import { isPresent } from '@ember/utils';
 import { tracked } from '@glimmer/tracking';
 import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
+import { capitalize } from '@ember/string';
 
 export default class BaseChannelController extends Controller {
 
@@ -48,7 +49,7 @@ export default class BaseChannelController extends Controller {
     // Do not toggle sidebav on desktop
     if (which.match(/(global|channel)/) && window.innerWidth > 900) return;
 
-    let menuProp = `show${which.capitalize()}Menu`;
+    let menuProp = `show${capitalize(which)}Menu`;
 
     switch(what) {
       case 'show':
