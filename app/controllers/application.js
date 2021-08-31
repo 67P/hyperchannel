@@ -8,6 +8,7 @@ import isDescendantOf from 'hyperchannel/utils/dom/is-descendant-of';
 export default class ApplicationController extends Controller {
 
   @service coms;
+  @service router;
 
   @tracked showGlobalMenu = false;
   @tracked showChannelMenu = false;
@@ -16,7 +17,7 @@ export default class ApplicationController extends Controller {
   hammerInputClass = Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput;
 
   get showChatInterface () {
-    return this.currentPath.includes('channel');
+    return this.router.currentRoute.name.includes('channel');
   }
 
   @action
