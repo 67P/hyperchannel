@@ -171,14 +171,8 @@ export default class ComsService extends Service {
   }
 
   leaveChannel (channel) {
-    switch (channel.protocol) {
-      case 'XMPP':
-        this.xmpp.leave(channel);
-        break;
-      case 'IRC':
-        this.irc.leave(channel);
-        break;
-    }
+    this.getServiceForSockethubPlatform(channel.protocol)
+        .leave(channel);
   }
 
   changeTopic (channel, topic) {
