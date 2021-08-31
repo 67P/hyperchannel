@@ -1,11 +1,11 @@
 import Controller, { inject as controller } from '@ember/controller';
-import { action, computed } from '@ember/object';
-import { alias } from '@ember/object/computed';
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import { tracked } from '@glimmer/tracking';
 import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
+import { capitalize } from '@ember/string';
 
 export default class BaseChannelController extends Controller {
 
@@ -15,7 +15,9 @@ export default class BaseChannelController extends Controller {
   @service router;
   @service('remotestorage') storage;
 
-  @alias('application.showChannelMenu') showChannelMenu;
+  get showChannelMenu () {
+    return this.application.showChannelMenu;
+  }
 
   createMessage (content, type) {
     const message = new Message({
@@ -36,7 +38,6 @@ export default class BaseChannelController extends Controller {
     return message;
   }
 
-  @computed('router.currentRouteName')
   get sidebarClass () {
     const route = this.router.currentRouteName;
     const wideBars = ['shares', 'settings'].map(r => `channel.${r}`);
@@ -48,7 +49,7 @@ export default class BaseChannelController extends Controller {
     // Do not toggle sidebav on desktop
     if (which.match(/(global|channel)/) && window.innerWidth > 900) return;
 
-    let menuProp = `show${which.capitalize()}Menu`;
+    let menuProp = `show${capitalize(which)}Menu`;
 
     switch(what) {
       case 'show':

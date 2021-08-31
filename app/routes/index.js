@@ -1,12 +1,14 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import { alias } from '@ember/object/computed';
 
 export default class IndexRoute extends Route {
 
   @service localData;
   @service coms;
-  @alias('localData.stores.userSettings') userSettings;
+
+  get userSettings () {
+    return this.localData.stores.userSettings;
+  }
 
   async redirect () {
     const currentChannel = await this.userSettings.getItem('currentChannel');

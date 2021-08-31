@@ -1,7 +1,6 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
-import { alias } from '@ember/object/computed';
 import { scheduleOnce } from '@ember/runloop';
 
 function focusMessageInput() {
@@ -17,7 +16,10 @@ export default class BaseChannelRoute extends Route {
   @service router;
   @service coms;
   @service localData;
-  @alias('localData.stores.userSettings') userSettings;
+
+  get userSettings () {
+    return this.localData.stores.userSettings;
+  }
 
   model (params) {
     let channel = this.coms.channels.findBy('slug', params.slug);
