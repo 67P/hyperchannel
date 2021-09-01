@@ -194,14 +194,6 @@ export default class SockethubIrcService extends Service {
    */
   leave (channel) {
     if (!channel.isUserChannel) {
-      // TODO Do we really need to create this room for leaving? It should
-      // already have been created when joining.
-      this.sockethub.ActivityStreams.Object.create({
-        '@type': "room",
-        '@id': channel.sockethubChannelId,
-        displayName: channel.name
-      });
-
       let leaveMsg = buildActivityObject(channel.account, {
         '@type': 'leave',
         target: channel.sockethubChannelId,

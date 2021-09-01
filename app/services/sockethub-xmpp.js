@@ -174,6 +174,19 @@ export default class SockethubXmppService extends Service {
           channel.addUser(message.actor.displayName);
         }
       }
+    } else if (message.actor['@type'] === 'person' && message.actor['@id'].match(/\/(.+)$/)) {
+      const sockethubActorId = message.actor['@id'];
+      const targetChannelId = sockethubActorId.match(/^(.+)\//)[1];
+      const channel = this.coms.getChannel(targetChannelId);
+      const displayName = sockethubActorId.match(/\/(.+)$/)[1];
+
+      if (channel) {
+        if (message.object.presence === 'unavailable') {
+          channel.removeUser(displayName);
+        } else {
+          channel.addUser(displayName);
+        }
+      }
     } else {
       this.log('xmpp', 'presence update from contact:', message.actor['@id'], message.object.presence, message.object.status);
     }
@@ -199,6 +212,19 @@ export default class SockethubXmppService extends Service {
 
     const channelMessage = channelMessageFromSockethubObject(message);
     channel.addMessage(channelMessage);
+  }
+
+  leave (channel) {
+    if (!channel.isUserChannel) {
+      const leaveMsg = buildActivityObject(channel.account, {
+        '@type': 'leave',
+        target: channel.sockethubChannelId,
+        object: {}
+      });
+
+      this.log('leave', 'leaving channel', leaveMsg);
+      this.sockethub.socket.emit('message', leaveMsg);
+    }
   }
 
   /**
