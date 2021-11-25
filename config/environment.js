@@ -3,7 +3,7 @@
 const fs = require('fs');
 let spacePresets = JSON.parse(fs.readFileSync('config/space-presets.json'));
 
-module.exports = function(environment) {
+module.exports = function (environment) {
   let ENV = {
     modulePrefix: 'hyperchannel',
     environment,
@@ -16,8 +16,8 @@ module.exports = function(environment) {
       },
       EXTEND_PROTOTYPES: {
         // Prevent Ember Data from overriding Date.parse.
-        Date: false
-      }
+        Date: false,
+      },
     },
     APP: {
       // Here you can pass flags/options to your application instance
@@ -26,7 +26,7 @@ module.exports = function(environment) {
     sockethubURL: 'http://localhost:10550',
     publicLogsUrl: 'https://storage.5apps.com/kosmos/public/chat-messages',
     spacePresets: spacePresets,
-    defaultSpaceId: 'freenode'
+    defaultSpaceId: 'freenode',
   };
 
   if (environment === 'development') {
