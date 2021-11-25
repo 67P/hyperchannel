@@ -46,7 +46,7 @@ export default class BaseChannelRoute extends Route {
 
   @action
   async didTransition () {
-    const channel = this.controller.model;
+    const channel = this.modelFor(this.routeName);
 
     await this.userSettings.setItem('currentChannel', channel.slug);
 
@@ -59,11 +59,6 @@ export default class BaseChannelRoute extends Route {
     // Mark unread messages as read
     channel.unreadMessages = false;
     channel.unreadMentions = false;
-  }
-
-  @action
-  menu (which, what) {
-    this.controller.send('menu', which, what);
   }
 
 }
