@@ -11,17 +11,21 @@ export default class DateHeadlineComponent extends Component {
 
   updateInterval = 120000; // 2 minutes
 
-  @action
-  scheduleUpdate () {
-    const date = moment(this.args.message.date);
+  setHeadline (messageDate) {
+    const date = moment(messageDate);
 
     if (date.isSame(moment(), 'day')) {
       this.headline = 'Today';
     } else if (date.isSame(moment().subtract(1, 'day'), 'day')) {
       this.headline = 'Yesterday';
     } else {
-      this.headline = this.args.message.date.toLocaleDateString();
+      this.headline = messageDate.toLocaleDateString();
     }
+  }
+
+  @action
+  scheduleUpdate () {
+    this.setHeadline(this.args.message.date);
 
     // don't schedule updates during testing, because it makes the tests time out
     if (config.environment === 'test') return;
