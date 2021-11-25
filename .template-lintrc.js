@@ -9,12 +9,4 @@ module.exports = {
     'no-duplicate-landmark-elements': false,
     'require-input-label': 'warn'
   },
-
-  ignore: [
-    'hyperchannel/templates/components/**',
-    'app/templates/components/**'
-  ],
-
-  pending: [
-  ]
 };
