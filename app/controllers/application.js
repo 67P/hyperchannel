@@ -55,4 +55,15 @@ export default class ApplicationController extends Controller {
   openSettingsModal () {
     this.showSettingsModal = true;
   }
+
+  @action
+  leaveChannel (channel) {
+    this.coms.removeChannel(channel);
+
+    // Switch to last channel if the channel parted was currently open
+    if (channel.visible) {
+      let lastChannel = this.coms.sortedChannels.lastObject;
+      this.router.transitionTo('channel', lastChannel);
+    }
+  }
 }

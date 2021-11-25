@@ -67,7 +67,6 @@
     "ember-moment": "^8.0.1",
     "ember-qunit": "^5.1.4",
     "ember-resolver": "^8.0.0",
-    "ember-route-action-helper": "^2.0.8",
     "ember-service-worker": "^0.8.4",
     "ember-sinon": "^5.0.0",
     "ember-sinon-qunit": "^5.0.0",
