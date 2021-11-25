@@ -32,10 +32,4 @@
 
 {{/if}}
 
-{{#if this.showSettingsModal}}
-  <ToElsewhere @named="modal"
-               @send={{hash body=(component "settings-container" onCancel=(fn (mut this.showSettingsModal) false))
-                            onOutsideClick=(fn (mut this.showSettingsModal) false)}} />
-{{/if}}
-
-<ModalTarget />
+<EpmModalContainer />

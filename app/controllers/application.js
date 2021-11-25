@@ -9,10 +9,10 @@ export default class ApplicationController extends Controller {
 
   @service coms;
   @service router;
+  @service modals;
 
   @tracked showGlobalMenu = false;
   @tracked showChannelMenu = false;
-  @tracked showSettingsModal = false;
 
   hammerInputClass = Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput;
 
@@ -53,7 +53,7 @@ export default class ApplicationController extends Controller {
 
   @action
   openSettingsModal () {
-    this.showSettingsModal = true;
+    this.modals.open('settings-container');
   }
 
   @action
