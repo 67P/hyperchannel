@@ -3,8 +3,6 @@ import { isPresent, isEmpty } from '@ember/utils';
 import { A } from '@ember/array';
 import moment from 'moment';
 import { tracked } from '@glimmer/tracking';
-import { computed } from '@ember/object';
-import { sort } from '@ember/object/computed';
 import IrcAccount from 'hyperchannel/models/account/irc';
 import XmppAccount from 'hyperchannel/models/account/xmpp';
 import Channel from 'hyperchannel/models/channel';
@@ -37,10 +35,10 @@ export default class ComsService extends Service {
    */
   @tracked channels = A([]);
 
-  channelSorting = ['name'];
-  @sort('channels', 'channelSorting') sortedChannels;
+  get sortedChannels () {
+    return this.channels.sortBy('name');
+  }
 
-  @computed('channels.@each.domain')
   get channelDomains () {
     return this.channels.mapBy('domain').uniq().sort();
   }
@@ -54,7 +52,6 @@ export default class ComsService extends Service {
     });
   }
 
-  @computed('channels.@each.visible')
   get activeChannel () {
     return this.channels.findBy('visible');
   }
