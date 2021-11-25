@@ -1,0 +1,12 @@
+.epm-backdrop {
+  @apply z-30;
+}
+
+.epm-modal-container {
+  @apply z-40;
+}
+
+.epm-modal {
+  @apply z-50 my-0 mx-auto rounded-md
+         bg-white text-gray-800 shadow-2xl;
+}

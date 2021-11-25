@@ -58,6 +58,7 @@
 
 @media screen and (max-width: 900px) {
   #global {
+    @apply z-10;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -65,7 +66,6 @@
     width: 168px;
     transform: translate3d(-168px, 0, 0);
     transition: transform 0.4s;
-    z-index: 10000;
 
     .main {
       position: absolute;
@@ -109,8 +109,8 @@ div#channel {
       overflow: hidden;
 
       > .content {
+        @apply z-10;
         flex: 1;
-        z-index: 1;
         @include app-column;
 
         @include media("<desktop") {
@@ -127,6 +127,7 @@ div#channel {
         }
 
         @include media("<desktop") {
+          @apply z-0;
           flex: 0;
           position: absolute;
           top: $headerHeight;
