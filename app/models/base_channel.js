@@ -1,7 +1,6 @@
-import { computed } from '@ember/object';
 import { isEmpty, isPresent } from '@ember/utils';
 import { A } from '@ember/array';
-import { tracked } from '@glimmer/tracking';
+import { tracked, cached } from '@glimmer/tracking';
 import Message from 'hyperchannel/models/message';
 import moment from 'moment';
 
@@ -84,19 +83,19 @@ export default class BaseChannel {
     return this.unreadMentions ? 'unread-mentions' : 'unread-messages';
   }
 
-  @computed('messages.@each.date')
+  @cached
   get sortedMessages () {
     return this.messages.sortBy('date');
   }
 
-  @computed('userList.[]')
+  @cached
   get sortedUserList () {
     return this.userList.sort(function (a, b) {
       return a.toLowerCase().localeCompare(b.toLowerCase());
     });
   }
 
-  @computed('account.loggedChannels.[]', 'name')
+  @cached
   get isLogged () {
     let loggedChannel = this.account.loggedChannels.find((channelName) => {
       return channelName === this.name;

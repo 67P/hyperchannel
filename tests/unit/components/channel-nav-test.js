@@ -6,21 +6,19 @@ import Channel from 'hyperchannel/models/channel';
 import createComponent from 'hyperchannel/tests/helpers/create-component';
 import { ircAccount } from '../../fixtures/accounts';
 
-const routerStub = Service.extend({
-  foo: 'bar',
-
+class RouterStub extends Service {
   transitionTo (route, channel) {
     this.currentRoute = route;
     this.currentChannel = channel;
     return true;
   }
-});
+}
 
 module('Unit | Component | channel-nav', function (hooks) {
   setupTest(hooks);
 
   test('switching to next channel', function (assert) {
-    const routerService = routerStub.create();
+    const routerService = new RouterStub();
     const channel1 = new Channel({ account: ircAccount, name: 'channel1', visible: false });
     const channel2 = new Channel({ account: ircAccount, name: 'channel2', visible: true });
     const channel3 = new Channel({ account: ircAccount, name: 'channel3', visible: false });
@@ -45,7 +43,7 @@ module('Unit | Component | channel-nav', function (hooks) {
   });
 
   test('switching to previous channel', function (assert) {
-    const routerService = routerStub.create();
+    const routerService = new RouterStub();
     const channel1 = new Channel({ account: ircAccount, name: 'channel1', visible: false });
     const channel2 = new Channel({ account: ircAccount, name: 'channel2', visible: true });
     const channel3 = new Channel({ account: ircAccount, name: 'channel3', visible: false });

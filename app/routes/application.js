@@ -1,6 +1,5 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
-import { action } from '@ember/object';
 import { isPresent } from '@ember/utils';
 
 export default class ApplicationRoute extends Route {
@@ -34,17 +33,6 @@ export default class ApplicationRoute extends Route {
 
     if (!this.coms.onboardingComplete) {
       this.transitionTo('welcome');
-    }
-  }
-
-  @action
-  leaveChannel (channel) {
-    this.coms.removeChannel(channel);
-
-    // Switch to last channel if the channel parted was currently open
-    if (channel.visible) {
-      let lastChannel = this.coms.sortedChannels.lastObject;
-      this.transitionTo('channel', lastChannel);
     }
   }
 

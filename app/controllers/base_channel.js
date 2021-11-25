@@ -168,4 +168,9 @@ export default class BaseChannelController extends Controller {
     }
   }
 
+  @action
+  leaveChannel (channel) {
+    this.application.leaveChannel(channel);
+  }
+
 }

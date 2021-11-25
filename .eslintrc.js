@@ -22,16 +22,7 @@ module.exports = {
   },
   rules: {
     "no-control-regex": "off",
-    "no-console": ["error", { allow: ["warn", "debug", "error"] }],
-    "ember/no-observers": "warn",
-    "ember/no-jquery": "error",
-    "ember/no-string-prototype-extensions": "warn",
-    "ember/no-controller-access-in-routes": "warn",
-    "ember/no-classic-classes": "warn",
-    "ember/no-computed-properties-in-native-classes": "warn",
-    "ember/require-tagless-components": "warn",
-    "ember/no-assignment-of-untracked-properties-used-in-tracking-contexts": "warn",
-    "ember/no-side-effects": "warn"
+    "no-console": ["error", { allow: ["warn", "debug", "error"] }]
   },
   overrides: [
     // node files
