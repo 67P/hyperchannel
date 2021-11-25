@@ -2,11 +2,11 @@
   <div class="grid grid-cols-1 gap-2 sm:grid-cols-10 sm:gap-4 sm:items-center mb-8">
     <label class="sm:col-span-3">Host</label>
     <div class="mb-4 sm:mb-0 sm:col-span-7 flex justify-center items-center">
-      <Input id="hostname" @type="text" @value={{this.hostname}} name="hostname"
+      <Input @type="text" @value={{this.hostname}} name="hostname"
              aria-label="Hostname" placeholder="Hostname" required
              class="flex-grow min-w-0" />
       <span class="flex-0 mx-1 text-xl">:</span>
-      <Input id="port" @type="text" @value={{this.port}} name="port"
+      <Input @type="text" @value={{this.port}} name="port"
              aria-label="Port number" placeholder="Port" required
              class="flex-shrink w-40 min-w-0" />
     </div>
