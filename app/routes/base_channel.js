@@ -61,9 +61,4 @@ export default class BaseChannelRoute extends Route {
     channel.unreadMentions = false;
   }
 
-  @action
-  menu (which, what) {
-    this.controller.send('menu', which, what);
-  }
-
 }
