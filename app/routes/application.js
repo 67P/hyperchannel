@@ -3,13 +3,12 @@ import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 
 export default class ApplicationRoute extends Route {
-
   @service('remotestorage') storage;
   @service localData;
   @service logger;
   @service coms;
 
-  async beforeModel () {
+  async beforeModel() {
     super.beforeModel(...arguments);
 
     await this.storage.ensureReadiness();
@@ -25,9 +24,11 @@ export default class ApplicationRoute extends Route {
     // this.logger.enable();
   }
 
-  redirect (model, transition) {
-    if (isPresent(transition.intent.url) &&
-        transition.intent.url.includes('add-account')) {
+  redirect(model, transition) {
+    if (
+      isPresent(transition.intent.url) &&
+      transition.intent.url.includes('add-account')
+    ) {
       return;
     }
 
@@ -35,5 +36,4 @@ export default class ApplicationRoute extends Route {
       this.transitionTo('welcome');
     }
   }
-
 }

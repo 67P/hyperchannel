@@ -6,19 +6,32 @@ export function initialize(application) {
   window.remoteStorage = remoteStorage;
 
   const rsEvents = [
-    'ready', 'not-connected', 'connected', 'disconnected', 'error',
-    'features-loaded', 'connecting', 'authing', 'wire-busy', 'wire-done',
-    'network-offline', 'network-online'
+    'ready',
+    'not-connected',
+    'connected',
+    'disconnected',
+    'error',
+    'features-loaded',
+    'connecting',
+    'authing',
+    'wire-busy',
+    'wire-done',
+    'network-offline',
+    'network-online',
   ];
 
-  remoteStorage.on('ready', () => { storage.rsReady = true; });
+  remoteStorage.on('ready', () => {
+    storage.rsReady = true;
+  });
 
-  rsEvents.forEach(evt => {
-    remoteStorage.on(evt, () => console.debug(`[remotestorage] RS event: ${evt}`));
+  rsEvents.forEach((evt) => {
+    remoteStorage.on(evt, () =>
+      console.debug(`[remotestorage] RS event: ${evt}`)
+    );
   });
 }
 
 export default {
   name: 'remotestorage',
-  initialize
+  initialize,
 };

@@ -1,12 +1,14 @@
 import BaseChannel from 'hyperchannel/routes/base_channel';
 
 export default class ChannelRoute extends BaseChannel {
-
-  createChannelOrUserChannel (account, channelId) {
+  createChannelOrUserChannel(account, channelId) {
     let channel;
-    switch(account.protocol) {
+    switch (account.protocol) {
       case 'IRC':
-        channel = this.coms.createChannel(account, '#'+channelId.match(/^(.+)@/)[1]);
+        channel = this.coms.createChannel(
+          account,
+          '#' + channelId.match(/^(.+)@/)[1]
+        );
         break;
       case 'XMPP':
         channel = this.coms.createChannel(account, channelId);
@@ -14,5 +16,4 @@ export default class ChannelRoute extends BaseChannel {
     }
     return channel;
   }
-
 }

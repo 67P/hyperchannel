@@ -3,33 +3,35 @@ import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
 import { action } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
-import { bindKeyboardShortcuts, unbindKeyboardShortcuts } from 'ember-keyboard-shortcuts';
+import {
+  bindKeyboardShortcuts,
+  unbindKeyboardShortcuts,
+} from 'ember-keyboard-shortcuts';
 
 export default class MessageInputComponent extends Component {
-
   @tracked message = '';
 
   keyboardShortcuts = {
-    'tab': 'completeUsername'
+    tab: 'completeUsername',
   };
 
-  setCursorPosition (input, newCursorPosition) {
+  setCursorPosition(input, newCursorPosition) {
     input.focus();
     input.setSelectionRange(newCursorPosition, newCursorPosition);
   }
 
   @action
-  bindKeyboardShortcuts (element) {
+  bindKeyboardShortcuts(element) {
     bindKeyboardShortcuts(this, element);
   }
 
   @action
-  unbindKeyboardShortcuts (element) {
+  unbindKeyboardShortcuts(element) {
     unbindKeyboardShortcuts(this, element);
   }
 
   @action
-  completeUsername () {
+  completeUsername() {
     const input = document.querySelector('input#message-field');
     const message = input.value;
     const cursorPosition = input.selectionStart;
@@ -40,7 +42,7 @@ export default class MessageInputComponent extends Component {
 
     if (isEmpty(searchWord)) return;
 
-    let username = this.args.usernames.find(username => {
+    let username = this.args.usernames.find((username) => {
       return username.toLowerCase().startsWith(searchWord.toLowerCase());
     });
 
@@ -60,7 +62,12 @@ export default class MessageInputComponent extends Component {
 
     // set the cursor right behind the inserted username,
     // but we have to wait for the update of the input first
-    scheduleOnce('afterRender', this, 'setCursorPosition', input, newCursorPosition);
+    scheduleOnce(
+      'afterRender',
+      this,
+      'setCursorPosition',
+      input,
+      newCursorPosition
+    );
   }
-
 }

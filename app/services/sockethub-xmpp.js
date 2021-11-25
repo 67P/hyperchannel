@@ -15,7 +15,7 @@ import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-messag
 function buildActivityObject(account, details) {
   let baseObject = {
     context: 'xmpp',
-    actor: account.sockethubPersonId
+    actor: account.sockethubPersonId,
   };
 
   return extend({}, baseObject, details);
@@ -30,14 +30,14 @@ function buildActivityObject(account, details) {
  * @param type {String} can be either 'message' or 'me'
  * @returns {Object} the activity object
  */
-function buildMessageObject(account, target, content, type='message') {
+function buildMessageObject(account, target, content, type = 'message') {
   return buildActivityObject(account, {
     '@type': 'send',
     target: target,
     object: {
       '@type': type,
-      content: content
-    }
+      content: content,
+    },
   });
 }
 
@@ -46,14 +46,13 @@ function buildMessageObject(account, target, content, type='message') {
  * @class hyperchannel/services/sockethub-xmpp
  */
 export default class SockethubXmppService extends Service {
-
   @service logger;
   @service coms;
 
-  connectWithCredentials (userAddress, password) {
+  connectWithCredentials(userAddress, password) {
     this.sockethub.ActivityStreams.Object.create({
       '@id': userAddress,
-      '@type': "person",
+      '@type': 'person',
       displayName: userAddress.split('@')[0],
     });
 
@@ -64,12 +63,14 @@ export default class SockethubXmppService extends Service {
         '@type': 'credentials',
         username: userAddress,
         password: password,
-        resource: 'hyperchannel'
-      }
+        resource: 'hyperchannel',
+      },
     };
 
     const connectJob = {
-      '@type': 'connect', context: 'xmpp', actor: userAddress
+      '@type': 'connect',
+      context: 'xmpp',
+      actor: userAddress,
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
@@ -80,12 +81,12 @@ export default class SockethubXmppService extends Service {
   /**
    * @public
    */
-  connect (account) {
+  connect(account) {
     const actor = account.sockethubPersonId;
 
     this.sockethub.ActivityStreams.Object.create({
       '@id': actor,
-      '@type': "person",
+      '@type': 'person',
       displayName: account.nickname,
     });
 
@@ -96,12 +97,14 @@ export default class SockethubXmppService extends Service {
         '@type': 'credentials',
         username: account.username, // JID
         password: account.password,
-        resource: 'hyperchannel'
-      }
+        resource: 'hyperchannel',
+      },
     };
 
     const connectJob = {
-      '@type': 'connect', context: 'xmpp', actor: actor
+      '@type': 'connect',
+      context: 'xmpp',
+      actor: actor,
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
@@ -109,7 +112,7 @@ export default class SockethubXmppService extends Service {
     this.sockethub.socket.emit('message', connectJob);
   }
 
-  handleJoinCompleted (message) {
+  handleJoinCompleted(message) {
     const channelId = message.target['@id'].split('/')[0];
     const channel = this.coms.channels.findBy('sockethubChannelId', channelId);
     if (channel) {
@@ -126,11 +129,11 @@ export default class SockethubXmppService extends Service {
    * @param {String} type - Type of channel. Can be "room" or "person".
    * @public
    */
-  join (channel, type) {
+  join(channel, type) {
     this.sockethub.ActivityStreams.Object.create({
       '@type': type,
       '@id': channel.sockethubChannelId,
-      displayName: channel.name
+      displayName: channel.name,
     });
 
     let joinMsg = buildActivityObject(channel.account, {
@@ -138,12 +141,12 @@ export default class SockethubXmppService extends Service {
       actor: {
         '@type': 'person',
         '@id': channel.sockethubPersonId,
-        displayName: channel.account.nickname
+        displayName: channel.account.nickname,
       },
       target: {
         '@id': channel.sockethubChannelId,
-        '@type': type
-      }
+        '@type': type,
+      },
     });
 
     this.log('xmpp', 'joining channel', joinMsg);
@@ -154,7 +157,7 @@ export default class SockethubXmppService extends Service {
    * Send a chat message to a channel
    * @public
    */
-  transferMessage (target, content) {
+  transferMessage(target, content) {
     const channel = this.coms.getChannel(target['@id']);
     const message = buildMessageObject(channel.account, target, content);
 
@@ -162,7 +165,7 @@ export default class SockethubXmppService extends Service {
     this.sockethub.socket.emit('message', message);
   }
 
-  handlePresenceUpdate (message) {
+  handlePresenceUpdate(message) {
     if (message.target['@type'] === 'room') {
       const targetChannelId = message.target['@id'];
       const channel = this.coms.getChannel(targetChannelId);
@@ -174,7 +177,10 @@ export default class SockethubXmppService extends Service {
           channel.addUser(message.actor.displayName);
         }
       }
-    } else if (message.actor['@type'] === 'person' && message.actor['@id'].match(/\/(.+)$/)) {
+    } else if (
+      message.actor['@type'] === 'person' &&
+      message.actor['@id'].match(/\/(.+)$/)
+    ) {
       const sockethubActorId = message.actor['@id'];
       const targetChannelId = sockethubActorId.match(/^(.+)\//)[1];
       const channel = this.coms.getChannel(targetChannelId);
@@ -188,7 +194,13 @@ export default class SockethubXmppService extends Service {
         }
       }
     } else {
-      this.log('xmpp', 'presence update from contact:', message.actor['@id'], message.object.presence, message.object.status);
+      this.log(
+        'xmpp',
+        'presence update from contact:',
+        message.actor['@id'],
+        message.object.presence,
+        message.object.status
+      );
     }
   }
 
@@ -197,16 +209,20 @@ export default class SockethubXmppService extends Service {
    * @param {Object} messsage
    * @public
    */
-  addMessageToChannel (message) {
+  addMessageToChannel(message) {
     if (isEmpty(message.object.content)) return;
 
     const channel = this.findOrCreateChannelForMessage(message);
 
     // TODO implement message carbons
     // https://xmpp.org/extensions/xep-0280.html
-    if (message.actor.displayName &&
-       (message.actor.displayName === channel.account.nickname)) {
-      const pendingConfirmed = channel.confirmPendingMessage(message.object.content);
+    if (
+      message.actor.displayName &&
+      message.actor.displayName === channel.account.nickname
+    ) {
+      const pendingConfirmed = channel.confirmPendingMessage(
+        message.object.content
+      );
       if (pendingConfirmed) return;
     }
 
@@ -214,12 +230,12 @@ export default class SockethubXmppService extends Service {
     channel.addMessage(channelMessage);
   }
 
-  leave (channel) {
+  leave(channel) {
     if (!channel.isUserChannel) {
       const leaveMsg = buildActivityObject(channel.account, {
         '@type': 'leave',
         target: channel.sockethubChannelId,
-        object: {}
+        object: {},
       });
 
       this.log('leave', 'leaving channel', leaveMsg);
@@ -233,13 +249,13 @@ export default class SockethubXmppService extends Service {
    * @param {Channel} channel
    * @public
    */
-  observeChannel (channel) {
+  observeChannel(channel) {
     let observeMsg = buildActivityObject(channel.account, {
       '@type': 'observe',
       target: channel.sockethubChannelId,
       object: {
-        '@type': 'attendance'
-      }
+        '@type': 'attendance',
+      },
     });
 
     this.log('xmpp', 'asking for attendance list', observeMsg);
@@ -253,12 +269,15 @@ export default class SockethubXmppService extends Service {
    * @returns {Channel} channel
    * @public
    */
-  findOrCreateChannelForMessage (message) {
+  findOrCreateChannelForMessage(message) {
     const targetChannelId = message.target['@id'];
     let channel;
 
     if (message.target['@type'] === 'room') {
-      channel = this.coms.channels.findBy('sockethubChannelId', targetChannelId);
+      channel = this.coms.channels.findBy(
+        'sockethubChannelId',
+        targetChannelId
+      );
 
       // TODO Find account for new channel by sockerhubPersonId
       if (!channel) {
@@ -266,11 +285,18 @@ export default class SockethubXmppService extends Service {
         // channel = this.coms.createChannel(space, targetChannelId);
       }
     } else {
-      channel = this.coms.channels.findBy('sockethubChannelId', message.actor['@id']);
+      channel = this.coms.channels.findBy(
+        'sockethubChannelId',
+        message.actor['@id']
+      );
 
       if (!channel) {
-        const account = this.coms.accounts.findBy('sockethubPersonId', message.target['@id']);
-        if (!account) console.warn('Received direct message for unknown account', message);
+        const account = this.coms.accounts.findBy(
+          'sockethubPersonId',
+          message.target['@id']
+        );
+        if (!account)
+          console.warn('Received direct message for unknown account', message);
         channel = this.coms.createUserChannel(account, message.actor['@id']);
       }
     }
@@ -286,12 +312,12 @@ export default class SockethubXmppService extends Service {
    * @returns {UserChannel} user channel
    * @public
    */
-  createUserChannel (account, sockethubActorId) {
+  createUserChannel(account, sockethubActorId) {
     const channel = new UserChannel({
       account: account,
       name: sockethubActorId, // e.g. kosmos-dev@kosmos.chat/jimmy
       displayName: sockethubActorId.match(/\/(.+)$/)[1],
-      connected: true
+      connected: true,
     });
     return channel;
   }
@@ -300,8 +326,7 @@ export default class SockethubXmppService extends Service {
    * Utility function for easier logging
    * @private
    */
-  log () {
+  log() {
     this.logger.log(...arguments);
   }
-
 }

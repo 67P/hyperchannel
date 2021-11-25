@@ -4,20 +4,26 @@ import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
 import { xmppAccount } from '../../fixtures/accounts';
 
-module('Unit | Service | sockethub xmpp', function(hooks) {
+module('Unit | Service | sockethub xmpp', function (hooks) {
   setupTest(hooks);
 
-  test('#handlePresenceUpdate adds new users to the channel', function(assert) {
-    const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
-    const comsService = this.owner.factoryFor('service:coms').create({
-      accounts: [ xmppAccount ], channels: [ channel ]
+  test('#handlePresenceUpdate adds new users to the channel', function (assert) {
+    const channel = new Channel({
+      account: xmppAccount,
+      name: 'some-channel@kosmos.chat',
     });
-    const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
+    const comsService = this.owner.factoryFor('service:coms').create({
+      accounts: [xmppAccount],
+      channels: [channel],
+    });
+    const service = this.owner
+      .factoryFor('service:sockethub-xmpp')
+      .create({ coms: comsService });
 
     const presenceUpdate = {
       actor: { '@id': 'walter@kosmos.org', displayName: 'walter' },
       target: { '@id': 'some-channel@kosmos.chat', '@type': 'room' },
-      object: { presence: 'online' }
+      object: { presence: 'online' },
     };
 
     service.handlePresenceUpdate(presenceUpdate);
@@ -25,18 +31,24 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.ok(channel.userList.includes('walter'));
   });
 
-  test('#handlePresenceUpdate removes offline users from the channel', function(assert) {
-    const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
+  test('#handlePresenceUpdate removes offline users from the channel', function (assert) {
+    const channel = new Channel({
+      account: xmppAccount,
+      name: 'some-channel@kosmos.chat',
+    });
     channel.addUser('walter');
     const comsService = this.owner.factoryFor('service:coms').create({
-      accounts: [ xmppAccount ], channels: [ channel ]
+      accounts: [xmppAccount],
+      channels: [channel],
     });
-    const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
+    const service = this.owner
+      .factoryFor('service:sockethub-xmpp')
+      .create({ coms: comsService });
 
     const presenceUpdate = {
       actor: { '@id': 'walter@kosmos.org', displayName: 'walter' },
       target: { '@id': 'some-channel@kosmos.chat', '@type': 'room' },
-      object: { presence: 'offline' }
+      object: { presence: 'offline' },
     };
 
     service.handlePresenceUpdate(presenceUpdate);
@@ -44,55 +56,67 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.notOk(channel.userList.includes('walter'));
   });
 
-  test('#findOrCreateChannelForMessage returns the channel for a given message', function(assert) {
-    const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
-    const comsService = this.owner.factoryFor('service:coms').create({
-      accounts: [ xmppAccount ], channels: [ channel ]
+  test('#findOrCreateChannelForMessage returns the channel for a given message', function (assert) {
+    const channel = new Channel({
+      account: xmppAccount,
+      name: 'some-channel@kosmos.chat',
     });
-    const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
+    const comsService = this.owner.factoryFor('service:coms').create({
+      accounts: [xmppAccount],
+      channels: [channel],
+    });
+    const service = this.owner
+      .factoryFor('service:sockethub-xmpp')
+      .create({ coms: comsService });
 
     const message = {
       actor: {
         '@id': 'some_user@some-server.com/hyperchannel',
         '@type': 'person',
-        displayName: 'some_user'
+        displayName: 'some_user',
       },
       target: {
         '@id': 'some-channel@kosmos.chat',
         '@type': 'room',
-        displayName: 'some-channel@kosmos.chat'
+        displayName: 'some-channel@kosmos.chat',
       },
       object: {
         '@type': 'message',
-        content: 'hello world'
-      }
+        content: 'hello world',
+      },
     };
 
     assert.equal(service.findOrCreateChannelForMessage(message), channel);
   });
 
-  test('#addMessageToChannel adds the message to the channel', function(assert) {
-    const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
-    const comsService = this.owner.factoryFor('service:coms').create({
-      accounts: [ xmppAccount ], channels: [ channel ]
+  test('#addMessageToChannel adds the message to the channel', function (assert) {
+    const channel = new Channel({
+      account: xmppAccount,
+      name: 'some-channel@kosmos.chat',
     });
-    const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
+    const comsService = this.owner.factoryFor('service:coms').create({
+      accounts: [xmppAccount],
+      channels: [channel],
+    });
+    const service = this.owner
+      .factoryFor('service:sockethub-xmpp')
+      .create({ coms: comsService });
 
     const message = {
       actor: {
         '@id': 'some_user@some-server.com/hyperchannel',
         '@type': 'person',
-        displayName: 'some_user'
+        displayName: 'some_user',
       },
       target: {
         '@id': 'some-channel@kosmos.chat',
         '@type': 'room',
-        displayName: 'some-channel@kosmos.chat'
+        displayName: 'some-channel@kosmos.chat',
       },
       object: {
         '@type': 'message',
-        content: 'hello world'
-      }
+        content: 'hello world',
+      },
     };
 
     service.addMessageToChannel(message);
@@ -100,26 +124,36 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.equal(channel.messages.lastObject.content, 'hello world');
   });
 
-  test('#addMessageToChannel updates pending status when receiving an outgoing message', function(assert) {
-    const channel = new Channel({ account: xmppAccount, name: 'kosmos-dev@kosmos.chat' });
+  test('#addMessageToChannel updates pending status when receiving an outgoing message', function (assert) {
+    const channel = new Channel({
+      account: xmppAccount,
+      name: 'kosmos-dev@kosmos.chat',
+    });
     const outgoingMessage = new Message({
       type: 'message-chat',
       date: new Date(),
       nickname: 'jimmy',
       content: 'yo, gang!',
-      pending: true
+      pending: true,
     });
     channel.messages.pushObject(outgoingMessage);
 
     const comsService = this.owner.factoryFor('service:coms').create({
-      accounts: [ xmppAccount ], channels: [ channel ]
+      accounts: [xmppAccount],
+      channels: [channel],
     });
-    const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
+    const service = this.owner
+      .factoryFor('service:sockethub-xmpp')
+      .create({ coms: comsService });
 
     const message = {
-      actor: { '@id': 'kosmos-dev@kosmos.chat/jimmy', '@type': 'person', displayName: 'jimmy' },
+      actor: {
+        '@id': 'kosmos-dev@kosmos.chat/jimmy',
+        '@type': 'person',
+        displayName: 'jimmy',
+      },
       target: { '@id': 'kosmos-dev@kosmos.chat', '@type': 'room' },
-      object: { '@type': 'message', content: 'yo, gang!' }
+      object: { '@type': 'message', content: 'yo, gang!' },
     };
 
     service.addMessageToChannel(message);
@@ -129,13 +163,18 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.notOk(channel.messages.lastObject.pending);
   });
 
-  test('#createUserChannel', function(assert) {
+  test('#createUserChannel', function (assert) {
     const comsService = this.owner.factoryFor('service:coms').create({
-      accounts: [ xmppAccount ]
+      accounts: [xmppAccount],
     });
-    const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
+    const service = this.owner
+      .factoryFor('service:sockethub-xmpp')
+      .create({ coms: comsService });
 
-    const channel = service.createUserChannel(xmppAccount, 'kosmos-dev@kosmos.chat/walter');
+    const channel = service.createUserChannel(
+      xmppAccount,
+      'kosmos-dev@kosmos.chat/walter'
+    );
 
     assert.equal(channel.name, 'kosmos-dev@kosmos.chat/walter');
     assert.equal(channel.displayName, 'walter');

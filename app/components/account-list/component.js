@@ -3,19 +3,22 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 export default class AccountListComponent extends Component {
-
   @service router;
   @service coms;
 
   @action
-  addAccount () {
+  addAccount() {
     this.args.closeModal();
     this.router.transitionTo('add-account');
   }
 
   @action
-  async deleteAccount (account) {
-    if (!window.confirm(`Are you sure you want to delete the account ${account.id}?`)) {
+  async deleteAccount(account) {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete the account ${account.id}?`
+      )
+    ) {
       return;
     }
 
@@ -29,5 +32,4 @@ export default class AccountListComponent extends Component {
       this.router.transitionTo('channel', firstChannel);
     }
   }
-
 }

@@ -8,50 +8,48 @@ import Message from 'hyperchannel/models/message';
 import { capitalize } from '@ember/string';
 
 export default class BaseChannelController extends Controller {
-
   @tracked newMessage = null;
   @controller application;
   @service coms;
   @service router;
   @service('remotestorage') storage;
 
-  get showChannelMenu () {
+  get showChannelMenu() {
     return this.application.showChannelMenu;
   }
 
-  createMessage (content, type) {
+  createMessage(content, type) {
     const message = new Message({
       type: type,
       date: new Date(),
       // TODO  nickname per channel
       nickname: this.model.account.nickname,
-      content: content
+      content: content,
     });
 
     // We only receive our own message from XMPP MUCs (but not DMs)
     // TODO implement message carbons or another way of verifying sent status
-    if (this.model.protocol === 'XMPP' &&
-       (this.model instanceof Channel)) {
+    if (this.model.protocol === 'XMPP' && this.model instanceof Channel) {
       message.pending = true;
     }
 
     return message;
   }
 
-  get sidebarClass () {
+  get sidebarClass() {
     const route = this.router.currentRouteName;
-    const wideBars = ['shares', 'settings'].map(r => `channel.${r}`);
+    const wideBars = ['shares', 'settings'].map((r) => `channel.${r}`);
     return wideBars.includes(route) ? 'sidebar-wide' : 'sidebar-normal';
   }
 
   @action
-  menu (which, what) {
+  menu(which, what) {
     // Do not toggle sidebav on desktop
     if (which.match(/(global|channel)/) && window.innerWidth > 900) return;
 
     let menuProp = `show${capitalize(which)}Menu`;
 
-    switch(what) {
+    switch (what) {
       case 'show':
         this.application.set(menuProp, true);
         break;
@@ -65,7 +63,7 @@ export default class BaseChannelController extends Controller {
   }
 
   @action
-  sendMessage (newMessage) {
+  sendMessage(newMessage) {
     const message = this.createMessage(newMessage, 'message-chat');
 
     this.coms.transferMessage(this.model, message.content);
@@ -76,18 +74,18 @@ export default class BaseChannelController extends Controller {
   }
 
   @action
-  executeCommand (newMessage) {
+  executeCommand(newMessage) {
     const availableCommands = [
-      "help",
-      "join",
-      "leave",
-      "me",
-      "msg",
-      "part",
-      "topic"
+      'help',
+      'join',
+      'leave',
+      'me',
+      'msg',
+      'part',
+      'topic',
     ];
     let commandText = newMessage.substr(1);
-    let commandSplitted = commandText.split(" ");
+    let commandSplitted = commandText.split(' ');
     let command = commandSplitted[0];
 
     if (availableCommands.includes(command.toLowerCase())) {
@@ -100,14 +98,14 @@ export default class BaseChannelController extends Controller {
   }
 
   @action
-  joinCommand (args) {
+  joinCommand(args) {
     const channel = this.coms.createChannel(this.model.account, args[0]);
     // TODO this.storage.saveChannel(channel);
     this.transitionToRoute('channel', channel);
   }
 
   @action
-  partCommand () {
+  partCommand() {
     this.coms.removeChannel(this.model);
     const lastChannel = this.coms.channels.lastObject;
     if (isPresent(lastChannel)) {
@@ -120,16 +118,15 @@ export default class BaseChannelController extends Controller {
   }
 
   @action
-  leaveCommand () {
+  leaveCommand() {
     this.send('partCommand');
   }
 
   @action
-  helpCommand () {
-  }
+  helpCommand() {}
 
   @action
-  meCommand (args) {
+  meCommand(args) {
     let newMessage = args.join(' ');
 
     let message = this.createMessage(newMessage, 'message-chat-me');
@@ -144,7 +141,7 @@ export default class BaseChannelController extends Controller {
   }
 
   @action
-  msgCommand (args) {
+  msgCommand(args) {
     let username = args.shift();
     this.coms.createUserChannel(this.model.account, username);
     // TODO fix this, sockethub sends a failure event with error
@@ -153,7 +150,7 @@ export default class BaseChannelController extends Controller {
   }
 
   @action
-  topicCommand (args) {
+  topicCommand(args) {
     let channel = this.model;
     let topic = args.join(' ');
 
@@ -161,7 +158,7 @@ export default class BaseChannelController extends Controller {
   }
 
   @action
-  addUsernameMentionToMessage (username) {
+  addUsernameMentionToMessage(username) {
     const msg = this.newMessage || '';
     if (!msg.match(new RegExp(`^${username}`))) {
       this.newMessage = `${username}: ${msg}`;
@@ -169,8 +166,7 @@ export default class BaseChannelController extends Controller {
   }
 
   @action
-  leaveChannel (channel) {
+  leaveChannel(channel) {
     this.application.leaveChannel(channel);
   }
-
 }

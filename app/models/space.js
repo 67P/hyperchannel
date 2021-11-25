@@ -10,13 +10,12 @@ import { A } from '@ember/array';
 // }
 
 export default class Space {
-
   // Keep a list of all old sockethubPersonIds, because there might
   // still be coming events from Sockethub for those.
   previousSockethubPersonIds = A([]);
 
   // FIXME adapt to new accounts/channels
-  updateUsername (username) {
+  updateUsername(username) {
     // keep track of old name for later reference
     this.previousSockethubPersonIds.pushObject(this.sockethubPersonId);
 
@@ -29,5 +28,4 @@ export default class Space {
         break;
     }
   }
-
 }

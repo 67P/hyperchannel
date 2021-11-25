@@ -1,17 +1,12 @@
 module.exports = {
   mode: 'jit',
-  purge: [
-    './app/**/*.html',
-    './app/**/*.hbs',
-  ],
+  purge: ['./app/**/*.html', './app/**/*.hbs'],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {}
+    extend: {},
   },
   variants: {
-    extend: {}
+    extend: {},
   },
-  plugins: [
-    require('@tailwindcss/forms')
-  ]
-}
+  plugins: [require('@tailwindcss/forms')],
+};

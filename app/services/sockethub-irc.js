@@ -15,7 +15,7 @@ import extend from 'extend';
 function buildActivityObject(account, details) {
   let baseObject = {
     context: 'irc',
-    actor: account.sockethubPersonId
+    actor: account.sockethubPersonId,
   };
 
   return extend({}, baseObject, details);
@@ -30,14 +30,14 @@ function buildActivityObject(account, details) {
  * @param type {String} can be either 'message' or 'me'
  * @returns {Object} the activity object
  */
-function buildMessageObject(account, target, content, type='message') {
+function buildMessageObject(account, target, content, type = 'message') {
   return buildActivityObject(account, {
     '@type': 'send',
     target: target,
     object: {
       '@type': type,
-      content: content
-    }
+      content: content,
+    },
   });
 }
 
@@ -46,7 +46,6 @@ function buildMessageObject(account, target, content, type='message') {
  * @class hyperchannel/services/sockethub-irc
  */
 export default class SockethubIrcService extends Service {
-
   @service logger;
   @service coms;
 
@@ -57,11 +56,11 @@ export default class SockethubIrcService extends Service {
    *   like e.g. `join`
    * @public
    */
-  connect (account) {
+  connect(account) {
     this.sockethub.ActivityStreams.Object.create({
       '@id': account.sockethubPersonId,
       '@type': 'person',
-      displayName: account.nickname
+      displayName: account.nickname,
     });
 
     const credentials = buildActivityObject(account, {
@@ -70,8 +69,8 @@ export default class SockethubIrcService extends Service {
         nick: account.nickname,
         server: account.server.hostname,
         port: parseInt(account.server.port, 10),
-        secure: account.server.secure
-      }
+        secure: account.server.secure,
+      },
     });
 
     console.debug('Connecting to IRC network', credentials);
@@ -85,24 +84,40 @@ export default class SockethubIrcService extends Service {
     // this.sockethub.socket.emit('message', connectJob);
   }
 
-  handleJoinCompleted (message) {
-    const channel = this.coms.channels.findBy('sockethubChannelId', message.target['@id']);
+  handleJoinCompleted(message) {
+    const channel = this.coms.channels.findBy(
+      'sockethubChannelId',
+      message.target['@id']
+    );
     if (channel) {
       this.observeChannel(channel);
     }
   }
 
-  handlePresenceUpdate (message) {
+  handlePresenceUpdate(message) {
     const hostname = message.target['@id'].match(/(.+)\//)[1];
     const account = this.coms.accounts.findBy('server.hostname', hostname);
-    if (isEmpty(account)) { console.warn('No account for presence update message found.', message); return; }
+    if (isEmpty(account)) {
+      console.warn('No account for presence update message found.', message);
+      return;
+    }
 
-    let channel = this.coms.channels.findBy('sockethubChannelId', message.target['@id']);
+    let channel = this.coms.channels.findBy(
+      'sockethubChannelId',
+      message.target['@id']
+    );
 
     // TODO document why there might be no channel instance, or remove
     if (isEmpty(channel)) {
-      console.debug('No channel for presence update message found. Creating it.', message);
-      channel = this.coms.createChannel(account, message.target.displayName, message.target['@id']);
+      console.debug(
+        'No channel for presence update message found. Creating it.',
+        message
+      );
+      channel = this.coms.createChannel(
+        account,
+        message.target.displayName,
+        message.target['@id']
+      );
     }
 
     // Hotfix for adding one's own user to the channel and marking it as
@@ -120,19 +135,19 @@ export default class SockethubIrcService extends Service {
    * Join a channel/room
    * @public
    */
-  join (channel, type) {
-    switch(type) {
+  join(channel, type) {
+    switch (type) {
       case 'room':
         this.sockethub.ActivityStreams.Object.create({
           '@type': type,
           '@id': channel.sockethubChannelId,
-          displayName: channel.name
+          displayName: channel.name,
         });
 
         var joinMsg = buildActivityObject(channel.account, {
           '@type': 'join',
           target: channel.sockethubChannelId,
-          object: {}
+          object: {},
         });
 
         this.log('irc', 'joining channel', joinMsg);
@@ -148,7 +163,7 @@ export default class SockethubIrcService extends Service {
    * Send a chat message to a channel
    * @public
    */
-  transferMessage (target, content) {
+  transferMessage(target, content) {
     const channel = this.coms.getChannel(target['@id']);
     const message = buildMessageObject(channel.account, target, content);
 
@@ -160,7 +175,7 @@ export default class SockethubIrcService extends Service {
    * Send an action chat message to a channel
    * @public
    */
-  transferMeMessage (target, content) {
+  transferMeMessage(target, content) {
     const channel = this.coms.getChannel(target['@id']);
     const message = buildMessageObject(channel.account, target, content, 'me');
 
@@ -173,7 +188,7 @@ export default class SockethubIrcService extends Service {
    * @param {Object} messsage
    * @public
    */
-  addMessageToChannel (message) {
+  addMessageToChannel(message) {
     const hostname = message.actor['@id'].match(/.+@(.+)/)[1];
     const account = this.coms.accounts.findBy('server.hostname', hostname);
 
@@ -192,12 +207,12 @@ export default class SockethubIrcService extends Service {
    * Leave a channel
    * @public
    */
-  leave (channel) {
+  leave(channel) {
     if (!channel.isUserChannel) {
       let leaveMsg = buildActivityObject(channel.account, {
         '@type': 'leave',
         target: channel.sockethubChannelId,
-        object: {}
+        object: {},
       });
 
       this.log('leave', 'leaving channel', leaveMsg);
@@ -209,14 +224,14 @@ export default class SockethubIrcService extends Service {
    * Send a channel topic change
    * @public
    */
-  changeTopic (channel, topic) {
+  changeTopic(channel, topic) {
     let topicMsg = buildActivityObject(channel.account, {
       '@type': 'update',
       target: channel.sockethubChannelId,
       object: {
         '@type': 'topic',
-        topic: topic
-      }
+        topic: topic,
+      },
     });
 
     this.sockethub.socket.emit('message', topicMsg);
@@ -226,13 +241,13 @@ export default class SockethubIrcService extends Service {
    * Ask for a channel's attendance list (users currently joined)
    * @public
    */
-  observeChannel (channel) {
+  observeChannel(channel) {
     let observeMsg = buildActivityObject(channel.account, {
       '@type': 'observe',
       target: channel.sockethubChannelId,
       object: {
-        '@type': 'attendance'
-      }
+        '@type': 'attendance',
+      },
     });
 
     this.log('irc', 'asking for attendance list', observeMsg);
@@ -247,22 +262,24 @@ export default class SockethubIrcService extends Service {
    * @returns {Channel} channel
    * @public
    */
-  getChannelForMessage (account, message) {
+  getChannelForMessage(account, message) {
     let targetChannelName, channel;
 
     if (account.nickname === message.target.displayName) {
       // Direct message
       targetChannelName = message.actor.displayName || message.actor['@id'];
-      channel = this.coms.channels.filterBy('account', account)
-                                  .findBy('name', targetChannelName);
+      channel = this.coms.channels
+        .filterBy('account', account)
+        .findBy('name', targetChannelName);
       if (!channel) {
         channel = this.coms.createUserChannel(account, targetChannelName);
       }
     } else {
       // Channel message
       targetChannelName = message.target.displayName;
-      channel = this.coms.channels.filterBy('account', account)
-                                  .findBy('name', targetChannelName);
+      channel = this.coms.channels
+        .filterBy('account', account)
+        .findBy('name', targetChannelName);
       if (!channel) {
         channel = this.coms.createChannel(account, targetChannelName);
       }
@@ -279,12 +296,12 @@ export default class SockethubIrcService extends Service {
    * @returns {UserChannel} user channel
    * @public
    */
-  createUserChannel (account, nickname) {
+  createUserChannel(account, nickname) {
     const channel = new UserChannel({
       account: account,
       name: nickname,
       displayName: nickname,
-      connected: true
+      connected: true,
     });
     return channel;
   }
@@ -293,8 +310,7 @@ export default class SockethubIrcService extends Service {
    * Utility function for easier logging
    * @protected
    */
-  log () {
+  log() {
     this.logger.log(...arguments);
   }
-
 }

@@ -5,7 +5,6 @@ import Message from 'hyperchannel/models/message';
 import moment from 'moment';
 
 export default class BaseChannel {
-
   @tracked account = null;
   @tracked id = '';
   @tracked name = ''; // e.g. kosmos-dev@kosmos.chat or #kosmos-dev
@@ -18,11 +17,11 @@ export default class BaseChannel {
   @tracked unreadMentions = false;
   @tracked visible = false; // Current/active channel
 
-  constructor (props) {
+  constructor(props) {
     Object.assign(this, props);
 
     if (isEmpty(this.id)) {
-      switch(this.protocol) {
+      switch (this.protocol) {
         case 'XMPP':
           this.id = this.name;
           break;
@@ -33,15 +32,15 @@ export default class BaseChannel {
     }
   }
 
-  get protocol () {
+  get protocol() {
     return this.account.protocol;
   }
 
-  get sockethubPersonId () {
+  get sockethubPersonId() {
     return this.account.sockethubPersonId;
   }
 
-  get sockethubChannelId () {
+  get sockethubChannelId() {
     let id;
     switch (this.protocol) {
       case 'XMPP':
@@ -54,16 +53,16 @@ export default class BaseChannel {
     return id;
   }
 
-  get slug () {
+  get slug() {
     // This could be based on server type in the future. E.g. IRC would be
     // server URL, while Campfire would be another id.
-    return this.id.replace(/#/g,'');
+    return this.id.replace(/#/g, '');
   }
 
-  get shortName () {
+  get shortName() {
     switch (this.protocol) {
       case 'IRC':
-        return this.name.replace(/#/g,'');
+        return this.name.replace(/#/g, '');
       case 'XMPP':
         return this.name.match(/^(.+)@/)[1];
       default:
@@ -71,12 +70,12 @@ export default class BaseChannel {
     }
   }
 
-  get domain () {
+  get domain() {
     const match = this.id.match(/@([^/]+)/);
     return match[1];
   }
 
-  get unreadMessagesClass () {
+  get unreadMessagesClass() {
     if (this.visible || !this.unreadMessages) {
       return null;
     }
@@ -84,19 +83,19 @@ export default class BaseChannel {
   }
 
   @cached
-  get sortedMessages () {
+  get sortedMessages() {
     return this.messages.sortBy('date');
   }
 
   @cached
-  get sortedUserList () {
+  get sortedUserList() {
     return this.userList.sort(function (a, b) {
       return a.toLowerCase().localeCompare(b.toLowerCase());
     });
   }
 
   @cached
-  get isLogged () {
+  get isLogged() {
     let loggedChannel = this.account.loggedChannels.find((channelName) => {
       return channelName === this.name;
     });
@@ -104,21 +103,28 @@ export default class BaseChannel {
     return isPresent(loggedChannel);
   }
 
-  addDateHeadline (newMessage) {
+  addDateHeadline(newMessage) {
     let headlineDate = moment(newMessage.date).startOf('day').toDate();
 
     let existingDateHeadline = this.messages.find(function (message) {
-      return message.type === 'date-headline' &&
-             message.date.toString() === headlineDate.toString();
+      return (
+        message.type === 'date-headline' &&
+        message.date.toString() === headlineDate.toString()
+      );
     });
 
-    if (existingDateHeadline) { return; }
+    if (existingDateHeadline) {
+      return;
+    }
 
-    let dateMessage = new Message({ type: 'date-headline', date: headlineDate });
+    let dateMessage = new Message({
+      type: 'date-headline',
+      date: headlineDate,
+    });
     this.messages.pushObject(dateMessage);
   }
 
-  addMessage (message) {
+  addMessage(message) {
     this.addDateHeadline(message);
 
     this.messages.pushObject(message);
@@ -131,9 +137,10 @@ export default class BaseChannel {
     }
   }
 
-  confirmPendingMessage (content) {
-    const message = this.messages.filterBy('pending')
-                                 .findBy('content', content);
+  confirmPendingMessage(content) {
+    const message = this.messages
+      .filterBy('pending')
+      .findBy('content', content);
 
     if (isPresent(message)) {
       message.pending = false;
@@ -153,13 +160,12 @@ export default class BaseChannel {
     this.userList.removeObject(username);
   }
 
-  serialize () {
+  serialize() {
     return {
       accountId: this.account.id,
       id: this.id,
       name: this.name,
-      displayName: this.displayName
-    }
+      displayName: this.displayName,
+    };
   }
-
 }

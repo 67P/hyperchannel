@@ -9,7 +9,7 @@ export default class JoinChannelComponent extends Component {
 
   @tracked selectedAccountId;
 
-  get selectedAccount () {
+  get selectedAccount() {
     if (isPresent(this.selectedAccountId)) {
       return this.coms.accounts.findBy('id', this.selectedAccountId);
     } else {
@@ -17,7 +17,7 @@ export default class JoinChannelComponent extends Component {
     }
   }
 
-  get preSelectedAccount () {
+  get preSelectedAccount() {
     if (isPresent(this.coms.activeChannel)) {
       return this.coms.activeChannel.account;
     } else {
@@ -25,11 +25,11 @@ export default class JoinChannelComponent extends Component {
     }
   }
 
-  get accountSelectionDisabled () {
+  get accountSelectionDisabled() {
     return this.coms.accounts.length < 2;
   }
 
-  get componentNameForProtocol () {
+  get componentNameForProtocol() {
     return 'join-channel-' + this.selectedAccount.protocol.toLowerCase();
   }
 

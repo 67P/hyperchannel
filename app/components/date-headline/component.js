@@ -6,12 +6,11 @@ import config from '../../config/environment';
 import { action } from '@ember/object';
 
 export default class DateHeadlineComponent extends Component {
-
   @tracked headline = null;
 
   updateInterval = 120000; // 2 minutes
 
-  setHeadline (messageDate) {
+  setHeadline(messageDate) {
     const date = moment(messageDate);
 
     if (date.isSame(moment(), 'day')) {
@@ -24,7 +23,7 @@ export default class DateHeadlineComponent extends Component {
   }
 
   @action
-  scheduleUpdate () {
+  scheduleUpdate() {
     this.setHeadline(this.args.message.date);
 
     // don't schedule updates during testing, because it makes the tests time out
@@ -34,5 +33,4 @@ export default class DateHeadlineComponent extends Component {
       later(this.scheduleUpdate, this.updateInterval);
     }
   }
-
 }

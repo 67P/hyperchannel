@@ -15,7 +15,6 @@ import config from 'hyperchannel/config/environment';
  * @class hyperchannel/services/coms
  */
 export default class ComsService extends Service {
-
   // Utils
   @service logger;
   // Data storage
@@ -35,24 +34,24 @@ export default class ComsService extends Service {
    */
   @tracked channels = A([]);
 
-  get sortedChannels () {
+  get sortedChannels() {
     return this.channels.sortBy('name');
   }
 
-  get channelDomains () {
+  get channelDomains() {
     return this.channels.mapBy('domain').uniq().sort();
   }
 
-  get groupedChannelsByDomain () {
-    return this.channelDomains.map(domain => {
+  get groupedChannelsByDomain() {
+    return this.channelDomains.map((domain) => {
       return {
         domain: domain,
-        channels: this.channels.filterBy('domain', domain).sortBy('name')
-      }
+        channels: this.channels.filterBy('domain', domain).sortBy('name'),
+      };
     });
   }
 
-  get activeChannel () {
+  get activeChannel() {
     return this.channels.findBy('visible');
   }
 
@@ -65,10 +64,13 @@ export default class ComsService extends Service {
    * listeners for incoming Sockethub messages.
    * @public
    */
-  setupListeners () {
-    this.sockethub.socket.on('completed', this.handleSockethubCompleted.bind(this));
-    this.sockethub.socket.on('message'  , this.handleSockethubMessage.bind(this));
-    this.sockethub.socket.on('failure'  , this.handleSockethubFailure.bind(this));
+  setupListeners() {
+    this.sockethub.socket.on(
+      'completed',
+      this.handleSockethubCompleted.bind(this)
+    );
+    this.sockethub.socket.on('message', this.handleSockethubMessage.bind(this));
+    this.sockethub.socket.on('failure', this.handleSockethubFailure.bind(this));
   }
 
   /**
@@ -76,43 +78,48 @@ export default class ComsService extends Service {
    * connects, and joins all configured/saved or default accounts and channels
    * @public
    */
-  async instantiateAccountsAndChannels () {
+  async instantiateAccountsAndChannels() {
     return new Promise((resolve, reject) => {
-      this.storage.rs.kosmos.accounts.getIds().then(accountIds => {
-        if (isEmpty(accountIds)) {
-          console.debug('No accounts found in RS');
-          resolve();
-        } else {
-          const allAccounts = accountIds.map(id => {
-            return this.storage.rs.kosmos.accounts.getConfig(id).then(config => {
-              const properties = {
-                username: config.username,
-                password: config.password,
-                nickname: config.nickname,
-                botkaURL: config.botkaURL,
-                server: config.server
-              }
-              let account;
-              switch(config.protocol) {
-                case 'XMPP':
-                  account = new XmppAccount(properties);
-                  break;
-                case 'IRC':
-                  account = new IrcAccount(properties);
-                  break;
-              }
-              this.connectServer(account);
-              this.accounts.pushObject(account);
-              // TODO wait for successful server connection before joining
-              return this.instantiateChannels(account);
+      this.storage.rs.kosmos.accounts.getIds().then(
+        (accountIds) => {
+          if (isEmpty(accountIds)) {
+            console.debug('No accounts found in RS');
+            resolve();
+          } else {
+            const allAccounts = accountIds.map((id) => {
+              return this.storage.rs.kosmos.accounts
+                .getConfig(id)
+                .then((config) => {
+                  const properties = {
+                    username: config.username,
+                    password: config.password,
+                    nickname: config.nickname,
+                    botkaURL: config.botkaURL,
+                    server: config.server,
+                  };
+                  let account;
+                  switch (config.protocol) {
+                    case 'XMPP':
+                      account = new XmppAccount(properties);
+                      break;
+                    case 'IRC':
+                      account = new IrcAccount(properties);
+                      break;
+                  }
+                  this.connectServer(account);
+                  this.accounts.pushObject(account);
+                  // TODO wait for successful server connection before joining
+                  return this.instantiateChannels(account);
+                });
             });
-          });
-          Promise.all(allAccounts).then(resolve);
+            Promise.all(allAccounts).then(resolve);
+          }
+        },
+        (e) => {
+          this.log('error', "couldn'd load account from RS", e);
+          reject();
         }
-      }, e => {
-        this.log('error', 'couldn\'d load account from RS', e);
-        reject();
-      });
+      );
     });
   }
 
@@ -120,9 +127,9 @@ export default class ComsService extends Service {
    * Invokes the connect function on the appropriate transport service
    * @public
    */
-  connectServer (account) { // JID
-    this.getServiceForSockethubPlatform(account.protocol)
-        .connect(account);
+  connectServer(account) {
+    // JID
+    this.getServiceForSockethubPlatform(account.protocol).connect(account);
   }
 
   /**
@@ -131,9 +138,8 @@ export default class ComsService extends Service {
    * @param {String} type - Type of channel. Can be "room" or "person"
    * @public
    */
-  joinChannel (channel, type) {
-    this.getServiceForSockethubPlatform(channel.protocol)
-        .join(channel, type);
+  joinChannel(channel, type) {
+    this.getServiceForSockethubPlatform(channel.protocol).join(channel, type);
   }
 
   /**
@@ -142,21 +148,23 @@ export default class ComsService extends Service {
    * @param {String} content
    * @public
    */
-  transferMessage (channel, content) {
+  transferMessage(channel, content) {
     const target = {
       '@id': channel.sockethubChannelId,
       '@type': channel.isUserChannel ? 'person' : 'room',
-      displayName: channel.name
+      displayName: channel.name,
     };
-    this.getServiceForSockethubPlatform(channel.protocol)
-        .transferMessage(target, content);
+    this.getServiceForSockethubPlatform(channel.protocol).transferMessage(
+      target,
+      content
+    );
   }
 
   /**
    * Invokes the send-action-message function on the appropriate transport service
    * @public
    */
-  transferMeMessage (account, target, content) {
+  transferMeMessage(account, target, content) {
     switch (account.protocol) {
       case 'XMPP':
         // TODO implement
@@ -167,12 +175,11 @@ export default class ComsService extends Service {
     }
   }
 
-  leaveChannel (channel) {
-    this.getServiceForSockethubPlatform(channel.protocol)
-        .leave(channel);
+  leaveChannel(channel) {
+    this.getServiceForSockethubPlatform(channel.protocol).leave(channel);
   }
 
-  changeTopic (channel, topic) {
+  changeTopic(channel, topic) {
     switch (channel.protocol) {
       case 'XMPP':
         // TODO implement
@@ -183,7 +190,7 @@ export default class ComsService extends Service {
     }
   }
 
-  updateChannelUserList (message) {
+  updateChannelUserList(message) {
     const channel = this.getChannel(message.actor['@id']);
 
     if (channel) {
@@ -194,14 +201,14 @@ export default class ComsService extends Service {
     }
   }
 
-  addUserToChannelUserList (message) {
+  addUserToChannelUserList(message) {
     const channel = this.getChannel(message.target['@id']);
     if (channel) {
       channel.addUser(message.actor.displayName);
     }
   }
 
-  removeUserFromChannelUserList (message) {
+  removeUserFromChannelUserList(message) {
     // TODO handle user quit leaves (multiple channels)
     // e.g. target is `{ @type: 'service', @id: 'irc.freenode.net' }`
     const channel = this.getChannel(message.target['@id']);
@@ -213,7 +220,7 @@ export default class ComsService extends Service {
   /**
    * @param {String} channelId - a Sockethub channel ID
    */
-  getChannel (channelId) {
+  getChannel(channelId) {
     const channel = this.channels.findBy('sockethubChannelId', channelId);
 
     if (isEmpty(channel)) {
@@ -224,7 +231,7 @@ export default class ComsService extends Service {
     return channel;
   }
 
-  updateUsername (message) {
+  updateUsername(message) {
     if (typeof message.actor === 'object') {
       const actorId = message.actor['@id'];
       const account = this.accounts.findBy('sockethubPersonId', actorId);
@@ -235,7 +242,7 @@ export default class ComsService extends Service {
     }
   }
 
-  updateChannelTopic (message) {
+  updateChannelTopic(message) {
     let channel = this.getChannel(message.target['@id']);
 
     if (isEmpty(channel)) {
@@ -248,10 +255,14 @@ export default class ComsService extends Service {
 
     channel.topic = newTopic;
 
-    if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.visible) {
-      Notification.requestPermission(function() {
+    if (
+      isPresent(currentTopic) &&
+      newTopic !== currentTopic &&
+      !channel.visible
+    ) {
+      Notification.requestPermission(function () {
         new Notification(channel.name, {
-          body: `New Topic: ${newTopic}`
+          body: `New Topic: ${newTopic}`,
         });
       });
     }
@@ -266,19 +277,21 @@ export default class ComsService extends Service {
     // channel.messages.pushObject(notification);
   }
 
-  async instantiateChannels (account) {
-    return this.storage.rs.kosmos.channels.getAll(account.id).then(channelData => {
-      for (const cid in channelData) {
-        this.createChannel(account, channelData[cid].name);
-      }
-    });
+  async instantiateChannels(account) {
+    return this.storage.rs.kosmos.channels
+      .getAll(account.id)
+      .then((channelData) => {
+        for (const cid in channelData) {
+          this.createChannel(account, channelData[cid].name);
+        }
+      });
   }
 
-  createChannel (account, channelName, options = {}) {
+  createChannel(account, channelName, options = {}) {
     const channel = new Channel({
       account: account,
       name: channelName,
-      displayName: channelName
+      displayName: channelName,
     });
     this.channels.pushObject(channel);
     this.joinChannel(channel, 'room');
@@ -288,17 +301,21 @@ export default class ComsService extends Service {
     }
 
     if (channel.isLogged) {
-      this.loadLastMessages(channel, moment.utc(), 2)
-          .catch(() => { /* TODO nothing to do here? */ });
+      this.loadLastMessages(channel, moment.utc(), 2).catch(() => {
+        /* TODO nothing to do here? */
+      });
     }
 
     return channel;
   }
 
-  loadLastMessages (channel, date, maximumDays = 14) {
+  loadLastMessages(channel, date, maximumDays = 14) {
     let searchUntilDate;
     if (channel.searchedPreviousLogsUntilDate) {
-      searchUntilDate = moment(channel.searchedPreviousLogsUntilDate).subtract(maximumDays, 'days');
+      searchUntilDate = moment(channel.searchedPreviousLogsUntilDate).subtract(
+        maximumDays,
+        'days'
+      );
     } else {
       searchUntilDate = moment.utc().subtract(maximumDays, 'days');
     }
@@ -314,41 +331,51 @@ export default class ComsService extends Service {
     });
   }
 
-  async loadArchiveMessages (channel, date) {
+  async loadArchiveMessages(channel, date) {
     // TODO move RS documents, make compatible
-    let logsUrl = `${config.publicLogsUrl}/${channel.account.server.hostname.toLowerCase()}/channels/${channel.slug}/`;
-        logsUrl += date.format('YYYY/MM/DD');
+    let logsUrl = `${
+      config.publicLogsUrl
+    }/${channel.account.server.hostname.toLowerCase()}/channels/${
+      channel.slug
+    }/`;
+    logsUrl += date.format('YYYY/MM/DD');
 
-    return fetch(logsUrl).then(res => res.json()).then(archive => {
-      archive.today?.messages?.forEach((message) => {
-        this.log('chat_message', message);
+    return fetch(logsUrl)
+      .then((res) => res.json())
+      .then((archive) => {
+        archive.today?.messages?.forEach((message) => {
+          this.log('chat_message', message);
 
-        let channelMessage = new Message({
-          type: 'message-chat',
-          date: new Date(message.timestamp),
-          nickname: message.from,
-          content: message.text
+          let channelMessage = new Message({
+            type: 'message-chat',
+            date: new Date(message.timestamp),
+            nickname: message.from,
+            content: message.text,
+          });
+
+          channel.addMessage(channelMessage);
         });
-
-        channel.addMessage(channelMessage);
+        let previous = archive.today?.previous;
+        channel.searchedPreviousLogsUntilDate = moment.utc(
+          previous.replace(/\//g, '-')
+        );
+      })
+      .catch((error) => {
+        this.log('fetch-error', "couldn't load archive document", error);
+        throw error;
       });
-      let previous = archive.today?.previous;
-      channel.searchedPreviousLogsUntilDate = moment.utc(previous.replace(/\//g, '-'));
-    }).catch(error => {
-      this.log('fetch-error', 'couldn\'t load archive document', error);
-      throw(error);
-    });
   }
 
-  createUserChannel (account, name) {
-    const channel = this.getServiceForSockethubPlatform(account.protocol)
-                        .createUserChannel(account, name);
+  createUserChannel(account, name) {
+    const channel = this.getServiceForSockethubPlatform(
+      account.protocol
+    ).createUserChannel(account, name);
 
     this.channels.pushObject(channel);
     return channel;
   }
 
-  async removeChannel (channel) {
+  async removeChannel(channel) {
     this.leaveChannel(channel);
     this.channels.removeObject(channel);
     if (!channel.isUserChannel) {
@@ -357,9 +384,12 @@ export default class ComsService extends Service {
     return;
   }
 
-  async removeAccount (account) {
+  async removeAccount(account) {
     const channels = this.channels.filterBy('account', account);
-    console.debug(`Removing ${channels.length} channels before removing account:`, channels);
+    console.debug(
+      `Removing ${channels.length} channels before removing account:`,
+      channels
+    );
     for (const channel of channels) {
       await this.removeChannel(channel);
     }
@@ -369,7 +399,7 @@ export default class ComsService extends Service {
     return;
   }
 
-  getServiceForSockethubPlatform (protocol) {
+  getServiceForSockethubPlatform(protocol) {
     return this[protocol.toLowerCase()];
   }
 
@@ -379,10 +409,10 @@ export default class ComsService extends Service {
    * Handles completed Sockethub actions:
    * - Successfully joined a channel
    */
-  handleSockethubCompleted (message) {
+  handleSockethubCompleted(message) {
     this.log(`${message.context}_completed`, message);
 
-    switch(message['@type']) {
+    switch (message['@type']) {
       case 'join':
         this[message.context].handleJoinCompleted(message);
         break;
@@ -398,10 +428,10 @@ export default class ComsService extends Service {
    * - The username/address changed
    * @private
    */
-  handleSockethubMessage (message) {
+  handleSockethubMessage(message) {
     this.log(`${message.context}_message`, 'SH message', message);
 
-    switch(message['@type']) {
+    switch (message['@type']) {
       case 'observe':
         if (message.object['@type'] === 'attendance') {
           this.updateChannelUserList(message);
@@ -414,16 +444,17 @@ export default class ComsService extends Service {
         this.removeUserFromChannelUserList(message);
         break;
       case 'send':
-        switch(message.object['@type']) {
+        switch (message.object['@type']) {
           case 'message':
           case 'me':
-            this.getServiceForSockethubPlatform(message.context)
-                .addMessageToChannel(message);
+            this.getServiceForSockethubPlatform(
+              message.context
+            ).addMessageToChannel(message);
             break;
         }
         break;
       case 'update':
-        switch(message.object['@type']) {
+        switch (message.object['@type']) {
           case 'topic':
             if (message.actor['@type'] === 'service') {
               // TODO (could also create a special service room)
@@ -436,11 +467,16 @@ export default class ComsService extends Service {
             this.updateUsername(message);
             break;
           case 'presence':
-            this.getServiceForSockethubPlatform(message.context)
-                .handlePresenceUpdate(message)
+            this.getServiceForSockethubPlatform(
+              message.context
+            ).handlePresenceUpdate(message);
             break;
           case 'error':
-            console.warn('Got error update message', message.actor['@id'], message.object.content);
+            console.warn(
+              'Got error update message',
+              message.actor['@id'],
+              message.object.content
+            );
             break;
         }
         break;
@@ -458,10 +494,13 @@ export default class ComsService extends Service {
    * Handles the various checks assosciated with channel joins
    * @private
    */
-  handleChannelJoin (message) {
-    if (message.object['@type'] && (message.object['@type'] === 'error')) {
+  handleChannelJoin(message) {
+    if (message.object['@type'] && message.object['@type'] === 'error') {
       // failed to join a channel
-      const channel = this.getChannel(message.target['@id'], message.actor['@id']);
+      const channel = this.getChannel(
+        message.target['@id'],
+        message.actor['@id']
+      );
 
       if (isPresent(channel)) {
         channel.connected = false;
@@ -477,7 +516,7 @@ export default class ComsService extends Service {
    * Handles incoming Sockethub errors/failures
    * @private
    */
-  handleSockethubFailure (message) {
+  handleSockethubFailure(message) {
     this.log('sh_failure', message);
   }
 
@@ -485,7 +524,7 @@ export default class ComsService extends Service {
    * Utility function for easier logging
    * @private
    */
-  log () {
+  log() {
     this.logger.log(...arguments);
   }
 }

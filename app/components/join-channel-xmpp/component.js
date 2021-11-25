@@ -11,7 +11,7 @@ export default class JoinChannelXmppComponent extends Component {
   @tracked channelDomain = '';
   @tracked nickname = '';
 
-  constructor () {
+  constructor() {
     super(...arguments);
     // TODO retrieve MUC domain from user's home server,
     // and/or use chat domain of currently active channel
@@ -19,15 +19,19 @@ export default class JoinChannelXmppComponent extends Component {
     this.nickname = this.args.account.nickname;
   }
 
-  get channelAddress () {
+  get channelAddress() {
     return `${this.channelName}@${this.channelDomain}`;
   }
 
   @action
-  joinChannel (e) {
+  joinChannel(e) {
     e.preventDefault();
 
-    const channel = this.coms.createChannel(this.args.account, this.channelAddress, { saveConfig: true });
+    const channel = this.coms.createChannel(
+      this.args.account,
+      this.channelAddress,
+      { saveConfig: true }
+    );
 
     // TODO wait for join success before transitioning
     this.router.transitionTo('channel', channel);

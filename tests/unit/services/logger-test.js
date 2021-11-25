@@ -1,27 +1,27 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 
-module('Unit | Service | logger', function(hooks) {
+module('Unit | Service | logger', function (hooks) {
   setupTest(hooks);
 
   // Replace this with your real tests.
-  test('it exists', function(assert) {
+  test('it exists', function (assert) {
     let service = this.owner.lookup('service:logger');
     assert.ok(service);
   });
 
-  test('is enabled by default', function(assert) {
+  test('is enabled by default', function (assert) {
     assert.expect(1);
 
     let service = this.owner.lookup('service:logger');
     assert.ok(service.enabled);
   });
 
-  test('does log activeTypes', function(assert) {
+  test('does log activeTypes', function (assert) {
     assert.expect(2);
 
     const originalDebug = console.debug;
-    console.debug = function() {
+    console.debug = function () {
       assert.equal(arguments[0], '[error]');
       assert.ok(true);
       console.debug = originalDebug;
@@ -31,11 +31,11 @@ module('Unit | Service | logger', function(hooks) {
     service.log('error', 'test');
   });
 
-  test('does log added types', function(assert) {
+  test('does log added types', function (assert) {
     assert.expect(1);
 
     const originalDebug = console.debug;
-    console.debug = function() {
+    console.debug = function () {
       assert.ok(true);
       console.debug = originalDebug;
     };
@@ -45,11 +45,11 @@ module('Unit | Service | logger', function(hooks) {
     service.log('message', 'test');
   });
 
-  test('does not log if disabled', function(assert) {
+  test('does not log if disabled', function (assert) {
     assert.expect(1);
 
     const originalDebug = console.debug;
-    console.debug = function() {
+    console.debug = function () {
       assert.ok(false);
     };
 
@@ -61,11 +61,11 @@ module('Unit | Service | logger', function(hooks) {
     console.debug = originalDebug;
   });
 
-  test('does not log if removed types', function(assert) {
+  test('does not log if removed types', function (assert) {
     assert.expect(1);
 
     const originalDebug = console.debug;
-    console.debug = function() {
+    console.debug = function () {
       assert.ok(false);
     };
 

@@ -1,11 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import {
-  click,
-  fillIn,
-  render,
-  select
-} from '@ember/test-helpers';
+import { click, fillIn, render, select } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { A } from '@ember/array';
 import Service from '@ember/service';
@@ -15,47 +10,69 @@ class comsStub extends Service {
   accounts = A();
 }
 
-module('Integration | Component | join-channel', function(hooks) {
+module('Integration | Component | join-channel', function (hooks) {
   setupRenderingTest(hooks);
 
-  hooks.beforeEach(function() {
-     this.owner.register('service:coms', comsStub);
+  hooks.beforeEach(function () {
+    this.owner.register('service:coms', comsStub);
   });
 
-  test('Account menu for one account', async function(assert) {
+  test('Account menu for one account', async function (assert) {
     this.coms = this.owner.lookup('service:coms');
     this.coms.accounts.pushObject(ircAccount);
     await render(hbs`<JoinChannel />`);
 
-    assert.equal(this.element.querySelectorAll('select#account option').length, 1, 'only has one option');
+    assert.equal(
+      this.element.querySelectorAll('select#account option').length,
+      1,
+      'only has one option'
+    );
     const el = this.element.querySelector('select#account option');
-    assert.equal(el.innerText, ircAccount.id, 'renders the only account option');
-    assert.ok(this.element.querySelector('select#account').disabled, 'is disabled');
+    assert.equal(
+      el.innerText,
+      ircAccount.id,
+      'renders the only account option'
+    );
+    assert.ok(
+      this.element.querySelector('select#account').disabled,
+      'is disabled'
+    );
   });
 
-  test('Account menu for multiple accounts', async function(assert) {
+  test('Account menu for multiple accounts', async function (assert) {
     this.coms = this.owner.lookup('service:coms');
-    this.set('coms.accounts', [ ircAccount, xmppAccount ]);
+    this.set('coms.accounts', [ircAccount, xmppAccount]);
     await render(hbs`<JoinChannel />`);
 
-    assert.equal(this.element.querySelectorAll('select#account option').length, 2, 'renders options for all accounts');
-    assert.notOk(this.element.querySelector('select#account').disabled, 'is not disabled');
+    assert.equal(
+      this.element.querySelectorAll('select#account option').length,
+      2,
+      'renders options for all accounts'
+    );
+    assert.notOk(
+      this.element.querySelector('select#account').disabled,
+      'is not disabled'
+    );
   });
 
-  test('Select different account', async function(assert) {
+  test('Select different account', async function (assert) {
     assert.expect(2);
 
     const coms = this.owner.lookup('service:coms');
 
-    coms.accounts = [ ircAccount, xmppAccount ];
+    coms.accounts = [ircAccount, xmppAccount];
 
     const router = this.owner.lookup('service:router');
     router.transitionTo = function () {};
 
     coms.createChannel = function (account, channelName) {
       assert.equal(account.id, xmppAccount.id, 'uses the selected account');
-      assert.equal(channelName, 'kosmos-random@kosmos.chat', 'uses the given channel address');
-    }
+      assert.equal(
+        channelName,
+        'kosmos-random@kosmos.chat',
+        'uses the given channel address'
+      );
+    };
 
     this.set('close', function () {});
 

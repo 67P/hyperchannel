@@ -6,10 +6,10 @@ import Service from '@ember/service';
 
 class comsStub extends Service {}
 
-module('Integration | Component | join-channel-irc', function(hooks) {
+module('Integration | Component | join-channel-irc', function (hooks) {
   setupRenderingTest(hooks);
 
-  hooks.beforeEach(function() {
+  hooks.beforeEach(function () {
     this.owner.register('service:coms', comsStub);
 
     const coms = this.owner.lookup('service:coms');
@@ -25,15 +25,21 @@ module('Integration | Component | join-channel-irc', function(hooks) {
     this.set('close', function () {});
   });
 
-  test('creates a channel with the given name on the passed account', async function(assert) {
+  test('creates a channel with the given name on the passed account', async function (assert) {
     assert.expect(3);
 
     this.coms.createChannel = function (account, channelName) {
       assert.equal(account.id, 'irc-account', 'uses the selected account');
-      assert.equal(channelName, '#kosmos-random', 'uses the given channel address');
-    }
+      assert.equal(
+        channelName,
+        '#kosmos-random',
+        'uses the given channel address'
+      );
+    };
 
-    await render(hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`);
+    await render(
+      hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`
+    );
 
     const channelInput = 'input[name="channel-name"]';
 
@@ -43,46 +49,56 @@ module('Integration | Component | join-channel-irc', function(hooks) {
     await click('input[type="submit"]');
   });
 
-  test('it prefixes the entered channel name with # when none given', async function(assert) {
+  test('it prefixes the entered channel name with # when none given', async function (assert) {
     assert.expect(2);
 
     this.coms.createChannel = function (account, channelName) {
       assert.equal(account.id, 'irc-account', 'uses the selected account');
-      assert.equal(channelName, '#kosmos-random', 'uses the given channel address');
-    }
+      assert.equal(
+        channelName,
+        '#kosmos-random',
+        'uses the given channel address'
+      );
+    };
 
-    await render(hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`);
+    await render(
+      hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`
+    );
 
     await fillIn('input[name="channel-name"]', 'kosmos-random');
     await click('input[type="submit"]');
   });
 
-  test('it sends the user to the created channel', async function(assert) {
+  test('it sends the user to the created channel', async function (assert) {
     assert.expect(2);
 
     this.coms.createChannel = function () {
       return 'channel-model';
-    }
+    };
 
     this.router.transitionTo = function (route, model) {
       assert.equal(route, 'channel');
       assert.equal(model, 'channel-model');
     };
 
-    await render(hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`);
+    await render(
+      hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`
+    );
 
     await fillIn('input[name="channel-name"]', 'kosmos-random');
     await click('input[type="submit"]');
   });
 
-  test('it closes the modal when finished', async function(assert) {
+  test('it closes the modal when finished', async function (assert) {
     assert.expect(1);
 
     this.set('close', function () {
       assert.ok(true);
     });
 
-    await render(hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`);
+    await render(
+      hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`
+    );
 
     await fillIn('input[name="channel-name"]', 'kosmos-random');
     await click('input[type="submit"]');

@@ -1,17 +1,17 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 
-module('Unit | Service | local data', function(hooks) {
-  hooks.beforeEach(async function() {
-    return new Promise((resolve/*, reject*/) => {
-      function nope (e) {
+module('Unit | Service | local data', function (hooks) {
+  hooks.beforeEach(async function () {
+    return new Promise((resolve /*, reject*/) => {
+      function nope(e) {
         console.warn('IndexedDB deletion complaint:', e);
         resolve(e);
       }
       const req = window.indexedDB.deleteDatabase('hyperchannel');
       req.onsuccess = resolve;
-      req.onerror = e => nope(e);
-      req.onblocked = e => nope(e);
+      req.onerror = (e) => nope(e);
+      req.onblocked = (e) => nope(e);
     });
     // FIXME this throws an uncaught IndexedDB error
     // await localforage.dropInstance({ name: 'hyperchannel' });
@@ -19,7 +19,7 @@ module('Unit | Service | local data', function(hooks) {
 
   setupTest(hooks);
 
-  test('store initialization', function(assert) {
+  test('store initialization', function (assert) {
     const service = this.owner.lookup('service:local-data');
     const userSettingsStore = service.stores.userSettings;
 
@@ -39,7 +39,7 @@ module('Unit | Service | local data', function(hooks) {
   //   assert.equal(currentChannel, 'kosmos');
   // });
 
-  test('storing and retrieving values', async function(assert) {
+  test('storing and retrieving values', async function (assert) {
     const service = this.owner.lookup('service:local-data');
     await service.setDefaultValues();
     const userSettingsStore = service.stores.userSettings;

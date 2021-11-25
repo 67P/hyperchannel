@@ -6,13 +6,12 @@ import { tracked } from '@glimmer/tracking';
 import { task } from 'ember-concurrency';
 import { action } from '@ember/object';
 
-function scrollToBottom () {
+function scrollToBottom() {
   let elem = document.getElementById('channel-content');
   elem.scrollTop = elem.scrollHeight;
 }
 
 export default class ChannelContainerComponent extends Component {
-
   @service router;
   @service coms;
 
@@ -24,16 +23,18 @@ export default class ChannelContainerComponent extends Component {
   @tracked renderedMessagesCount = 0; // maximum number of messages to render
   renderedMessagesAddendumAmount = 30; // number of messages to increase rendering count by
 
-  get renderedMessages () {
+  get renderedMessages() {
     if (this.partialRenderingEnabled) {
-      return this.args.channel.sortedMessages.slice(-this.renderedMessagesCount);
+      return this.args.channel.sortedMessages.slice(
+        -this.renderedMessagesCount
+      );
     } else {
       return this.args.channel.sortedMessages;
     }
   }
 
   @action
-  channelChanged () {
+  channelChanged() {
     this.renderedMessagesCount = this.renderedMessagesAddendumAmount;
     this.partialRenderingEnabled = true;
     this.automaticScrollingEnabled = true;
@@ -41,53 +42,57 @@ export default class ChannelContainerComponent extends Component {
   }
 
   @action
-  messagesUpdated () {
+  messagesUpdated() {
     if (this.automaticScrollingEnabled) {
       scheduleOnce('afterRender', scrollToBottom);
     }
   }
 
   @action
-  scheduleOnAfterRender () {
+  scheduleOnAfterRender() {
     scheduleOnce('afterRender', this, this.onAfterRender);
   }
 
-  onAfterRender () {
+  onAfterRender() {
     // TODO update the config when window is resized
     const element = document.getElementById('channel');
-    this.partialRenderingObserverMargin = `${element.clientHeight/3}px`;
+    this.partialRenderingObserverMargin = `${element.clientHeight / 3}px`;
 
     // We need to define an empty handler for swipe events on the
     // #channel-content element, so that the actual handler of the app container
     // component gets triggered
-    Hammer(document.getElementById('channel-content')).on('swipe', function(){});
+    Hammer(document.getElementById('channel-content')).on(
+      'swipe',
+      function () {}
+    );
   }
 
-  focusMessageInputField () {
+  focusMessageInputField() {
     const inputEl = document.querySelector('input#message-field');
     inputEl.focus();
   }
 
-  @(task(function * () {
+  @(task(function* () {
     this.automaticScrollingEnabled = false;
     yield this.coms.loadLastMessages(
       this.args.channel,
       this.args.channel.searchedPreviousLogsUntilDate
     );
-  }).drop()) loadPreviousMessages;
+  }).drop())
+  loadPreviousMessages;
 
   // TODO make dynamic based on active sidebar content
-  get headerNavButtonUsersActive () {
+  get headerNavButtonUsersActive() {
     if (window.innerWidth > 900) return true;
     return this.args.showChannelMenu;
   }
 
   @action
-  processMessageOrCommand (e) {
+  processMessageOrCommand(e) {
     if (e && e.preventDefault) e.preventDefault();
     const msg = document.querySelector('input#message-field').value;
 
-    if (msg.substr(0, 1) === "/") {
+    if (msg.substr(0, 1) === '/') {
       this.args.onCommand(msg);
     } else {
       this.args.onMessage(msg);
@@ -95,31 +100,32 @@ export default class ChannelContainerComponent extends Component {
   }
 
   @action
-  menu (which, what) {
+  menu(which, what) {
     this.args.onMenu(which, what);
   }
 
   @action
-  addUsernameMentionToMessage (username) {
+  addUsernameMentionToMessage(username) {
     this.args.addUsernameMentionToMessage(username);
     this.focusMessageInputField();
   }
 
   @action
-  increaseRenderedMessagesCount () {
-    let newMessagesCount = this.renderedMessagesCount + this.renderedMessagesAddendumAmount;
-    this.renderedMessagesCount =newMessagesCount;
-    this.partialRenderingEnabled = newMessagesCount < this.args.channel.sortedMessages.length;
+  increaseRenderedMessagesCount() {
+    let newMessagesCount =
+      this.renderedMessagesCount + this.renderedMessagesAddendumAmount;
+    this.renderedMessagesCount = newMessagesCount;
+    this.partialRenderingEnabled =
+      newMessagesCount < this.args.channel.sortedMessages.length;
   }
 
   @action
-  setAutomaticScrolling (state) {
+  setAutomaticScrolling(state) {
     this.automaticScrollingEnabled = state;
   }
 
   @action
-  leaveChannel (channel) {
+  leaveChannel(channel) {
     this.args.onLeaveChannel(channel);
   }
-
 }

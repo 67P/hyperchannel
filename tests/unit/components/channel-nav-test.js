@@ -7,7 +7,7 @@ import createComponent from 'hyperchannel/tests/helpers/create-component';
 import { ircAccount } from '../../fixtures/accounts';
 
 class RouterStub extends Service {
-  transitionTo (route, channel) {
+  transitionTo(route, channel) {
     this.currentRoute = route;
     this.currentChannel = channel;
     return true;
@@ -19,12 +19,24 @@ module('Unit | Component | channel-nav', function (hooks) {
 
   test('switching to next channel', function (assert) {
     const routerService = new RouterStub();
-    const channel1 = new Channel({ account: ircAccount, name: 'channel1', visible: false });
-    const channel2 = new Channel({ account: ircAccount, name: 'channel2', visible: true });
-    const channel3 = new Channel({ account: ircAccount, name: 'channel3', visible: false });
+    const channel1 = new Channel({
+      account: ircAccount,
+      name: 'channel1',
+      visible: false,
+    });
+    const channel2 = new Channel({
+      account: ircAccount,
+      name: 'channel2',
+      visible: true,
+    });
+    const channel3 = new Channel({
+      account: ircAccount,
+      name: 'channel3',
+      visible: false,
+    });
     const comsService = this.owner.factoryFor('service:coms').create({
-      accounts: [ ircAccount ],
-      channels: [ channel1, channel2, channel3 ]
+      accounts: [ircAccount],
+      channels: [channel1, channel2, channel3],
     });
     const component = createComponent('component:channel-nav');
     component.coms = comsService;
@@ -44,12 +56,24 @@ module('Unit | Component | channel-nav', function (hooks) {
 
   test('switching to previous channel', function (assert) {
     const routerService = new RouterStub();
-    const channel1 = new Channel({ account: ircAccount, name: 'channel1', visible: false });
-    const channel2 = new Channel({ account: ircAccount, name: 'channel2', visible: true });
-    const channel3 = new Channel({ account: ircAccount, name: 'channel3', visible: false });
+    const channel1 = new Channel({
+      account: ircAccount,
+      name: 'channel1',
+      visible: false,
+    });
+    const channel2 = new Channel({
+      account: ircAccount,
+      name: 'channel2',
+      visible: true,
+    });
+    const channel3 = new Channel({
+      account: ircAccount,
+      name: 'channel3',
+      visible: false,
+    });
     const comsService = this.owner.factoryFor('service:coms').create({
-      accounts: [ ircAccount ],
-      channels: [ channel1, channel2, channel3 ]
+      accounts: [ircAccount],
+      channels: [channel1, channel2, channel3],
     });
     const component = createComponent('component:channel-nav');
     component.coms = comsService;
@@ -66,5 +90,4 @@ module('Unit | Component | channel-nav', function (hooks) {
 
     assert.equal(routerService.currentChannel.name, channel3.name);
   });
-
 });

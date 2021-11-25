@@ -7,6 +7,6 @@ module.exports = {
     'no-invalid-interactive': false,
     'link-href-attributes': false,
     'no-duplicate-landmark-elements': false,
-    'require-input-label': 'warn'
+    'require-input-label': 'warn',
   },
 };

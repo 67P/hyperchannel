@@ -1,7 +1,6 @@
 import Service from '@ember/service';
 
 export default class LoggerService extends Service {
-
   enabled = true;
 
   allowedTypes = [
@@ -20,7 +19,7 @@ export default class LoggerService extends Service {
     'irc',
     'xmpp',
     'fetch-error',
-    'chat_message'
+    'chat_message',
   ];
 
   activeTypes = [
@@ -37,10 +36,10 @@ export default class LoggerService extends Service {
     'xmpp',
     'message',
     'irc_message',
-    'xmpp_message'
+    'xmpp_message',
   ];
 
-  log (type) {
+  log(type) {
     if (!this.allowedTypes.includes(type)) {
       throw new Error(`You specified a unknown type: "${type}".`);
     }
@@ -52,19 +51,19 @@ export default class LoggerService extends Service {
     }
   }
 
-  add (type) {
+  add(type) {
     this.activeTypes.addObject(type);
   }
 
-  remove (type) {
+  remove(type) {
     this.activeTypes.removeObject(type);
   }
 
-  disable () {
+  disable() {
     this.enabled = false;
   }
 
-  enable () {
+  enable() {
     this.enabled = true;
   }
 }

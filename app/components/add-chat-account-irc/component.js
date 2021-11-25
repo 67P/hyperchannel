@@ -5,7 +5,6 @@ import { tracked } from '@glimmer/tracking';
 import IrcAccount from 'hyperchannel/models/account/irc';
 
 export default class AddChatAccountIrcComponent extends Component {
-
   @service router;
   @service coms;
   @service('sockethub-irc') irc;
@@ -22,7 +21,7 @@ export default class AddChatAccountIrcComponent extends Component {
   @tracked connectError = null;
   @tracked showCredentialFields = false;
 
-  get username () {
+  get username() {
     return this.nickname;
   }
 
@@ -60,12 +59,12 @@ export default class AddChatAccountIrcComponent extends Component {
   //   }
   // }
 
-  instantiateAccount () {
+  instantiateAccount() {
     return new IrcAccount({
       server: {
         hostname: this.hostname,
         port: this.port,
-        secure: this.useTls
+        secure: this.useTls,
       },
       nickname: this.nickname,
       // username: this.username,
@@ -73,25 +72,22 @@ export default class AddChatAccountIrcComponent extends Component {
     });
   }
 
-  async createAccount () {
+  async createAccount() {
     const account = this.instantiateAccount();
     this.coms.accounts.pushObject(account);
     return this.storage.saveAccount(account).then(() => account);
   }
 
-  addDefaultChannels (account) {
-    const defaultChannels = [
-      '#kosmos',
-      '#kosmos-random'
-    ];
+  addDefaultChannels(account) {
+    const defaultChannels = ['#kosmos', '#kosmos-random'];
 
-    defaultChannels.forEach(name => {
-      this.coms.createChannel(account, name, { saveConfig: true })
+    defaultChannels.forEach((name) => {
+      this.coms.createChannel(account, name, { saveConfig: true });
     });
   }
 
   @action
-  async submitForm (e) {
+  async submitForm(e) {
     e.preventDefault();
     this.connectError = null;
 
@@ -109,5 +105,4 @@ export default class AddChatAccountIrcComponent extends Component {
     this.addDefaultChannels(account);
     this.router.transitionTo('channel', this.coms.channels.firstObject);
   }
-
 }

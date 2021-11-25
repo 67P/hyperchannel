@@ -9,14 +9,18 @@ export default class JoinChannelIrcComponent extends Component {
 
   @tracked channelName = '';
 
-  @action joinChannel (e) {
+  @action joinChannel(e) {
     e.preventDefault();
 
     if (!this.channelName.match(/^#/)) {
       this.channelName = `#${this.channelName}`;
     }
 
-    const channel = this.coms.createChannel(this.args.account, this.channelName, { saveConfig: true });
+    const channel = this.coms.createChannel(
+      this.args.account,
+      this.channelName,
+      { saveConfig: true }
+    );
 
     // TODO wait for join success before transitioning
     this.router.transitionTo('channel', channel);

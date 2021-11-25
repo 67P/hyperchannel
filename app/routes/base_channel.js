@@ -12,16 +12,15 @@ function focusMessageInput() {
 }
 
 export default class BaseChannelRoute extends Route {
-
   @service router;
   @service coms;
   @service localData;
 
-  get userSettings () {
+  get userSettings() {
     return this.localData.stores.userSettings;
   }
 
-  model (params) {
+  model(params) {
     let channel = this.coms.channels.findBy('slug', params.slug);
     if (channel) return channel;
 
@@ -30,7 +29,10 @@ export default class BaseChannelRoute extends Route {
     const randomChannelForDomain = this.coms.channels.findBy('domain', domain);
 
     if (randomChannelForDomain) {
-      channel = this.createChannelOrUserChannel(randomChannelForDomain.account, channelId);
+      channel = this.createChannelOrUserChannel(
+        randomChannelForDomain.account,
+        channelId
+      );
       return channel;
     } else {
       const firstChannel = this.coms.channels.firstObject;
@@ -38,14 +40,14 @@ export default class BaseChannelRoute extends Route {
     }
   }
 
-  setupController () {
+  setupController() {
     super.setupController(...arguments);
 
     scheduleOnce('afterRender', this, focusMessageInput);
   }
 
   @action
-  async didTransition () {
+  async didTransition() {
     const channel = this.modelFor(this.routeName);
 
     await this.userSettings.setItem('currentChannel', channel.slug);
@@ -60,5 +62,4 @@ export default class BaseChannelRoute extends Route {
     channel.unreadMessages = false;
     channel.unreadMentions = false;
   }
-
 }

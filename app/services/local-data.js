@@ -6,21 +6,21 @@ import * as localforage from 'localforage';
 const defaultValues = {
   userSettings: {
     // nickname: null
-  }
+  },
 };
 
 export default class LocalDataService extends Service {
-
-  constructor () {
+  constructor() {
     super(...arguments);
     this.stores = {
       userSettings: localforage.createInstance({
-        name: 'hyperchannel', storeName: 'userSettings'
-      })
-    }
+        name: 'hyperchannel',
+        storeName: 'userSettings',
+      }),
+    };
   }
 
-  async setDefaultValues () {
+  async setDefaultValues() {
     for (const storeName of Object.keys(defaultValues)) {
       const store = this.stores[storeName];
 
@@ -32,5 +32,4 @@ export default class LocalDataService extends Service {
       }
     }
   }
-
 }

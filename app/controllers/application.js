@@ -6,7 +6,6 @@ import { tracked } from '@glimmer/tracking';
 import isDescendantOf from 'hyperchannel/utils/dom/is-descendant-of';
 
 export default class ApplicationController extends Controller {
-
   @service coms;
   @service router;
   @service modals;
@@ -14,14 +13,16 @@ export default class ApplicationController extends Controller {
   @tracked showGlobalMenu = false;
   @tracked showChannelMenu = false;
 
-  hammerInputClass = Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput;
+  hammerInputClass = Hammer.SUPPORT_POINTER_EVENTS
+    ? Hammer.PointerEventInput
+    : Hammer.TouchInput;
 
-  get showChatInterface () {
+  get showChatInterface() {
     return this.router.currentRoute.name.includes('channel');
   }
 
   @action
-  swipeLeft () {
+  swipeLeft() {
     if (this.showGlobalMenu) {
       this.showGlobalMenu = false;
     } else {
@@ -30,7 +31,7 @@ export default class ApplicationController extends Controller {
   }
 
   @action
-  swipeRight () {
+  swipeRight() {
     if (this.showChannelMenu) {
       this.showChannelMenu = false;
     } else {
@@ -39,25 +40,29 @@ export default class ApplicationController extends Controller {
   }
 
   @action
-  tap (e) {
-    if (this.showGlobalMenu &&
-        !isDescendantOf('channel-header', e.target) &&
-        !isDescendantOf('global', e.target)) {
+  tap(e) {
+    if (
+      this.showGlobalMenu &&
+      !isDescendantOf('channel-header', e.target) &&
+      !isDescendantOf('global', e.target)
+    ) {
       this.showGlobalMenu = false;
-    } else if (this.showChannelMenu &&
-        !isDescendantOf('channel-nav', e.target) &&
-        !isDescendantOf('channel-sidebar', e.target)) {
+    } else if (
+      this.showChannelMenu &&
+      !isDescendantOf('channel-nav', e.target) &&
+      !isDescendantOf('channel-sidebar', e.target)
+    ) {
       this.showChannelMenu = false;
     }
   }
 
   @action
-  openSettingsModal () {
+  openSettingsModal() {
     this.modals.open('settings-container');
   }
 
   @action
-  leaveChannel (channel) {
+  leaveChannel(channel) {
     this.coms.removeChannel(channel);
 
     // Switch to last channel if the channel parted was currently open
