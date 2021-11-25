@@ -1,3 +1,11 @@
+:root {
+  --epm-animation-backdrop-in-duration: 0.1s;
+  --epm-animation-backdrop-out-duration: 0.1s;
+  --epm-animation-modal-in-duration: 0.15s;
+  --epm-animation-modal-out-duration: 0.15s;
+  --epm-backdrop-background: #2d37488c;
+}
+
 .epm-backdrop {
   @apply z-30;
 }
@@ -9,4 +17,26 @@
 .epm-modal {
   @apply z-50 my-0 mx-auto rounded-md
          bg-white text-gray-800 shadow-2xl;
+}
+
+@keyframes epm-modal-in {
+  0% {
+    transform: translate(0, -10vh) scale(2);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes epm-modal-out {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, -10vh) scale(0);
+    opacity: 0;
+  }
 }
