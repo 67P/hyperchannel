@@ -46,7 +46,7 @@ export default class BaseChannelRoute extends Route {
 
   @action
   async didTransition () {
-    const channel = this.controller.model;
+    const channel = this.modelFor(this.routeName);
 
     await this.userSettings.setItem('currentChannel', channel.slug);
 
