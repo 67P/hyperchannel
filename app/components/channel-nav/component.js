@@ -8,6 +8,7 @@ export default class ChannelNavComponent extends Component {
 
   @service router;
   @service coms;
+  @service modals;
   @service('remotestorage') storage;
 
   keyboardShortcuts = Object.freeze({
@@ -47,19 +48,9 @@ export default class ChannelNavComponent extends Component {
 
   @action
   joinChannel () {
-    let channelName = window.prompt('Join channel');
-    if (isEmpty(channelName)) return;
-
-    // TODO let user choose account
-    // (new, proper join-channel dialog)
-    const account = this.coms.activeChannel.account;
-
-    if (account.protocol === 'IRC' && !channelName.match(/^#/)) {
-      channelName = `#${channelName}`;
-    }
-
-    const channel = this.coms.createChannel(account, channelName, { saveConfig: true });
-    this.router.transitionTo('channel', channel);
+    this.modals.open('join-channel', {
+      selectedAccount: this.coms.activeChannel.account
+    });
   }
 
   @action
