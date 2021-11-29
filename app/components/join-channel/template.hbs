@@ -5,7 +5,7 @@
     <select id="account" name="account"
             disabled={{this.accountSelectionDisabled}}
             onchange={{action (mut this.selectedAccountId) value="target.value"}}
-            class="block pl-3 pr-10 py-2 text-base border-gray-600 bg-gray-700
+            class="block pl-3 pr-10 py-2 text-base border-gray-500 bg-gray-700
                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
                    sm:text-sm rounded-md mr-0 {{if this.accountSelectionDisabled 'text-gray-300'}}">
     {{#each this.coms.accounts as |account|}}
@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<div class="w-full">
-  {{selectedAccount.id}}
-  {{yield}}
+<div class="w-full p-6">
+  {{component this.componentNameForProtocol
+              account=this.selectedAccount}}
 </div>

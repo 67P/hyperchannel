@@ -30,6 +30,10 @@ export default class JoinChannelComponent extends Component {
     return this.coms.accounts.length < 2;
   }
 
+  get componentNameForProtocol () {
+    return 'join-channel-' + this.selectedAccount.protocol.toLowerCase();
+  }
+
   // @action
   // createChannel (account, channelName) {
   //   if (isEmpty(channelName)) return;
