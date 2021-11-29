@@ -1,11 +1,11 @@
-<div class="flex bg-gray-800 text-white pl-6 pr-3 py-3 rounded-t-md items-center">
+<div class="w-full flex bg-gray-800 text-white pl-6 pr-3 py-3 rounded-t-md items-center">
   <h2 class="flex-grow mr-12">Join Channel</h2>
   <div class="flex-grow">
     <label for="account" class="hidden">Account</label>
     <select id="account" name="account"
-            disabled={{this.accountSelectionDisabled}}
+            disabled={{this.accountSelectionDisabled}} tabindex="0"
             onchange={{action (mut this.selectedAccountId) value="target.value"}}
-            class="block pl-3 pr-10 py-2 text-base border-gray-500 bg-gray-700
+            class="block ml-auto pl-3 pr-10 py-2 text-base border-gray-500 bg-gray-700
                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
                    sm:text-sm rounded-md mr-0 {{if this.accountSelectionDisabled 'text-gray-300'}}">
     {{#each this.coms.accounts as |account|}}
@@ -16,7 +16,8 @@
   </div>
 </div>
 
-<div class="w-full p-6">
+<div class="w-full px-6 py-8">
   {{component this.componentNameForProtocol
-              account=this.selectedAccount}}
+              account=this.selectedAccount
+              closeModal=@close}}
 </div>

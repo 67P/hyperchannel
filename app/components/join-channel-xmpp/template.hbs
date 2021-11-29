@@ -1,1 +1,25 @@
-join-channel-xmpp for {{@account.id}}
+<form {{on "submit" this.joinChannel}}>
+  <div class="grid grid-cols-1 gap-2">
+    <label for="channel-name" class="hidden">Channel</label>
+    <div class="flex justify-center items-center">
+      <Input name="channel-name" @type="text" @value={{this.channelName}}
+             aria-label="channel name" placeholder="channel"
+             required class="flex-grow min-w-0" tabindex="1"/>
+      <span class="flex-0 mx-1 text-xl">@</span>
+      <Input name="channel-domain" @type="text" @value={{this.channelDomain}}
+             aria-label="domain" placeholder="domain"
+             required class="flex-grow min-w-0" tabindex="2" />
+      <input type="submit" value="Join" aria-label="Join"
+             class="flex-none ml-4 btn-md btn-blue" tabindex="3" />
+    </div>
+  </div>
+  <!-- TODO -->
+  <!-- <div class="mt-6"> -->
+  <!--   Advanced options -->
+  <!-- </div> -->
+  <!-- <div class="mt&#45;6 grid grid&#45;cols&#45;1 gap&#45;2 sm:grid&#45;cols&#45;10 sm:gap&#45;4 sm:items&#45;center"> -->
+  <!--   <label for="nickname" class="sm:col&#45;span&#45;3 pr&#45;4">Nickname</label> -->
+  <!--   <Input name="nickname" @type="text" @value={{this.nickname}} -->
+  <!--          required class="sm:col&#45;span&#45;7" tabindex="4"/> -->
+  <!-- </div> -->
+</form>
