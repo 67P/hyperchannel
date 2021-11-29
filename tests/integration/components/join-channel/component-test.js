@@ -22,10 +22,10 @@ module('Integration | Component | join-channel', function(hooks) {
     this.coms.accounts.pushObject(ircAccount);
     await render(hbs`<JoinChannel />`);
 
-    assert.equal(this.element.querySelectorAll('select#account option').length, 1, 'select only has one option');
+    assert.equal(this.element.querySelectorAll('select#account option').length, 1, 'only has one option');
     const el = this.element.querySelector('select#account option');
-    assert.equal(el.innerText, ircAccount.id, 'select option is the only account');
-    assert.ok(this.element.querySelector('select#account').disabled, 'select is disabled');
+    assert.equal(el.innerText, ircAccount.id, 'renders the only account option');
+    assert.ok(this.element.querySelector('select#account').disabled, 'is disabled');
 
   });
 
@@ -34,17 +34,17 @@ module('Integration | Component | join-channel', function(hooks) {
     this.set('coms.accounts', [ ircAccount, xmppAccount ]);
     await render(hbs`<JoinChannel />`);
 
-    assert.equal(this.element.querySelectorAll('select#account option').length, 2, 'select shows options for all accounts');
-    assert.notOk(this.element.querySelector('select#account').disabled, 'select is not disabled');
+    assert.equal(this.element.querySelectorAll('select#account option').length, 2, 'renders options for all accounts');
+    assert.notOk(this.element.querySelector('select#account').disabled, 'is not disabled');
   });
 
   test('Select different account', async function(assert) {
     this.coms = this.owner.lookup('service:coms');
     this.set('coms.accounts', [ ircAccount, xmppAccount ]);
-    this.set('selectedAccount', ircAccount);
+    this.set('selectedAccountId', ircAccount.id);
     await render(hbs`<JoinChannel />`);
 
-    select('select#account', xmppAccount.id);
-    assert.equal(this.selectedAccount.id, xmppAccount.id, 'updates the selected account property');
+    await select('select#account', xmppAccount.id);
+    assert.equal(this.selectedAccountId, xmppAccount.id, 'updates the selected account ID property');
   });
 });

@@ -8,11 +8,14 @@ export default class JoinChannelComponent extends Component {
   // @service router;
   @service coms;
 
-  @tracked selectedAccount;
+  @tracked selectedAccountId;
 
-  constructor () {
-    super(...arguments);
-    this.selectedAccount = this.preSelectedAccount;
+  get selectedAccount () {
+    if (isPresent(this.selectedAccountId)) {
+      return this.coms.accounts.findBy('id', this.selectedAccountId);
+    } else {
+      return this.preSelectedAccount;
+    }
   }
 
   get preSelectedAccount () {
