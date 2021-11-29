@@ -48,9 +48,7 @@ export default class ChannelNavComponent extends Component {
 
   @action
   joinChannel () {
-    this.modals.open('join-channel', {
-      selectedAccount: this.coms.activeChannel.account
-    });
+    this.modals.open('join-channel');
   }
 
   @action

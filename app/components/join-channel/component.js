@@ -1,14 +1,26 @@
 import Component from '@glimmer/component';
-// import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
+import { isPresent } from '@ember/utils';
+// import { action } from '@ember/object';
 
 export default class JoinChannelComponent extends Component {
-
   // @service router;
   @service coms;
 
-  get selectedAccount () {
-    return this.args.data.selectedAccount;
+  @tracked selectedAccount;
+
+  constructor () {
+    super(...arguments);
+    this.selectedAccount = this.preSelectedAccount;
+  }
+
+  get preSelectedAccount () {
+    if (isPresent(this.coms.activeChannel)) {
+      return this.coms.activeChannel.account;
+    } else {
+      return this.coms.accounts.firstObject;
+    }
   }
 
   get accountSelectionDisabled () {
