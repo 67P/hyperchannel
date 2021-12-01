@@ -1,6 +1,11 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, select } from '@ember/test-helpers';
+import {
+  click,
+  fillIn,
+  render,
+  select
+} from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { A } from '@ember/array';
 import Service from '@ember/service';
@@ -26,7 +31,6 @@ module('Integration | Component | join-channel', function(hooks) {
     const el = this.element.querySelector('select#account option');
     assert.equal(el.innerText, ircAccount.id, 'renders the only account option');
     assert.ok(this.element.querySelector('select#account').disabled, 'is disabled');
-
   });
 
   test('Account menu for multiple accounts', async function(assert) {
@@ -39,12 +43,27 @@ module('Integration | Component | join-channel', function(hooks) {
   });
 
   test('Select different account', async function(assert) {
-    this.coms = this.owner.lookup('service:coms');
-    this.set('coms.accounts', [ ircAccount, xmppAccount ]);
-    this.set('selectedAccountId', ircAccount.id);
-    await render(hbs`<JoinChannel />`);
+    assert.expect(2);
+
+    const coms = this.owner.lookup('service:coms');
+
+    coms.accounts = [ ircAccount, xmppAccount ];
+
+    const router = this.owner.lookup('service:router');
+    router.transitionTo = function () {};
+
+    coms.createChannel = function (account, channelName) {
+      assert.equal(account.id, xmppAccount.id, 'uses the selected account');
+      assert.equal(channelName, 'kosmos-random@kosmos.chat', 'uses the given channel address');
+    }
+
+    this.set('close', function () {});
+
+    await render(hbs`<JoinChannel @close={{this.close}} />`);
 
     await select('select#account', xmppAccount.id);
-    assert.equal(this.selectedAccountId, xmppAccount.id, 'updates the selected account ID property');
+    await fillIn('input[name="channel-name"]', 'kosmos-random');
+
+    await click('input[type="submit"]');
   });
 });
