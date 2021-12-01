@@ -2,6 +2,7 @@ import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { isPresent } from '@ember/utils';
+import { action } from '@ember/object';
 
 export default class JoinChannelComponent extends Component {
   @service coms;
@@ -30,5 +31,10 @@ export default class JoinChannelComponent extends Component {
 
   get componentNameForProtocol () {
     return 'join-channel-' + this.selectedAccount.protocol.toLowerCase();
+  }
+
+  @action
+  selectAccount(event) {
+    this.selectedAccountId = event.target.value;
   }
 }
