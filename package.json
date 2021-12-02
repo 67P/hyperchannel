@@ -64,7 +64,7 @@
     "ember-load-initializers": "^2.1.2",
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-moment": "^8.0.1",
-    "ember-promise-modals": "^2.0.0",
+    "ember-promise-modals": "github:67P/ember-promise-modals#feature/no_focus_trap",
     "ember-qunit": "^5.1.4",
     "ember-resolver": "^8.0.0",
     "ember-service-worker": "^0.8.4",

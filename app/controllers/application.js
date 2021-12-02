@@ -16,6 +16,11 @@ export default class ApplicationController extends Controller {
 
   hammerInputClass = Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput;
 
+  constructor () {
+    super(...arguments);
+    this.modals.disableFocusTrap = true;
+  }
+
   get showChatInterface () {
     return this.router.currentRoute.name.includes('channel');
   }
