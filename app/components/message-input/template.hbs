@@ -1,5 +1,4 @@
 <section id="new-message" class="py-0 px-4"
-         {{did-insert this.bindKeyboardShortcuts}}
          {{will-destroy this.unbindKeyboardShortcuts}}>
   <form {{on "submit" @sendMessage}}>
     <ChannelInputField @value={{@message}}
@@ -7,6 +6,8 @@
                        @name="chat-message"
                        @id="message-field"
                        @autocomplete="off"
-                       @classNames="w-full p-0 border-none" />
+                       @classNames="w-full p-0 border-none"
+                       {{on "focusin" this.bindKeyboardShortcuts}}
+                       {{on "focusout" this.unbindKeyboardShortcuts}} />
   </form>
 </section>
