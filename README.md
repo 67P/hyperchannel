@@ -2,7 +2,7 @@
 [![Code Climate](https://img.shields.io/codeclimate/maintainability/67P/hyperchannel.svg)](https://codeclimate.com/github/67P/hyperchannel)
 [![devDependency Status](https://david-dm.org/67P/hyperchannel/dev-status.svg)](https://david-dm.org/67P/hyperchannel#info=devDependencies)
 
-# Hyperchannel (pre-alpha!)
+# Hyperchannel (alpha!)
 
 **Hyperchannel** is the unhosted client application of the
 [Kosmos](https://kosmos.org) Chat project. It is based on
