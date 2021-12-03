@@ -9,9 +9,9 @@ export default class MessageInputComponent extends Component {
 
   @tracked message = '';
 
-  keyboardShortcuts = Object.freeze({
+  keyboardShortcuts = {
     'tab': 'completeUsername'
-  });
+  };
 
   setCursorPosition (input, newCursorPosition) {
     input.focus();

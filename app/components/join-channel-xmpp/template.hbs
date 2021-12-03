@@ -1,0 +1,27 @@
+<form {{on "submit" this.joinChannel}}>
+  <div class="grid grid-cols-1 gap-2">
+    <label for="channel-name" class="hidden">Channel</label>
+    <div class="flex justify-center items-center">
+      <Input name="channel-name" @type="text" @value={{this.channelName}}
+             aria-label="channel name" placeholder="channel"
+             required class="flex-grow min-w-0" {{autofocus}} />
+      <span class="flex-0 mx-1 text-xl">@</span>
+      <Input name="channel-domain" @type="text" @value={{this.channelDomain}}
+             aria-label="domain" placeholder="domain"
+             required class="flex-grow min-w-0" />
+      <input type="submit" value="Join" aria-label="Join"
+             class="flex-none ml-4 btn-md btn-blue" />
+    </div>
+  </div>
+  {{!--
+  <!-- TODO -->
+  <div class="mt-6">
+    Advanced options
+  </div>
+  <div class="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-10 sm:gap-4 sm:items-center">
+    <label for="nickname" class="sm:col-span-3 pr-4">Nickname</label>
+    <Input name="nickname" @type="text" @value={{this.nickname}}
+           required class="sm:col-span-7" />
+  </div>
+  --}}
+</form>

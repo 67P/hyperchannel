@@ -13,14 +13,5 @@ module('Integration | Component | add-chat-account-xmpp', function(hooks) {
     await render(hbs`<AddChatAccountXmpp />`);
 
     assert.equal(this.element.textContent.trim(), '');
-
-    // Template block usage:
-    await render(hbs`
-      <AddChatAccountXmpp>
-        template block text
-      </AddChatAccountXmpp>
-    `);
-
-    assert.equal(this.element.textContent.trim(), 'template block text');
   });
 });

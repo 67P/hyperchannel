@@ -13,14 +13,5 @@ module('Integration | Component | add-chat-account-irc', function(hooks) {
     await render(hbs`<AddChatAccountIrc />`);
 
     assert.equal(this.element.textContent.trim(), '');
-
-    // Template block usage:
-    await render(hbs`
-      <AddChatAccountIrc>
-        template block text
-      </AddChatAccountIrc>
-    `);
-
-    assert.equal(this.element.textContent.trim(), 'template block text');
   });
 });
