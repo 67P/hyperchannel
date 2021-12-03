@@ -42,6 +42,7 @@
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-auto-import": "^1.11.3",
+    "ember-autofocus-modifier": "^3.0.0",
     "ember-body-class": "^2.0.0",
     "ember-cached-decorator-polyfill": "^0.1.4",
     "ember-cli": "~3.20.2",
@@ -90,7 +91,6 @@
     "tailwindcss": "^2.2.4"
   },
   "dependencies": {
-    "ember-autofocus-modifier": "^3.0.0",
     "extend": "^3.0.2"
   },
   "optionalDependencies": {
