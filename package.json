@@ -62,7 +62,7 @@
     "ember-concurrency": "^2.1.0",
     "ember-export-application-global": "^2.0.1",
     "ember-fetch": "^8.1.0",
-    "ember-gestures": "^2.0.1",
+    "ember-gestures": "github:lupestro/ember-gestures#ee4bf441c304b7f183b04a28d127dba8c3221f34",
     "ember-hammertime": "1.6.0",
     "ember-keyboard-shortcuts": "github:67P/ember-keyboard-shortcuts#feature/octane_classes",
     "ember-load-initializers": "^2.1.2",
