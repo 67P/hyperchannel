@@ -1,6 +1,5 @@
 [![Build Status](https://travis-ci.com/67P/hyperchannel.svg?branch=master)](https://travis-ci.org/67P/hyperchannel)
 [![Code Climate](https://img.shields.io/codeclimate/maintainability/67P/hyperchannel.svg)](https://codeclimate.com/github/67P/hyperchannel)
-[![devDependency Status](https://david-dm.org/67P/hyperchannel/dev-status.svg)](https://david-dm.org/67P/hyperchannel#info=devDependencies)
 
 # Hyperchannel (alpha!)
 
