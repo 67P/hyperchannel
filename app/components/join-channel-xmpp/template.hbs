@@ -4,7 +4,7 @@
     <div class="flex justify-center items-center">
       <Input name="channel-name" @type="text" @value={{this.channelName}}
              aria-label="channel name" placeholder="channel"
-             required class="flex-grow min-w-0" />
+             required class="flex-grow min-w-0" {{autofocus}} />
       <span class="flex-0 mx-1 text-xl">@</span>
       <Input name="channel-domain" @type="text" @value={{this.channelDomain}}
              aria-label="domain" placeholder="domain"
