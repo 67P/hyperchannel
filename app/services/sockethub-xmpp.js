@@ -32,10 +32,10 @@ function buildActivityObject(account, details) {
  */
 function buildMessageObject(account, target, content, type='message') {
   return buildActivityObject(account, {
-    '@type': 'send',
+    type: 'send',
     target: target,
     object: {
-      '@type': type,
+      type: type,
       content: content
     }
   });
@@ -52,16 +52,16 @@ export default class SockethubXmppService extends Service {
 
   connectWithCredentials (userAddress, password) {
     this.sockethub.ActivityStreams.Object.create({
-      '@id': userAddress,
-      '@type': "person",
-      displayName: userAddress.split('@')[0],
+      id: userAddress,
+      type: 'person',
+      name: userAddress.split('@')[0],
     });
 
     const credentialsJob = {
       actor: userAddress,
       context: 'xmpp',
       object: {
-        '@type': 'credentials',
+        type: 'credentials',
         username: userAddress,
         password: password,
         resource: 'hyperchannel'
@@ -69,7 +69,9 @@ export default class SockethubXmppService extends Service {
     };
 
     const connectJob = {
-      '@type': 'connect', context: 'xmpp', actor: userAddress
+      type: 'connect',
+      context: 'xmpp',
+      actor: userAddress
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
@@ -84,16 +86,16 @@ export default class SockethubXmppService extends Service {
     const actor = account.sockethubPersonId;
 
     this.sockethub.ActivityStreams.Object.create({
-      '@id': actor,
-      '@type': "person",
-      displayName: account.nickname,
+      id: actor,
+      type: 'person',
+      name: account.nickname
     });
 
     const credentialsJob = {
       actor: actor,
       context: 'xmpp',
       object: {
-        '@type': 'credentials',
+        type: 'credentials',
         username: account.username, // JID
         password: account.password,
         resource: 'hyperchannel'
@@ -101,7 +103,9 @@ export default class SockethubXmppService extends Service {
     };
 
     const connectJob = {
-      '@type': 'connect', context: 'xmpp', actor: actor
+      type: 'connect',
+      context: 'xmpp',
+      actor: actor
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
@@ -110,7 +114,7 @@ export default class SockethubXmppService extends Service {
   }
 
   handleJoinCompleted (message) {
-    const channelId = message.target['@id'].split('/')[0];
+    const channelId = message.target.id.split('/')[0];
     const channel = this.coms.channels.findBy('sockethubChannelId', channelId);
     if (channel) {
       this.observeChannel(channel);
@@ -128,21 +132,21 @@ export default class SockethubXmppService extends Service {
    */
   join (channel, type) {
     this.sockethub.ActivityStreams.Object.create({
-      '@type': type,
-      '@id': channel.sockethubChannelId,
-      displayName: channel.name
+      type: type,
+      id: channel.sockethubChannelId,
+      name: channel.name
     });
 
     let joinMsg = buildActivityObject(channel.account, {
-      '@type': 'join',
+      type: 'join',
       actor: {
-        '@type': 'person',
-        '@id': channel.sockethubPersonId,
-        displayName: channel.account.nickname
+        type: 'person',
+        id: channel.sockethubPersonId,
+        name: channel.account.nickname
       },
       target: {
-        '@id': channel.sockethubChannelId,
-        '@type': type
+        id: channel.sockethubChannelId,
+        type: type
       }
     });
 
@@ -155,7 +159,7 @@ export default class SockethubXmppService extends Service {
    * @public
    */
   transferMessage (target, content) {
-    const channel = this.coms.getChannel(target['@id']);
+    const channel = this.coms.getChannel(target.id);
     const message = buildMessageObject(channel.account, target, content);
 
     this.log('send', 'sending message job', message);
@@ -163,32 +167,32 @@ export default class SockethubXmppService extends Service {
   }
 
   handlePresenceUpdate (message) {
-    if (message.target['@type'] === 'room') {
-      const targetChannelId = message.target['@id'];
+    if (message.target.type === 'room') {
+      const targetChannelId = message.target.id;
       const channel = this.coms.getChannel(targetChannelId);
 
       if (channel) {
         if (message.object.presence === 'offline') {
-          channel.removeUser(message.actor.displayName);
+          channel.removeUser(message.actor.name);
         } else {
-          channel.addUser(message.actor.displayName);
+          channel.addUser(message.actor.name);
         }
       }
-    } else if (message.actor['@type'] === 'person' && message.actor['@id'].match(/\/(.+)$/)) {
-      const sockethubActorId = message.actor['@id'];
+    } else if (message.actor.type === 'person' && message.actor.id.match(/\/(.+)$/)) {
+      const sockethubActorId = message.actor.id;
       const targetChannelId = sockethubActorId.match(/^(.+)\//)[1];
       const channel = this.coms.getChannel(targetChannelId);
-      const displayName = sockethubActorId.match(/\/(.+)$/)[1];
+      const username = sockethubActorId.match(/\/(.+)$/)[1];
 
       if (channel) {
         if (message.object.presence === 'unavailable') {
-          channel.removeUser(displayName);
+          channel.removeUser(username);
         } else {
-          channel.addUser(displayName);
+          channel.addUser(username);
         }
       }
     } else {
-      this.log('xmpp', 'presence update from contact:', message.actor['@id'], message.object.presence, message.object.status);
+      this.log('xmpp', 'presence update from contact:', message.actor.id, message.object.presence, message.object.status);
     }
   }
 
@@ -204,8 +208,8 @@ export default class SockethubXmppService extends Service {
 
     // TODO implement message carbons
     // https://xmpp.org/extensions/xep-0280.html
-    if (message.actor.displayName &&
-       (message.actor.displayName === channel.account.nickname)) {
+    if (message.actor.name &&
+       (message.actor.name === channel.account.nickname)) {
       const pendingConfirmed = channel.confirmPendingMessage(message.object.content);
       if (pendingConfirmed) return;
     }
@@ -217,7 +221,7 @@ export default class SockethubXmppService extends Service {
   leave (channel) {
     if (!channel.isUserChannel) {
       const leaveMsg = buildActivityObject(channel.account, {
-        '@type': 'leave',
+        type: 'leave',
         target: channel.sockethubChannelId,
         object: {}
       });
@@ -235,10 +239,10 @@ export default class SockethubXmppService extends Service {
    */
   observeChannel (channel) {
     let observeMsg = buildActivityObject(channel.account, {
-      '@type': 'observe',
+      type: 'observe',
       target: channel.sockethubChannelId,
       object: {
-        '@type': 'attendance'
+        type: 'attendance'
       }
     });
 
@@ -254,10 +258,10 @@ export default class SockethubXmppService extends Service {
    * @public
    */
   findOrCreateChannelForMessage (message) {
-    const targetChannelId = message.target['@id'];
+    const targetChannelId = message.target.id;
     let channel;
 
-    if (message.target['@type'] === 'room') {
+    if (message.target.type === 'room') {
       channel = this.coms.channels.findBy('sockethubChannelId', targetChannelId);
 
       // TODO Find account for new channel by sockerhubPersonId
@@ -266,12 +270,12 @@ export default class SockethubXmppService extends Service {
         // channel = this.coms.createChannel(space, targetChannelId);
       }
     } else {
-      channel = this.coms.channels.findBy('sockethubChannelId', message.actor['@id']);
+      channel = this.coms.channels.findBy('sockethubChannelId', message.actor.id);
 
       if (!channel) {
-        const account = this.coms.accounts.findBy('sockethubPersonId', message.target['@id']);
+        const account = this.coms.accounts.findBy('sockethubPersonId', message.target.id);
         if (!account) console.warn('Received direct message for unknown account', message);
-        channel = this.coms.createUserChannel(account, message.actor['@id']);
+        channel = this.coms.createUserChannel(account, message.actor.id);
       }
     }
 

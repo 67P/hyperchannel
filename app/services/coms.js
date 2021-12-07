@@ -144,9 +144,9 @@ export default class ComsService extends Service {
    */
   transferMessage (channel, content) {
     const target = {
-      '@id': channel.sockethubChannelId,
-      '@type': channel.isUserChannel ? 'person' : 'room',
-      displayName: channel.name
+      id: channel.sockethubChannelId,
+      type: channel.isUserChannel ? 'person' : 'room',
+      name: channel.name
     };
     this.getServiceForSockethubPlatform(channel.protocol)
         .transferMessage(target, content);
@@ -184,7 +184,7 @@ export default class ComsService extends Service {
   }
 
   updateChannelUserList (message) {
-    const channel = this.getChannel(message.actor['@id']);
+    const channel = this.getChannel(message.actor.id);
 
     if (channel) {
       channel.connected = true;
@@ -195,18 +195,18 @@ export default class ComsService extends Service {
   }
 
   addUserToChannelUserList (message) {
-    const channel = this.getChannel(message.target['@id']);
+    const channel = this.getChannel(message.target.id);
     if (channel) {
-      channel.addUser(message.actor.displayName);
+      channel.addUser(message.actor.name);
     }
   }
 
   removeUserFromChannelUserList (message) {
     // TODO handle user quit leaves (multiple channels)
-    // e.g. target is `{ @type: 'service', @id: 'irc.freenode.net' }`
-    const channel = this.getChannel(message.target['@id']);
+    // e.g. target is `{ type: 'service', id: 'irc.freenode.net' }`
+    const channel = this.getChannel(message.target.id);
     if (channel) {
-      channel.removeUser(message.actor.displayName);
+      channel.removeUser(message.actor.name);
     }
   }
 
@@ -226,17 +226,17 @@ export default class ComsService extends Service {
 
   updateUsername (message) {
     if (typeof message.actor === 'object') {
-      const actorId = message.actor['@id'];
+      const actorId = message.actor.id;
       const account = this.accounts.findBy('sockethubPersonId', actorId);
       if (isPresent(account)) {
-        account.updateUsername(message.target.displayName);
+        account.updateUsername(message.target.name);
       }
       // TODO update nickname in channels
     }
   }
 
   updateChannelTopic (message) {
-    let channel = this.getChannel(message.target['@id']);
+    let channel = this.getChannel(message.target.id);
 
     if (isEmpty(channel)) {
       console.warn('No channel for update topic message found.', message);
@@ -260,7 +260,7 @@ export default class ComsService extends Service {
     // let notification = new Message({
     //   type: 'notification-topic-change',
     //   date: new Date(message.published),
-    //   nickname: message.actor.displayName,
+    //   nickname: message.actor.name,
     //   content: message.object.topic
     // });
     // channel.messages.pushObject(notification);
@@ -382,7 +382,7 @@ export default class ComsService extends Service {
   handleSockethubCompleted (message) {
     this.log(`${message.context}_completed`, message);
 
-    switch(message['@type']) {
+    switch (message.type) {
       case 'join':
         this[message.context].handleJoinCompleted(message);
         break;
@@ -401,9 +401,9 @@ export default class ComsService extends Service {
   handleSockethubMessage (message) {
     this.log(`${message.context}_message`, 'SH message', message);
 
-    switch(message['@type']) {
+    switch (message.type) {
       case 'observe':
-        if (message.object['@type'] === 'attendance') {
+        if (message.object['type'] === 'attendance') {
           this.updateChannelUserList(message);
         }
         break;
@@ -414,7 +414,7 @@ export default class ComsService extends Service {
         this.removeUserFromChannelUserList(message);
         break;
       case 'send':
-        switch(message.object['@type']) {
+        switch (message.object.type) {
           case 'message':
           case 'me':
             this.getServiceForSockethubPlatform(message.context)
@@ -423,9 +423,9 @@ export default class ComsService extends Service {
         }
         break;
       case 'update':
-        switch(message.object['@type']) {
+        switch (message.object.type) {
           case 'topic':
-            if (message.actor['@type'] === 'service') {
+            if (message.actor['type'] === 'service') {
               // TODO (could also create a special service room)
               // this.handleServiceAnnouncement()
             } else {
@@ -440,7 +440,7 @@ export default class ComsService extends Service {
                 .handlePresenceUpdate(message)
             break;
           case 'error':
-            console.warn('Got error update message', message.actor['@id'], message.object.content);
+            console.warn('Got error update message', message.actor.id, message.object.content);
             break;
         }
         break;
@@ -459,9 +459,9 @@ export default class ComsService extends Service {
    * @private
    */
   handleChannelJoin (message) {
-    if (message.object['@type'] && (message.object['@type'] === 'error')) {
+    if (message.object.type && message.object.type === 'error') {
       // failed to join a channel
-      const channel = this.getChannel(message.target['@id'], message.actor['@id']);
+      const channel = this.getChannel(message.target.id, message.actor.id);
 
       if (isPresent(channel)) {
         channel.connected = false;

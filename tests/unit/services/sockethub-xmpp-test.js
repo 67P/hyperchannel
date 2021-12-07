@@ -15,8 +15,8 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
 
     const presenceUpdate = {
-      actor: { '@id': 'walter@kosmos.org', displayName: 'walter' },
-      target: { '@id': 'some-channel@kosmos.chat', '@type': 'room' },
+      actor: { id: 'walter@kosmos.org', name: 'walter' },
+      target: { id: 'some-channel@kosmos.chat', type: 'room' },
       object: { presence: 'online' }
     };
 
@@ -34,8 +34,8 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
 
     const presenceUpdate = {
-      actor: { '@id': 'walter@kosmos.org', displayName: 'walter' },
-      target: { '@id': 'some-channel@kosmos.chat', '@type': 'room' },
+      actor: { id: 'walter@kosmos.org', name: 'walter' },
+      target: { id: 'some-channel@kosmos.chat', type: 'room' },
       object: { presence: 'offline' }
     };
 
@@ -53,17 +53,17 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     const message = {
       actor: {
-        '@id': 'some_user@some-server.com/hyperchannel',
-        '@type': 'person',
-        displayName: 'some_user'
+        id: 'some_user@some-server.com/hyperchannel',
+        type: 'person',
+        name: 'some_user'
       },
       target: {
-        '@id': 'some-channel@kosmos.chat',
-        '@type': 'room',
-        displayName: 'some-channel@kosmos.chat'
+        id: 'some-channel@kosmos.chat',
+        type: 'room',
+        name: 'some-channel@kosmos.chat'
       },
       object: {
-        '@type': 'message',
+        type: 'message',
         content: 'hello world'
       }
     };
@@ -80,17 +80,17 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     const message = {
       actor: {
-        '@id': 'some_user@some-server.com/hyperchannel',
-        '@type': 'person',
-        displayName: 'some_user'
+        id: 'some_user@some-server.com/hyperchannel',
+        type: 'person',
+        name: 'some_user'
       },
       target: {
-        '@id': 'some-channel@kosmos.chat',
-        '@type': 'room',
-        displayName: 'some-channel@kosmos.chat'
+        id: 'some-channel@kosmos.chat',
+        type: 'room',
+        name: 'some-channel@kosmos.chat'
       },
       object: {
-        '@type': 'message',
+        type: 'message',
         content: 'hello world'
       }
     };
@@ -117,9 +117,9 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
 
     const message = {
-      actor: { '@id': 'kosmos-dev@kosmos.chat/jimmy', '@type': 'person', displayName: 'jimmy' },
-      target: { '@id': 'kosmos-dev@kosmos.chat', '@type': 'room' },
-      object: { '@type': 'message', content: 'yo, gang!' }
+      actor: { id: 'kosmos-dev@kosmos.chat/jimmy', type: 'person', name: 'jimmy' },
+      target: { id: 'kosmos-dev@kosmos.chat', type: 'room' },
+      object: { type: 'message', content: 'yo, gang!' }
     };
 
     service.addMessageToChannel(message);

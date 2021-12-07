@@ -32,10 +32,10 @@ function buildActivityObject(account, details) {
  */
 function buildMessageObject(account, target, content, type='message') {
   return buildActivityObject(account, {
-    '@type': 'send',
+    type: 'send',
     target: target,
     object: {
-      '@type': type,
+      type: type,
       content: content
     }
   });
@@ -59,14 +59,14 @@ export default class SockethubIrcService extends Service {
    */
   connect (account) {
     this.sockethub.ActivityStreams.Object.create({
-      '@id': account.sockethubPersonId,
-      '@type': 'person',
-      displayName: account.nickname
+      id: account.sockethubPersonId,
+      type: 'person',
+      name: account.nickname
     });
 
     const credentials = buildActivityObject(account, {
       object: {
-        '@type': 'credentials',
+        type: 'credentials',
         nick: account.nickname,
         server: account.server.hostname,
         port: parseInt(account.server.port, 10),
@@ -80,29 +80,29 @@ export default class SockethubIrcService extends Service {
     // TODO This is how it should work at some point. At the moment you need
     // to join a channel in order to connect to a server automatically.
     // const connectJob = {
-    //   '@type': 'connect', context: 'irc', actor: account.sockethubPersonId
+    //   type: 'connect', context: 'irc', actor: account.sockethubPersonId
     // };
     // this.sockethub.socket.emit('message', connectJob);
   }
 
   handleJoinCompleted (message) {
-    const channel = this.coms.channels.findBy('sockethubChannelId', message.target['@id']);
+    const channel = this.coms.channels.findBy('sockethubChannelId', message.target.id);
     if (channel) {
       this.observeChannel(channel);
     }
   }
 
   handlePresenceUpdate (message) {
-    const hostname = message.target['@id'].match(/(.+)\//)[1];
+    const hostname = message.target.id.match(/(.+)\//)[1];
     const account = this.coms.accounts.findBy('server.hostname', hostname);
     if (isEmpty(account)) { console.warn('No account for presence update message found.', message); return; }
 
-    let channel = this.coms.channels.findBy('sockethubChannelId', message.target['@id']);
+    let channel = this.coms.channels.findBy('sockethubChannelId', message.target.id);
 
     // TODO document why there might be no channel instance, or remove
     if (isEmpty(channel)) {
       console.debug('No channel for presence update message found. Creating it.', message);
-      channel = this.coms.createChannel(account, message.target.displayName, message.target['@id']);
+      channel = this.coms.createChannel(account, message.target.name, message.target.id);
     }
 
     // Hotfix for adding one's own user to the channel and marking it as
@@ -113,7 +113,7 @@ export default class SockethubIrcService extends Service {
     channel.addUser(account.nickname);
     channel.connected = true;
 
-    channel.addUser(message.actor.displayName);
+    channel.addUser(message.actor.name);
   }
 
   /**
@@ -124,13 +124,13 @@ export default class SockethubIrcService extends Service {
     switch(type) {
       case 'room':
         this.sockethub.ActivityStreams.Object.create({
-          '@type': type,
-          '@id': channel.sockethubChannelId,
-          displayName: channel.name
+          type: type,
+          id: channel.sockethubChannelId,
+          name: channel.name
         });
 
         var joinMsg = buildActivityObject(channel.account, {
-          '@type': 'join',
+          type: 'join',
           target: channel.sockethubChannelId,
           object: {}
         });
@@ -149,7 +149,7 @@ export default class SockethubIrcService extends Service {
    * @public
    */
   transferMessage (target, content) {
-    const channel = this.coms.getChannel(target['@id']);
+    const channel = this.coms.getChannel(target.id);
     const message = buildMessageObject(channel.account, target, content);
 
     this.log('send', 'sending message job', message);
@@ -161,7 +161,7 @@ export default class SockethubIrcService extends Service {
    * @public
    */
   transferMeMessage (target, content) {
-    const channel = this.coms.getChannel(target['@id']);
+    const channel = this.coms.getChannel(target.id);
     const message = buildMessageObject(channel.account, target, content, 'me');
 
     this.log('send', 'sending message job', message);
@@ -174,7 +174,7 @@ export default class SockethubIrcService extends Service {
    * @public
    */
   addMessageToChannel (message) {
-    const hostname = message.actor['@id'].match(/.+@(.+)/)[1];
+    const hostname = message.actor.id.match(/.+@(.+)/)[1];
     const account = this.coms.accounts.findBy('server.hostname', hostname);
 
     if (isEmpty(account)) {
@@ -195,7 +195,7 @@ export default class SockethubIrcService extends Service {
   leave (channel) {
     if (!channel.isUserChannel) {
       let leaveMsg = buildActivityObject(channel.account, {
-        '@type': 'leave',
+        type: 'leave',
         target: channel.sockethubChannelId,
         object: {}
       });
@@ -211,10 +211,10 @@ export default class SockethubIrcService extends Service {
    */
   changeTopic (channel, topic) {
     let topicMsg = buildActivityObject(channel.account, {
-      '@type': 'update',
+      type: 'update',
       target: channel.sockethubChannelId,
       object: {
-        '@type': 'topic',
+        type: 'topic',
         topic: topic
       }
     });
@@ -228,10 +228,10 @@ export default class SockethubIrcService extends Service {
    */
   observeChannel (channel) {
     let observeMsg = buildActivityObject(channel.account, {
-      '@type': 'observe',
+      type: 'observe',
       target: channel.sockethubChannelId,
       object: {
-        '@type': 'attendance'
+        type: 'attendance'
       }
     });
 
@@ -250,9 +250,9 @@ export default class SockethubIrcService extends Service {
   getChannelForMessage (account, message) {
     let targetChannelName, channel;
 
-    if (account.nickname === message.target.displayName) {
+    if (account.nickname === message.target.name) {
       // Direct message
-      targetChannelName = message.actor.displayName || message.actor['@id'];
+      targetChannelName = message.actor.name || message.actor.id;
       channel = this.coms.channels.filterBy('account', account)
                                   .findBy('name', targetChannelName);
       if (!channel) {
@@ -260,7 +260,7 @@ export default class SockethubIrcService extends Service {
       }
     } else {
       // Channel message
-      targetChannelName = message.target.displayName;
+      targetChannelName = message.target.name;
       channel = this.coms.channels.filterBy('account', account)
                                   .findBy('name', targetChannelName);
       if (!channel) {

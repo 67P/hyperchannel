@@ -3,7 +3,7 @@ import Message from 'hyperchannel/models/message';
 
 export default function channelMessageFromSockethubObject(message) {
   const channelMessage = new Message({
-    type: message.object['@type'] === 'me' ? 'message-chat-me' : 'message-chat',
+    type: message.object['type'] === 'me' ? 'message-chat-me' : 'message-chat',
     date: extractDate(message.published),
     nickname: extractNickname(message.actor),
     content: message.object.content
@@ -12,11 +12,11 @@ export default function channelMessageFromSockethubObject(message) {
 }
 
 function extractNickname (actor) {
-  if (actor.displayName) {
-    return actor.displayName;
+  if (actor.name) {
+    return actor.name;
   } else {
-    const matchChannelUser = actor['@id'].match(/^.+@.+\/(.*)$/);
-    return matchChannelUser ? matchChannelUser[1] : actor['@id'];
+    const matchChannelUser = actor.id.match(/^.+@.+\/(.*)$/);
+    return matchChannelUser ? matchChannelUser[1] : actor.id;
   }
 }
 

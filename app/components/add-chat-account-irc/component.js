@@ -35,9 +35,9 @@ export default class AddChatAccountIrcComponent extends Component {
   // async handleConnectMessage (message) {
   //   console.debug('handleConnectMessage called with', message);
   //
-  //   if (message['@type'] === 'error' &&
+  //   if (message.type === 'error' &&
   //       message.object.condition === 'not-authorized'
-  //       && TODO message.actor['@id'] === actor */) {
+  //       && TODO message.actor.id === actor */) {
   //     this.connectError = {
   //       title: 'Account connection failed',
   //       content: message.object.content
@@ -50,8 +50,8 @@ export default class AddChatAccountIrcComponent extends Component {
   // async handleConnectCompleted (message) {
   //   console.debug('handleConnectComplete called with', message);
   //
-  //   if (message['@type'] === 'connect' &&
-  //       message.actor['@id'] === this.userAddress) {
+  //   if (message.type === 'connect' &&
+  //       message.actor.id === this.userAddress) {
   //     // Connected successfully
   //     const account = await this.addAccount();
   //     this.addDefaultChannels(account);

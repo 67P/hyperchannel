@@ -37,9 +37,9 @@ module('Unit | Service | coms', function(hooks) {
   test('#transferMessage calls transferMessage on the appropriate transport service', function(assert) {
     const xmppStub = {
       transferMessage: function(target, content) {
-        assert.equal(target['@id'], 'testchannel@kosmos.chat');
-        assert.equal(target['@type'], 'room');
-        assert.equal(target.displayName, 'testchannel@kosmos.chat');
+        assert.equal(target.id, 'testchannel@kosmos.chat');
+        assert.equal(target.type, 'room');
+        assert.equal(target.name, 'testchannel@kosmos.chat');
         assert.equal(content, 'hello world');
       }
     };
@@ -55,19 +55,19 @@ module('Unit | Service | coms', function(hooks) {
 
   test('#updateChannelUserList updates the users and connects the channel', function(assert) {
     const observeMessage = {
-      "@type": "observe",
+      "type": "observe",
       "actor": {
-          "@id": "kosmos@kosmos.chat",
-          "@type": "room",
-          "displayName": "kosmos"
+          "id": "kosmos@kosmos.chat",
+          "type": "room",
+          "name": "kosmos"
       },
       "target": {
-        "@id": "jimmy@kosmos.org/hyperchannel",
-        "@type": "person"
+        "id": "jimmy@kosmos.org/hyperchannel",
+        "type": "person"
       },
       "context": "xmpp",
       "object": {
-          "@type": "attendance",
+          "type": "attendance",
           "members": [
               "derbumi",
               "galfert",
