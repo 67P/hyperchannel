@@ -5,6 +5,7 @@
 # compiled output
 /dist/
 /tmp/
+/release/
 
 # dependencies
 /bower_components/
@@ -13,6 +14,7 @@
 # misc
 /coverage/
 !.*
+.eslintcache
 
 # ember-try
 /.node_modules.ember-try/

@@ -3,7 +3,7 @@
 const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 const tailwind = require('tailwindcss');
 
-module.exports = function(defaults) {
+module.exports = function (defaults) {
 
   const inlineContent = {};
 
