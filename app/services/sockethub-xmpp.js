@@ -242,7 +242,10 @@ export default class SockethubXmppService extends Service {
   observeChannel (channel) {
     let observeMsg = buildActivityObject(channel.account, {
       type: 'observe',
-      target: channel.sockethubChannelId,
+      target: {
+        id: channel.sockethubChannelId,
+        type: 'room'
+      },
       object: {
         type: 'attendance'
       }
