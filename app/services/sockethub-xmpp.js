@@ -59,6 +59,7 @@ export default class SockethubXmppService extends Service {
 
     const credentialsJob = {
       actor: userAddress,
+      type: 'credentials',
       context: 'xmpp',
       object: {
         type: 'credentials',
@@ -93,6 +94,7 @@ export default class SockethubXmppService extends Service {
 
     const credentialsJob = {
       actor: actor,
+      type: 'credentials',
       context: 'xmpp',
       object: {
         type: 'credentials',

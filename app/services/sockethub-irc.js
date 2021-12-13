@@ -65,6 +65,7 @@ export default class SockethubIrcService extends Service {
     });
 
     const credentials = buildActivityObject(account, {
+      type: 'credentials',
       object: {
         type: 'credentials',
         nick: account.nickname,
