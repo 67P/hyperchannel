@@ -132,8 +132,7 @@ export default class SockethubIrcService extends Service {
 
         var joinMsg = buildActivityObject(channel.account, {
           type: 'join',
-          target: channel.sockethubChannelId,
-          object: {}
+          target: channel.sockethubChannelId
         });
 
         this.log('irc', 'joining channel', joinMsg);

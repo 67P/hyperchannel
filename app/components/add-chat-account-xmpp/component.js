@@ -22,7 +22,6 @@ export default class AddChatAccountXmppComponent extends Component {
   }
 
   async handleConnectStatus (eventName, message) {
-    console.debug('handleConnectStatus called') // TODO remove
     if (this.finishedSetup) {
       // TODO remove when double events fixed
       console.debug('Account setup already finished, nothing to do')
