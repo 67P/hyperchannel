@@ -51,16 +51,18 @@ export default class SockethubXmppService extends Service {
   @service coms;
 
   connectWithCredentials (userAddress, password) {
+    const sockethubPersonId = `${userAddress}/hyperchannel`;
+
     this.sockethub.ActivityStreams.Object.create({
-      id: userAddress,
+      id: sockethubPersonId,
       type: 'person',
       name: userAddress.split('@')[0],
     });
 
     const credentialsJob = {
-      actor: userAddress,
       type: 'credentials',
       context: 'xmpp',
+      actor: sockethubPersonId,
       object: {
         type: 'credentials',
         username: userAddress,
@@ -72,7 +74,7 @@ export default class SockethubXmppService extends Service {
     const connectJob = {
       type: 'connect',
       context: 'xmpp',
-      actor: userAddress
+      actor: sockethubPersonId
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
@@ -93,9 +95,9 @@ export default class SockethubXmppService extends Service {
     });
 
     const credentialsJob = {
-      actor: actor,
       type: 'credentials',
       context: 'xmpp',
+      actor: actor,
       object: {
         type: 'credentials',
         username: account.username, // JID

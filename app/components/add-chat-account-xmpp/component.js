@@ -43,7 +43,7 @@ export default class AddChatAccountXmppComponent extends Component {
     }
 
     if (message.type === 'connect' &&
-        message.actor.id === this.userAddress) {
+        message.actor.id === `${this.userAddress}/hyperchannel`) {
       // Connected successfully
       this.xmpp.sockethub.socket.offAny();
 
