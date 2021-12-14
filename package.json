@@ -94,9 +94,6 @@
     "remotestoragejs": "^2.0.0-beta.1",
     "tailwindcss": "^2.2.4"
   },
-  "dependencies": {
-    "extend": "^3.0.2"
-  },
   "optionalDependencies": {
     "fsevents": "^2.3.2"
   }
