@@ -2,7 +2,6 @@ import Service, { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
 import UserChannel from 'hyperchannel/models/user_channel';
 import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
-import extend from 'extend';
 
 /**
  * Build an activity object for sending to Sockethub
@@ -18,7 +17,7 @@ function buildActivityObject(account, details) {
     actor: account.sockethubPersonId
   };
 
-  return extend({}, baseObject, details);
+  return { ...baseObject, ...details };
 }
 
 /**
