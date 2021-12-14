@@ -5,12 +5,12 @@ import { module, test } from 'qunit';
 module('Unit | Utility | channel message from sockethub object', function() {
   let sockethubMessageObject = {
     actor: {
-      '@id': 'raucao@irc.freenode.net',
-      '@type': 'person',
-      displayName: 'raucao'
+      id: 'raucao@irc.freenode.net',
+      type: 'person',
+      name: 'raucao'
     },
     object: {
-      '@type': 'message',
+      type: 'message',
       content: 'airberlin flight AB 1234 is ready for boarding'
     },
     published: '2017-06-14T06:32:42.025Z'
@@ -31,7 +31,7 @@ module('Unit | Utility | channel message from sockethub object', function() {
   });
 
   test('it creates an action message instance from a Sockethub message object', function(assert) {
-    sockethubMessageObject.object['@type'] = 'me';
+    sockethubMessageObject.object.type = 'me';
     sockethubMessageObject.object.content = 'boards the plane';
     let result = channelMessageFromSockethubObject(sockethubMessageObject);
 
@@ -46,10 +46,10 @@ module('Unit | Utility | channel message from sockethub object', function() {
                  new Date('2017-06-14T06:32:42.025Z').toISOString());
   });
 
-  test('it uses the whole JID for XMPP messages without displayName', function(assert) {
+  test('it uses the whole JID for XMPP messages without name', function(assert) {
     const message = {
-      actor: { '@id': 'walter@kosmos.org', '@type': 'person' },
-      object: { '@type': 'message', content: 'this is a direct message' }
+      actor: { id: 'walter@kosmos.org', type: 'person' },
+      object: { type: 'message', content: 'this is a direct message' }
     };
     const result = channelMessageFromSockethubObject(message);
 
@@ -58,8 +58,8 @@ module('Unit | Utility | channel message from sockethub object', function() {
 
   test('it extracts the nickname from XMPP channel DM actor IDs', function(assert) {
     const message = {
-      actor: { '@id': 'kosmos-dev@kosmos.chat/walter', '@type': 'person' },
-      object: { '@type': 'message', content: 'this is a direct message' }
+      actor: { id: 'kosmos-dev@kosmos.chat/walter', type: 'person' },
+      object: { type: 'message', content: 'this is a direct message' }
     };
     const result = channelMessageFromSockethubObject(message);
 

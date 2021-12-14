@@ -22,7 +22,6 @@ export default class AddChatAccountXmppComponent extends Component {
   }
 
   async handleConnectStatus (eventName, message) {
-    console.debug('handleConnectStatus called') // TODO remove
     if (this.finishedSetup) {
       // TODO remove when double events fixed
       console.debug('Account setup already finished, nothing to do')
@@ -32,9 +31,9 @@ export default class AddChatAccountXmppComponent extends Component {
     if (message.context !== 'xmpp' ||
         !['message', 'completed'].includes(eventName)) { return; }
 
-    if (message['@type'] === 'error' &&
+    if (message.type === 'error' &&
         message.object.condition === 'not-authorized'
-        /* && TODO message.actor['@id'] === actor */) {
+        /* && TODO message.actor.id === actor */) {
       this.connectError = {
         title: 'Account connection failed',
         content: message.object.content
@@ -42,8 +41,8 @@ export default class AddChatAccountXmppComponent extends Component {
       this.xmpp.sockethub.socket.offAny();
     }
 
-    if (message['@type'] === 'connect' &&
-        message.actor['@id'] === this.userAddress) {
+    if (message.type === 'connect' &&
+        message.actor.id === `${this.userAddress}/hyperchannel`) {
       // Connected successfully
       this.xmpp.sockethub.socket.offAny();
 
