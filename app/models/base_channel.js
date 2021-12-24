@@ -119,6 +119,11 @@ export default class BaseChannel {
   }
 
   addMessage (message) {
+    if (message.replaceId) {
+      this.replaceMessage(message);
+      return;
+    }
+
     this.addDateHeadline(message);
 
     this.messages.pushObject(message);
@@ -128,6 +133,14 @@ export default class BaseChannel {
       if (message.content.match(this.account.nickname)) {
         this.unreadMentions = true;
       }
+    }
+  }
+
+  replaceMessage (newMessage) {
+    const oldMessage = this.messages.findBy('id', newMessage.replaceId);
+    if (oldMessage) {
+      oldMessage.content = newMessage.content;
+      oldMessage.edited = true;
     }
   }
 

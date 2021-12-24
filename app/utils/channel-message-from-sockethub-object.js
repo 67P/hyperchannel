@@ -1,4 +1,4 @@
-import { isEmpty } from '@ember/utils';
+import { isEmpty, isPresent } from '@ember/utils';
 import Message from 'hyperchannel/models/message';
 
 export default function channelMessageFromSockethubObject(message) {
@@ -6,8 +6,17 @@ export default function channelMessageFromSockethubObject(message) {
     type: message.object['type'] === 'me' ? 'message-chat-me' : 'message-chat',
     date: extractDate(message.published),
     nickname: extractNickname(message.actor),
-    content: message.object.content
+    content: message.object.content,
+    id: message.object.id
   });
+
+  if (isPresent(message.object['xmpp:stanza-id'])) {
+    channelMessage.sid = message.object['xmpp:stanza-id'];
+  }
+  if (isPresent(message.object['xmpp:replace'])) {
+    channelMessage.replaceId = message.object['xmpp:replace'].id;
+  }
+
   return channelMessage;
 }
 
