@@ -138,7 +138,8 @@ export default class BaseChannel {
 
   replaceMessage (newMessage) {
     const oldMessage = this.messages.findBy('id', newMessage.replaceId);
-    if (oldMessage) {
+    if (oldMessage &&
+       (oldMessage.nickname === newMessage.nickname)) {
       oldMessage.content = newMessage.content;
       oldMessage.edited = true;
     }

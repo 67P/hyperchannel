@@ -213,6 +213,30 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.true(oldMessage.edited, 'marks the old message as edited');
   });
 
+  test('#replaceMessage from wrong sender', function(assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+
+    channel.messages.pushObject(new Message({
+      nickname: 'mrklaus',
+      type: 'message-chat', date: new Date(),
+      id: '234abc', content: 'Merry Christmas, everyone!'
+    }));
+
+    const newMessage = new Message({
+      nickname: 'thegrinch',
+      type: 'message-chat', date: new Date(),
+      id: '678abc', content: 'You can find hidden presents outside in the snow!',
+      replaceId: '234abc'
+    });
+
+    channel.replaceMessage(newMessage);
+
+    const oldMessage = channel.messages.findBy('id', '234abc');
+
+    assert.notEqual(oldMessage.content, newMessage.content, 'does not replace the message content');
+    assert.false(oldMessage.edited, 'does not mark the old message as edited');
+  });
+
   //
   // isLogged
   // TODO Re-implement without custom space/network IDs
