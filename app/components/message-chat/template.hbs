@@ -11,6 +11,11 @@
   </time>
 
     <span class="{{this.pendingClass}}">
-    {{this.formattedContent}}
+      {{this.formattedContent}}
+      {{#if @message.edited}}
+      <span title="Edited">
+        <IconEdit @class="inline text-gray-300 w-4 h-4" />
+      </span>
+      {{/if}}
   </span>
 </div>
