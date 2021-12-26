@@ -137,11 +137,14 @@ export default class BaseChannel {
   }
 
   replaceMessage (newMessage) {
-    const oldMessage = this.messages.findBy('id', newMessage.replaceId);
-    if (oldMessage &&
-       (oldMessage.nickname === newMessage.nickname)) {
-      oldMessage.content = newMessage.content;
-      oldMessage.edited = true;
+    const lastMessage = this.sortedMessages
+                            .filterBy('nickname', newMessage.nickname)
+                            .lastObject
+
+    if (lastMessage &&
+       (lastMessage.id === newMessage.replaceId)) {
+      lastMessage.content = newMessage.content;
+      lastMessage.edited = true;
     }
   }
 

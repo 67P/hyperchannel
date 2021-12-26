@@ -195,12 +195,14 @@ module('Unit | Model | base-channel', function(hooks) {
     const channel = new BaseChannel({ account: xmppAccount });
 
     channel.messages.pushObject(new Message({
-      type: 'message-chat', date: new Date(),
+      date: moment().subtract(1, 'minutes'),
+      type: 'message-chat', nickname: 'alice',
       id: '234abc', content: 'Merry Christmus, Mr. Klaus!'
     }));
 
     const newMessage = new Message({
-      type: 'message-chat', date: new Date(),
+      date: new Date(),
+      type: 'message-chat',nickname: 'alice',
       id: '678abc', content: 'Merry Christmas, Mr. Klaus!',
       replaceId: '234abc'
     });
@@ -226,6 +228,36 @@ module('Unit | Model | base-channel', function(hooks) {
       nickname: 'thegrinch',
       type: 'message-chat', date: new Date(),
       id: '678abc', content: 'You can find hidden presents outside in the snow!',
+      replaceId: '234abc'
+    });
+
+    channel.replaceMessage(newMessage);
+
+    const oldMessage = channel.messages.findBy('id', '234abc');
+
+    assert.notEqual(oldMessage.content, newMessage.content, 'does not replace the message content');
+    assert.false(oldMessage.edited, 'does not mark the old message as edited');
+  });
+
+  test('#replaceMessage that is not the last message', function(assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+
+    channel.messages.pushObject(new Message({
+      date: moment().subtract(5, 'minutes').toDate(),
+      nickname: 'mrklaus', type: 'message-chat',
+      id: '234abc', content: 'Merry Christmus, everyone!'
+    }));
+
+    channel.messages.pushObject(new Message({
+      date: moment().subtract(1, 'minutes').toDate(),
+      nickname: 'mrklaus', type: 'message-chat',
+      id: '567cde', content: 'My workshop is closed over the holidays.'
+    }));
+
+    const newMessage = new Message({
+      date: new Date(),
+      nickname: 'mrklaus', type: 'message-chat',
+      id: '678abc', content: 'Merry Christmas, everyone!',
       replaceId: '234abc'
     });
 
