@@ -26,15 +26,17 @@ function buildActivityObject(account, details) {
  * @param {Account} account - Account model instance
  * @param {String} target - Where to send the message to (channelId)
  * @param {String} content - The message itself
- * @param {String} type - Can be either 'message' or 'me'
+ * @param {String} id - A locally generated message ID
+ * @param {String} [type] - Can be either 'message' or 'me'
  * @returns {Object} The activity object
  */
-function buildMessageObject(account, target, content, type='message') {
+function buildMessageObject(account, target, content, id) {
   return buildActivityObject(account, {
     type: 'send',
     target: target,
     object: {
-      type: type,
+      type: 'message',
+      id: id,
       content: content
     }
   });
@@ -167,9 +169,9 @@ export default class SockethubXmppService extends Service {
    * @param {String} content - Message content
    * @public
    */
-  transferMessage (target, content) {
+  transferMessage (target, content, id) {
     const channel = this.coms.getChannel(target.id);
-    const message = buildMessageObject(channel.account, target, content);
+    const message = buildMessageObject(channel.account, target, content, id);
 
     this.log('send', 'sending message job', message);
     this.sockethub.socket.emit('message', message);

@@ -2,10 +2,11 @@ import Controller, { inject as controller } from '@ember/controller';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
+import { capitalize } from '@ember/string';
 import { tracked } from '@glimmer/tracking';
 import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
-import { capitalize } from '@ember/string';
+import generateMessageId from 'hyperchannel/utils/generate-message-id';
 
 export default class BaseChannelController extends Controller {
 
@@ -21,6 +22,7 @@ export default class BaseChannelController extends Controller {
 
   createMessage (content, type) {
     const message = new Message({
+      id: generateMessageId(),
       type: type,
       date: new Date(),
       // TODO  nickname per channel
@@ -68,7 +70,7 @@ export default class BaseChannelController extends Controller {
   sendMessage (newMessage) {
     const message = this.createMessage(newMessage, 'message-chat');
 
-    this.coms.transferMessage(this.model, message.content);
+    this.coms.transferMessage(this.model, message.content, message.id);
 
     this.model.addMessage(message);
 
@@ -137,7 +139,8 @@ export default class BaseChannelController extends Controller {
     this.coms.transferMeMessage(
       this.model.account,
       this.model.sockethubChannelId,
-      message.content
+      message.content,
+      message.id
     );
 
     this.model.addMessage(message);

@@ -36,11 +36,12 @@ module('Unit | Service | coms', function(hooks) {
 
   test('#transferMessage calls transferMessage on the appropriate transport service', function(assert) {
     const xmppStub = {
-      transferMessage: function(target, content) {
+      transferMessage: function(target, content, id) {
         assert.equal(target.id, 'testchannel@kosmos.chat');
         assert.equal(target.type, 'room');
         assert.equal(target.name, 'testchannel@kosmos.chat');
         assert.equal(content, 'hello world');
+        assert.equal(id, 'hc-1234abcd');
       }
     };
     const service = this.owner.factoryFor('service:coms').create({ xmpp: xmppStub });
@@ -50,7 +51,7 @@ module('Unit | Service | coms', function(hooks) {
       name: 'testchannel@kosmos.chat'
     });
 
-    service.transferMessage(channel, 'hello world');
+    service.transferMessage(channel, 'hello world', 'hc-1234abcd');
   });
 
   test('#updateChannelUserList updates the users and connects the channel', function(assert) {
