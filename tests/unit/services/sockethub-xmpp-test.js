@@ -3,6 +3,7 @@ import { setupTest } from 'ember-qunit';
 import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
 import { xmppAccount } from '../../fixtures/accounts';
+import sinon from 'sinon';
 
 module('Unit | Service | sockethub xmpp', function(hooks) {
   setupTest(hooks);
@@ -141,5 +142,26 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.equal(channel.displayName, 'walter');
     assert.ok(channel.isUserChannel);
     assert.ok(channel.connected);
+  });
+
+  test('#transferMessage', function(assert) {
+    const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
+    const comsService = this.owner.factoryFor('service:coms').create({
+      accounts: [ xmppAccount ], channels: [ channel ]
+    });
+    const xmpp = this.owner.factoryFor('service:sockethub-xmpp').create({
+      coms: comsService
+    });
+    const socketEmitSpy = sinon.spy(xmpp.sockethub.socket, 'emit');
+
+    xmpp.transferMessage(channel, 'Only 4 days until 2022!')
+
+    assert.ok(socketEmitSpy.calledOnce, 'emits a sockethub job message');
+
+    const jobMessage = socketEmitSpy.getCall(0).args[1];
+    assert.equal(jobMessage.context, 'xmpp');
+    assert.equal(jobMessage.type, 'send');
+    assert.equal(jobMessage.object.type, 'message');
+    assert.equal(jobMessage.object.content, 'Only 4 days until 2022!');
   });
 });
