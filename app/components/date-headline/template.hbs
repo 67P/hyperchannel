@@ -1,3 +1,11 @@
-<div class="date-headline" {{did-insert this.scheduleUpdate}}>
-  <h3>{{this.headline}}</h3>
+<div class="relative my-6" {{did-insert this.scheduleUpdate}}>
+  <div class="absolute inset-0 flex items-center" aria-hidden="true">
+    <div class="w-full border-t border-gray-200"></div>
+  </div>
+  <div class="relative flex justify-center">
+    <span class="px-2 bg-white text-sm text-gray-400">
+      <h3 class="text-sm">{{this.headline}}</h3>
+    </span>
+  </div>
 </div>
+
