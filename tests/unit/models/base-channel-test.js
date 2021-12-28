@@ -4,6 +4,7 @@ import Message from 'hyperchannel/models/message';
 import BaseChannel from 'hyperchannel/models/base_channel';
 import { ircAccount, xmppAccount } from '../../fixtures/accounts';
 import moment from 'moment';
+import sinon from 'sinon';
 
 module('Unit | Model | base-channel', function(hooks) {
   setupTest(hooks);
@@ -129,6 +130,143 @@ module('Unit | Model | base-channel', function(hooks) {
     );
 
     assert.equal(channel.sortedMessages.length, 1);
+  });
+
+  //
+  // addMessage
+  //
+
+  test('#addMessage', function(assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+    const addDateHeadlineStub = sinon.stub(channel, 'addDateHeadline');
+    const replaceMessage = sinon.stub(channel, 'replaceMessage');
+
+    channel.messages.pushObject(new Message({
+      type: 'message-chat', date: new Date(), id: '123bca',
+      content: 'Once we accept our limits, we go beyond them.'
+    }));
+
+    const newMessage = new Message({
+      type: 'message-chat', date: new Date(), id: '234abc',
+      content: 'Human beings, vegetables, or cosmic dust, we all dance to a mysterious tune, intoned in the distance by an invisible piper.'
+    });
+
+    channel.addMessage(newMessage);
+
+    assert.equal(channel.messages.filterBy('type', 'message-chat').length, 2,
+                 'adds the new message');
+
+    assert.ok(addDateHeadlineStub.calledOnce);
+    assert.ok(addDateHeadlineStub.calledWith(newMessage));
+    assert.notOk(replaceMessage.calledOnce);
+  });
+
+  test('#addMessage for message correction', function(assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+    const addDateHeadlineStub = sinon.stub(channel, 'addDateHeadline');
+    const replaceMessage = sinon.stub(channel, 'replaceMessage');
+
+    channel.messages.pushObject(new Message({
+      type: 'message-chat', date: new Date(), id: '123bca',
+      content: 'Once we accept our limits, we go beyond them.'
+    }));
+
+    const newMessage = new Message({
+      type: 'message-chat', date: new Date(), id: '234abc',
+      content: 'Human beings, vegetables, or cosmic dust, we all dance to a mysterious tune, intoned in the distance by an invisible piper.',
+      replaceId: '123bca'
+    });
+
+    channel.addMessage(newMessage);
+
+    assert.equal(channel.messages.filterBy('type', 'message-chat').length, 1,
+                 'does not add a new message');
+
+    assert.ok(replaceMessage.calledOnce);
+    assert.ok(replaceMessage.calledWith(newMessage));
+    assert.notOk(addDateHeadlineStub.calledOnce);
+  });
+
+  //
+  // replaceMessage
+  //
+
+  test('#replaceMessage', function(assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+
+    channel.messages.pushObject(new Message({
+      date: moment().subtract(1, 'minutes'),
+      type: 'message-chat', nickname: 'alice',
+      id: '234abc', content: 'Merry Christmus, Mr. Klaus!'
+    }));
+
+    const newMessage = new Message({
+      date: new Date(),
+      type: 'message-chat',nickname: 'alice',
+      id: '678abc', content: 'Merry Christmas, Mr. Klaus!',
+      replaceId: '234abc'
+    });
+
+    channel.replaceMessage(newMessage);
+
+    const oldMessage = channel.messages.findBy('id', '234abc');
+
+    assert.equal(oldMessage.content, newMessage.content, 'replaces the message content');
+    assert.true(oldMessage.edited, 'marks the old message as edited');
+  });
+
+  test('#replaceMessage from wrong sender', function(assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+
+    channel.messages.pushObject(new Message({
+      nickname: 'mrklaus',
+      type: 'message-chat', date: new Date(),
+      id: '234abc', content: 'Merry Christmas, everyone!'
+    }));
+
+    const newMessage = new Message({
+      nickname: 'thegrinch',
+      type: 'message-chat', date: new Date(),
+      id: '678abc', content: 'You can find hidden presents outside in the snow!',
+      replaceId: '234abc'
+    });
+
+    channel.replaceMessage(newMessage);
+
+    const oldMessage = channel.messages.findBy('id', '234abc');
+
+    assert.notEqual(oldMessage.content, newMessage.content, 'does not replace the message content');
+    assert.false(oldMessage.edited, 'does not mark the old message as edited');
+  });
+
+  test('#replaceMessage that is not the last message', function(assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+
+    channel.messages.pushObject(new Message({
+      date: moment().subtract(5, 'minutes').toDate(),
+      nickname: 'mrklaus', type: 'message-chat',
+      id: '234abc', content: 'Merry Christmus, everyone!'
+    }));
+
+    channel.messages.pushObject(new Message({
+      date: moment().subtract(1, 'minutes').toDate(),
+      nickname: 'mrklaus', type: 'message-chat',
+      id: '567cde', content: 'My workshop is closed over the holidays.'
+    }));
+
+    const newMessage = new Message({
+      date: new Date(),
+      nickname: 'mrklaus', type: 'message-chat',
+      id: '678abc', content: 'Merry Christmas, everyone!',
+      replaceId: '234abc'
+    });
+
+    channel.replaceMessage(newMessage);
+
+    const oldMessage = channel.messages.findBy('id', '234abc');
+
+    assert.notEqual(oldMessage.content, newMessage.content, 'does not replace the message content');
+    assert.false(oldMessage.edited, 'does not mark the old message as edited');
   });
 
   //

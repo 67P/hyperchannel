@@ -119,6 +119,11 @@ export default class BaseChannel {
   }
 
   addMessage (message) {
+    if (message.replaceId) {
+      this.replaceMessage(message);
+      return;
+    }
+
     this.addDateHeadline(message);
 
     this.messages.pushObject(message);
@@ -128,6 +133,18 @@ export default class BaseChannel {
       if (message.content.match(this.account.nickname)) {
         this.unreadMentions = true;
       }
+    }
+  }
+
+  replaceMessage (newMessage) {
+    const lastMessage = this.sortedMessages
+                            .filterBy('nickname', newMessage.nickname)
+                            .lastObject
+
+    if (lastMessage &&
+       (lastMessage.id === newMessage.replaceId)) {
+      lastMessage.content = newMessage.content;
+      lastMessage.edited = true;
     }
   }
 

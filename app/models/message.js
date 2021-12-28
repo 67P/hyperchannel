@@ -7,6 +7,7 @@ export default class Message {
   @tracked nickname = null;
   @tracked content = null;
   @tracked pending = null;
+  @tracked edited = false;
 
   constructor (props) {
     Object.assign(this, props);
