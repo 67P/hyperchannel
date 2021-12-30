@@ -1,21 +1,24 @@
-<div class="chat-message px-4 py-1 break-words hover:bg-gray-100">
-  <span data-username={{@message.nickname}}
-        onclick={{fn this.usernameClick @message.nickname}}
-        class="mr-1 font-bold {{this.pendingClass}}" >
-    {{@message.nickname}}:
+<div class="chat-message group relative px-4 py-1 break-words hover:bg-gray-100">
+  <div class="text-sm">
+    <span data-username={{@message.nickname}}
+          onclick={{fn this.usernameClick @message.nickname}}
+          class="mr-1 font-bold {{this.pendingClass}}" >
+      {{@message.nickname}}
+    </span>
+    <time datetime={{this.datetime}} title={{this.dateTitle}}
+          class="text-gray-300 group-hover:text-gray-400" >
+      {{moment-format @message.date "HH:mm"}}
+    </time>
+  </div>
+
+  <span class="{{this.pendingClass}}">
+    {{this.formattedContent}}
+    {{#if @message.edited}}
+    <span title="Edited">
+      <IconEdit @class="inline w-4 h-4 text-gray-300 group-hover:text-gray-400" />
+    </span>
+    {{/if}}
   </span>
 
-  <time datetime={{this.datetime}} title={{this.dateTitle}}
-        class="block float-right text-sm text-gray-300" >
-    {{moment-format @message.date "HH:mm"}}
-  </time>
-
-    <span class="{{this.pendingClass}}">
-      {{this.formattedContent}}
-      {{#if @message.edited}}
-      <span title="Edited">
-        <IconEdit @class="inline text-gray-300 w-4 h-4" />
-      </span>
-      {{/if}}
-  </span>
+  <MessageUserActions @message={{@message}} @channel={{@channel}} />
 </div>
