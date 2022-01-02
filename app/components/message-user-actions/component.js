@@ -1,5 +1,4 @@
 import Component from '@glimmer/component';
-import { action } from '@ember/object';
 import { isEmpty, isPresent } from '@ember/utils';
 
 export default class MessageUserActionsComponent extends Component {
@@ -15,11 +14,6 @@ export default class MessageUserActionsComponent extends Component {
                        .filterBy('nickname', this.args.channel.account.nickname)
                        .lastObject?.id;
     return isPresent(lastId) && (lastId === this.args.message.id);
-  }
-
-  @action
-  correctMessage () {
-    // TODO
   }
 
 }
