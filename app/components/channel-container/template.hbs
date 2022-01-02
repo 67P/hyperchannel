@@ -28,14 +28,14 @@
 
     <div class="content-container {{@sidebarClass}} {{if @showChannelMenu "channel-menu-open"}}">
       <div class="content">
-        <section id="channel-content" class="main pt-4 pb-0 bg-white text-gray-800">
+        <section id="channel-content" class="main pt-4 pb-8 bg-white text-gray-800">
           {{#if @channel.isLogged}}
             <a onclick={{perform this.loadPreviousMessages}} class="load-previous" role="button">
               Load previous messages
             </a>
           {{/if}}
 
-          <ul class="list-none mb-8">
+          <ul class="list-none">
             <li>
               <ScrollingObserver @rootElement="#channel-content"
                                  @rootMargin={{this.partialRenderingObserverMargin}}

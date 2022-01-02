@@ -1,6 +1,6 @@
 <div class="absolute right-4 -top-2 z-0 inline-flex shadow-sm rounded-md
             invisible group-hover:visible">
-  {{#if this.isOwnLastMessage}}
+  {{#if (and (eq @channel.protocol "XMPP") this.isOwnLastMessage)}}
   <button type="button" title="Edit"
           class="relative inline-flex items-center px-3 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
     <IconEdit-2 @class="w-4 h-4" />
