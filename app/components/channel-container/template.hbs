@@ -45,6 +45,7 @@
             {{#each this.renderedMessages as |message|}}
               <li {{did-insert this.messagesUpdated}}>
                 {{component message.type message=message channel=@channel
+                            sendMessage=@onMessage
                             onUsernameClick=this.addUsernameMentionToMessage}}
               </li>
             {{else}}

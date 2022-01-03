@@ -5,6 +5,7 @@ import { htmlSafe } from '@ember/string';
 import { tracked } from '@glimmer/tracking';
 import { scheduleOnce } from '@ember/runloop';
 import moment from 'moment';
+import { isEmpty } from '@ember/utils';
 
 export default class MessageChatComponent extends Component {
 
@@ -83,7 +84,15 @@ export default class MessageChatComponent extends Component {
   @action
   correctMessage (ev) {
     ev.preventDefault();
-    debugger;
+    if (isEmpty(this.editedContent)) {
+      console.warn('Message cannot be empty');
+      return false;
+    }
+
+    this.args.sendMessage(this.editedContent, {
+      replaceId: this.args.message.id
+    });
+    this.cancelMessageCorrection();
   }
 
 }

@@ -20,14 +20,15 @@ export default class BaseChannelController extends Controller {
     return this.application.showChannelMenu;
   }
 
-  createMessage (content, type) {
+  createMessage (content, type, attrs={}) {
     const message = new Message({
       id: generateMessageId(),
       type: type,
       date: new Date(),
       // TODO  nickname per channel
       nickname: this.model.account.nickname,
-      content: content
+      content: content,
+      ...attrs
     });
 
     // We only receive our own message from XMPP MUCs (but not DMs)
@@ -67,13 +68,14 @@ export default class BaseChannelController extends Controller {
   }
 
   @action
-  sendMessage (newMessage) {
-    const message = this.createMessage(newMessage, 'message-chat');
-
-    this.coms.transferMessage(this.model, message.content, message.id);
-
+  sendMessage (content, attrs) {
+    // Create new message instance
+    const message = this.createMessage(content, 'message-chat', attrs);
+    // Send message job to Sockethub
+    this.coms.transferMessage(this.model, message);
+    // Add message to channel
     this.model.addMessage(message);
-
+    // Reset message input
     this.newMessage = null;
   }
 

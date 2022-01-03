@@ -30,16 +30,22 @@ function buildActivityObject(account, details) {
  * @param {String} [type] - Can be either 'message' or 'me'
  * @returns {Object} The activity object
  */
-function buildMessageObject(account, target, content, id) {
-  return buildActivityObject(account, {
+function buildMessageObject(account, target, message) {
+  const job = buildActivityObject(account, {
     type: 'send',
     target: target,
     object: {
       type: 'message',
-      id: id,
-      content: content
+      id: message.id,
+      content: message.content
     }
   });
+
+  if (message.replaceId) {
+    job.object['replace'] = { id: message.replaceId };
+  }
+
+  return job;
 }
 
 /**
@@ -165,16 +171,16 @@ export default class SockethubXmppService extends Service {
   /**
    * Send a chat message to a channel
    *
-   * @param {(Channel|UserChannel)} target - Channel to send message to
-   * @param {String} content - Message content
+   * @param {Object} target - Channel to send message to
+   * @param {Message} - Message instance
    * @public
    */
-  transferMessage (target, content, id) {
+  transferMessage (target, message) {
     const channel = this.coms.getChannel(target.id);
-    const message = buildMessageObject(channel.account, target, content, id);
+    const messageJob = buildMessageObject(channel.account, target, message);
 
-    this.log('send', 'sending message job', message);
-    this.sockethub.socket.emit('message', message);
+    this.log('send', 'sending message job', messageJob);
+    this.sockethub.socket.emit('message', messageJob);
   }
 
   handlePresenceUpdate (message) {

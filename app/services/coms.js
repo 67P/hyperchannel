@@ -143,14 +143,14 @@ export default class ComsService extends Service {
    * @param {String} [id]
    * @public
    */
-  transferMessage (channel, content, id) {
+  transferMessage (channel, message) {
     const target = {
       id: channel.sockethubChannelId,
       type: channel.isUserChannel ? 'person' : 'room',
       name: channel.name
     };
     this.getServiceForSockethubPlatform(channel.protocol)
-        .transferMessage(target, content, id);
+        .transferMessage(target, message);
   }
 
   /**
