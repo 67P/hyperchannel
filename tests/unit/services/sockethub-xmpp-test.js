@@ -146,6 +146,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
   test('#transferMessage', function(assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
+    const message = new Message({ content: 'Only 4 days until 2022!', id: 'hc-123abcde'});
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
     });
@@ -154,7 +155,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     });
     const socketEmitSpy = sinon.spy(xmpp.sockethub.socket, 'emit');
 
-    xmpp.transferMessage(channel, 'Only 4 days until 2022!', 'hc-123abcde')
+    xmpp.transferMessage(channel, message);
 
     assert.ok(socketEmitSpy.calledOnce, 'emits a sockethub job message');
 

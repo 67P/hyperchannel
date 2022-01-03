@@ -2,6 +2,7 @@ import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import sinon from 'sinon';
 import Channel from 'hyperchannel/models/channel';
+import Message from 'hyperchannel/models/message';
 import { ircAccount, xmppAccount } from '../../fixtures/accounts';
 
 module('Unit | Service | coms', function(hooks) {
@@ -35,13 +36,16 @@ module('Unit | Service | coms', function(hooks) {
   });
 
   test('#transferMessage calls transferMessage on the appropriate transport service', function(assert) {
+    const msg = new Message({
+      content: 'hello world',
+      id: 'hc-1234abcd'
+    });
     const xmppStub = {
-      transferMessage: function(target, content, id) {
+      transferMessage: function(target, message) {
         assert.equal(target.id, 'testchannel@kosmos.chat');
         assert.equal(target.type, 'room');
         assert.equal(target.name, 'testchannel@kosmos.chat');
-        assert.equal(content, 'hello world');
-        assert.equal(id, 'hc-1234abcd');
+        assert.equal(message, msg);
       }
     };
     const service = this.owner.factoryFor('service:coms').create({ xmpp: xmppStub });
@@ -51,7 +55,7 @@ module('Unit | Service | coms', function(hooks) {
       name: 'testchannel@kosmos.chat'
     });
 
-    service.transferMessage(channel, 'hello world', 'hc-1234abcd');
+    service.transferMessage(channel, msg);
   });
 
   test('#updateChannelUserList updates the users and connects the channel', function(assert) {
