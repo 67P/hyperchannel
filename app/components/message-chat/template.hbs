@@ -11,7 +11,25 @@
     </time>
   </div>
 
-  {{#unless this.isEditing}}
+  {{#if this.isEditing}}
+  <form {{on "submit" this.correctMessage}}>
+    <label><span class="invisible">Message</span>
+      <Input @type="text" @value={{this.editedContent}}
+             name="message-input-{{@message.id}}"
+             autocomplete="off"
+             class="mt-2 mr-1 py-1.5 md:w-1/2 group-hover:bg-white" />
+    </label>
+    <button type="submit" title="Send"
+            class="btn-icon-sm btn-blue align-middle mr-0.5">
+      <IconSend />
+    </button>
+    <button {{on "click" this.cancelMessageCorrection}}
+            type="reset" title="Cancel"
+            class="btn-icon-sm btn-red align-middle">
+      <IconX />
+    </button>
+  </form>
+  {{else}}
   <span class="{{this.pendingClass}}">
     {{this.formattedContent}}
     {{#if @message.edited}}
@@ -20,22 +38,7 @@
     </span>
     {{/if}}
   </span>
-  {{else}}
-    <form {{on "submit" this.correctMessage}}>
-      <Input @type="text" @value={{this.editedContent}}
-             @name="message-input-{{@message.id}}"
-             @autocomplete="off"
-             @class="mt-2 mr-1 py-1.5 md:w-1/2 group-hover:bg-white" />
-      <button type="submit" title="Send"
-              class="btn-icon-sm btn-blue align-middle mr-0.5">
-        <IconSend />
-      </button>
-      <button {{on "click" this.cancelMessageCorrection}}
-              title="Cancel" class="btn-icon-sm btn-red align-middle">
-        <IconX />
-      </button>
-    </form>
-  {{/unless}}
+  {{/if}}
 
   <MessageUserActions @message={{@message}} @channel={{@channel}}
                       @onCorrectMessage={{this.startMessageCorrection}}/>
