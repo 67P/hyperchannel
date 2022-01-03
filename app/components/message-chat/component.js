@@ -2,9 +2,15 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { htmlSafe } from '@ember/string';
+import { tracked } from '@glimmer/tracking';
+import { scheduleOnce } from '@ember/runloop';
 import moment from 'moment';
+import { isEmpty } from '@ember/utils';
 
 export default class MessageChatComponent extends Component {
+
+  @tracked isEditing = false;
+  @tracked editedContent = null;
 
   get datetime () {
     return moment(this.args.message.date).format('YYYY-MM-DD[T]HH:mm');
@@ -51,8 +57,42 @@ export default class MessageChatComponent extends Component {
     return this.args.message.pending ? 'text-gray-500' : '';
   }
 
+  focusInputField(messageId) {
+    const inputEl = document.querySelector(`input[name=message-input-${messageId}]`);
+    inputEl.focus();
+    inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
   @action
   usernameClick (username) {
     this.args.onUsernameClick(username);
   }
+
+  @action
+  startMessageCorrection () {
+    this.editedContent = this.args.message.content;
+    this.isEditing = true;
+    scheduleOnce('afterRender', this, 'focusInputField', this.args.message.id);
+  }
+
+  @action
+  cancelMessageCorrection () {
+    this.editedContent = null;
+    this.isEditing = false;
+  }
+
+  @action
+  correctMessage (ev) {
+    ev.preventDefault();
+    if (isEmpty(this.editedContent)) {
+      console.warn('Message cannot be empty');
+      return false;
+    }
+
+    this.args.sendMessage(this.editedContent, {
+      replaceId: this.args.message.id
+    });
+    this.cancelMessageCorrection();
+  }
+
 }

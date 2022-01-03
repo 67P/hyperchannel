@@ -2,10 +2,11 @@ import Controller, { inject as controller } from '@ember/controller';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { isPresent } from '@ember/utils';
+import { capitalize } from '@ember/string';
 import { tracked } from '@glimmer/tracking';
 import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
-import { capitalize } from '@ember/string';
+import generateMessageId from 'hyperchannel/utils/generate-message-id';
 
 export default class BaseChannelController extends Controller {
 
@@ -19,13 +20,15 @@ export default class BaseChannelController extends Controller {
     return this.application.showChannelMenu;
   }
 
-  createMessage (content, type) {
+  createMessage (content, type, attrs={}) {
     const message = new Message({
+      id: generateMessageId(),
       type: type,
       date: new Date(),
       // TODO  nickname per channel
       nickname: this.model.account.nickname,
-      content: content
+      content: content,
+      ...attrs
     });
 
     // We only receive our own message from XMPP MUCs (but not DMs)
@@ -65,13 +68,14 @@ export default class BaseChannelController extends Controller {
   }
 
   @action
-  sendMessage (newMessage) {
-    const message = this.createMessage(newMessage, 'message-chat');
-
-    this.coms.transferMessage(this.model, message.content);
-
+  sendMessage (content, attrs) {
+    // Create new message instance
+    const message = this.createMessage(content, 'message-chat', attrs);
+    // Send message job to Sockethub
+    this.coms.transferMessage(this.model, message);
+    // Add message to channel
     this.model.addMessage(message);
-
+    // Reset message input
     this.newMessage = null;
   }
 
@@ -137,7 +141,8 @@ export default class BaseChannelController extends Controller {
     this.coms.transferMeMessage(
       this.model.account,
       this.model.sockethubChannelId,
-      message.content
+      message.content,
+      message.id
     );
 
     this.model.addMessage(message);

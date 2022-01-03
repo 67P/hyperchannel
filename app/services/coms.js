@@ -140,16 +140,17 @@ export default class ComsService extends Service {
    * Invokes the send-message function on the appropriate transport service
    * @param {Channel} channel
    * @param {String} content
+   * @param {String} [id]
    * @public
    */
-  transferMessage (channel, content) {
+  transferMessage (channel, message) {
     const target = {
       id: channel.sockethubChannelId,
       type: channel.isUserChannel ? 'person' : 'room',
       name: channel.name
     };
     this.getServiceForSockethubPlatform(channel.protocol)
-        .transferMessage(target, content);
+        .transferMessage(target, message);
   }
 
   /**

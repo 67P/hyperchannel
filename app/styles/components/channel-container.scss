@@ -135,10 +135,6 @@
   }
 
   #channel-content {
-    padding: 0 1rem 1.5rem 1rem;
-    background-color: #fff;
-    color: #333;
-
     a {
       color: #aaa;
       text-decoration: underline;
@@ -155,23 +151,14 @@
     }
 
     ul {
-      list-style: none;
-      margin-bottom: 1.5rem;
-
       li {
         line-height: 1.5em;
-        margin-bottom: 0.75em;
 
         .chat-me-message {
           .username {
-            margin-right: 0;
-            font-style: italic;
             &::after {
               content: '';
             }
-          }
-          .message {
-            font-style: italic;
           }
         }
       }

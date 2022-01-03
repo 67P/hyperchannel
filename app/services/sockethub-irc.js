@@ -145,14 +145,17 @@ export default class SockethubIrcService extends Service {
 
   /**
    * Send a chat message to a channel
+   *
+   * @param {Object} target - Channel to send message to
+   * @param {Message} - Message instance
    * @public
    */
-  transferMessage (target, content) {
+  transferMessage (target, message) {
     const channel = this.coms.getChannel(target.id);
-    const message = buildMessageObject(channel.account, target, content);
+    const messageJob = buildMessageObject(channel.account, target, message.content);
 
-    this.log('send', 'sending message job', message);
-    this.sockethub.socket.emit('message', message);
+    this.log('send', 'sending message job', messageJob);
+    this.sockethub.socket.emit('message', messageJob);
   }
 
   /**

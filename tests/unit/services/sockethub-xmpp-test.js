@@ -3,6 +3,7 @@ import { setupTest } from 'ember-qunit';
 import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
 import { xmppAccount } from '../../fixtures/accounts';
+import sinon from 'sinon';
 
 module('Unit | Service | sockethub xmpp', function(hooks) {
   setupTest(hooks);
@@ -141,5 +142,49 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.equal(channel.displayName, 'walter');
     assert.ok(channel.isUserChannel);
     assert.ok(channel.connected);
+  });
+
+  test('#transferMessage', function(assert) {
+    const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
+    const message = new Message({ content: 'Only 4 days until 2022!', id: 'hc-123abcde'});
+    const comsService = this.owner.factoryFor('service:coms').create({
+      accounts: [ xmppAccount ], channels: [ channel ]
+    });
+    const xmpp = this.owner.factoryFor('service:sockethub-xmpp').create({
+      coms: comsService
+    });
+    const socketEmitSpy = sinon.spy(xmpp.sockethub.socket, 'emit');
+
+    xmpp.transferMessage(channel, message);
+
+    assert.ok(socketEmitSpy.calledOnce, 'emits a sockethub job message');
+
+    const jobMessage = socketEmitSpy.getCall(0).args[1];
+    assert.equal(jobMessage.context, 'xmpp', 'job context is correct');
+    assert.equal(jobMessage.type, 'send', 'job type is correct');
+    assert.equal(jobMessage.object.type, 'message', 'job object type is correct');
+    assert.equal(jobMessage.object.content, 'Only 4 days until 2022!', 'job object content is correct');
+    assert.equal(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
+  });
+
+  test('#transferMessage for correction', function(assert) {
+    const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
+    const message = new Message({
+      content: 'Only 4 days until 2022!',
+      id: 'hc-123abcde', replaceId: 'hc-234ghijk'
+    });
+    const comsService = this.owner.factoryFor('service:coms').create({
+      accounts: [ xmppAccount ], channels: [ channel ]
+    });
+    const xmpp = this.owner.factoryFor('service:sockethub-xmpp').create({
+      coms: comsService
+    });
+    const socketEmitSpy = sinon.spy(xmpp.sockethub.socket, 'emit');
+
+    xmpp.transferMessage(channel, message);
+
+    const jobMessage = socketEmitSpy.getCall(0).args[1];
+    assert.equal(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
+    assert.deepEqual(jobMessage.object.replace, { id: 'hc-234ghijk' }, 'job object contains the replace property');
   });
 });

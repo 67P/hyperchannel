@@ -1,0 +1,9 @@
+<div class="absolute right-4 -top-2 z-0 inline-flex shadow-sm rounded-md
+            invisible group-hover:visible">
+  {{#if (and (eq @channel.protocol "XMPP") this.isOwnLastMessage)}}
+  <button type="button" title="Edit" onclick={{@onCorrectMessage}}
+          class="btn-outline-icon relative inline-flex items-center">
+    <IconEdit-2 />
+  </button>
+  {{/if}}
+</div>

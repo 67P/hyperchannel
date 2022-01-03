@@ -28,14 +28,14 @@
 
     <div class="content-container {{@sidebarClass}} {{if @showChannelMenu "channel-menu-open"}}">
       <div class="content">
-        <section id="channel-content" class="main">
+        <section id="channel-content" class="main pt-4 pb-8 bg-white text-gray-800">
           {{#if @channel.isLogged}}
             <a onclick={{perform this.loadPreviousMessages}} class="load-previous" role="button">
               Load previous messages
             </a>
           {{/if}}
 
-          <ul>
+          <ul class="list-none">
             <li>
               <ScrollingObserver @rootElement="#channel-content"
                                  @rootMargin={{this.partialRenderingObserverMargin}}
@@ -44,15 +44,22 @@
             </li>
             {{#each this.renderedMessages as |message|}}
               <li {{did-insert this.messagesUpdated}}>
-                {{component message.type message=message
+                {{component message.type message=message channel=@channel
+                            sendMessage=@onMessage
                             onUsernameClick=this.addUsernameMentionToMessage}}
               </li>
             {{else}}
-              {{#if @channel.isLogged}}
-                <li class="no-messages discreet">No recent messages to display.</li>
+              <li class="px-4 text-gray-400">
+              {{#if (eq @channel.protocol "IRC")}}
+                {{#if @channel.isLogged}}
+                  No recent messages to display.
+                {{else}}
+                  No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank" rel="noopener noreferrer">Learn more</a>
+                {{/if}}
               {{else}}
-                <li class="no-messages discreet">No Kosmos logs configured for this channel. <a href="https://wiki.kosmos.org/Setting_up_channel_logs" target="_blank" rel="noopener noreferrer">Learn more</a></li>
+                  No recent messages to display.
               {{/if}}
+              </li>
             {{/each}}
             <li>
             <ScrollingObserver @rootElement="#channel"

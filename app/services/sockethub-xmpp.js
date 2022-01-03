@@ -6,8 +6,8 @@ import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-messag
 /**
  * Build an activity object for sending to Sockethub
  *
- * @param account {Account} account model the activity belongs to
- * @param details {Object} the activity details
+ * @param {Account} account - account model the activity belongs to
+ * @param {Object} details - the activity details
  * @returns {Object} the activity object
  * @private
  */
@@ -23,21 +23,29 @@ function buildActivityObject(account, details) {
 /**
  * Build a message object
  *
- * @param account {Account} account model instance
- * @param target {String} where to send the message to (channelId)
- * @param content {String} the message itself
- * @param type {String} can be either 'message' or 'me'
- * @returns {Object} the activity object
+ * @param {Account} account - Account model instance
+ * @param {String} target - Where to send the message to (channelId)
+ * @param {String} content - The message itself
+ * @param {String} id - A locally generated message ID
+ * @param {String} [type] - Can be either 'message' or 'me'
+ * @returns {Object} The activity object
  */
-function buildMessageObject(account, target, content, type='message') {
-  return buildActivityObject(account, {
+function buildMessageObject(account, target, message) {
+  const job = buildActivityObject(account, {
     type: 'send',
     target: target,
     object: {
-      type: type,
-      content: content
+      type: 'message',
+      id: message.id,
+      content: message.content
     }
   });
+
+  if (message.replaceId) {
+    job.object['replace'] = { id: message.replaceId };
+  }
+
+  return job;
 }
 
 /**
@@ -82,6 +90,9 @@ export default class SockethubXmppService extends Service {
   }
 
   /**
+   * Connect to an XMPP server
+   *
+   * @param {Account} account
    * @public
    */
   connect (account) {
@@ -159,14 +170,17 @@ export default class SockethubXmppService extends Service {
 
   /**
    * Send a chat message to a channel
+   *
+   * @param {Object} target - Channel to send message to
+   * @param {Message} - Message instance
    * @public
    */
-  transferMessage (target, content) {
+  transferMessage (target, message) {
     const channel = this.coms.getChannel(target.id);
-    const message = buildMessageObject(channel.account, target, content);
+    const messageJob = buildMessageObject(channel.account, target, message);
 
-    this.log('send', 'sending message job', message);
-    this.sockethub.socket.emit('message', message);
+    this.log('send', 'sending message job', messageJob);
+    this.sockethub.socket.emit('message', messageJob);
   }
 
   handlePresenceUpdate (message) {

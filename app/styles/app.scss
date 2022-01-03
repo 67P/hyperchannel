@@ -81,10 +81,6 @@ header {
   margin-top: 10px;
 }
 
-.discreet {
-  color: #aaa;
-}
-
 @layer components {
   // TODO create actual nav-tabs ember components, move directives to templates
   nav.hc-tabs {

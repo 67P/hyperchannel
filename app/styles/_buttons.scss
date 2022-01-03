@@ -17,7 +17,7 @@
 
   .btn-icon-sm {
     @apply btn;
-    @apply h-8 px-2 text-sm shadow-sm;
+    @apply p-2 text-sm shadow-sm;
 
     svg {
       @apply h-4 w-4;
@@ -48,6 +48,21 @@
   .btn:disabled {
     @apply btn-gray text-gray-400;
     box-shadow: none;
+  }
+
+  .btn-outline {
+    @apply px-3 py-2 rounded-md border border-gray-300
+           bg-white text-sm font-medium text-gray-700 hover:bg-gray-50
+           focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500
+           focus:border-indigo-500;
+  }
+
+  .btn-outline-icon {
+    @apply btn-outline;
+
+    svg {
+      @apply h-4 w-4;
+    }
   }
 
 }
