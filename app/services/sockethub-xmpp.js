@@ -42,7 +42,7 @@ function buildMessageObject(account, target, message) {
   });
 
   if (message.replaceId) {
-    job.object['replace'] = { id: message.replaceId };
+    job.object['xmpp:replace'] = { id: message.replaceId };
   }
 
   return job;
