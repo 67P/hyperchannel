@@ -185,6 +185,6 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     const jobMessage = socketEmitSpy.getCall(0).args[1];
     assert.equal(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
-    assert.deepEqual(jobMessage.object.replace, { id: 'hc-234ghijk' }, 'job object contains the replace property');
+    assert.deepEqual(jobMessage.object['xmpp:replace'], { id: 'hc-234ghijk' }, 'job object contains the replace property');
   });
 });
