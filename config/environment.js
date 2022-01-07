@@ -1,7 +1,7 @@
 'use strict';
 
-const fs = require('fs');
-let spacePresets = JSON.parse(fs.readFileSync('config/space-presets.json'));
+// const fs = require('fs');
+// const networkPresetsIrc = JSON.parse(fs.readFileSync('config/network-presets-irc.json'));
 
 module.exports = function (environment) {
   let ENV = {
@@ -24,9 +24,13 @@ module.exports = function (environment) {
       // when it is created
     },
     sockethubURL: 'http://localhost:10550',
-    publicLogsUrl: 'https://storage.5apps.com/kosmos/public/chat-messages',
-    spacePresets: spacePresets,
-    defaultSpaceId: 'freenode',
+    publicLogs: {
+      defaultBaseUrl: 'https://storage.5apps.com/kosmos/public/chat-messages',
+      knownLoggedNetworks: [
+        'irc.libera.chat'
+      ]
+    }
+    // networkPresetsIrc,
   };
 
   if (environment === 'development') {
@@ -50,7 +54,7 @@ module.exports = function (environment) {
   }
 
   if (environment === 'production') {
-    ENV.defaultSpaceId = 'freenode';
+    // TODO make configurable
     ENV.sockethubURL = 'https://sockethub.kosmos.org:10550';
   }
 
