@@ -17,17 +17,6 @@ export default class Account {
     return this.userAddress;
   }
 
-  // TODO get from bot API; move to libera.chat
-  get loggedChannels () {
-    // if (this.protocol === 'IRC' && this.name === 'Freenode' &&) {
-    //   return ['#5apps','#kosmos','#kosmos-dev','#remotestorage','#hackerbeach',
-    //           '#unhosted','#sockethub','#opensourcedesign','#openknot','#emberjs',
-    //           '#indieweb', '#mastodon'];
-    // } else {
-    return [];
-    // }
-  }
-
   serialize () {
     const serialized = {
       id: this.id,
