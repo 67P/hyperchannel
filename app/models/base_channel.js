@@ -151,6 +151,7 @@ export default class BaseChannel {
        (lastMessage.id === newMessage.replaceId)) {
       lastMessage.content = newMessage.content;
       lastMessage.edited = true;
+      // TODO replace date?
     }
   }
 
