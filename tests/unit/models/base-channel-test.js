@@ -161,6 +161,42 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.notOk(replaceMessage.calledOnce);
   });
 
+  test('#addMessage grouped messages', function(assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+    let date;
+
+    channel.addMessage(new Message({
+      type: 'message-chat', date: moment().toDate(),
+      nickname: 'iceman', content: 'hi there', id: '123'
+    }));
+    assert.equal(channel.messages.lastObject.grouped, false,
+                 'does not mark message as grouped when there is no previous message');
+
+    date = moment(channel.messages.lastObject.date).add(3, 'seconds').toDate();
+    channel.addMessage(new Message({
+      type: 'message-chat', date: date,
+      nickname: 'cyberbob', content: 'ohai', id: '234'
+    }));
+    assert.equal(channel.messages.lastObject.grouped, false,
+                 'does not mark message as grouped when previous one is from different nick');
+
+    date = moment(channel.messages.lastObject.date).add(300, 'seconds').toDate();
+    channel.addMessage(new Message({
+      type: 'message-chat', date: date,
+      nickname: 'cyberbob', content: 'how is life?', id: '456'
+    }));
+    assert.equal(channel.messages.lastObject.grouped, false,
+                 'does not mark message as grouped when previous one is too long ago');
+
+    date = moment(channel.messages.lastObject.date).add(30, 'seconds').toDate();
+    channel.addMessage(new Message({
+      type: 'message-chat', date: date,
+      nickname: 'cyberbob', content: 'want to meet afk?', id: '567'
+    }));
+    assert.equal(channel.messages.lastObject.grouped, true,
+                 'marks message as grouped');
+  });
+
   test('#addMessage for message correction', function(assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     const addDateHeadlineStub = sinon.stub(channel, 'addDateHeadline');
@@ -202,7 +238,7 @@ module('Unit | Model | base-channel', function(hooks) {
 
     const newMessage = new Message({
       date: new Date(),
-      type: 'message-chat',nickname: 'alice',
+      type: 'message-chat', nickname: 'alice',
       id: '678abc', content: 'Merry Christmas, Mr. Klaus!',
       replaceId: '234abc'
     });

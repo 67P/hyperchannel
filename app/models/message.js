@@ -8,6 +8,7 @@ export default class Message {
   @tracked content = null;
   @tracked pending = null;
   @tracked edited = false;
+  @tracked grouped = false;
 
   constructor (props) {
     Object.assign(this, props);
