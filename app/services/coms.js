@@ -293,7 +293,7 @@ export default class ComsService extends Service {
     // TODO Check other message archives first, depending on protocol
     // (e.g. MAM for XMPP)
     if (account.protocol === 'IRC') {
-      this.loadLastMessagesFromKosmosArchives(channel, options.isLogged);
+      this.loadLastMessagesFromKosmosArchives(channel, { isLogged: options.isLogged });
     }
 
     return channel;
