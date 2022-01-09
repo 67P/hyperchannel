@@ -156,22 +156,4 @@ module('Unit | Service | coms', function(hooks) {
 
     assert.equal(service.activeChannel, channel2);
   });
-
-
-  // TODO Re-implement without custom space IDs
-  //
-  // test('#loggedChannels returns list of channels when space is Freenode', function(assert) {
-  //   const space = new Space({ name: 'Freenode' });
-  //
-  //   let loggedChannels = space.loggedChannels;
-  //
-  //   assert.ok(loggedChannels.length > 0);
-  //   assert.ok(loggedChannels.find(function(name) { return name === '#kosmos'; }));
-  // });
-  //
-  // test('#loggedChannels returns empty list when space is not Freenode', function(assert) {
-  //   const space = new Space({ name: 'Quakenet' });
-  //
-  //   assert.equal(space.loggedChannels.length, 0);
-  // });
 });
