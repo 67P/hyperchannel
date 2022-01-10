@@ -1,7 +1,7 @@
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import RemoteStorage from 'remotestoragejs';
-import Kosmos from 'remotestorage-module-kosmos';
+import Kosmos from '@kosmos/remotestorage-module-kosmos';
 // import config from 'hyperchannel/config/environment';
 
 export default class RemotestorageService extends Service {
