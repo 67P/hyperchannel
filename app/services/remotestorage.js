@@ -23,41 +23,6 @@ export default class RemotestorageService extends Service {
     });
   }
 
-  // TODO
-  // addDefaultSpace () {
-  //   const spaceConfig = config.spacePresets
-  //                             .find(s => s.id === config.defaultSpaceId);
-  //
-  //   const params = {
-  //     id: spaceConfig.id,
-  //     name: spaceConfig.name,
-  //     protocol: spaceConfig.protocol,
-  //     server: spaceConfig.server,
-  //     channels: [
-  //       '#hackerbeach',
-  //       '#kosmos',
-  //       '#kosmos-dev',
-  //       '#kosmos-random',
-  //       '#sockethub'
-  //     ],
-  //     botkaURL: spaceConfig.botkaURL
-  //   };
-  //
-  //   params.server.nickname = window.prompt("Choose a nickname");
-  //
-  //   return this.rs.kosmos.spaces.store(params)
-  //     .then(() => {
-  //       console.debug('[remotestorage]', 'created/stored default space');
-  //
-  //       let channels = params.channels;
-  //       delete params.channels;
-  //
-  //       const space = new Space(params);
-  //
-  //       return { space, channels };
-  //     });
-  // }
-
   saveAccount (account) {
     return this.rs.kosmos.accounts.storeConfig(account.serialize())
       .then(() => console.debug(`saved account ${account.id}`))

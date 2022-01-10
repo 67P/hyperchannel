@@ -70,9 +70,10 @@ export default class ChannelContainerComponent extends Component {
 
   @(task(function * () {
     this.automaticScrollingEnabled = false;
-    yield this.coms.loadLastMessages(
+    yield this.coms.loadArchiveMessages(
       this.args.channel,
-      this.args.channel.searchedPreviousLogsUntilDate
+      this.args.channel.searchedPreviousLogsUntilDate,
+      { minMessages: 1, maxDays: 1 }
     );
   }).drop()) loadPreviousMessages;
 

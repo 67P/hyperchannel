@@ -1,6 +1,7 @@
 /* global linkifyStr */
 import { htmlSafe } from '@ember/string';
 import BaseChannel from 'hyperchannel/models/base_channel';
+import config from 'hyperchannel/config/environment';
 
 export default class Channel extends BaseChannel {
 
@@ -16,6 +17,11 @@ export default class Channel extends BaseChannel {
     } else {
       return '';
     }
+  }
+
+  get publicLogsBaseUrl () {
+    // TODO needs to get hostname from channel meta info for federated protocols
+    return `${config.publicLogs.defaultBaseUrl}/${this.account.server.hostname.toLowerCase()}/channels/${this.shortName}`;
   }
 
 }

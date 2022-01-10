@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Libera.Chat",
+    "description": "A community platform for free and open-source software and peer directed projects",
+    "website": "https://wiki.gnome.org/action/show/GettingInTouch/IRC",
+    "protocol": "IRC",
+    "server": {
+      "hostname": "irc.libera.chat",
+      "port": 6697,
+      "secure": true
+    }
+  },
+  {
+    "name": "GIMPnet",
+    "description": "Home of the GNOME desktop project",
+    "website": "https://wiki.gnome.org/action/show/GettingInTouch/IRC",
+    "protocol": "IRC",
+    "server": {
+      "hostname": "irc.gnome.org",
+      "port": 6697,
+      "secure": true
+    }
+  }
+]

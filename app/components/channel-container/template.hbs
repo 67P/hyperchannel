@@ -30,7 +30,7 @@
       <div class="content">
         <section id="channel-content" class="main pt-4 pb-8 bg-white text-gray-800">
           {{#if @channel.isLogged}}
-            <a onclick={{perform this.loadPreviousMessages}} class="load-previous" role="button">
+            <a onclick={{perform this.loadPreviousMessages}} class="block px-4 text-sm" role="button">
               Load previous messages
             </a>
           {{/if}}

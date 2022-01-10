@@ -90,7 +90,7 @@
     "postcss-scss": "4.0.0",
     "qunit": "^2.16.0",
     "qunit-dom": "^1.6.0",
-    "remotestorage-module-kosmos": "~2.0.0",
+    "remotestorage-module-kosmos": "github:67P/remotestorage-module-kosmos#chore/add_channel_properties",
     "remotestoragejs": "^2.0.0-beta.1",
     "tailwindcss": "^2.2.4"
   },

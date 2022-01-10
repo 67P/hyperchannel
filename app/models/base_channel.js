@@ -10,6 +10,7 @@ export default class BaseChannel {
   @tracked id = '';
   @tracked name = ''; // e.g. kosmos-dev@kosmos.chat or #kosmos-dev
   @tracked displayName = ''; // e.g. Kosmos Dev
+  @tracked isLogged;
   @tracked connected = false;
   @tracked topic = null;
   @tracked userList = A([]);

@@ -1,7 +1,6 @@
 import Service, { inject as service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
 import { A } from '@ember/array';
-import moment from 'moment';
 import { tracked } from '@glimmer/tracking';
 import IrcAccount from 'hyperchannel/models/account/irc';
 import XmppAccount from 'hyperchannel/models/account/xmpp';
@@ -268,18 +267,21 @@ export default class ComsService extends Service {
   }
 
   async instantiateChannels (account) {
-    return this.storage.rs.kosmos.channels.getAll(account.id).then(channelData => {
-      for (const cid in channelData) {
-        this.createChannel(account, channelData[cid].name);
-      }
-    });
+    const channelData = await this.storage.rs.kosmos.channels.getAll(account.id);
+
+    for (const cid in channelData) {
+      this.createChannel(account, channelData[cid].name, {
+        isLogged: channelData[cid].isLogged
+      });
+    }
   }
 
   createChannel (account, channelName, options = {}) {
     const channel = new Channel({
       account: account,
       name: channelName,
-      displayName: channelName
+      displayName: channelName,
+      isLogged: options.isLogged
     });
     this.channels.pushObject(channel);
     this.joinChannel(channel, 'room');
@@ -288,57 +290,65 @@ export default class ComsService extends Service {
       this.storage.saveChannel(channel);
     }
 
-    if (channel.isLogged) {
-      this.loadLastMessages(channel, moment.utc(), 2)
-          .catch(() => { /* TODO nothing to do here? */ });
+    // TODO Check other message archives first, depending on protocol
+    // (e.g. MAM for XMPP)
+    if (account.protocol === 'IRC') {
+      this.loadLastMessagesFromKosmosArchives(channel, { isLogged: options.isLogged });
     }
 
     return channel;
   }
 
-  loadLastMessages (channel, date, maximumDays = 14) {
-    let searchUntilDate;
-    if (channel.searchedPreviousLogsUntilDate) {
-      searchUntilDate = moment(channel.searchedPreviousLogsUntilDate).subtract(maximumDays, 'days');
-    } else {
-      searchUntilDate = moment.utc().subtract(maximumDays, 'days');
-    }
+  loadLastMessagesFromKosmosArchives (channel, options = {}) {
+    // TODO implement a channel getter for the hostname so it works with
+    // protocols other than IRC
+    const channelNetworkHostname = channel.account.server.hostname;
 
-    if (date.isBefore(searchUntilDate, 'day')) {
-      channel.searchedPreviousLogsUntilDate = date;
-      return;
-    }
+    const discoverPublicLogs = !options.isLogged;
+    const networkIsLogged    = config.publicLogs.knownLoggedNetworks.includes(channelNetworkHostname);
 
-    return this.loadArchiveMessages(channel, date).catch(() => {
-      // didn't find any archive for this day, restart searching for the previous day
-      return this.loadLastMessages(channel, date.subtract(1, 'day'));
+    if (discoverPublicLogs && !networkIsLogged) return false;
+
+    return fetch(`${channel.publicLogsBaseUrl}/meta`).then(res => res.json()).then(meta => {
+      channel.isLogged = true;
+      return this.loadArchiveMessages(channel, meta.last);
+    }).catch(() => {
+      channel.isLogged = false;
+    }).finally(() => {
+      if (discoverPublicLogs) { this.storage.saveChannel(channel); }
     });
   }
 
-  async loadArchiveMessages (channel, date) {
-    // TODO move RS documents, make compatible
-    let logsUrl = `${config.publicLogsUrl}/${channel.account.server.hostname.toLowerCase()}/channels/${channel.slug}/`;
-        logsUrl += date.format('YYYY/MM/DD');
+  async loadArchiveMessages (channel, dateStr, options = {}) {
+    options.minMessages = options.minMessages || 10;
+    options.maxDays = options.maxDays || 5;
 
-    return fetch(logsUrl).then(res => res.json()).then(archive => {
-      archive.today?.messages?.forEach((message) => {
-        this.log('chat_message', message);
+    let messagesCount = 0;
+    let archivesCount = 0;
 
+    while ((messagesCount < options.minMessages) &&
+           (archivesCount < options.maxDays)) {
+      const archive = await fetch(`${channel.publicLogsBaseUrl}/${dateStr}`).then(res => res.json());
+
+      archive.today?.messages?.forEach(message => {
         let channelMessage = new Message({
           type: 'message-chat',
           date: new Date(message.timestamp),
           nickname: message.from,
-          content: message.text
+          content: message.text,
+          id: message.id
         });
 
         channel.addMessage(channelMessage);
       });
-      let previous = archive.today?.previous;
-      channel.searchedPreviousLogsUntilDate = moment.utc(previous.replace(/\//g, '-'));
-    }).catch(error => {
-      this.log('fetch-error', 'couldn\'t load archive document', error);
-      throw(error);
-    });
+
+      messagesCount += archive.today?.messages?.length || 0;
+      archivesCount += 1;
+
+      dateStr = archive.today?.previous;
+      channel.searchedPreviousLogsUntilDate = dateStr;
+      if (isEmpty(dateStr)) break;
+    }
   }
 
   createUserChannel (account, name) {
