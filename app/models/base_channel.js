@@ -127,6 +127,12 @@ export default class BaseChannel {
 
     this.addDateHeadline(message);
 
+    const prevMsg = this.messages.lastObject;
+    if ((prevMsg.nickname === message.nickname) &&
+         moment(message.date).isBefore(moment(prevMsg.date).add(120, 'seconds'))) {
+      message.grouped = true;
+    }
+
     this.messages.pushObject(message);
 
     if (!this.visible) {
@@ -146,6 +152,7 @@ export default class BaseChannel {
        (lastMessage.id === newMessage.replaceId)) {
       lastMessage.content = newMessage.content;
       lastMessage.edited = true;
+      // TODO replace date?
     }
   }
 
