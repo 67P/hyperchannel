@@ -41,6 +41,7 @@
     "@ember/test-helpers": "^2.2.8",
     "@glimmer/component": "^1.0.3",
     "@glimmer/tracking": "^1.0.4",
+    "@kosmos/remotestorage-module-kosmos": "^2.1.2",
     "@tailwindcss/forms": "^0.3.3",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
@@ -91,7 +92,6 @@
     "postcss-scss": "4.0.0",
     "qunit": "^2.16.0",
     "qunit-dom": "^1.6.0",
-    "remotestorage-module-kosmos": "github:67P/remotestorage-module-kosmos#chore/add_channel_properties",
     "remotestoragejs": "^2.0.0-beta.1",
     "tailwindcss": "^2.2.4"
   },
