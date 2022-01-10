@@ -44,6 +44,7 @@
     "@tailwindcss/forms": "^0.3.3",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
+    "consistent-color-generation": "0.4.0",
     "ember-auto-import": "^1.11.3",
     "ember-autofocus-modifier": "^3.0.0",
     "ember-body-class": "^2.0.0",

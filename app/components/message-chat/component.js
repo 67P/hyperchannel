@@ -4,13 +4,21 @@ import { action } from '@ember/object';
 import { htmlSafe } from '@ember/string';
 import { tracked } from '@glimmer/tracking';
 import { scheduleOnce } from '@ember/runloop';
-import moment from 'moment';
 import { isEmpty } from '@ember/utils';
+import moment from 'moment';
+import getRGB from 'consistent-color-generation';
 
 export default class MessageChatComponent extends Component {
 
   @tracked isEditing = false;
   @tracked editedContent = null;
+
+  constructor () {
+    super(...arguments);
+    // TODO move to user object when implemented
+    // https://github.com/67P/hyperchannel/issues/180
+    this.userColorHex = getRGB(this.args.message.nickname).toString();
+  }
 
   get datetime () {
     return moment(this.args.message.date).format('YYYY-MM-DD[T]HH:mm');
@@ -55,6 +63,10 @@ export default class MessageChatComponent extends Component {
 
   get pendingClass () {
     return this.args.message.pending ? 'text-gray-500' : '';
+  }
+
+  get avatarPlaceholderLetter () {
+    return this.args.message.nickname.charAt(0).toUpperCase();
   }
 
   focusInputField(messageId) {
