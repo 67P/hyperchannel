@@ -19,7 +19,7 @@ module('Integration | Component | message-chat', function(hooks) {
     }));
   });
 
-  test('it renders the message', async function(assert) {
+  test('simple message', async function(assert) {
     await render(hbs`<MessageChat @channel={{this.channel}} @message={{this.message}} />`);
 
     const contentEl = this.element.querySelector('.msg-content');
@@ -32,7 +32,7 @@ module('Integration | Component | message-chat', function(hooks) {
     assert.equal(avatarEl.querySelector('span').innerText.length, 1, `renders one letter of the sender's nickname`);
   });
 
-  test('renders a grouped message', async function(assert) {
+  test('grouped message', async function(assert) {
     this.message.grouped = true;
     await render(hbs`<MessageChat @channel={{this.channel}} @message={{this.message}} />`);
 
@@ -41,5 +41,22 @@ module('Integration | Component | message-chat', function(hooks) {
 
     assert.notOk(this.element.querySelector('.msg-meta'), `hides the meta information`);
     assert.notOk(this.element.querySelector('.msg-avatar span'), `hides the user avatar (placeholder)`);
+  });
+
+  test('line breaks', async function(assert) {
+    this.message.content = 'The wren\nEarns his living\nNoiselessly.\n- Kobayahsi Issa';
+    await render(hbs`<MessageChat @channel={{this.channel}} @message={{this.message}} />`);
+
+    const contentEl = this.element.querySelector('.msg-content');
+
+    assert.equal(contentEl.querySelectorAll('br').length, 3, 'inserts line breaks for LF');
+
+    this.message.content = 'The wren\rEarns his living\rNoiselessly.\r- Kobayahsi Issa';
+    await render(hbs`<MessageChat @channel={{this.channel}} @message={{this.message}} />`);
+    assert.equal(contentEl.querySelectorAll('br').length, 3, 'inserts line breaks for CR');
+
+    this.message.content = 'The wren\r\nEarns his living\r\nNoiselessly.\r\n- Kobayahsi Issa';
+    await render(hbs`<MessageChat @channel={{this.channel}} @message={{this.message}} />`);
+    assert.equal(contentEl.querySelectorAll('br').length, 3, 'inserts line breaks for CR+LF');
   });
 });

@@ -56,7 +56,8 @@ export default class MessageChatComponent extends Component {
              .replace(/"color-(\d)"/g, '"color-0$1"')
              .replace(/\u0002/g, '<span class="bold">')
              .replace(/\u001D/g, '<span class="italic">')
-             .replace(/\u000f/g,  '</span>');
+             .replace(/\u000f/g,  '</span>')
+             .replace(/(?:\r\n|\r|\n)/g, '<br>');
 
     return htmlSafe(out);
   }
