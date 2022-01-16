@@ -85,8 +85,13 @@ export default class SockethubXmppService extends Service {
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
-    this.sockethub.socket.emit('credentials', credentialsJob);
-    this.sockethub.socket.emit('message', connectJob);
+    this.sockethub.socket.emit('credentials', credentialsJob, (err) => {
+      if (err) { this.log('failed to store credentials: ', err); }
+    });
+    this.sockethub.socket.emit('message', connectJob, (message) => {
+      if (message.error) { this.log('failed to connect to xmpp server: ', message); }
+      else { this.coms.handleSockethubMessage(message); }
+    });
   }
 
   /**
@@ -123,8 +128,13 @@ export default class SockethubXmppService extends Service {
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
-    this.sockethub.socket.emit('credentials', credentialsJob);
-    this.sockethub.socket.emit('message', connectJob);
+    this.sockethub.socket.emit('credentials', credentialsJob, (err) => {
+      if (err) { this.log('failed to store credentials: ', err); }
+    });
+    this.sockethub.socket.emit('message', connectJob, (message) => {
+      if (message.error) { this.log('failed to connect to xmpp server: ', message); }
+      else { this.coms.handleSockethubMessage(message); }
+    });
   }
 
   handleJoinCompleted (message) {
@@ -158,14 +168,11 @@ export default class SockethubXmppService extends Service {
         id: channel.sockethubPersonId,
         name: channel.account.nickname
       },
-      target: {
-        id: channel.sockethubChannelId,
-        type: type
-      }
+      target: channel.sockethubChannelId
     });
 
     this.log('xmpp', 'joining channel', joinMsg);
-    this.sockethub.socket.emit('message', joinMsg);
+    this.sockethub.socket.emit('message', joinMsg, this.coms.handleChannelJoin.bind(this.coms));
   }
 
   /**
@@ -180,7 +187,7 @@ export default class SockethubXmppService extends Service {
     const messageJob = buildMessageObject(channel.account, target, message);
 
     this.log('send', 'sending message job', messageJob);
-    this.sockethub.socket.emit('message', messageJob);
+    this.sockethub.socket.emit('message', messageJob, this.coms.handleSockethubMessage.bind(this.coms));
   }
 
   handlePresenceUpdate (message) {
@@ -244,7 +251,7 @@ export default class SockethubXmppService extends Service {
       });
 
       this.log('leave', 'leaving channel', leaveMsg);
-      this.sockethub.socket.emit('message', leaveMsg);
+      this.sockethub.socket.emit('message', leaveMsg, this.coms.handleSockethubMessage.bind(this.coms));
     }
   }
 
@@ -284,7 +291,7 @@ export default class SockethubXmppService extends Service {
     if (message.target.type === 'room') {
       channel = this.coms.channels.findBy('sockethubChannelId', targetChannelId);
 
-      // TODO Find account for new channel by sockerhubPersonId
+      // TODO Find account for new channel by sockethubPersonId
       if (!channel) {
         console.warn('Received message for unknown channel', message);
         // channel = this.coms.createChannel(space, targetChannelId);

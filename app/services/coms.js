@@ -47,7 +47,7 @@ export default class ComsService extends Service {
       return {
         domain: domain,
         channels: this.channels.filterBy('domain', domain).sortBy('name')
-      }
+      };
     });
   }
 
@@ -65,9 +65,7 @@ export default class ComsService extends Service {
    * @public
    */
   setupListeners () {
-    this.sockethub.socket.on('completed', this.handleSockethubCompleted.bind(this));
     this.sockethub.socket.on('message'  , this.handleSockethubMessage.bind(this));
-    this.sockethub.socket.on('failure'  , this.handleSockethubFailure.bind(this));
   }
 
   /**
@@ -384,22 +382,6 @@ export default class ComsService extends Service {
     return this[protocol.toLowerCase()];
   }
 
-  /*
-   * @private
-   *
-   * Handles completed Sockethub actions:
-   * - Successfully joined a channel
-   */
-  handleSockethubCompleted (message) {
-    this.log(`${message.context}_completed`, message);
-
-    switch (message.type) {
-      case 'join':
-        this[message.context].handleJoinCompleted(message);
-        break;
-    }
-  }
-
   /**
    * Handles incoming Sockethub messages:
    * - Attendance list for channel
@@ -482,14 +464,6 @@ export default class ComsService extends Service {
     } else {
       this.addUserToChannelUserList(message);
     }
-  }
-
-  /**
-   * Handles incoming Sockethub errors/failures
-   * @private
-   */
-  handleSockethubFailure (message) {
-    this.log('sh_failure', message);
   }
 
   /**
