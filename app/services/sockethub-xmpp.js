@@ -57,7 +57,7 @@ export default class SockethubXmppService extends Service {
   @service logger;
   @service coms;
 
-  connectWithCredentials (userAddress, password) {
+  connectWithCredentials (userAddress, password, callback) {
     const sockethubPersonId = `${userAddress}/hyperchannel`;
 
     this.sockethub.ActivityStreams.Object.create({
@@ -88,10 +88,7 @@ export default class SockethubXmppService extends Service {
     this.sockethub.socket.emit('credentials', credentialsJob, (err) => {
       if (err) { this.log('failed to store credentials: ', err); }
     });
-    this.sockethub.socket.emit('message', connectJob, (message) => {
-      if (message.error) { this.log('failed to connect to xmpp server: ', message); }
-      else { this.coms.handleSockethubMessage(message); }
-    });
+    this.sockethub.socket.emit('message', connectJob, callback);
   }
 
   /**
@@ -251,7 +248,7 @@ export default class SockethubXmppService extends Service {
       });
 
       this.log('leave', 'leaving channel', leaveMsg);
-      this.sockethub.socket.emit('message', leaveMsg, this.coms.handleSockethubMessage.bind(this.coms));
+      this.sockethub.socket.emit('message', leaveMsg, this.coms.removeUserFromChannelUserList.bind(this.coms));
     }
   }
 
