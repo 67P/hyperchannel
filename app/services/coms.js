@@ -400,9 +400,6 @@ export default class ComsService extends Service {
           this.updateChannelUserList(message);
         }
         break;
-      case 'join':
-        this.handleChannelJoin(message);
-        break;
       case 'leave':
         this.removeUserFromChannelUserList(message);
         break;
@@ -444,25 +441,6 @@ export default class ComsService extends Service {
       //       break;
       //   }
       //   break;
-    }
-  }
-
-  /**
-   * Handles the various checks assosciated with channel joins
-   * @private
-   */
-  handleChannelJoin (message) {
-    if (message.object.type && message.object.type === 'error') {
-      // failed to join a channel
-      const channel = this.getChannel(message.target.id, message.actor.id);
-
-      if (isPresent(channel)) {
-        channel.connected = false;
-      } else {
-        console.warn('Could not find channel for error message', message);
-      }
-    } else {
-      this.addUserToChannelUserList(message);
     }
   }
 

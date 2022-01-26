@@ -172,7 +172,7 @@ export default class SockethubXmppService extends Service {
     });
 
     this.log('xmpp', 'joining channel', joinMsg);
-    this.sockethub.socket.emit('message', joinMsg, this.coms.handleChannelJoin.bind(this.coms));
+    this.sockethub.socket.emit('message', joinMsg, this.handleJoinCompleted.bind(this));
   }
 
   /**
