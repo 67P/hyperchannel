@@ -187,7 +187,7 @@ export default class SockethubXmppService extends Service {
     const messageJob = buildMessageObject(channel.account, target, message);
 
     this.log('send', 'sending message job', messageJob);
-    this.sockethub.socket.emit('message', messageJob, this.coms.handleSockethubMessage.bind(this.coms));
+    this.sockethub.socket.emit('message', messageJob);
   }
 
   handlePresenceUpdate (message) {
