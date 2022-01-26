@@ -243,12 +243,17 @@ export default class SockethubXmppService extends Service {
     if (!channel.isUserChannel) {
       const leaveMsg = buildActivityObject(channel.account, {
         type: 'leave',
-        target: channel.sockethubChannelId,
-        object: {}
+        target: channel.sockethubChannelId
       });
 
       this.log('leave', 'leaving channel', leaveMsg);
-      this.sockethub.socket.emit('message', leaveMsg, this.coms.removeUserFromChannelUserList.bind(this.coms));
+      this.sockethub.socket.emit('message', leaveMsg, (message) => {
+        if (message.error) {
+          console.warn(message.error);
+        } else {
+          this.coms.removeUserFromChannelUserList.bind(this.coms)
+        }
+      });
     }
   }
 

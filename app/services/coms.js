@@ -202,7 +202,8 @@ export default class ComsService extends Service {
   removeUserFromChannelUserList (message) {
     // TODO handle user quit leaves (multiple channels)
     // e.g. target is `{ type: 'service', id: 'irc.freenode.net' }`
-    const channel = this.getChannel(message.target.id);
+    const sockethubChannelId = typeof message.target === 'object' ? message.target.id : message.target;
+    const channel = this.getChannel(sockethubChannelId);
     if (channel) {
       channel.removeUser(message.actor.name);
     }
@@ -400,9 +401,6 @@ export default class ComsService extends Service {
           this.updateChannelUserList(message);
         }
         break;
-      case 'leave':
-        this.removeUserFromChannelUserList(message);
-        break;
       case 'send':
         switch (message.object.type) {
           case 'message':
@@ -430,17 +428,10 @@ export default class ComsService extends Service {
                 .handlePresenceUpdate(message)
             break;
           case 'error':
-            console.warn('Got error update message', message.actor.id, message.object.content);
+            console.warn('Received error update message', message.actor.id, message.object.content);
             break;
         }
         break;
-      // case 'error':
-      //   switch(message.context) {
-      //     case 'xmpp':
-      //       this.xmpp.handleErrorMessage(message);
-      //       break;
-      //   }
-      //   break;
     }
   }
 
