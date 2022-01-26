@@ -32,6 +32,7 @@ install:
   - cd $HOME
   - git clone https://github.com/sockethub/sockethub.git
   - cd sockethub
+  - git checkout refactor-sockethub-client
   - yarn install
   - yarn run build
   - cd $TRAVIS_BUILD_DIR
