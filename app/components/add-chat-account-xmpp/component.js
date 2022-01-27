@@ -15,44 +15,9 @@ export default class AddChatAccountXmppComponent extends Component {
   @tracked hostname = 'kosmos.org';
   @tracked password;
   @tracked connectError = null;
-  @tracked finishedSetup = false;
 
   get userAddress () {
     return `${this.username}@${this.hostname}`;
-  }
-
-  async handleConnectStatus (eventName, message) {
-    if (this.finishedSetup) {
-      // TODO remove when double events fixed
-      console.debug('Account setup already finished, nothing to do')
-      return;
-    }
-
-    if (message.context !== 'xmpp' ||
-        !['message', 'completed'].includes(eventName)) { return; }
-
-    if (message.type === 'error' &&
-        message.object.condition === 'not-authorized'
-        /* && TODO message.actor.id === actor */) {
-      this.connectError = {
-        title: 'Account connection failed',
-        content: message.object.content
-      }
-      this.xmpp.sockethub.socket.offAny();
-    }
-
-    if (message.type === 'connect' &&
-        message.actor.id === `${this.userAddress}/hyperchannel`) {
-      // Connected successfully
-      this.xmpp.sockethub.socket.offAny();
-
-      const account = await this.addAccount();
-      this.addDefaultChannels(account);
-      this.finishedSetup = true;
-
-      const firstChannel = this.coms.channels.filterBy('account', account).firstObject;
-      this.router.transitionTo('channel', firstChannel);
-    }
   }
 
   async addAccount () {
@@ -81,8 +46,19 @@ export default class AddChatAccountXmppComponent extends Component {
   submitForm (e) {
     e.preventDefault();
     this.connectError = null;
-    this.xmpp.sockethub.socket.onAny(this.handleConnectStatus.bind(this));
-    this.xmpp.connectWithCredentials(this.userAddress, this.password);
+    this.xmpp.connectWithCredentials(this.userAddress, this.password, async (message) => {
+      if (message.error) {
+        this.connectError = {
+          title: 'Account connection failed',
+          content: message.error
+        }
+      } else {
+        const account = await this.addAccount();
+        this.addDefaultChannels(account);
+        const firstChannel = this.coms.channels.filterBy('account', account).firstObject;
+        this.router.transitionTo('channel', firstChannel);
+      }
+    });
   }
 
 }

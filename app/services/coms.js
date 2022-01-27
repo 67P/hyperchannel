@@ -47,7 +47,7 @@ export default class ComsService extends Service {
       return {
         domain: domain,
         channels: this.channels.filterBy('domain', domain).sortBy('name')
-      }
+      };
     });
   }
 
@@ -65,9 +65,7 @@ export default class ComsService extends Service {
    * @public
    */
   setupListeners () {
-    this.sockethub.socket.on('completed', this.handleSockethubCompleted.bind(this));
     this.sockethub.socket.on('message'  , this.handleSockethubMessage.bind(this));
-    this.sockethub.socket.on('failure'  , this.handleSockethubFailure.bind(this));
   }
 
   /**
@@ -204,7 +202,8 @@ export default class ComsService extends Service {
   removeUserFromChannelUserList (message) {
     // TODO handle user quit leaves (multiple channels)
     // e.g. target is `{ type: 'service', id: 'irc.freenode.net' }`
-    const channel = this.getChannel(message.target.id);
+    const sockethubChannelId = typeof message.target === 'object' ? message.target.id : message.target;
+    const channel = this.getChannel(sockethubChannelId);
     if (channel) {
       channel.removeUser(message.actor.name);
     }
@@ -384,22 +383,6 @@ export default class ComsService extends Service {
     return this[protocol.toLowerCase()];
   }
 
-  /*
-   * @private
-   *
-   * Handles completed Sockethub actions:
-   * - Successfully joined a channel
-   */
-  handleSockethubCompleted (message) {
-    this.log(`${message.context}_completed`, message);
-
-    switch (message.type) {
-      case 'join':
-        this[message.context].handleJoinCompleted(message);
-        break;
-    }
-  }
-
   /**
    * Handles incoming Sockethub messages:
    * - Attendance list for channel
@@ -417,12 +400,6 @@ export default class ComsService extends Service {
         if (message.object['type'] === 'attendance') {
           this.updateChannelUserList(message);
         }
-        break;
-      case 'join':
-        this.handleChannelJoin(message);
-        break;
-      case 'leave':
-        this.removeUserFromChannelUserList(message);
         break;
       case 'send':
         switch (message.object.type) {
@@ -451,45 +428,11 @@ export default class ComsService extends Service {
                 .handlePresenceUpdate(message)
             break;
           case 'error':
-            console.warn('Got error update message', message.actor.id, message.object.content);
+            console.warn('Received error update message', message.actor.id, message.object.content);
             break;
         }
         break;
-      // case 'error':
-      //   switch(message.context) {
-      //     case 'xmpp':
-      //       this.xmpp.handleErrorMessage(message);
-      //       break;
-      //   }
-      //   break;
     }
-  }
-
-  /**
-   * Handles the various checks assosciated with channel joins
-   * @private
-   */
-  handleChannelJoin (message) {
-    if (message.object.type && message.object.type === 'error') {
-      // failed to join a channel
-      const channel = this.getChannel(message.target.id, message.actor.id);
-
-      if (isPresent(channel)) {
-        channel.connected = false;
-      } else {
-        console.warn('Could not find channel for error message', message);
-      }
-    } else {
-      this.addUserToChannelUserList(message);
-    }
-  }
-
-  /**
-   * Handles incoming Sockethub errors/failures
-   * @private
-   */
-  handleSockethubFailure (message) {
-    this.log('sh_failure', message);
   }
 
   /**

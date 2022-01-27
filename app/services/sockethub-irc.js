@@ -135,7 +135,7 @@ export default class SockethubIrcService extends Service {
         });
 
         this.log('irc', 'joining channel', joinMsg);
-        this.sockethub.socket.emit('message', joinMsg);
+        this.sockethub.socket.emit('message', joinMsg, this.handleJoinCompleted.bind(this));
         break;
       case 'person':
         channel.connected = true;
