@@ -44,24 +44,5 @@
       text-decoration: underline;
       color: #339;
     }
-
-    img {
-      &.from-image-url {
-        padding-top: 0.25em;
-        max-width: 500px;
-        max-height: 300px;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 900px) {
-  .chat-message {
-    img {
-      &.from-image-url {
-        max-width: 100%;
-        max-height: 250px;
-      }
-    }
   }
 }
