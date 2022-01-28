@@ -50,6 +50,8 @@ module('Unit | Component | message-chat', function(hooks) {
       message: { content: 'https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif', nickname: 'cerealkiller' }
     });
 
-    assert.equal(component.formattedContent.toString(), '<br><a href="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif" target="_blank" rel="nofollow noopener"><img src="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif" class="from-image-url" alt="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif"></a>');
+    const content = component.formattedContent.toString();
+    assert.ok(content.match('<a href="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif" target="_blank" rel="nofollow noopener">'));
+    assert.ok(content.match('<img src="https://storage.5apps.com/basti/public/shares/160527-1119-magic.gif"'));
   });
 });
