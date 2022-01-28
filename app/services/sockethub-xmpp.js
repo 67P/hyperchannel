@@ -129,7 +129,7 @@ export default class SockethubXmppService extends Service {
       if (err) { this.log('failed to store credentials: ', err); }
     });
     this.sockethub.socket.emit('message', connectJob, (message) => {
-      if (message.error) { this.log('failed to connect to xmpp server: ', message); }
+      if (message.error) { this.log('xmpp', 'failed to connect to xmpp server: ', message); }
       else { this.coms.handleSockethubMessage(message); }
     });
   }
@@ -249,7 +249,7 @@ export default class SockethubXmppService extends Service {
       this.log('leave', 'leaving channel', leaveMsg);
       this.sockethub.socket.emit('message', leaveMsg, (message) => {
         if (message.error) {
-          console.warn(message.error);
+          this.log('leave', 'failed to leave channel: ', message);
         } else {
           this.coms.removeUserFromChannelUserList.bind(this.coms)
         }
