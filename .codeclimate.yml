@@ -1,24 +1,27 @@
-engines:
-  duplication:
+version: "2"
+checks:
+  similar-code:
+    config:
+      threshold: 60
+  identical-code:
+    config:
+      threshold: 60
+  method-lines:
     enabled: true
     config:
-      languages:
-        javascript:
-          mass_threshold: 60
-  fixme:
-    enabled: true
-    checks:
-      TODO:
-        enabled: false
-      FIXME:
-        enabled: false
-ratings:
-  paths:
-    - "app/**/*"
-exclude_paths:
-  - ".eslintrc.js"
-  - ".template-lintrc.js"
-  - "config/tailwindcss-config.js"
-  - "release/**/*"
-  - "scripts/**/*"
-  - "tests/**/*"
+      threshold: 30
+# plugins:
+#   fixme:
+#     enabled: true
+#     config:
+#       strings:
+#       - TODO
+#       - FIXME
+exclude_patterns:
+- ".eslintrc.js"
+- ".template-lintrc.js"
+- "config/tailwindcss-config.js"
+- "release/"
+- "scripts/"
+- "tests/"
+- "node_modules/"
