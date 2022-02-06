@@ -46,6 +46,7 @@ export default class AddChatAccountXmppComponent extends Component {
   submitForm (e) {
     e.preventDefault();
     this.connectError = null;
+
     this.xmpp.connectWithCredentials(this.userAddress, this.password, async (message) => {
       if (message.error) {
         this.connectError = {
