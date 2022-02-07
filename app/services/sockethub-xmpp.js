@@ -72,7 +72,7 @@ export default class SockethubXmppService extends Service {
       actor: sockethubPersonId,
       object: {
         type: 'credentials',
-        username: userAddress,
+        userAddress,
         password: password,
         resource: 'hyperchannel'
       }
@@ -112,7 +112,7 @@ export default class SockethubXmppService extends Service {
       actor: actor,
       object: {
         type: 'credentials',
-        username: account.username, // JID
+        userAddress: account.username, // JID
         password: account.password,
         resource: 'hyperchannel'
       }
