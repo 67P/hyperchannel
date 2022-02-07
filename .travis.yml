@@ -32,7 +32,7 @@ install:
   - cd $HOME
   - git clone https://github.com/sockethub/sockethub.git
   - cd sockethub
-  - yarn install
+  - yarn run deps
   - yarn run build
   - cd $TRAVIS_BUILD_DIR
   - npm ci
