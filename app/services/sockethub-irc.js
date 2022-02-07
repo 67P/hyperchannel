@@ -56,14 +56,14 @@ export default class SockethubIrcService extends Service {
    *   like e.g. `join`
    * @public
    */
-  connect (account) {
+  connect (account, callback) {
     this.sockethub.ActivityStreams.Object.create({
       id: account.sockethubPersonId,
       type: 'person',
       name: account.nickname
     });
 
-    const credentials = buildActivityObject(account, {
+    const credentialsJob = buildActivityObject(account, {
       type: 'credentials',
       object: {
         type: 'credentials',
@@ -74,15 +74,23 @@ export default class SockethubIrcService extends Service {
       }
     });
 
-    console.debug('Connecting to IRC network', credentials);
-    this.sockethub.socket.emit('credentials', credentials);
+    const connectJob = buildActivityObject(account, {
+      type: 'connect'
+    });
 
-    // TODO This is how it should work at some point. At the moment you need
-    // to join a channel in order to connect to a server automatically.
-    // const connectJob = {
-    //   type: 'connect', context: 'irc', actor: account.sockethubPersonId
-    // };
-    // this.sockethub.socket.emit('message', connectJob);
+    this.log('irc', 'connecting to IRC network...');
+
+    this.sockethub.socket.emit('credentials', credentialsJob, (err) => {
+      if (err) { this.log('failed to store credentials: ', err); }
+    });
+
+    this.sockethub.socket.emit('message', connectJob, (message) => {
+      if (message.error) {
+        this.log('irc', 'failed to connect to IRC network: ', message);
+      }
+      if (typeof callback === 'function') { callback(message); }
+      else { this.coms.handleSockethubMessage(message); }
+    });
   }
 
   handleJoinCompleted (message) {

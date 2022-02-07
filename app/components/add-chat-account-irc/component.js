@@ -26,40 +26,6 @@ export default class AddChatAccountIrcComponent extends Component {
     return this.nickname;
   }
 
-  // TODO Implement once available
-  // async handleConnectFailure (message) {
-  //   console.debug('handleConnectFailure called with', message);
-  // }
-
-  // TODO Implement once available
-  // async handleConnectMessage (message) {
-  //   console.debug('handleConnectMessage called with', message);
-  //
-  //   if (message.type === 'error' &&
-  //       message.object.condition === 'not-authorized'
-  //       && TODO message.actor.id === actor */) {
-  //     this.connectError = {
-  //       title: 'Account connection failed',
-  //       content: message.object.content
-  //     }
-  //     this.xmpp.sockethub.socket.offAny();
-  //   }
-  // }
-
-  // TODO Implement once available
-  // async handleConnectCompleted (message) {
-  //   console.debug('handleConnectComplete called with', message);
-  //
-  //   if (message.type === 'connect' &&
-  //       message.actor.id === this.userAddress) {
-  //     // Connected successfully
-  //     const account = await this.addAccount();
-  //     this.addDefaultChannels(account);
-  //     // this.finishedSetup = true;
-  //     // this.router.transitionTo('channel', /* welcome channel */);
-  //   }
-  // }
-
   instantiateAccount () {
     return new IrcAccount({
       server: {
@@ -73,7 +39,7 @@ export default class AddChatAccountIrcComponent extends Component {
     });
   }
 
-  async createAccount () {
+  async addAccount () {
     const account = this.instantiateAccount();
     this.coms.accounts.pushObject(account);
     return this.storage.saveAccount(account).then(() => account);
@@ -94,20 +60,21 @@ export default class AddChatAccountIrcComponent extends Component {
   async submitForm (e) {
     e.preventDefault();
     this.connectError = null;
+    const accountDummy = this.instantiateAccount();
 
-    // this.irc.sockethub.socket.onAny(() => console.debug(...arguments));
-
-    // TODO Handle connect status once implemented in Sockethub
-    // this.irc.sockethub.socket.on('failure', this.handleConnectFailure.bind(this));
-    // this.irc.sockethub.socket.on('message', this.handleConnectMessage.bind(this));
-    // this.irc.sockethub.socket.on('completed', this.handleConnectCompleted.bind(this));
-
-    const account = await this.createAccount();
-    this.irc.connect(account);
-
-    // TODO Move to connect-completed handler once available; let user change channels to join
-    this.addDefaultChannels(account);
-    this.router.transitionTo('channel', this.coms.channels.firstObject);
+    this.irc.connect(accountDummy, async (message) => {
+      if (message.error) {
+        this.connectError = {
+          title: 'Account connection failed',
+          content: message.error
+        }
+      } else {
+        const account = await this.addAccount();
+        this.addDefaultChannels(account);
+        const firstChannel = this.coms.channels.filterBy('account', account).firstObject;
+        this.router.transitionTo('channel', firstChannel);
+      }
+    });
   }
 
 }

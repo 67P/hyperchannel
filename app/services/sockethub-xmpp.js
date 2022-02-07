@@ -129,7 +129,7 @@ export default class SockethubXmppService extends Service {
       if (err) { this.log('failed to store credentials: ', err); }
     });
     this.sockethub.socket.emit('message', connectJob, (message) => {
-      if (message.error) { this.log('xmpp', 'failed to connect to xmpp server: ', message); }
+      if (message.error) { this.log('xmpp', 'failed to connect to XMPP server: ', message); }
       else { this.coms.handleSockethubMessage(message); }
     });
   }
