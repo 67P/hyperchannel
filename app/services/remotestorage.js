@@ -1,10 +1,12 @@
-import Service from '@ember/service';
+import Service, { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import RemoteStorage from 'remotestoragejs';
 import Kosmos from '@kosmos/remotestorage-module-kosmos';
 // import config from 'hyperchannel/config/environment';
 
 export default class RemotestorageService extends Service {
+
+  @service logger;
 
   @tracked rsReady = false;
 
@@ -25,25 +27,32 @@ export default class RemotestorageService extends Service {
 
   saveAccount (account) {
     return this.rs.kosmos.accounts.storeConfig(account.serialize())
-      .then(() => console.debug(`saved account ${account.id}`))
+      .then(() => this.log('storage', `saved account ${account.id}`))
       .catch(err => console.error('saving account failed:', err));
   }
 
   removeAccount (account) {
     return this.rs.kosmos.accounts.remove(account.id)
-      .then(() => console.debug(`removed account ${account.id}`));
+      .then(() => this.log('storage', `removed account ${account.id}`));
   }
 
   saveChannel (channel) {
     return this.rs.kosmos.channels.store(channel.serialize())
-      .then(() => console.debug(`saved channel ${channel.id}`))
+      .then(() => this.log('storage', `saved channel ${channel.id}`))
       .catch(err => console.error('saving channel failed:', err));
   }
 
   removeChannel (channel) {
     return this.rs.kosmos.channels.remove(channel.account.id, channel.id)
-      .then(() => console.debug(`removed channel ${channel.id}`))
+      .then(() => this.log('storage', `removed channel ${channel.id}`))
       .catch(err => console.error('removing channel failed:', err));
   }
 
+  /**
+   * Utility function for easier logging
+   * @private
+   */
+  log () {
+    this.logger.log(...arguments);
+  }
 }

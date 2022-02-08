@@ -5,7 +5,6 @@ export default class LoggerService extends Service {
   enabled = true;
 
   allowedTypes = [
-    'connection',
     'error',
     'join',
     'leave',
@@ -13,31 +12,24 @@ export default class LoggerService extends Service {
     'irc_message',
     'xmpp_message',
     'send',
-    'xmpp_completed',
-    'irc_completed',
-    'sh_completed',
-    'sh_failure',
     'irc',
     'xmpp',
     'fetch-error',
-    'chat_message'
+    'chat_message',
+    'storage',
   ];
 
   activeTypes = [
-    'connection',
     'error',
     'join',
     'leave',
     'send',
-    'sh_completed',
-    'xmpp_completed',
-    'irc_completed',
-    'sh_failure',
     'irc',
     'xmpp',
+    'xmpp_message',
     'message',
     'irc_message',
-    'xmpp_message'
+    'storage'
   ];
 
   log (type) {
