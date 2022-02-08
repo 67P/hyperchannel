@@ -1,9 +1,9 @@
-<div class="chat-message group mt-1.5 px-4 py-0.5 hover:bg-gray-100 flex space-x-3
+<div class="chat-message group mt-1.5 px-4 py-0.5 hover:bg-neutral-100 flex space-x-3
             {{if @message.grouped 'mt-0'}}">
   <div class="msg-avatar w-10">
     {{#unless @message.grouped}}
       <span class="w-10 h-10 flex justify-center items-center text-center
-                   text-white text-xl rounded bg-gray-200">
+                   text-white text-xl rounded bg-neutral-200">
         <span class="flex-1" style={{html-safe (concat "color: " this.userColorHex)}}>
           {{this.avatarPlaceholderLetter}}
         </span>
@@ -19,7 +19,7 @@
         {{@message.nickname}}
       </span>
       <time datetime={{this.datetime}} title={{this.dateTitle}}
-            class="text-gray-300 group-hover:text-gray-400" >
+            class="text-neutral-300 group-hover:text-neutral-400" >
         {{moment-format @message.date "HH:mm"}}
       </time>
     </div>
@@ -48,7 +48,7 @@
       {{this.formattedContent}}
       {{#if @message.edited}}
       <span title="Edited">
-        <IconEdit @class="inline w-4 h-4 text-gray-300 group-hover:text-gray-400" />
+        <IconEdit @class="inline w-4 h-4 text-neutral-300 group-hover:text-neutral-400" />
       </span>
       {{/if}}
     </div>

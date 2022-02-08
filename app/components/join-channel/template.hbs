@@ -1,13 +1,13 @@
-<div class="w-full flex bg-gray-800 text-white pl-6 pr-3 py-3 rounded-t-md items-center">
-  <h2 class="flex-grow mr-12">Join Channel</h2>
-  <div class="flex-grow">
+<div class="w-full flex bg-neutral-800 text-white pl-6 pr-3 py-3 rounded-t-md items-center">
+  <h2 class="grow mr-12">Join Channel</h2>
+  <div class="grow">
     <label for="account" class="hidden">Account</label>
     <select id="account" name="account"
             disabled={{this.accountSelectionDisabled}}
             {{on "change" this.selectAccount}}
-            class="block ml-auto pl-3 pr-10 py-2 text-base border-gray-500 bg-gray-700
+            class="block ml-auto pl-3 pr-10 py-2 text-base border-neutral-500 bg-neutral-700
                    focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
-                   sm:text-sm rounded-md mr-0 {{if this.accountSelectionDisabled 'text-gray-300'}}">
+                   sm:text-sm rounded-md mr-0 {{if this.accountSelectionDisabled 'text-neutral-300'}}">
     {{#each this.coms.accounts as |account|}}
       <option selected={{if (eq account.id this.selectedAccount.id) "selected"}}
               value={{account.id}}>{{account.id}}</option>
