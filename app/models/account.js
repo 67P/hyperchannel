@@ -31,7 +31,8 @@ export default class Account {
       serialized.server = {
         hostname: this.server.hostname,
         port: parseInt(this.server.port, 10),
-        secure: this.server.secure
+        secure: this.server.secure,
+        sasl: this.server.sasl
       };
     }
 

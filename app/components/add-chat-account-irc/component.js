@@ -14,29 +14,35 @@ export default class AddChatAccountIrcComponent extends Component {
   @tracked hostname = 'irc.libera.chat';
   @tracked port = '6697';
   @tracked nickname;
-  // TODO Implement authenticated connect using SASL
   // @tracked username;
-  // @tracked password;
-  // @tracked serverPassword;
+  @tracked password;
+  @tracked useAuth = false;
+  // @tracked useSasl = false;
   @tracked useTls = true;
   @tracked connectError = null;
-  @tracked showCredentialFields = false;
 
   get username () {
     return this.nickname;
   }
 
+  get useSasl () {
+    return this.useAuth;
+  }
+
   instantiateAccount () {
-    return new IrcAccount({
+    const account = new IrcAccount({
       server: {
         hostname: this.hostname,
         port: this.port,
-        secure: this.useTls
+        secure: this.useTls,
+        sasl: this.useSasl
       },
       nickname: this.nickname,
-      // username: this.username,
-      // password: this.password,
+      username: this.username,
+      password: this.password
     });
+
+    return account;
   }
 
   async addAccount () {

@@ -67,10 +67,13 @@ export default class SockethubIrcService extends Service {
       type: 'credentials',
       object: {
         type: 'credentials',
-        nick: account.nickname,
         server: account.server.hostname,
         port: parseInt(account.server.port, 10),
-        secure: account.server.secure
+        secure: account.server.secure,
+        sasl: account.server.sasl,
+        nick: account.nickname,
+        // username: account.username,
+        password: account.password
       }
     });
 
