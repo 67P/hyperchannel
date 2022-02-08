@@ -138,7 +138,7 @@ export default class SockethubXmppService extends Service {
     const channelId = message.target.id.split('/')[0];
     const channel = this.coms.channels.findBy('sockethubChannelId', channelId);
     if (channel) {
-      this.observeChannel(channel);
+      this.queryAttendance(channel);
     } else {
       console.warn('Could not find channel for join message', message);
     }
@@ -263,9 +263,9 @@ export default class SockethubXmppService extends Service {
    * @param {Channel} channel
    * @public
    */
-  observeChannel (channel) {
-    let observeMsg = buildActivityObject(channel.account, {
-      type: 'observe',
+  queryAttendance (channel) {
+    let msg = buildActivityObject(channel.account, {
+      type: 'query',
       target: {
         id: channel.sockethubChannelId,
         type: 'room'
@@ -275,8 +275,8 @@ export default class SockethubXmppService extends Service {
       }
     });
 
-    this.log('xmpp', 'asking for attendance list', observeMsg);
-    this.sockethub.socket.emit('message', observeMsg);
+    this.log('xmpp', 'asking for attendance list', msg);
+    this.sockethub.socket.emit('message', msg);
   }
 
   /**
