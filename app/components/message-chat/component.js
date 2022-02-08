@@ -37,7 +37,7 @@ export default class MessageChatComponent extends Component {
       out = `<a href="${content}" target="_blank" rel="nofollow noopener">` +
             `<img src="${content}" ` +
                  `class="my-1 p-1 h-48 w-auto max-w-full md:max-w-7xl
-                         border border-slate-200 hover:border-slate-400">` +
+                         border border-neutral-200 hover:border-neutral-400">` +
             `</a>`;
     }
     // Other links
@@ -65,7 +65,7 @@ export default class MessageChatComponent extends Component {
   }
 
   get pendingClass () {
-    return this.args.message.pending ? 'text-slate-500' : '';
+    return this.args.message.pending ? 'text-neutral-500' : '';
   }
 
   get avatarPlaceholderLetter () {

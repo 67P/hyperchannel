@@ -1,4 +1,4 @@
-<div class="flex bg-slate-800 text-white pl-6 pr-3 py-3 rounded-t-md">
+<div class="flex bg-neutral-800 text-white pl-6 pr-3 py-3 rounded-t-md">
   <h2 class="grow">Accounts</h2>
   <button {{on "click" this.addAccount}} type="button"
     class="inline-block btn-sm btn-blue flex-none">
@@ -6,12 +6,12 @@
   </button>
 </div>
 
-<div class="w-96 divide-y divide-slate-300">
+<div class="w-96 divide-y divide-neutral-300">
   {{#each this.coms.accounts as |account|}}
     <div class="flex items-center">
       <div class="grow px-6 py-5">
         <h3 class="font-bold">{{account.id}}</h3>
-        <p class="text-slate-500 text-sm">{{account.protocol}}</p>
+        <p class="text-neutral-500 text-sm">{{account.protocol}}</p>
       </div>
       <button {{on "click" (fn this.deleteAccount account)}} type="button"
               title="Delete" class="btn-icon-sm btn-red-hover mr-3">

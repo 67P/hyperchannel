@@ -25,8 +25,8 @@
   }
 
   .btn-gray {
-    @apply bg-slate-100 hover:bg-slate-200
-           focus:ring-slate-300 focus:ring-opacity-75;
+    @apply bg-neutral-100 hover:bg-neutral-200
+           focus:ring-neutral-300 focus:ring-opacity-75;
   }
 
   .btn-blue {
@@ -46,13 +46,13 @@
   }
 
   .btn:disabled {
-    @apply btn-gray text-slate-400;
+    @apply btn-gray text-neutral-400;
     box-shadow: none;
   }
 
   .btn-outline {
-    @apply px-3 py-2 rounded-md border border-slate-300
-           bg-white text-sm font-medium text-slate-700 hover:bg-slate-50
+    @apply px-3 py-2 rounded-md border border-neutral-300
+           bg-white text-sm font-medium text-neutral-700 hover:bg-neutral-50
            focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500
            focus:border-indigo-500;
   }

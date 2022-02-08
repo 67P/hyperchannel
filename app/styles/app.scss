@@ -85,8 +85,8 @@ header {
   // TODO create actual nav-tabs ember components, move directives to templates
   nav.hc-tabs {
     a, button {
-      @apply border-transparent text-slate-500
-             hover:text-slate-800 hover:border-slate-300
+      @apply border-transparent text-neutral-500
+             hover:text-neutral-800 hover:border-neutral-300
              w-1/2 py-4 px-1 text-center border-b-2;
     }
 
