@@ -96,7 +96,7 @@ export default class SockethubIrcService extends Service {
   handleJoinCompleted (message) {
     const channel = this.coms.channels.findBy('sockethubChannelId', message.target.id);
     if (channel) {
-      this.observeChannel(channel);
+      this.queryAttendance(channel);
     }
   }
 
@@ -236,17 +236,17 @@ export default class SockethubIrcService extends Service {
    * Ask for a channel's attendance list (users currently joined)
    * @public
    */
-  observeChannel (channel) {
-    let observeMsg = buildActivityObject(channel.account, {
-      type: 'observe',
+  queryAttendance (channel) {
+    let msg = buildActivityObject(channel.account, {
+      type: 'query',
       target: channel.sockethubChannelId,
       object: {
         type: 'attendance'
       }
     });
 
-    this.log('irc', 'asking for attendance list', observeMsg);
-    this.sockethub.socket.emit('message', observeMsg);
+    this.log('irc', 'asking for attendance list', msg);
+    this.sockethub.socket.emit('message', msg);
   }
 
   /**

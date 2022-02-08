@@ -396,6 +396,12 @@ export default class ComsService extends Service {
     this.log(`${message.context}_message`, 'SH message', message);
 
     switch (message.type) {
+      case 'query':
+        if (message.object['type'] === 'attendance') {
+          this.updateChannelUserList(message);
+        }
+        break;
+      // TODO remove deprecated term in favor of query
       case 'observe':
         if (message.object['type'] === 'attendance') {
           this.updateChannelUserList(message);
