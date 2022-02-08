@@ -4,11 +4,11 @@
     <div class="mb-4 sm:mb-0 sm:col-span-7 flex justify-center items-center">
       <Input @type="text" @value={{this.hostname}} name="hostname"
              aria-label="Hostname" placeholder="Hostname" required
-             class="flex-grow min-w-0" />
+             class="grow min-w-0" />
       <span class="flex-0 mx-1 text-xl">:</span>
       <Input @type="text" @value={{this.port}} name="port"
              aria-label="Port number" placeholder="Port" required
-             class="flex-shrink w-40 min-w-0" />
+             class="shrink w-40 min-w-0" />
     </div>
     <label for="nickname" class="sm:col-span-3">Nickname</label>
     <Input id="nickname" @type="text" @value={{this.nickname}} name="nickname"
@@ -17,7 +17,7 @@
     <div class="mt-4 sm:mt-2 sm:col-start-4 sm:col-span-7">
       <label>
         <Input @type="checkbox" @checked={{this.useAuth}} class="mr-1 align-middle" />
-        <span class="font-normal text-sm text-gray-500">I have a password</span>
+        <span class="font-normal text-sm text-slate-500">I have a password</span>
       </label>
     </div>
 

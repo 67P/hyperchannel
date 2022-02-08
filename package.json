@@ -42,7 +42,8 @@
     "@glimmer/component": "^1.0.3",
     "@glimmer/tracking": "^1.0.4",
     "@kosmos/remotestorage-module-kosmos": "^2.2.0",
-    "@tailwindcss/forms": "^0.3.3",
+    "@tailwindcss/forms": "^0.4.0",
+    "autoprefixer": "^10.4.2",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
     "consistent-color-generation": "0.4.0",
@@ -58,7 +59,7 @@
     "ember-cli-inject-live-reload": "^2.1.0",
     "ember-cli-inline-content": "^0.4.1",
     "ember-cli-moment-shim": "^3.8.0",
-    "ember-cli-postcss": "7.0.2",
+    "ember-cli-postcss": "^8.0.0",
     "ember-cli-sri": "^2.1.1",
     "ember-cli-terser": "^4.0.1",
     "ember-concurrency": "^2.1.0",
@@ -88,12 +89,12 @@
     "loader.js": "^4.7.0",
     "localforage": "^1.9.0",
     "npm-run-all": "^4.1.5",
-    "postcss": "8.3.5",
-    "postcss-scss": "4.0.0",
+    "postcss": "8.4.6",
+    "postcss-scss": "4.0.3",
     "qunit": "^2.16.0",
     "qunit-dom": "^1.6.0",
     "remotestoragejs": "^2.0.0-beta.1",
-    "tailwindcss": "^2.2.4"
+    "tailwindcss": "^3.0.19"
   },
   "optionalDependencies": {
     "fsevents": "^2.3.2"

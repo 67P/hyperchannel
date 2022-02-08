@@ -28,7 +28,7 @@
 
     <div class="content-container {{@sidebarClass}} {{if @showChannelMenu "channel-menu-open"}}">
       <div class="content">
-        <section id="channel-content" class="main pt-4 pb-8 bg-white text-gray-800">
+        <section id="channel-content" class="main pt-4 pb-8 bg-white text-slate-800">
           {{#if @channel.isLogged}}
             <a onclick={{perform this.loadPreviousMessages}} class="block px-4 text-sm" role="button">
               Load previous messages
@@ -49,7 +49,7 @@
                             onUsernameClick=this.addUsernameMentionToMessage}}
               </li>
             {{else}}
-              <li class="px-4 text-gray-400">
+              <li class="px-4 text-slate-400">
               {{#if (eq @channel.protocol "IRC")}}
                 {{#if @channel.isLogged}}
                   No recent messages to display.

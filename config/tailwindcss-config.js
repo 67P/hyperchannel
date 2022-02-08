@@ -1,15 +1,9 @@
 module.exports = {
-  mode: 'jit',
-  purge: [
-    './app/**/*.html',
-    './app/**/*.hbs',
-    './app/**/*.js',
+  content: [
+    './app/**/*.{html,hbs,js}'
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {}
-  },
-  variants: {
     extend: {}
   },
   plugins: [
