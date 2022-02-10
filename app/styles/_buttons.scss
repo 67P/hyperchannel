@@ -1,18 +1,24 @@
 @layer components {
   .btn {
-    @apply inline-block font-semibold rounded-md leading-none cursor-pointer
-           transition-colors duration-75 focus:outline-none focus:ring-4
-           text-center;
+    @apply inline-flex items-center justify-center
+           font-semibold rounded-md border border-transparent
+           cursor-pointer transition-colors duration-75
+           focus:outline-none focus:ring-4 text-center;
+
+    .spinner {
+      @apply ml-3 border-2 border-t-current border-b-current
+             border-l-current border-r-transparent;
+    }
   }
 
   .btn-md {
     @apply btn;
-    @apply py-2.5 px-5 shadow-sm;
+    @apply px-4 py-2 shadow-sm;
   }
 
   .btn-sm {
     @apply btn;
-    @apply py-1 px-3 text-sm shadow-sm;
+    @apply px-3 py-1.5 text-sm shadow-sm;
   }
 
   .btn-icon-sm {
@@ -46,8 +52,7 @@
   }
 
   .btn:disabled {
-    @apply btn-gray text-neutral-400;
-    box-shadow: none;
+    @apply btn-gray text-neutral-400 shadow-none;
   }
 
   .btn-outline {
@@ -62,6 +67,17 @@
 
     svg {
       @apply h-4 w-4;
+    }
+  }
+
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform:rotate(360deg)
     }
   }
 
