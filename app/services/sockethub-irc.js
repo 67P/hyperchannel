@@ -124,7 +124,7 @@ export default class SockethubIrcService extends Service {
     channel.addUser(account.nickname);
     channel.connected = true;
 
-    channel.addUser(message.actor.name);
+    channel.addUser(message.actor.name || message.actor.id);
   }
 
   /**

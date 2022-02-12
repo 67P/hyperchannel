@@ -395,6 +395,11 @@ export default class ComsService extends Service {
   handleSockethubMessage (message) {
     this.log(`${message.context}_message`, 'SH message', message);
 
+    if (message.actor.type === 'service') {
+      this.log(`${message.context}_message`, 'skipping service message');
+      return;
+    }
+
     switch (message.type) {
       case 'query':
         if (message.object['type'] === 'attendance') {
