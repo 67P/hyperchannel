@@ -424,12 +424,7 @@ export default class ComsService extends Service {
       case 'update':
         switch (message.object.type) {
           case 'topic':
-            if (message.actor['type'] === 'service') {
-              // TODO (could also create a special service room)
-              // this.handleServiceAnnouncement()
-            } else {
-              this.updateChannelTopic(message);
-            }
+            this.updateChannelTopic(message);
             break;
           case 'address':
             this.updateUsername(message);
