@@ -20,6 +20,7 @@ export default class AddChatAccountIrcComponent extends Component {
   // @tracked useSasl = false;
   @tracked useTls = true;
   @tracked connectError = null;
+  @tracked connecting = false;
 
   get username () {
     return this.nickname;
@@ -66,9 +67,12 @@ export default class AddChatAccountIrcComponent extends Component {
   async submitForm (e) {
     e.preventDefault();
     this.connectError = null;
+    this.connecting = true;
     const accountDummy = this.instantiateAccount();
 
     this.irc.connect(accountDummy, async (message) => {
+      this.connecting = false;
+
       if (message.error) {
         this.connectError = {
           title: 'Account connection failed',

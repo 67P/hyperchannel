@@ -22,7 +22,9 @@
   {{/if}}
 
   <div class="w-full mt-10 sm:flex sm:justify-center">
-    <input type="submit" value="Continue" aria-label="Continue"
-           class="w-full sm:w-1/2 btn-md btn-blue" />
+    <ButtonSubmit @classNames="w-full sm:w-1/2 btn-md btn-blue"
+                  @loading={{this.connecting}}>
+      Continue
+    </ButtonSubmit>
   </div>
 </form>

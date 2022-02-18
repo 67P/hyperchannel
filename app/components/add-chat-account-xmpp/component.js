@@ -15,6 +15,7 @@ export default class AddChatAccountXmppComponent extends Component {
   @tracked hostname = 'kosmos.org';
   @tracked password;
   @tracked connectError = null;
+  @tracked connecting = false;
 
   get userAddress () {
     return `${this.username}@${this.hostname}`;
@@ -46,8 +47,11 @@ export default class AddChatAccountXmppComponent extends Component {
   submitForm (e) {
     e.preventDefault();
     this.connectError = null;
+    this.connecting = true;
 
     this.xmpp.connectWithCredentials(this.userAddress, this.password, async (message) => {
+      this.connecting = false;
+
       if (message.error) {
         this.connectError = {
           title: 'Account connection failed',
