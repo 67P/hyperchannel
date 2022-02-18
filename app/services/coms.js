@@ -395,6 +395,11 @@ export default class ComsService extends Service {
   handleSockethubMessage (message) {
     this.log(`${message.context}_message`, 'SH message', message);
 
+    if (message.actor.type === 'service') {
+      this.log(`${message.context}_message`, 'skipping service message');
+      return;
+    }
+
     switch (message.type) {
       case 'query':
         if (message.object['type'] === 'attendance') {
@@ -419,12 +424,7 @@ export default class ComsService extends Service {
       case 'update':
         switch (message.object.type) {
           case 'topic':
-            if (message.actor['type'] === 'service') {
-              // TODO (could also create a special service room)
-              // this.handleServiceAnnouncement()
-            } else {
-              this.updateChannelTopic(message);
-            }
+            this.updateChannelTopic(message);
             break;
           case 'address':
             this.updateUsername(message);
