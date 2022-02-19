@@ -1,7 +1,7 @@
-/* global linkifyStr */
 import { htmlSafe } from '@ember/string';
 import BaseChannel from 'hyperchannel/models/base_channel';
 import config from 'hyperchannel/config/environment';
+import linkifyStr from 'linkify-string';
 
 export default class Channel extends BaseChannel {
 
@@ -11,7 +11,10 @@ export default class Channel extends BaseChannel {
     if (this.topic !== null) {
       let topic = linkifyStr(this.topic, {
         defaultProtocol: 'https',
-        linkAttributes: { rel: 'nofollow' }
+        attributes: {
+          rel: 'nofollow noopener',
+          target: '_blank'
+        },
       });
       return new htmlSafe(topic);
     } else {
