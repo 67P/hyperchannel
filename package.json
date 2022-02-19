@@ -34,7 +34,6 @@
     "edition": "octane"
   },
   "devDependencies": {
-    "@67p/ember-service-worker-hubot-web-push-notifications": "^1.0.1",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/plugin-proposal-decorators": "^7.17.2",
     "@csstools/postcss-sass": "^5.0.0",
@@ -75,7 +74,6 @@
     "ember-promise-modals": "^2.0.0",
     "ember-qunit": "^5.1.4",
     "ember-resolver": "^8.0.2",
-    "ember-service-worker": "^0.8.4",
     "ember-sinon": "^5.0.0",
     "ember-sinon-qunit": "^6.0.0",
     "ember-source": "~3.24.6",
