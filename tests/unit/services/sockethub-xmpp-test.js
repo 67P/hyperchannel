@@ -144,16 +144,19 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.ok(channel.connected);
   });
 
-  test('#transferMessage', function(assert) {
+  test('#transferMessage', async function(assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
     const message = new Message({ content: 'Only 4 days until 2022!', id: 'hc-123abcde'});
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
     });
+    const sockethubService = this.owner.factoryFor('service:sockethub').create();
+    await sockethubService.initialize();
     const xmpp = this.owner.factoryFor('service:sockethub-xmpp').create({
+      sockethub: sockethubService,
       coms: comsService
     });
-    const socketEmitSpy = sinon.spy(xmpp.sockethub.socket, 'emit');
+    const socketEmitSpy = sinon.spy(xmpp.sockethubClient.socket, 'emit');
 
     xmpp.transferMessage(channel, message);
 
@@ -167,7 +170,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.equal(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
   });
 
-  test('#transferMessage for correction', function(assert) {
+  test('#transferMessage for correction', async function(assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
     const message = new Message({
       content: 'Only 4 days until 2022!',
@@ -176,10 +179,13 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
     });
+    const sockethubService = this.owner.factoryFor('service:sockethub').create();
+    await sockethubService.initialize();
     const xmpp = this.owner.factoryFor('service:sockethub-xmpp').create({
+      sockethub: sockethubService,
       coms: comsService
     });
-    const socketEmitSpy = sinon.spy(xmpp.sockethub.socket, 'emit');
+    const socketEmitSpy = sinon.spy(xmpp.sockethubClient.socket, 'emit');
 
     xmpp.transferMessage(channel, message);
 

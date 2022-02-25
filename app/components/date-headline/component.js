@@ -1,9 +1,9 @@
 import Component from '@glimmer/component';
+import { action } from '@ember/object';
 import { later } from '@ember/runloop';
 import { tracked } from '@glimmer/tracking';
 import moment from 'moment';
-import config from '../../config/environment';
-import { action } from '@ember/object';
+import config from 'hyperchannel/config/environment';
 
 export default class DateHeadlineComponent extends Component {
 
