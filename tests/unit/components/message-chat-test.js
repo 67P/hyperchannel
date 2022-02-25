@@ -10,7 +10,7 @@ module('Unit | Component | message-chat', function(hooks) {
       message: { content: 'visit https://kosmos.org for more info', nickname: 'cerealkiller' }
     });
 
-    assert.equal(component.formattedContent.toString(), 'visit <a href="https://kosmos.org" class="linkified" target="_blank" rel="nofollow noopener">https://kosmos.org</a> for more info');
+    assert.equal(component.formattedContent.toString(), 'visit <a href="https://kosmos.org" rel="nofollow noopener" target="_blank">https://kosmos.org</a> for more info');
   });
 
   test('#formattedContent does not turn domain names into links', function(assert) {

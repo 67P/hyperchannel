@@ -10,7 +10,7 @@ module('Unit | Model | channel', function(hooks) {
     const channel = new Channel({ account: xmppAccount });
     channel.topic = 'visit kosmos.org for more info';
 
-    assert.equal(channel.formattedTopic.toString(), 'visit <a href="https://kosmos.org" class="linkified" target="_blank" rel="nofollow">kosmos.org</a> for more info');
+    assert.equal(channel.formattedTopic.toString(), 'visit <a href="https://kosmos.org" rel="nofollow noopener" target="_blank">kosmos.org</a> for more info');
   });
 
   test('#formattedTopic escapes HTML', function(assert) {

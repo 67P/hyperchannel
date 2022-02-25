@@ -96,15 +96,6 @@ export default class BaseChannel {
     });
   }
 
-  @cached
-  get isLogged () {
-    let loggedChannel = this.account.loggedChannels.find((channelName) => {
-      return channelName === this.name;
-    });
-
-    return isPresent(loggedChannel);
-  }
-
   addDateHeadline (newMessage) {
     let headlineDate = moment(newMessage.date).startOf('day').toDate();
 

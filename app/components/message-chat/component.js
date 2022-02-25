@@ -1,10 +1,10 @@
-/* global linkifyStr */
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { htmlSafe } from '@ember/string';
 import { tracked } from '@glimmer/tracking';
 import { scheduleOnce } from '@ember/runloop';
 import { isEmpty } from '@ember/utils';
+import linkifyStr from 'linkify-string';
 import moment from 'moment';
 import getRGB from 'consistent-color-generation';
 
@@ -43,7 +43,10 @@ export default class MessageChatComponent extends Component {
     // Other links
     else {
       out = linkifyStr(content, {
-        linkAttributes: { rel: 'nofollow noopener' },
+        attributes: {
+          rel: 'nofollow noopener',
+          target: '_blank'
+        },
         validate: {
           url: function (value) {
             return /^(http)s?:\/\//.test(value);
