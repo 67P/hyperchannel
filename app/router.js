@@ -15,4 +15,5 @@ Router.map(function() {
 
   this.route('welcome');
   this.route('add-account', function() {});
+  this.route('configure-sockethub');
 });

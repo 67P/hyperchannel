@@ -20,6 +20,7 @@ export default class ComsService extends Service {
   // Data storage
   @service('remotestorage') storage;
   // Message transport
+  @service sockethub;
   @service('sockethub-irc') irc;
   @service('sockethub-xmpp') xmpp;
 
@@ -65,7 +66,7 @@ export default class ComsService extends Service {
    * @public
    */
   setupListeners () {
-    this.sockethub.socket.on('message'  , this.handleSockethubMessage.bind(this));
+    this.sockethub.client.socket.on('message', this.handleSockethubMessage.bind(this));
   }
 
   /**

@@ -46,8 +46,13 @@ function buildMessageObject(account, target, content, type='message') {
  */
 export default class SockethubIrcService extends Service {
 
+  @service sockethub;
   @service logger;
   @service coms;
+
+  get sockethubClient () {
+    return this.sockethub.client;
+  }
 
   /**
    * - Creates an ActivityStreams person object for
@@ -57,7 +62,7 @@ export default class SockethubIrcService extends Service {
    * @public
    */
   connect (account, callback) {
-    this.sockethub.ActivityStreams.Object.create({
+    this.sockethubClient.ActivityStreams.Object.create({
       id: account.sockethubPersonId,
       type: 'person',
       name: account.nickname
@@ -83,11 +88,11 @@ export default class SockethubIrcService extends Service {
 
     this.log('irc', 'connecting to IRC network...');
 
-    this.sockethub.socket.emit('credentials', credentialsJob, (err) => {
+    this.sockethubClient.socket.emit('credentials', credentialsJob, (err) => {
       if (err) { this.log('failed to store credentials: ', err); }
     });
 
-    this.sockethub.socket.emit('message', connectJob, (message) => {
+    this.sockethubClient.socket.emit('message', connectJob, (message) => {
       if (message.error) {
         this.log('irc', 'failed to connect to IRC network: ', message);
       }
@@ -134,7 +139,7 @@ export default class SockethubIrcService extends Service {
   join (channel, type) {
     switch(type) {
       case 'room':
-        this.sockethub.ActivityStreams.Object.create({
+        this.sockethubClient.ActivityStreams.Object.create({
           type: type,
           id: channel.sockethubChannelId,
           name: channel.name
@@ -146,7 +151,7 @@ export default class SockethubIrcService extends Service {
         });
 
         this.log('irc', 'joining channel', joinMsg);
-        this.sockethub.socket.emit('message', joinMsg, this.handleJoinCompleted.bind(this));
+        this.sockethubClient.socket.emit('message', joinMsg, this.handleJoinCompleted.bind(this));
         break;
       case 'person':
         channel.connected = true;
@@ -166,7 +171,7 @@ export default class SockethubIrcService extends Service {
     const messageJob = buildMessageObject(channel.account, target, message.content);
 
     this.log('send', 'sending message job', messageJob);
-    this.sockethub.socket.emit('message', messageJob);
+    this.sockethubClient.socket.emit('message', messageJob);
   }
 
   /**
@@ -178,7 +183,7 @@ export default class SockethubIrcService extends Service {
     const message = buildMessageObject(channel.account, target, content, 'me');
 
     this.log('send', 'sending message job', message);
-    this.sockethub.socket.emit('message', message);
+    this.sockethubClient.socket.emit('message', message);
   }
 
   /**
@@ -214,7 +219,7 @@ export default class SockethubIrcService extends Service {
       });
 
       this.log('leave', 'leaving channel', leaveMsg);
-      this.sockethub.socket.emit('message', leaveMsg);
+      this.sockethubClient.socket.emit('message', leaveMsg);
     }
   }
 
@@ -232,7 +237,7 @@ export default class SockethubIrcService extends Service {
       }
     });
 
-    this.sockethub.socket.emit('message', topicMsg);
+    this.sockethubClient.socket.emit('message', topicMsg);
   }
 
   /**
@@ -249,7 +254,7 @@ export default class SockethubIrcService extends Service {
     });
 
     this.log('irc', 'asking for attendance list', msg);
-    this.sockethub.socket.emit('message', msg);
+    this.sockethubClient.socket.emit('message', msg);
   }
 
   /**

@@ -5,6 +5,7 @@ import { isPresent } from '@ember/utils';
 export default class ApplicationRoute extends Route {
 
   @service('remotestorage') storage;
+  @service sockethub;
   @service localData;
   @service logger;
   @service coms;
@@ -14,8 +15,13 @@ export default class ApplicationRoute extends Route {
 
     await this.storage.ensureReadiness();
     await this.localData.setDefaultValues();
-    await this.coms.instantiateAccountsAndChannels();
-    this.coms.setupListeners();
+
+    await this.sockethub.initialize().then(async () => {
+      await this.coms.instantiateAccountsAndChannels();
+      this.coms.setupListeners();
+    }).catch(error => {
+      console.warn('Failed to load Sockethub libs:', error);
+    });
 
     // See a list of allowed types in logger.js
     // Add or remove all your log types here:
@@ -25,13 +31,16 @@ export default class ApplicationRoute extends Route {
     // this.logger.enable();
   }
 
-  redirect (model, transition) {
+  redirect (_model, transition) {
     if (isPresent(transition.intent.url) &&
         transition.intent.url.includes('add-account')) {
       return;
     }
 
-    if (!this.coms.onboardingComplete) {
+    if (!this.sockethub.client) {
+      this.transitionTo('configure-sockethub');
+    }
+    else if (!this.coms.onboardingComplete) {
       this.transitionTo('welcome');
     }
   }

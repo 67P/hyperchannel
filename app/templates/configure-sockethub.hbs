@@ -1,0 +1,23 @@
+<div class="max-w-3xl mx-auto mt-10 lg:mt-40 lg:mb-24 sm:px-6 lg:px-8">
+  <div class="bg-white overflow-hidden shadow sm:rounded-lg">
+    <div class="px-4 py-10 sm:p-10 text-neutral-800">
+      <h2 class="mb-10 text-center text-3xl font-light">Sockethub unavailable</h2>
+      <p class="mb-4">
+        Unfortunately, the Sockethub server at
+        <code class="px-2 py-1 bg-orange-100 text-orange-600 font-bold">{{this.model.config.sockethubURL}}</code>
+        seems to be offline at the moment.
+      </p>
+      <p class="mb-4">
+        <a href="http://sockethub.org/" target="_blank" class="text-orange-600 underline" rel="noopener noreferrer">Sockethub</a>
+        is an open-source server program, which this app uses in
+        order to talk to chat servers.
+      </p>
+      {{#if (eq this.model.config.environment "development")}}
+        <p class="mb-10 font-bold">
+          The app is running in development mode. Please make sure Sockethub is
+          running on your machine and try again.
+        </p>
+      {{/if}}
+    </div>
+  </div>
+</div>
