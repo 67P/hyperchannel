@@ -6,6 +6,12 @@ import { ircAccount, xmppAccount } from '../../fixtures/accounts';
 module('Unit | Model | channel', function(hooks) {
   setupTest(hooks);
 
+  test('#formattedTopic with no topic available', function(assert) {
+    const channel = new Channel({ account: xmppAccount });
+
+    assert.equal(channel.formattedTopic.toString(), '', 'returns an empty string');
+  });
+
   test('#formattedTopic turns URLs into links', function(assert) {
     const channel = new Channel({ account: xmppAccount });
     channel.topic = 'visit kosmos.org for more info';

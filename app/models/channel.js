@@ -1,4 +1,5 @@
 import { htmlSafe } from '@ember/string';
+import { isPresent } from '@ember/utils';
 import BaseChannel from 'hyperchannel/models/base_channel';
 import config from 'hyperchannel/config/environment';
 import linkifyStr from 'linkify-string';
@@ -8,7 +9,7 @@ export default class Channel extends BaseChannel {
   searchedPreviousLogsUntilDate = null;
 
   get formattedTopic () {
-    if (this.topic !== null) {
+    if (isPresent(this.topic)) {
       let topic = linkifyStr(this.topic, {
         defaultProtocol: 'https',
         attributes: {
