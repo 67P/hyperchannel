@@ -14,8 +14,14 @@ export default class SockethubService extends Service {
   }
 
   async loadSockethubLibs (baseURL) {
-    await this.loadExternalScript(baseURL + '/socket.io.js');
-    await this.loadExternalScript(baseURL + '/sockethub-client.js');
+    try {
+      await this.loadExternalScript(baseURL + '/socket.io.js');
+      await this.loadExternalScript(baseURL + '/sockethub-client.js');
+    } catch(e) {
+      const msg = `Could not load Sockethub client library from ${e.target.src}`;
+      console.warn(msg);
+      throw(msg);
+    }
   }
 
   async loadExternalScript (url) {
