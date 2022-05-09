@@ -29,7 +29,7 @@ install:
   - cd $HOME
   - git clone https://github.com/sockethub/sockethub.git
   - cd sockethub
-  - git checkout sockethub@5.0.0-alpha.3
+  - git checkout 8161f89
   - yarn run deps
   - yarn run build
   - cd $TRAVIS_BUILD_DIR
