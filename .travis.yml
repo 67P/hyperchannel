@@ -1,7 +1,7 @@
 dist: xenial
 language: node_js
 node_js:
-  - 14
+  - 16
 
 notifications:
   email:
@@ -25,20 +25,20 @@ env:
     # See https://git.io/vdao3 for details.
     - JOBS=1
 
-before_install:
-  - npm config set spin false
-
 install:
   - cd $HOME
   - git clone https://github.com/sockethub/sockethub.git
   - cd sockethub
+  - git checkout 8161f89
   - yarn run deps
   - yarn run build
   - cd $TRAVIS_BUILD_DIR
+  - cp sockethub.config.json $HOME/sockethub/packages/sockethub/
   - npm ci
 
 before_script:
   - cd $HOME/sockethub
+  - find . -name sockethub-client.js
   - yarn start 2> /dev/null &
 
 branches:
