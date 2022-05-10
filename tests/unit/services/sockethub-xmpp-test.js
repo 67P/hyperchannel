@@ -147,18 +147,26 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
   test('#transferMessage', async function(assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
     const message = new Message({ content: 'Only 4 days until 2022!', id: 'hc-123abcde'});
-    const comsService = this.owner.factoryFor('service:coms').create({
+    const coms = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
     });
     const sockethubService = this.owner.factoryFor('service:sockethub').create();
     await sockethubService.initialize();
     const xmpp = this.owner.factoryFor('service:sockethub-xmpp').create({
-      sockethub: sockethubService,
-      coms: comsService
+      sockethub: sockethubService, coms
     });
     const socketEmitSpy = sinon.spy(xmpp.sockethubClient.socket, 'emit');
 
-    xmpp.transferMessage(channel, message);
+    xmpp.sockethubClient.ActivityStreams.Object.create({
+      id: xmppAccount.sockethubPersonId, type: 'person', name: xmppAccount.nickname
+    });
+    xmpp.sockethubClient.ActivityStreams.Object.create({
+      id: channel.sockethubChannelId, type: 'room', name: channel.name
+    });
+
+    const target = { id: channel.sockethubChannelId, type: "room", name: channel.name };
+
+    xmpp.transferMessage(target, message);
 
     assert.ok(socketEmitSpy.calledOnce, 'emits a sockethub job message');
 
@@ -187,7 +195,16 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     });
     const socketEmitSpy = sinon.spy(xmpp.sockethubClient.socket, 'emit');
 
-    xmpp.transferMessage(channel, message);
+    xmpp.sockethubClient.ActivityStreams.Object.create({
+      id: xmppAccount.sockethubPersonId, type: 'person', name: xmppAccount.nickname
+    });
+    xmpp.sockethubClient.ActivityStreams.Object.create({
+      id: channel.sockethubChannelId, type: 'room', name: channel.name
+    });
+
+    const target = { id: channel.sockethubChannelId, type: "room", name: channel.name };
+
+    xmpp.transferMessage(target, message);
 
     const jobMessage = socketEmitSpy.getCall(0).args[1];
     assert.equal(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
