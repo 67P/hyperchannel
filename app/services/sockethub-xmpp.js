@@ -171,7 +171,7 @@ export default class SockethubXmppService extends Service {
         name: channel.name
       }
     });
-    this.sockethubClient.ActivityStreams.Object.create(channel.sockethubChannelId);
+    this.sockethubClient.ActivityStreams.Object.create(joinMsg.target);
 
     this.log('xmpp', 'joining channel', joinMsg);
     this.sockethubClient.socket.emit('message', joinMsg, (message) => {
