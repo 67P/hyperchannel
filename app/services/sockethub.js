@@ -10,6 +10,10 @@ export default class SockethubService extends Service {
       this.client = new window.SockethubClient(
         window.io(config.sockethubURL, { path: '/sockethub' })
       );
+      this.client.socket.on('disconnect', () => {
+        console.log('disconnect received');
+        this.client.socket.removeAllListeners();
+      });
     });
   }
 

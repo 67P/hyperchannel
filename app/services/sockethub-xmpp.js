@@ -134,8 +134,9 @@ export default class SockethubXmppService extends Service {
       if (err) { this.log('failed to store credentials: ', err); }
     });
     this.sockethubClient.socket.emit('message', connectJob, (message) => {
-      if (message.error) { this.log('xmpp', 'failed to connect to XMPP server: ', message); }
-      else { this.coms.handleSockethubMessage(message); }
+      if (message) {
+        this.log('xmpp', 'failed to connect to XMPP server: ', message);
+      }
     });
   }
 
@@ -157,12 +158,6 @@ export default class SockethubXmppService extends Service {
    * @public
    */
   join (channel, type) {
-    this.sockethubClient.ActivityStreams.Object.create({
-      type: type,
-      id: channel.sockethubChannelId,
-      name: channel.name
-    });
-
     let joinMsg = buildActivityObject(channel.account, {
       type: 'join',
       actor: {
@@ -170,11 +165,22 @@ export default class SockethubXmppService extends Service {
         id: channel.sockethubPersonId,
         name: channel.account.nickname
       },
-      target: channel.sockethubChannelId
+      target: {
+        type: type,
+        id: channel.sockethubChannelId,
+        name: channel.name
+      }
     });
+    this.sockethubClient.ActivityStreams.Object.create(channel.sockethubChannelId);
 
     this.log('xmpp', 'joining channel', joinMsg);
-    this.sockethubClient.socket.emit('message', joinMsg, this.handleJoinCompleted.bind(this));
+    this.sockethubClient.socket.emit('message', joinMsg, (message) => {
+      if (message) {
+        this.log('xmpp', 'failed to connect to XMPP server: ', message);
+      } else {
+        this.handleJoinCompleted(joinMsg);
+      }
+    });
   }
 
   /**
