@@ -93,7 +93,7 @@ export default class SockethubIrcService extends Service {
     });
 
     this.sockethubClient.socket.emit('message', connectJob, (message) => {
-      if (message.error) {
+      if (message?.error) {
         this.log('irc', 'failed to connect to IRC network: ', message);
       }
       if (typeof callback === 'function') { callback(message); }

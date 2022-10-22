@@ -134,7 +134,7 @@ export default class SockethubXmppService extends Service {
       if (err) { this.log('failed to store credentials: ', err); }
     });
     this.sockethubClient.socket.emit('message', connectJob, (message) => {
-      if (message) {
+      if (message?.error) {
         this.log('xmpp', 'failed to connect to XMPP server: ', message);
       }
     });
@@ -175,10 +175,10 @@ export default class SockethubXmppService extends Service {
 
     this.log('xmpp', 'joining channel', joinMsg);
     this.sockethubClient.socket.emit('message', joinMsg, (message) => {
-      if (message) {
+      if (message?.error) {
         this.log('xmpp', 'failed to connect to XMPP server: ', message);
       } else {
-        this.handleJoinCompleted(joinMsg);
+        this.handleJoinCompleted(message);
       }
     });
   }

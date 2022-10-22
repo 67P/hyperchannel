@@ -5,6 +5,7 @@ export default class LoggerService extends Service {
   enabled = true;
 
   allowedTypes = [
+    'sockethub',
     'error',
     'join',
     'leave',
@@ -20,6 +21,7 @@ export default class LoggerService extends Service {
   ];
 
   activeTypes = [
+    'sockethub',
     'error',
     'join',
     'leave',
