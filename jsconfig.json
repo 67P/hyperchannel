@@ -1,5 +1,10 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "hyperchannel/tests/*": ["tests/*"],
+      "hyperchannel/*": ["app/*"]
+    }
   }
 }
