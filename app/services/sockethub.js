@@ -1,10 +1,8 @@
-import Service, { inject as service } from '@ember/service';
+import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import config from 'hyperchannel/config/environment';
 
 export default class SockethubService extends Service {
-  @service logger;
-
   @tracked client = null;
 
   async initialize (/* baseURL */) {
@@ -12,12 +10,6 @@ export default class SockethubService extends Service {
       this.client = new window.SockethubClient(
         window.io(config.sockethubURL, { path: '/sockethub' })
       );
-      this.client.socket.on('connect', () => {
-        this.logger.log('sockethub', 'connected');
-      });
-      this.client.socket.on('disconnect', () => {
-        this.logger.log('sockethub', 'disconnected');
-      });
     });
   }
 
