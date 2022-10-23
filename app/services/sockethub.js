@@ -17,7 +17,6 @@ export default class SockethubService extends Service {
       });
       this.client.socket.on('disconnect', () => {
         this.logger.log('sockethub', 'disconnected');
-        this.client.socket.removeAllListeners();
       });
     });
   }
