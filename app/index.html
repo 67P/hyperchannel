@@ -24,5 +24,14 @@
     <script src="{{rootURL}}assets/hyperchannel.js"></script>
 
     {{content-for "body-footer"}}
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+        .catch((error) => {
+          console.error('Could not setup service worker: ' + error);
+        });
+      }
+    </script>
   </body>
 </html>
