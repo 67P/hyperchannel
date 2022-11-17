@@ -1,0 +1,24 @@
+{
+  "name": "Kosmos Chat",
+  "short_name": "Chat",
+  "description": "Kosmos Chat for the Web",
+  "scope": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#471856",
+  "background_color": "#FFFFFF",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icons/icon-rounded-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-square-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

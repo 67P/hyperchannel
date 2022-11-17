@@ -1,6 +1,6 @@
 {
   "name": "hyperchannel",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "description": "Kosmos Web Client",
   "repository": "https://github.com/67P/hyperchannel",
   "license": "MPL",
@@ -24,7 +24,6 @@
     "build-prod": "NODE_ENV=production rm -rf release/* && ember build -prod --output-path release",
     "preversion": "npm test",
     "version": "npm run build-prod && git add release/",
-    "postversion": "git push origin master",
     "deploy": "git push 5apps master"
   },
   "engines": {
