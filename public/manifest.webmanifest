@@ -1,6 +1,6 @@
 {
-  "name": "Hyperchannel",
-  "short_name": "Hyperchannel",
+  "name": "Kosmos Chat",
+  "short_name": "Chat",
   "description": "Kosmos Chat for the Web",
   "scope": "/",
   "start_url": "/",
