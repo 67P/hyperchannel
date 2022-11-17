@@ -24,7 +24,6 @@
     "build-prod": "NODE_ENV=production rm -rf release/* && ember build -prod --output-path release",
     "preversion": "npm test",
     "version": "npm run build-prod && git add release/",
-    "postversion": "git push origin master",
     "deploy": "git push 5apps master"
   },
   "engines": {
