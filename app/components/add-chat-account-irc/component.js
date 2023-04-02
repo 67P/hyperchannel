@@ -40,7 +40,7 @@ export default class AddChatAccountIrcComponent extends Component {
       },
       nickname: this.nickname,
       username: this.username,
-      password: this.password
+      password: this.password || null
     });
 
     return account;

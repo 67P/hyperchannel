@@ -79,36 +79,43 @@ export default class ComsService extends Service {
       this.storage.rs.kosmos.accounts.getIds().then(accountIds => {
         if (isEmpty(accountIds)) {
           console.debug('No accounts found in RS');
-          resolve();
-        } else {
-          const allAccounts = accountIds.map(id => {
-            return this.storage.rs.kosmos.accounts.getConfig(id).then(config => {
-              const properties = {
-                username: config.username,
-                password: config.password,
-                nickname: config.nickname,
-                botkaURL: config.botkaURL,
-                server: config.server
-              }
-              let account;
-              switch(config.protocol) {
-                case 'XMPP':
-                  account = new XmppAccount(properties);
-                  break;
-                case 'IRC':
-                  account = new IrcAccount(properties);
-                  break;
-              }
-              this.connectServer(account);
-              this.accounts.pushObject(account);
-              // TODO wait for successful server connection before joining
-              return this.instantiateChannels(account);
-            });
-          });
-          Promise.all(allAccounts).then(resolve);
+          resolve(); return;
         }
+        console.debug('Loading account config for', accountIds);
+
+        const allAccounts = accountIds.map(async id => {
+          const config = await this.storage.rs.kosmos.accounts.getConfig(id);
+          if (isEmpty(config)) {
+            console.debug('RS: config missing for account', id);
+            return;
+          }
+
+          const properties = {
+            username: config.username, password: config.password,
+            nickname: config.nickname, botkaURL: config.botkaURL,
+            server: config.server
+          }
+          let account;
+          switch(config.protocol) {
+            case 'XMPP':
+              account = new XmppAccount(properties);
+              break;
+            case 'IRC':
+              account = new IrcAccount(properties);
+              break;
+          }
+
+          this.connectServer(account);
+
+          this.accounts.pushObject(account);
+
+          // TODO wait for successful server connection before joining
+          return this.instantiateChannels(account);
+        });
+
+        Promise.all(allAccounts).then(resolve);
       }, e => {
-        this.log('error', 'couldn\'d load account from RS', e);
+        this.log('error', 'Failed to load accounts from RS', e);
         reject();
       });
     });
