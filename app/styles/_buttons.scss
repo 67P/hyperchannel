@@ -4,11 +4,6 @@
            font-semibold rounded-md border border-transparent
            cursor-pointer transition-colors duration-75
            focus:outline-none focus:ring-4 text-center;
-
-    .spinner {
-      @apply mr-3 border-2 border-t-current border-b-current
-             border-l-current border-r-transparent;
-    }
   }
 
   .btn-md {
