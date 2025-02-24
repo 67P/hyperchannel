@@ -28,6 +28,7 @@ export default class SockethubService extends Service {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
       document.body.appendChild(script);
+      script.type = "module";
       script.onload = resolve;
       script.onerror = reject;
       script.async = true;
