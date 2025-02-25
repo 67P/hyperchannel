@@ -36,8 +36,7 @@ export default class MessageChatComponent extends Component {
     if (content.match(/^(http)s?:\/\/.*(gif|png|jpg|jpeg)$/i)) {
       out = `<a href="${content}" target="_blank" rel="nofollow noopener">` +
             `<img src="${content}" ` +
-                 `class="my-1 p-1 h-48 w-auto max-w-full md:max-w-7xl
-                         border border-neutral-200 hover:border-neutral-400">` +
+            `class="my-1 p-1 h-48 w-auto max-w-full md:max-w-7xl border border-neutral-200 hover:border-neutral-400">` +
             `</a>`;
     }
     // Other links
