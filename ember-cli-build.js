@@ -4,7 +4,6 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 const tailwind = require('tailwindcss');
 
 module.exports = function (defaults) {
-
   const app = new EmberApp(defaults, {
     fingerprint: { enabled: false },
     sourcemaps: { // enabled sourcemaps for all environments (e.g. for sentry integration)
