@@ -19,7 +19,7 @@ module('Integration | Component | link to username', function(hooks) {
 
     const link = this.element.querySelector('a');
 
-    assert.equal(link.innerText, 'test_user');
+    assert.strictEqual(link.innerText, 'test_user');
     assert.ok(link.className.includes('normal'));
   });
 
@@ -29,7 +29,7 @@ module('Integration | Component | link to username', function(hooks) {
 
     const link = this.element.querySelector('a');
 
-    assert.equal(link.innerText, '@op');
+    assert.strictEqual(link.innerText, '@op');
     assert.ok(link.className.includes('op'));
   });
 
@@ -39,7 +39,7 @@ module('Integration | Component | link to username', function(hooks) {
 
     const link = this.element.querySelector('a');
 
-    assert.equal(link.innerText, '%wannabe_op');
+    assert.strictEqual(link.innerText, '%wannabe_op');
     assert.ok(link.className.includes('half-op'));
   });
 });

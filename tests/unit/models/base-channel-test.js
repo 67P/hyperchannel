@@ -15,7 +15,7 @@ module('Unit | Model | base-channel', function(hooks) {
       name: '#kosmos-dev'
     });
 
-    assert.equal(model.slug, 'kosmos-dev@irc.libera.chat');
+    assert.strictEqual(model.slug, 'kosmos-dev@irc.libera.chat');
   });
 
   //
@@ -27,7 +27,7 @@ module('Unit | Model | base-channel', function(hooks) {
     channel.unreadMessages = true;
     channel.visible = true;
 
-    assert.equal(channel.unreadMessagesClass, null);
+    assert.strictEqual(channel.unreadMessagesClass, null);
   });
 
   test('#unreadMessagesClass is null when channel has no unread messages', function(assert) {
@@ -35,7 +35,7 @@ module('Unit | Model | base-channel', function(hooks) {
     channel.unreadMessages = false;
     channel.visible = false;
 
-    assert.equal(channel.unreadMessagesClass, null);
+    assert.strictEqual(channel.unreadMessagesClass, null);
   });
 
   test('#unreadMessagesClass is correct for unread messages', function(assert) {
@@ -44,7 +44,7 @@ module('Unit | Model | base-channel', function(hooks) {
     channel.unreadMentions = false;
     channel.visible = false;
 
-    assert.equal(channel.unreadMessagesClass, 'unread-messages');
+    assert.strictEqual(channel.unreadMessagesClass, 'unread-messages');
   });
 
   test('#unreadMessagesClass is correct for unread mentions', function(assert) {
@@ -53,7 +53,7 @@ module('Unit | Model | base-channel', function(hooks) {
     channel.unreadMentions = true;
     channel.visible = false;
 
-    assert.equal(channel.unreadMessagesClass, 'unread-mentions');
+    assert.strictEqual(channel.unreadMessagesClass, 'unread-mentions');
   });
 
   //
@@ -64,7 +64,7 @@ module('Unit | Model | base-channel', function(hooks) {
     const channel = new BaseChannel({ account: xmppAccount });
 
     assert.ok(Array.isArray(channel.sortedMessages));
-    assert.equal(channel.sortedMessages.length, 0);
+    assert.strictEqual(channel.sortedMessages.length, 0);
   });
 
   //
@@ -75,7 +75,7 @@ module('Unit | Model | base-channel', function(hooks) {
     const channel = new BaseChannel({ account: xmppAccount });
 
     assert.ok(Array.isArray(channel.sortedUserList));
-    assert.equal(channel.sortedUserList.length, 0);
+    assert.strictEqual(channel.sortedUserList.length, 0);
   });
 
   test('#sortedUserList returns a list of sorted usernames', function(assert) {
@@ -105,9 +105,9 @@ module('Unit | Model | base-channel', function(hooks) {
       })
     );
 
-    assert.equal(channel.sortedMessages.length, 1, 'has no messages');
+    assert.strictEqual(channel.sortedMessages.length, 1, 'has no messages');
     let firstMessage = channel.sortedMessages.firstObject;
-    assert.equal(firstMessage.type, 'date-headline', 'has the wrong type');
+    assert.strictEqual(firstMessage.type, 'date-headline', 'has the wrong type');
   });
 
   test('#addDateHeadline does not add a date-headline when one exists already', function(assert) {
@@ -129,7 +129,7 @@ module('Unit | Model | base-channel', function(hooks) {
       })
     );
 
-    assert.equal(channel.sortedMessages.length, 1);
+    assert.strictEqual(channel.sortedMessages.length, 1);
   });
 
   //
@@ -153,7 +153,7 @@ module('Unit | Model | base-channel', function(hooks) {
 
     channel.addMessage(newMessage);
 
-    assert.equal(channel.messages.filterBy('type', 'message-chat').length, 2,
+    assert.strictEqual(channel.messages.filterBy('type', 'message-chat').length, 2,
                  'adds the new message');
 
     assert.ok(addDateHeadlineStub.calledOnce);
@@ -215,7 +215,7 @@ module('Unit | Model | base-channel', function(hooks) {
 
     channel.addMessage(newMessage);
 
-    assert.equal(channel.messages.filterBy('type', 'message-chat').length, 1,
+    assert.strictEqual(channel.messages.filterBy('type', 'message-chat').length, 1,
                  'does not add a new message');
 
     assert.ok(replaceMessage.calledOnce);
@@ -247,7 +247,7 @@ module('Unit | Model | base-channel', function(hooks) {
 
     const oldMessage = channel.messages.findBy('id', '234abc');
 
-    assert.equal(oldMessage.content, newMessage.content, 'replaces the message content');
+    assert.strictEqual(oldMessage.content, newMessage.content, 'replaces the message content');
     assert.true(oldMessage.edited, 'marks the old message as edited');
   });
 
@@ -352,14 +352,14 @@ module('Unit | Model | base-channel', function(hooks) {
       account: xmppAccount,
       name: 'kosmos-dev@kosmos.chat'
     });
-    assert.equal(channel.domain, 'kosmos.chat', 'returns the MUC domain for rooms');
+    assert.strictEqual(channel.domain, 'kosmos.chat', 'returns the MUC domain for rooms');
 
     channel = new BaseChannel({
       account: xmppAccount,
       isUserChannel: true,
       name: 'kosmos-dev@kosmos.chat/jimmy'
     });
-    assert.equal(channel.domain, 'kosmos.chat', 'returns the MUC domain for direct message channels');
+    assert.strictEqual(channel.domain, 'kosmos.chat', 'returns the MUC domain for direct message channels');
   });
 
   test('#domain (IRC)', function(assert) {
@@ -367,6 +367,6 @@ module('Unit | Model | base-channel', function(hooks) {
       account: ircAccount,
       name: '#kosmos-dev'
     });
-    assert.equal(channel.domain, 'irc.libera.chat', 'returns the network/account domain');
+    assert.strictEqual(channel.domain, 'irc.libera.chat', 'returns the network/account domain');
   });
 });

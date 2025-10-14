@@ -8,7 +8,7 @@ module('Integration | Component | button-submit', function(hooks) {
 
   test('button text', async function(assert) {
     await render(hbs`<ButtonSubmit>Connect</ButtonSubmit>`);
-    assert.equal(this.element.textContent.trim(), 'Connect');
+    assert.strictEqual(this.element.textContent.trim(), 'Connect');
   });
 
   test('button loading state without custom text', async function(assert) {
@@ -27,7 +27,7 @@ module('Integration | Component | button-submit', function(hooks) {
         Continue
       </ButtonSubmit>
     `);
-    assert.equal(this.element.textContent.trim(), 'Continue');
+    assert.strictEqual(this.element.textContent.trim(), 'Continue');
 
     this.set('isLoading', true);
     assert.ok(this.element.textContent.match('Connecting'));

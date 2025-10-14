@@ -32,14 +32,14 @@ module('Unit | Component | channel-nav', function (hooks) {
 
     run(() => component.goNextChannel());
 
-    assert.equal(routerService.currentRoute, 'channel');
-    assert.equal(routerService.currentChannel.name, channel3.name);
+    assert.strictEqual(routerService.currentRoute, 'channel');
+    assert.strictEqual(routerService.currentChannel.name, channel3.name);
 
     channel2.visible = false;
     channel3.visible = true;
     run(() => component.goNextChannel());
 
-    assert.equal(routerService.currentChannel.name, channel1.name);
+    assert.strictEqual(routerService.currentChannel.name, channel1.name);
   });
 
   test('switching to previous channel', function (assert) {
@@ -57,14 +57,14 @@ module('Unit | Component | channel-nav', function (hooks) {
 
     run(() => component.goPreviousChannel());
 
-    assert.equal(routerService.currentRoute, 'channel');
-    assert.equal(routerService.currentChannel.name, channel1.name);
+    assert.strictEqual(routerService.currentRoute, 'channel');
+    assert.strictEqual(routerService.currentChannel.name, channel1.name);
 
     channel1.visible = true;
     channel2.visible = false;
     run(() => component.goPreviousChannel());
 
-    assert.equal(routerService.currentChannel.name, channel3.name);
+    assert.strictEqual(routerService.currentChannel.name, channel3.name);
   });
 
 });

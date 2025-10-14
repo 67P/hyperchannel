@@ -9,21 +9,21 @@ module('Unit | Model | channel', function(hooks) {
   test('#formattedTopic with no topic available', function(assert) {
     const channel = new Channel({ account: xmppAccount });
 
-    assert.equal(channel.formattedTopic.toString(), '', 'returns an empty string');
+    assert.strictEqual(channel.formattedTopic.toString(), '', 'returns an empty string');
   });
 
   test('#formattedTopic turns URLs into links', function(assert) {
     const channel = new Channel({ account: xmppAccount });
     channel.topic = 'visit kosmos.org for more info';
 
-    assert.equal(channel.formattedTopic.toString(), 'visit <a href="https://kosmos.org" rel="nofollow noopener" target="_blank">kosmos.org</a> for more info');
+    assert.strictEqual(channel.formattedTopic.toString(), 'visit <a href="https://kosmos.org" rel="nofollow noopener" target="_blank">kosmos.org</a> for more info');
   });
 
   test('#formattedTopic escapes HTML', function(assert) {
     const channel = new Channel({ account: xmppAccount });
     channel.topic = 'never gonna <marquee>give you up</marquee>';
 
-    assert.equal(channel.formattedTopic.toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
+    assert.strictEqual(channel.formattedTopic.toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
   });
 
   test('#shortName', function(assert) {
@@ -31,12 +31,12 @@ module('Unit | Model | channel', function(hooks) {
       account: ircAccount,
       name: '#kosmos-dev'
     });
-    assert.equal(channel.shortName, 'kosmos-dev', 'returns name without hash for IRC');
+    assert.strictEqual(channel.shortName, 'kosmos-dev', 'returns name without hash for IRC');
 
     channel = new Channel({
       account: xmppAccount,
       name: 'kosmos-dev@kosmos.chat'
     });
-    assert.equal(channel.shortName, 'kosmos-dev', 'returns name without MUC domain for XMPP');
+    assert.strictEqual(channel.shortName, 'kosmos-dev', 'returns name without MUC domain for XMPP');
   });
 });

@@ -22,7 +22,7 @@ module('Unit | Service | logger', function(hooks) {
 
     const originalDebug = console.debug;
     console.debug = function() {
-      assert.equal(arguments[0], '[error]');
+      assert.strictEqual(arguments[0], '[error]');
       assert.ok(true);
       console.debug = originalDebug;
     };

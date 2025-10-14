@@ -12,6 +12,6 @@ module('Integration | Component | add-chat-account-xmpp', function(hooks) {
 
     await render(hbs`<AddChatAccountXmpp />`);
 
-    assert.equal(this.element.textContent.trim(), '');
+    assert.strictEqual(this.element.textContent.trim(), '');
   });
 });

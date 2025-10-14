@@ -12,7 +12,7 @@ module('Integration | Component | flash-message-error', function(hooks) {
 
     await render(hbs`<FlashMessageError />`);
 
-    assert.equal(this.element.textContent.trim(), '');
+    assert.strictEqual(this.element.textContent.trim(), '');
 
     // TODO implement block usage
     // Template block usage:
@@ -22,6 +22,6 @@ module('Integration | Component | flash-message-error', function(hooks) {
     //   </FlashMessageError>
     // `);
     //
-    // assert.equal(this.element.textContent.trim(), 'template block text');
+    // assert.strictEqual(this.element.textContent.trim(), 'template block text');
   });
 });

@@ -27,9 +27,9 @@ module('Integration | Component | join-channel', function(hooks) {
     this.coms.accounts.pushObject(ircAccount);
     await render(hbs`<JoinChannel />`);
 
-    assert.equal(this.element.querySelectorAll('select#account option').length, 1, 'only has one option');
+    assert.strictEqual(this.element.querySelectorAll('select#account option').length, 1, 'only has one option');
     const el = this.element.querySelector('select#account option');
-    assert.equal(el.innerText, ircAccount.id, 'renders the only account option');
+    assert.strictEqual(el.innerText, ircAccount.id, 'renders the only account option');
     assert.ok(this.element.querySelector('select#account').disabled, 'is disabled');
   });
 
@@ -38,7 +38,7 @@ module('Integration | Component | join-channel', function(hooks) {
     this.set('coms.accounts', [ ircAccount, xmppAccount ]);
     await render(hbs`<JoinChannel />`);
 
-    assert.equal(this.element.querySelectorAll('select#account option').length, 2, 'renders options for all accounts');
+    assert.strictEqual(this.element.querySelectorAll('select#account option').length, 2, 'renders options for all accounts');
     assert.notOk(this.element.querySelector('select#account').disabled, 'is not disabled');
   });
 
@@ -53,8 +53,8 @@ module('Integration | Component | join-channel', function(hooks) {
     router.transitionTo = function () {};
 
     coms.createChannel = function (account, channelName) {
-      assert.equal(account.id, xmppAccount.id, 'uses the selected account');
-      assert.equal(channelName, 'kosmos-random@kosmos.chat', 'uses the given channel address');
+      assert.strictEqual(account.id, xmppAccount.id, 'uses the selected account');
+      assert.strictEqual(channelName, 'kosmos-random@kosmos.chat', 'uses the given channel address');
     }
 
     this.set('close', function () {});

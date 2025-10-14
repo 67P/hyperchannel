@@ -12,6 +12,6 @@ module('Integration | Component | add-chat-account-irc', function(hooks) {
 
     await render(hbs`<AddChatAccountIrc />`);
 
-    assert.equal(this.element.textContent.trim(), '');
+    assert.strictEqual(this.element.textContent.trim(), '');
   });
 });

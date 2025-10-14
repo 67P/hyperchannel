@@ -69,7 +69,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
       }
     };
 
-    assert.equal(service.findOrCreateChannelForMessage(message), channel);
+    assert.strictEqual(service.findOrCreateChannelForMessage(message), channel);
   });
 
   test('#addMessageToChannel adds the message to the channel', function(assert) {
@@ -98,7 +98,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     service.addMessageToChannel(message);
 
-    assert.equal(channel.messages.lastObject.content, 'hello world');
+    assert.strictEqual(channel.messages.lastObject.content, 'hello world');
   });
 
   test('#addMessageToChannel updates pending status when receiving an outgoing message', function(assert) {
@@ -125,8 +125,8 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     service.addMessageToChannel(message);
 
-    assert.equal(channel.messages.filterBy('nickname', 'jimmy').length, 1);
-    assert.equal(channel.messages.lastObject.content, 'yo, gang!');
+    assert.strictEqual(channel.messages.filterBy('nickname', 'jimmy').length, 1);
+    assert.strictEqual(channel.messages.lastObject.content, 'yo, gang!');
     assert.notOk(channel.messages.lastObject.pending);
   });
 
@@ -138,8 +138,8 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     const channel = service.createUserChannel(xmppAccount, 'kosmos-dev@kosmos.chat/walter');
 
-    assert.equal(channel.name, 'kosmos-dev@kosmos.chat/walter');
-    assert.equal(channel.displayName, 'walter');
+    assert.strictEqual(channel.name, 'kosmos-dev@kosmos.chat/walter');
+    assert.strictEqual(channel.displayName, 'walter');
     assert.ok(channel.isUserChannel);
     assert.ok(channel.connected);
   });
@@ -171,11 +171,11 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.ok(socketEmitSpy.calledOnce, 'emits a sockethub job message');
 
     const jobMessage = socketEmitSpy.getCall(0).args[1];
-    assert.equal(jobMessage.context, 'xmpp', 'job context is correct');
-    assert.equal(jobMessage.type, 'send', 'job type is correct');
-    assert.equal(jobMessage.object.type, 'message', 'job object type is correct');
-    assert.equal(jobMessage.object.content, 'Only 4 days until 2022!', 'job object content is correct');
-    assert.equal(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
+    assert.strictEqual(jobMessage.context, 'xmpp', 'job context is correct');
+    assert.strictEqual(jobMessage.type, 'send', 'job type is correct');
+    assert.strictEqual(jobMessage.object.type, 'message', 'job object type is correct');
+    assert.strictEqual(jobMessage.object.content, 'Only 4 days until 2022!', 'job object content is correct');
+    assert.strictEqual(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
   });
 
   test('#transferMessage for correction', async function(assert) {
@@ -207,7 +207,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     xmpp.transferMessage(target, message);
 
     const jobMessage = socketEmitSpy.getCall(0).args[1];
-    assert.equal(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
+    assert.strictEqual(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
     assert.deepEqual(jobMessage.object['xmpp:replace'], { id: 'hc-234ghijk' }, 'job object contains the replace property');
   });
 });

@@ -25,9 +25,9 @@ module('Unit | Service | sockethub irc', function(hooks) {
   //     },
   //     socket: {
   //       emit: function(type, event) {
-  //         assert.equal(type, 'message');
-  //         assert.equal(event['@type'], 'join');
-  //         assert.equal(event.target, 'testchannel');
+  //         assert.strictEqual(type, 'message');
+  //         assert.strictEqual(event['@type'], 'join');
+  //         assert.strictEqual(event.target, 'testchannel');
   //         done();
   //       }
   //     }

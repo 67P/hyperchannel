@@ -44,10 +44,10 @@ module('Unit | Service | coms', function(hooks) {
     });
     const xmppStub = {
       transferMessage: function(target, message) {
-        assert.equal(target.id, 'testchannel@kosmos.chat');
-        assert.equal(target.type, 'room');
-        assert.equal(target.name, 'testchannel@kosmos.chat');
-        assert.equal(message, msg);
+        assert.strictEqual(target.id, 'testchannel@kosmos.chat');
+        assert.strictEqual(target.type, 'room');
+        assert.strictEqual(target.name, 'testchannel@kosmos.chat');
+        assert.strictEqual(message, msg);
       }
     };
     const service = this.owner.factoryFor('service:coms').create({ xmpp: xmppStub });
@@ -100,7 +100,7 @@ module('Unit | Service | coms', function(hooks) {
     service.updateChannelUserList(observeMessage);
 
     assert.ok(channel.connected);
-    assert.equal(channel.userList.length, 5);
+    assert.strictEqual(channel.userList.length, 5);
   });
 
   test('#sortedChannels returns channels sorted by name', function(assert) {
@@ -156,6 +156,6 @@ module('Unit | Service | coms', function(hooks) {
       channels: [ channel1, channel2 ]
     });
 
-    assert.equal(service.activeChannel, channel2);
+    assert.strictEqual(service.activeChannel, channel2);
   });
 });

@@ -29,8 +29,8 @@ module('Integration | Component | join-channel-irc', function(hooks) {
     assert.expect(3);
 
     this.coms.createChannel = function (account, channelName) {
-      assert.equal(account.id, 'irc-account', 'uses the selected account');
-      assert.equal(channelName, '#kosmos-random', 'uses the given channel address');
+      assert.strictEqual(account.id, 'irc-account', 'uses the selected account');
+      assert.strictEqual(channelName, '#kosmos-random', 'uses the given channel address');
     }
 
     await render(hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`);
@@ -47,8 +47,8 @@ module('Integration | Component | join-channel-irc', function(hooks) {
     assert.expect(2);
 
     this.coms.createChannel = function (account, channelName) {
-      assert.equal(account.id, 'irc-account', 'uses the selected account');
-      assert.equal(channelName, '#kosmos-random', 'uses the given channel address');
+      assert.strictEqual(account.id, 'irc-account', 'uses the selected account');
+      assert.strictEqual(channelName, '#kosmos-random', 'uses the given channel address');
     }
 
     await render(hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`);
@@ -65,8 +65,8 @@ module('Integration | Component | join-channel-irc', function(hooks) {
     }
 
     this.router.transitionTo = function (route, model) {
-      assert.equal(route, 'channel');
-      assert.equal(model, 'channel-model');
+      assert.strictEqual(route, 'channel');
+      assert.strictEqual(model, 'channel-model');
     };
 
     await render(hbs`<JoinChannelIrc @account={{this.account}} @closeModal={{this.close}} />`);

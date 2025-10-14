@@ -29,8 +29,8 @@ module('Integration | Component | join-channel-xmpp', function(hooks) {
     assert.expect(3);
 
     this.coms.createChannel = function (account, channelName) {
-      assert.equal(account.id, 'xmpp-account', 'uses the selected account');
-      assert.equal(channelName, 'kosmos-random@kosmos.chat', 'uses the given channel address');
+      assert.strictEqual(account.id, 'xmpp-account', 'uses the selected account');
+      assert.strictEqual(channelName, 'kosmos-random@kosmos.chat', 'uses the given channel address');
     }
 
     await render(hbs`<JoinChannelXmpp @account={{this.account}} @closeModal={{this.close}} />`);
@@ -51,8 +51,8 @@ module('Integration | Component | join-channel-xmpp', function(hooks) {
     }
 
     this.router.transitionTo = function (route, model) {
-      assert.equal(route, 'channel');
-      assert.equal(model, 'channel-model');
+      assert.strictEqual(route, 'channel');
+      assert.strictEqual(model, 'channel-model');
     };
 
     await render(hbs`<JoinChannelXmpp @account={{this.account}} @closeModal={{this.close}} />`);

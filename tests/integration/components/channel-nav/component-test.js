@@ -12,6 +12,6 @@
 //
 //     await render(hbs`<ChannelNav />`);
 //
-//     assert.equal(this.element.textContent.trim(), '');
+//     assert.strictEqual(this.element.textContent.trim(), '');
 //   });
 // });

@@ -23,13 +23,13 @@ module('Integration | Component | message-chat', function(hooks) {
     await render(hbs`<MessageChat @channel={{this.channel}} @message={{this.message}} />`);
 
     const contentEl = this.element.querySelector('.msg-content');
-    assert.equal(contentEl.innerText, this.message.content, 'renders the message content');
+    assert.strictEqual(contentEl.innerText, this.message.content, 'renders the message content');
 
     const metaEl = this.element.querySelector('.msg-meta');
     assert.ok(metaEl.querySelector('span').innerText.match(this.message.nickname), `renders the sender's nickname`);
 
     const avatarEl = this.element.querySelector('.msg-avatar');
-    assert.equal(avatarEl.querySelector('span').innerText.length, 1, `renders one letter of the sender's nickname`);
+    assert.strictEqual(avatarEl.querySelector('span').innerText.length, 1, `renders one letter of the sender's nickname`);
   });
 
   test('grouped message', async function(assert) {
@@ -37,7 +37,7 @@ module('Integration | Component | message-chat', function(hooks) {
     await render(hbs`<MessageChat @channel={{this.channel}} @message={{this.message}} />`);
 
     const contentEl = this.element.querySelector('.msg-content');
-    assert.equal(contentEl.innerText, this.message.content, 'renders the message content');
+    assert.strictEqual(contentEl.innerText, this.message.content, 'renders the message content');
 
     assert.notOk(this.element.querySelector('.msg-meta'), `hides the meta information`);
     assert.notOk(this.element.querySelector('.msg-avatar span'), `hides the user avatar (placeholder)`);
@@ -49,14 +49,14 @@ module('Integration | Component | message-chat', function(hooks) {
 
     const contentEl = this.element.querySelector('.msg-content');
 
-    assert.equal(contentEl.querySelectorAll('br').length, 3, 'inserts line breaks for LF');
+    assert.strictEqual(contentEl.querySelectorAll('br').length, 3, 'inserts line breaks for LF');
 
     this.message.content = 'The wren\rEarns his living\rNoiselessly.\r- Kobayahsi Issa';
     await render(hbs`<MessageChat @channel={{this.channel}} @message={{this.message}} />`);
-    assert.equal(contentEl.querySelectorAll('br').length, 3, 'inserts line breaks for CR');
+    assert.strictEqual(contentEl.querySelectorAll('br').length, 3, 'inserts line breaks for CR');
 
     this.message.content = 'The wren\r\nEarns his living\r\nNoiselessly.\r\n- Kobayahsi Issa';
     await render(hbs`<MessageChat @channel={{this.channel}} @message={{this.message}} />`);
-    assert.equal(contentEl.querySelectorAll('br').length, 3, 'inserts line breaks for CR+LF');
+    assert.strictEqual(contentEl.querySelectorAll('br').length, 3, 'inserts line breaks for CR+LF');
   });
 });

@@ -8,6 +8,6 @@ module('Unit | Service | remotestorage', function(hooks) {
     let service = this.owner.lookup('service:remotestorage');
     let remoteStorage = service.rs;
 
-    assert.equal(typeof remoteStorage.scope, 'function');
+    assert.strictEqual(typeof remoteStorage.scope, 'function');
   });
 });

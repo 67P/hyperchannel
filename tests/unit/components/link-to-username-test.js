@@ -11,13 +11,13 @@ module('Unit | Component | link-to-username', function(hooks) {
     const component = createComponent('component:link-to-username');
 
     component.args.username = '@smooth_operator';
-    assert.equal(component.role, 'op');
+    assert.strictEqual(component.role, 'op');
 
     component.args.username = '%wannabe_operator';
-    assert.equal(component.role, 'half-op');
+    assert.strictEqual(component.role, 'half-op');
 
     component.args.username = '+frank_sinatra';
-    assert.equal(component.role, 'voice');
+    assert.strictEqual(component.role, 'voice');
   });
 
   test('usernameWithoutPrefix removes IRC role prefixes', function(assert) {
@@ -26,13 +26,13 @@ module('Unit | Component | link-to-username', function(hooks) {
     const component = createComponent('component:link-to-username');
 
     component.args.username = '@smooth_operator';
-    assert.equal(component.usernameWithoutPrefix, 'smooth_operator');
+    assert.strictEqual(component.usernameWithoutPrefix, 'smooth_operator');
 
     component.args.username = '%wannabe_operator';
-    assert.equal(component.usernameWithoutPrefix, 'wannabe_operator');
+    assert.strictEqual(component.usernameWithoutPrefix, 'wannabe_operator');
 
     component.args.username = '+frank_sinatra';
-    assert.equal(component.usernameWithoutPrefix, 'frank_sinatra');
+    assert.strictEqual(component.usernameWithoutPrefix, 'frank_sinatra');
   });
 });
 

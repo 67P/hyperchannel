@@ -36,7 +36,7 @@ module('Unit | Service | local data', function(hooks) {
   //   const userSettingsStore = service.stores.userSettings;
   //   const currentChannel = await userSettingsStore.getItem('currentChannel');
   //
-  //   assert.equal(currentChannel, 'kosmos');
+  //   assert.strictEqual(currentChannel, 'kosmos');
   // });
 
   test('storing and retrieving values', async function(assert) {
@@ -47,6 +47,6 @@ module('Unit | Service | local data', function(hooks) {
     await userSettingsStore.setItem('currentChannel', 'kosmos-random');
     const currentChannel = await userSettingsStore.getItem('currentChannel');
 
-    assert.equal(currentChannel, 'kosmos-random');
+    assert.strictEqual(currentChannel, 'kosmos-random');
   });
 });

@@ -8,11 +8,11 @@ module('Unit | Controller | base_channel', function(hooks) {
   test('add username mention to message, with empty message', function(assert) {
     const controller = this.owner.lookup('controller:base_channel');
     controller.focusMessageInputField = function () { return true; }
-    assert.equal(controller.newMessage, null);
+    assert.strictEqual(controller.newMessage, null);
 
     run(() => controller.addUsernameMentionToMessage('toshi'));
 
-    assert.equal(controller.newMessage, 'toshi: ');
+    assert.strictEqual(controller.newMessage, 'toshi: ');
   });
 
   test('add username mention to message, with existing message', function(assert) {
@@ -22,7 +22,7 @@ module('Unit | Controller | base_channel', function(hooks) {
 
     run(() => controller.addUsernameMentionToMessage('toshi'));
 
-    assert.equal(controller.newMessage, 'toshi: hey, wasup?',
+    assert.strictEqual(controller.newMessage, 'toshi: hey, wasup?',
                  'adds the name in front of the message');
   });
 
@@ -33,7 +33,7 @@ module('Unit | Controller | base_channel', function(hooks) {
 
     run(() => controller.addUsernameMentionToMessage('toshi'));
 
-    assert.equal(controller.newMessage, 'toshi: hey, wasup?',
+    assert.strictEqual(controller.newMessage, 'toshi: hey, wasup?',
                  'does not add the name twice');
   });
 });
