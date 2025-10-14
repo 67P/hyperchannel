@@ -28,7 +28,7 @@ module('Unit | Service | local data', function(hooks) {
   });
 
   // TODO Re-add when we add new default configs
-  // test('default values', async function(assert) {
+  // skip('default values', async function(assert) {
   //   const service = this.owner.lookup('service:local-data');
   //
   //   await service.setDefaultValues();

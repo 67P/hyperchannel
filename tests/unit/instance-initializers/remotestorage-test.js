@@ -1,6 +1,6 @@
 // import Ember from 'ember';
 // import { initialize } from 'hyperchannel/instance-initializers/remotestorage';
-// import { module, test } from 'qunit';
+// import { module, skip } from 'qunit';
 // import destroyApp from '../../helpers/destroy-app';
 //
 // module('Unit | Instance Initializer | remotestorage', {
@@ -17,7 +17,7 @@
 // });
 //
 // // Replace this with your real tests.
-// test('it works', function(assert) {
+// skip('it works', function(assert) {
 //   initialize(this.appInstance);
 //
 //   // you would normally confirm the results of the initializer here

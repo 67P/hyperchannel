@@ -169,7 +169,7 @@ module('Unit | Model | base-channel', function(hooks) {
       type: 'message-chat', date: moment().toDate(),
       nickname: 'iceman', content: 'hi there', id: '123'
     }));
-    assert.equal(channel.messages.lastObject.grouped, false,
+    assert.false(channel.messages.lastObject.grouped,
                  'does not mark message as grouped when there is no previous message');
 
     date = moment(channel.messages.lastObject.date).add(3, 'seconds').toDate();
@@ -177,7 +177,7 @@ module('Unit | Model | base-channel', function(hooks) {
       type: 'message-chat', date: date,
       nickname: 'cyberbob', content: 'ohai', id: '234'
     }));
-    assert.equal(channel.messages.lastObject.grouped, false,
+    assert.false(channel.messages.lastObject.grouped,
                  'does not mark message as grouped when previous one is from different nick');
 
     date = moment(channel.messages.lastObject.date).add(300, 'seconds').toDate();
@@ -185,7 +185,7 @@ module('Unit | Model | base-channel', function(hooks) {
       type: 'message-chat', date: date,
       nickname: 'cyberbob', content: 'how is life?', id: '456'
     }));
-    assert.equal(channel.messages.lastObject.grouped, false,
+    assert.false(channel.messages.lastObject.grouped,
                  'does not mark message as grouped when previous one is too long ago');
 
     date = moment(channel.messages.lastObject.date).add(30, 'seconds').toDate();
@@ -193,7 +193,7 @@ module('Unit | Model | base-channel', function(hooks) {
       type: 'message-chat', date: date,
       nickname: 'cyberbob', content: 'want to meet afk?', id: '567'
     }));
-    assert.equal(channel.messages.lastObject.grouped, true,
+    assert.true(channel.messages.lastObject.grouped,
                  'marks message as grouped');
   });
 
@@ -310,7 +310,7 @@ module('Unit | Model | base-channel', function(hooks) {
   // TODO Re-implement without custom space/network IDs
   //
 
-  // test('#isLogged returns true when channel is logged', function(assert) {
+  // skip('#isLogged returns true when channel is logged', function(assert) {
   //   const channel = new BaseChannel({
   //     account: xmppAccount,
   //     name: '#kosmos'
@@ -319,7 +319,7 @@ module('Unit | Model | base-channel', function(hooks) {
   //   assert.ok(channel.isLogged);
   // });
   //
-  // test('#isLogged returns false when channel is not logged', function(assert) {
+  // skip('#isLogged returns false when channel is not logged', function(assert) {
   //   const channel = new BaseChannel({
   //     account: xmppAccount,
   //     name: '#some-random-chan'

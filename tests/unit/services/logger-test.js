@@ -55,7 +55,7 @@ module('Unit | Service | logger', function(hooks) {
 
     let service = this.owner.lookup('service:logger');
     service.disable();
-    assert.ok(!service.enabled);
+    assert.false(service.enabled);
 
     service.log('error', 'test');
     console.debug = originalDebug;
@@ -71,7 +71,7 @@ module('Unit | Service | logger', function(hooks) {
 
     let service = this.owner.lookup('service:logger');
     service.remove('error');
-    assert.ok(!service.activeTypes.includes('error'));
+    assert.false(service.activeTypes.includes('error'));
 
     service.log('error', 'test');
     console.debug = originalDebug;

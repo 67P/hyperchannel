@@ -36,6 +36,8 @@ module('Unit | Service | coms', function(hooks) {
   });
 
   test('#transferMessage calls transferMessage on the appropriate transport service', function(assert) {
+    assert.expect(4);
+    
     const msg = new Message({
       content: 'hello world',
       id: 'hc-1234abcd'

@@ -16,7 +16,7 @@ module('Unit | Service | sockethub irc', function(hooks) {
   });
 
   // FIXME this test randomly fails with error "Assertion occured after test had finished."
-  // test('#join sends the join activity to Sockethub for a room channel', function(assert) {
+  // skip('#join sends the join activity to Sockethub for a room channel', function(assert) {
   //   const done = assert.async();
   //
   //   const sockethubStub = {
