@@ -1,8 +1,10 @@
 import Service from '@ember/service';
+import { tracked } from '@glimmer/tracking';
+import { TrackedArray } from 'tracked-built-ins';
 
 export default class LoggerService extends Service {
 
-  enabled = true;
+  @tracked enabled = true;
 
   allowedTypes = [
     'error',
@@ -19,7 +21,7 @@ export default class LoggerService extends Service {
     'storage',
   ];
 
-  activeTypes = [
+  activeTypes = new TrackedArray([
     'error',
     'join',
     'leave',
@@ -30,7 +32,7 @@ export default class LoggerService extends Service {
     'message',
     'irc_message',
     'storage'
-  ];
+  ]);
 
   log (type) {
     if (!this.allowedTypes.includes(type)) {
@@ -45,11 +47,14 @@ export default class LoggerService extends Service {
   }
 
   add (type) {
-    this.activeTypes.addObject(type);
+    this.activeTypes.push(type);
   }
 
   remove (type) {
-    this.activeTypes.removeObject(type);
+    const index = this.activeTypes.indexOf(type);
+    if (index > -1) {
+      this.activeTypes.splice(index, 1);
+    }
   }
 
   disable () {
