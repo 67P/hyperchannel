@@ -27,7 +27,7 @@
     "deploy": "git push 5apps master"
   },
   "engines": {
-    "node": "10.* || >= 12"
+    "node": ">= 16"
   },
   "ember": {
     "edition": "octane"
