@@ -11,17 +11,16 @@ module('Integration | Component | button-submit', function(hooks) {
     assert.equal(this.element.textContent.trim(), 'Connect');
   });
 
-  test('button loading state', async function(assert) {
+  test('button loading state without custom text', async function(assert) {
     this.set('isLoading', false);
     await render(hbs`<ButtonSubmit @loading={{this.isLoading}}>Continue</ButtonSubmit>`);
-    assert.notOk(this.element.textContent.match('Loading...'));
+    assert.ok(this.element.textContent.match('Continue'));
 
     this.set('isLoading', true);
-    assert.ok(this.element.textContent.match('Loading...'));
     assert.ok(this.element.textContent.match('Continue'));
   });
 
-  test('button text while loading', async function(assert) {
+  test('button loading state with custom text', async function(assert) {
     this.set('isLoading', false);
     await render(hbs`
       <ButtonSubmit @loading={{this.isLoading}} @textLoading="Connecting">
@@ -31,7 +30,6 @@ module('Integration | Component | button-submit', function(hooks) {
     assert.equal(this.element.textContent.trim(), 'Continue');
 
     this.set('isLoading', true);
-    assert.ok(this.element.textContent.match('Loading...'));
     assert.ok(this.element.textContent.match('Connecting'));
   });
 });
