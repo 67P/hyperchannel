@@ -25,7 +25,7 @@ module('Unit | Component | channel-nav', function (hooks) {
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount ],
       channels: [ channel1, channel2, channel3 ]
-    });
+    }});
     const component = createComponent('component:channel-nav');
     component.coms = comsService;
     component.router = routerService;
@@ -50,7 +50,7 @@ module('Unit | Component | channel-nav', function (hooks) {
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount ],
       channels: [ channel1, channel2, channel3 ]
-    });
+    }});
     const component = createComponent('component:channel-nav');
     component.coms = comsService;
     component.router = routerService;
