@@ -3,6 +3,7 @@
 
 # compiled output
 /dist/
+/release/
 
 # misc
 /coverage/
@@ -11,3 +12,10 @@
 /pnpm-lock.yaml
 ember-cli-update.json
 *.html
+
+# issue archives
+/issues/
+/github-issues/
+
+# Other ignored files
+/gitno/
