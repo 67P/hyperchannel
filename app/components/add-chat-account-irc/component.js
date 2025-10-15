@@ -48,7 +48,7 @@ export default class AddChatAccountIrcComponent extends Component {
 
   async addAccount () {
     const account = this.instantiateAccount();
-    this.coms.accounts.pushObject(account);
+    this.coms.accounts.push(account);
     return this.storage.saveAccount(account).then(() => account);
   }
 
@@ -81,7 +81,7 @@ export default class AddChatAccountIrcComponent extends Component {
       } else {
         const account = await this.addAccount();
         this.addDefaultChannels(account);
-        const firstChannel = this.coms.channels.filterBy('account', account).firstObject;
+        const firstChannel = this.coms.channels.filter(ch => ch.account === account)[0];
         this.router.transitionTo('channel', firstChannel);
       }
     });

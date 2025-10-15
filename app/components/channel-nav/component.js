@@ -18,7 +18,7 @@ export default class ChannelNavComponent extends Component {
 
   transitionToRelativeChannel (relativePosition) {
     if (isPresent(this.coms.activeChannel)) {
-      const channels = this.coms.channels.filterBy('account', this.coms.activeChannel.account);
+      const channels = this.coms.channels.filter(ch => ch.account === this.coms.activeChannel.account);
       const currentPosition = channels.indexOf(this.coms.activeChannel);
 
       let edge = channels.length-1;
