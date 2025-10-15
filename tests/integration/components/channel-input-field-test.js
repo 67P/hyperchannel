@@ -9,7 +9,7 @@ module('Integration | Component | channel-input-field', function (hooks) {
   test('it renders', async function (assert) {
     assert.expect(1);
 
-    await render(hbs`{{channel-input-field}}`);
+    await render(hbs`<ChannelInputField />`);
 
     assert.dom(this.element).hasText('');
   });

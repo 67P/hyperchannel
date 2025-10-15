@@ -25,7 +25,8 @@ module('Integration | Component | link to username', function (hooks) {
 
   test('it renders for an op user', async function (assert) {
     this.set('channel', xmppChannel);
-    await render(hbs`<LinkToUsername @username='@op' @channel={{this.channel}} />`);
+    this.set('username', '@op');
+    await render(hbs`<LinkToUsername @username={{this.username}} @channel={{this.channel}} />`);
 
     const link = this.element.querySelector('a');
 
