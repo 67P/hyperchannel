@@ -14,9 +14,9 @@ export default class IndexRoute extends Route {
     const currentChannel = await this.userSettings.getItem('currentChannel');
 
     if (currentChannel) {
-      this.transitionTo('channel', currentChannel);
+      this.router.transitionTo('channel', currentChannel);
     } else {
-      this.transitionTo('channel', this.coms.channels.firstObject);
+      this.router.transitionTo('channel', this.coms.channels.firstObject);
     }
   }
 

@@ -12,7 +12,7 @@ export default class ConfigureSockethubRoute extends Route {
 
   redirect () {
     if (this.sockethub.client) {
-      this.transitionTo('index');
+      this.router.transitionTo('index');
     }
   }
 

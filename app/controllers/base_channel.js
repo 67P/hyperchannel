@@ -107,7 +107,7 @@ export default class BaseChannelController extends Controller {
   joinCommand (args) {
     const channel = this.coms.createChannel(this.model.account, args[0]);
     // TODO this.storage.saveChannel(channel);
-    this.transitionToRoute('channel', channel);
+    this.router.transitionTo('channel', channel);
   }
 
   @action
@@ -115,11 +115,11 @@ export default class BaseChannelController extends Controller {
     this.coms.removeChannel(this.model);
     const lastChannel = this.coms.channels.lastObject;
     if (isPresent(lastChannel)) {
-      this.transitionToRoute('channel', lastChannel);
+      this.router.transitionTo('channel', lastChannel);
     } else {
       // TODO handle zero channels left
       console.warn('No channels left to transition to');
-      this.transitionToRoute('index');
+      this.router.transitionTo('index');
     }
   }
 

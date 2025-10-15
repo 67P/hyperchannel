@@ -38,10 +38,10 @@ export default class ApplicationRoute extends Route {
     }
 
     if (!this.sockethub.client) {
-      this.transitionTo('configure-sockethub');
+      this.router.transitionTo('configure-sockethub');
     }
     else if (!this.coms.onboardingComplete) {
-      this.transitionTo('welcome');
+      this.router.transitionTo('welcome');
     }
   }
 
