@@ -2,7 +2,7 @@ import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-messag
 import Message from 'hyperchannel/models/message';
 import { module, test } from 'qunit';
 
-module('Unit | Utility | channel message from sockethub object', function() {
+module('Unit | Utility | channel message from sockethub object', function () {
   let sockethubMessageObject = {
     actor: {
       id: 'raucao@irc.freenode.net',
@@ -16,7 +16,7 @@ module('Unit | Utility | channel message from sockethub object', function() {
     published: '2017-06-14T06:32:42.025Z'
   };
 
-  test('it creates a message instance from a Sockethub message object', function(assert) {
+  test('it creates a message instance from a Sockethub message object', function (assert) {
     let result = channelMessageFromSockethubObject(sockethubMessageObject);
 
     assert.ok(result instanceof Message);
@@ -30,7 +30,7 @@ module('Unit | Utility | channel message from sockethub object', function() {
                  new Date('2017-06-14T06:32:42.025Z').toISOString());
   });
 
-  test('it creates an action message instance from a Sockethub message object', function(assert) {
+  test('it creates an action message instance from a Sockethub message object', function (assert) {
     sockethubMessageObject.object.type = 'me';
     sockethubMessageObject.object.content = 'boards the plane';
     let result = channelMessageFromSockethubObject(sockethubMessageObject);
@@ -46,7 +46,7 @@ module('Unit | Utility | channel message from sockethub object', function() {
                  new Date('2017-06-14T06:32:42.025Z').toISOString());
   });
 
-  test('it uses the whole JID for XMPP messages without name', function(assert) {
+  test('it uses the whole JID for XMPP messages without name', function (assert) {
     const message = {
       actor: { id: 'walter@kosmos.org', type: 'person' },
       object: { type: 'message', content: 'this is a direct message' }
@@ -56,7 +56,7 @@ module('Unit | Utility | channel message from sockethub object', function() {
     assert.strictEqual(result.nickname, 'walter@kosmos.org');
   });
 
-  test('it extracts the nickname from XMPP channel DM actor IDs', function(assert) {
+  test('it extracts the nickname from XMPP channel DM actor IDs', function (assert) {
     const message = {
       actor: { id: 'kosmos-dev@kosmos.chat/walter', type: 'person' },
       object: { type: 'message', content: 'this is a direct message' }
@@ -66,7 +66,7 @@ module('Unit | Utility | channel message from sockethub object', function() {
     assert.strictEqual(result.nickname, 'walter');
   });
 
-  test('it works with the published field being a unix timestamp', function(assert) {
+  test('it works with the published field being a unix timestamp', function (assert) {
     sockethubMessageObject.published = '1497421962025';
 
     let result = channelMessageFromSockethubObject(sockethubMessageObject);

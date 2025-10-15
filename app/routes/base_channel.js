@@ -3,7 +3,7 @@ import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { scheduleOnce } from '@ember/runloop';
 
-function focusMessageInput() {
+function focusMessageInput () {
   if (window.innerWidth > 900) {
     document.querySelector('input#message-field').focus();
   } else {

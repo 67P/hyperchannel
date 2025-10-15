@@ -74,7 +74,7 @@ export default class MessageChatComponent extends Component {
     return this.args.message.nickname.charAt(0).toUpperCase();
   }
 
-  focusInputField(messageId) {
+  focusInputField (messageId) {
     const inputEl = document.querySelector(`input[name=message-input-${messageId}]`);
     inputEl.focus();
     inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });

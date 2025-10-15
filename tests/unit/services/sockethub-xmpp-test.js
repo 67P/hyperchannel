@@ -5,10 +5,10 @@ import Message from 'hyperchannel/models/message';
 import { xmppAccount } from '../../fixtures/accounts';
 import sinon from 'sinon';
 
-module('Unit | Service | sockethub xmpp', function(hooks) {
+module('Unit | Service | sockethub xmpp', function (hooks) {
   setupTest(hooks);
 
-  test('#handlePresenceUpdate adds new users to the channel', function(assert) {
+  test('#handlePresenceUpdate adds new users to the channel', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
@@ -26,7 +26,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.ok(channel.userList.includes('walter'));
   });
 
-  test('#handlePresenceUpdate removes offline users from the channel', function(assert) {
+  test('#handlePresenceUpdate removes offline users from the channel', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
     channel.addUser('walter');
     const comsService = this.owner.factoryFor('service:coms').create({
@@ -45,7 +45,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.notOk(channel.userList.includes('walter'));
   });
 
-  test('#findOrCreateChannelForMessage returns the channel for a given message', function(assert) {
+  test('#findOrCreateChannelForMessage returns the channel for a given message', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
@@ -72,7 +72,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.strictEqual(service.findOrCreateChannelForMessage(message), channel);
   });
 
-  test('#addMessageToChannel adds the message to the channel', function(assert) {
+  test('#addMessageToChannel adds the message to the channel', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
@@ -101,7 +101,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.strictEqual(channel.messages.lastObject.content, 'hello world');
   });
 
-  test('#addMessageToChannel updates pending status when receiving an outgoing message', function(assert) {
+  test('#addMessageToChannel updates pending status when receiving an outgoing message', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'kosmos-dev@kosmos.chat' });
     const outgoingMessage = new Message({
       type: 'message-chat',
@@ -130,7 +130,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.notOk(channel.messages.lastObject.pending);
   });
 
-  test('#createUserChannel', function(assert) {
+  test('#createUserChannel', function (assert) {
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ]
     });
@@ -144,7 +144,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.ok(channel.connected);
   });
 
-  test('#transferMessage', async function(assert) {
+  test('#transferMessage', async function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
     const message = new Message({ content: 'Only 4 days until 2022!', id: 'hc-123abcde'});
     const coms = this.owner.factoryFor('service:coms').create({
@@ -178,7 +178,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.strictEqual(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
   });
 
-  test('#transferMessage for correction', async function(assert) {
+  test('#transferMessage for correction', async function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
     const message = new Message({
       content: 'Only 4 days until 2022!',

@@ -5,10 +5,10 @@ import hbs from 'htmlbars-inline-precompile';
 import Message from 'hyperchannel/models/message';
 import moment from 'moment';
 
-module('Integration | Component | date-headline', function(hooks) {
+module('Integration | Component | date-headline', function (hooks) {
   setupRenderingTest(hooks);
 
-  test('show headline "Today" for the current day', async function(assert) {
+  test('show headline "Today" for the current day', async function (assert) {
     assert.expect(1);
 
     this.dateMessage = new Message({
@@ -20,7 +20,7 @@ module('Integration | Component | date-headline', function(hooks) {
     assert.dom(this.element.querySelector('h3')).hasText('Today');
   });
 
-  test('show headline "Yesterday" for the previous day', async function(assert) {
+  test('show headline "Yesterday" for the previous day', async function (assert) {
     assert.expect(1);
 
     this.dateMessage = new Message({
@@ -32,7 +32,7 @@ module('Integration | Component | date-headline', function(hooks) {
     assert.dom(this.element.querySelector('h3')).hasText('Yesterday');
   });
 
-  test('show headline as a date for all other days', async function(assert) {
+  test('show headline as a date for all other days', async function (assert) {
     assert.expect(2);
 
     this.dateMessage = new Message({

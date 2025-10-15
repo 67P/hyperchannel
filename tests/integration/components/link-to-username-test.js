@@ -10,10 +10,10 @@ const xmppChannel = new Channel({
   name: 'kosmos-dev@kosmos.chat'
 });
 
-module('Integration | Component | link to username', function(hooks) {
+module('Integration | Component | link to username', function (hooks) {
   setupRenderingTest(hooks);
 
-  test('it renders for a normal user', async function(assert) {
+  test('it renders for a normal user', async function (assert) {
     this.set('channel', xmppChannel);
     await render(hbs`<LinkToUsername @username='test_user' @channel={{this.channel}} />`);
 
@@ -23,7 +23,7 @@ module('Integration | Component | link to username', function(hooks) {
     assert.ok(link.className.includes('normal'));
   });
 
-  test('it renders for an op user', async function(assert) {
+  test('it renders for an op user', async function (assert) {
     this.set('channel', xmppChannel);
     await render(hbs`<LinkToUsername @username='@op' @channel={{this.channel}} />`);
 
@@ -33,7 +33,7 @@ module('Integration | Component | link to username', function(hooks) {
     assert.ok(link.className.includes('op'));
   });
 
-  test('it renders for a half-op user', async function(assert) {
+  test('it renders for a half-op user', async function (assert) {
     this.set('channel', xmppChannel);
     await render(hbs`<LinkToUsername @username='%wannabe_op' @channel={{this.channel}} />`);
 

@@ -159,13 +159,13 @@ export default class BaseChannel {
     }
   }
 
-  addUser(username) {
+  addUser (username) {
     if (!this.userList.includes(username)) {
       this.userList.pushObject(username);
     }
   }
 
-  removeUser(username) {
+  removeUser (username) {
     this.userList.removeObject(username);
   }
 

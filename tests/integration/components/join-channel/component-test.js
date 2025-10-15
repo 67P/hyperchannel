@@ -15,14 +15,14 @@ class comsStub extends Service {
   accounts = A();
 }
 
-module('Integration | Component | join-channel', function(hooks) {
+module('Integration | Component | join-channel', function (hooks) {
   setupRenderingTest(hooks);
 
-  hooks.beforeEach(function() {
+  hooks.beforeEach(function () {
      this.owner.register('service:coms', comsStub);
   });
 
-  test('Account menu for one account', async function(assert) {
+  test('Account menu for one account', async function (assert) {
     this.coms = this.owner.lookup('service:coms');
     this.coms.accounts.pushObject(ircAccount);
     await render(hbs`<JoinChannel />`);
@@ -33,7 +33,7 @@ module('Integration | Component | join-channel', function(hooks) {
     assert.ok(this.element.querySelector('select#account').disabled, 'is disabled');
   });
 
-  test('Account menu for multiple accounts', async function(assert) {
+  test('Account menu for multiple accounts', async function (assert) {
     this.coms = this.owner.lookup('service:coms');
     this.set('coms.accounts', [ ircAccount, xmppAccount ]);
     await render(hbs`<JoinChannel />`);
@@ -42,7 +42,7 @@ module('Integration | Component | join-channel', function(hooks) {
     assert.notOk(this.element.querySelector('select#account').disabled, 'is not disabled');
   });
 
-  test('Select different account', async function(assert) {
+  test('Select different account', async function (assert) {
     assert.expect(2);
 
     const coms = this.owner.lookup('service:coms');

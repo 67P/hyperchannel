@@ -1,8 +1,8 @@
 import generateMessageId from 'hyperchannel/utils/generate-message-id';
 import { module, test } from 'qunit';
 
-module('Unit | Utility | generate message id', function() {
-  test('it generates a random message ID string', function(assert) {
+module('Unit | Utility | generate message id', function () {
+  test('it generates a random message ID string', function (assert) {
     let result = generateMessageId();
 
     assert.strictEqual(typeof result, 'string', 'returns a string');

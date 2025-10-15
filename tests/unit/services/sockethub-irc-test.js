@@ -3,10 +3,10 @@ import { setupTest } from 'ember-qunit';
 import Channel from 'hyperchannel/models/channel';
 import { ircAccount } from '../../fixtures/accounts';
 
-module('Unit | Service | sockethub irc', function(hooks) {
+module('Unit | Service | sockethub irc', function (hooks) {
   setupTest(hooks);
 
-  test('#join directly connects a person channel', function(assert) {
+  test('#join directly connects a person channel', function (assert) {
     const service = this.owner.lookup('service:sockethub-irc');
     const channel = new Channel({ account: ircAccount, isUserChannel: true });
 

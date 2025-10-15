@@ -56,7 +56,7 @@ export default class ComsService extends Service {
     return this.channels.findBy('visible');
   }
 
-  get onboardingComplete() {
+  get onboardingComplete () {
     return isPresent(this.accounts);
   }
 
@@ -256,7 +256,7 @@ export default class ComsService extends Service {
     channel.topic = newTopic;
 
     if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.visible) {
-      Notification.requestPermission(function() {
+      Notification.requestPermission(function () {
         new Notification(channel.name, {
           body: `New Topic: ${newTopic}`
         });

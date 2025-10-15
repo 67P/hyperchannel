@@ -1,4 +1,4 @@
-export function initialize(application) {
+export function initialize (application) {
   const storage = application.lookup('service:remotestorage');
   const remoteStorage = storage.rs;
 

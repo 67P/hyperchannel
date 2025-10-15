@@ -11,7 +11,7 @@ import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-messag
  * @returns {Object} the activity object
  * @private
  */
-function buildActivityObject(account, details) {
+function buildActivityObject (account, details) {
   let baseObject = {
     context: 'xmpp',
     actor: account.sockethubPersonId
@@ -30,7 +30,7 @@ function buildActivityObject(account, details) {
  * @param {String} [type] - Can be either 'message' or 'me'
  * @returns {Object} The activity object
  */
-function buildMessageObject(account, target, message) {
+function buildMessageObject (account, target, message) {
   const job = buildActivityObject(account, {
     type: 'send',
     target: target,

@@ -6,10 +6,10 @@ import { ircAccount, xmppAccount } from '../../fixtures/accounts';
 import moment from 'moment';
 import sinon from 'sinon';
 
-module('Unit | Model | base-channel', function(hooks) {
+module('Unit | Model | base-channel', function (hooks) {
   setupTest(hooks);
 
-  test('#slug', function(assert) {
+  test('#slug', function (assert) {
     const model = new BaseChannel({
       account: ircAccount,
       name: '#kosmos-dev'
@@ -22,7 +22,7 @@ module('Unit | Model | base-channel', function(hooks) {
   // unreadMessagesClass
   //
 
-  test('#unreadMessagesClass is null when channel is visible', function(assert) {
+  test('#unreadMessagesClass is null when channel is visible', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     channel.unreadMessages = true;
     channel.visible = true;
@@ -30,7 +30,7 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.strictEqual(channel.unreadMessagesClass, null);
   });
 
-  test('#unreadMessagesClass is null when channel has no unread messages', function(assert) {
+  test('#unreadMessagesClass is null when channel has no unread messages', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     channel.unreadMessages = false;
     channel.visible = false;
@@ -38,7 +38,7 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.strictEqual(channel.unreadMessagesClass, null);
   });
 
-  test('#unreadMessagesClass is correct for unread messages', function(assert) {
+  test('#unreadMessagesClass is correct for unread messages', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     channel.unreadMessages = true;
     channel.unreadMentions = false;
@@ -47,7 +47,7 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.strictEqual(channel.unreadMessagesClass, 'unread-messages');
   });
 
-  test('#unreadMessagesClass is correct for unread mentions', function(assert) {
+  test('#unreadMessagesClass is correct for unread mentions', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     channel.unreadMessages = true;
     channel.unreadMentions = true;
@@ -60,7 +60,7 @@ module('Unit | Model | base-channel', function(hooks) {
   // sortedMessages
   //
 
-  test('#sortedMessages returns an empty array if there are no messages', function(assert) {
+  test('#sortedMessages returns an empty array if there are no messages', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
     assert.ok(Array.isArray(channel.sortedMessages));
@@ -71,14 +71,14 @@ module('Unit | Model | base-channel', function(hooks) {
   // sortedUserList
   //
 
-  test('#sortedUserList returns an empty array if there are no users', function(assert) {
+  test('#sortedUserList returns an empty array if there are no users', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
     assert.ok(Array.isArray(channel.sortedUserList));
     assert.strictEqual(channel.sortedUserList.length, 0);
   });
 
-  test('#sortedUserList returns a list of sorted usernames', function(assert) {
+  test('#sortedUserList returns a list of sorted usernames', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
     channel.userList = ['silverbucket', 'XioNox', 'raucau', '@operator',
@@ -95,7 +95,7 @@ module('Unit | Model | base-channel', function(hooks) {
   // addDateHeadline
   //
 
-  test('#addDateHeadline adds a date-headline when none exists yet', function(assert) {
+  test('#addDateHeadline adds a date-headline when none exists yet', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     channel.addDateHeadline(
       new Message({
@@ -110,7 +110,7 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.strictEqual(firstMessage.type, 'date-headline', 'has the wrong type');
   });
 
-  test('#addDateHeadline does not add a date-headline when one exists already', function(assert) {
+  test('#addDateHeadline does not add a date-headline when one exists already', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
     channel.messages.pushObject(
@@ -136,7 +136,7 @@ module('Unit | Model | base-channel', function(hooks) {
   // addMessage
   //
 
-  test('#addMessage', function(assert) {
+  test('#addMessage', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     const addDateHeadlineStub = sinon.stub(channel, 'addDateHeadline');
     const replaceMessage = sinon.stub(channel, 'replaceMessage');
@@ -161,7 +161,7 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.notOk(replaceMessage.calledOnce);
   });
 
-  test('#addMessage grouped messages', function(assert) {
+  test('#addMessage grouped messages', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     let date;
 
@@ -197,7 +197,7 @@ module('Unit | Model | base-channel', function(hooks) {
                  'marks message as grouped');
   });
 
-  test('#addMessage for message correction', function(assert) {
+  test('#addMessage for message correction', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     const addDateHeadlineStub = sinon.stub(channel, 'addDateHeadline');
     const replaceMessage = sinon.stub(channel, 'replaceMessage');
@@ -227,7 +227,7 @@ module('Unit | Model | base-channel', function(hooks) {
   // replaceMessage
   //
 
-  test('#replaceMessage', function(assert) {
+  test('#replaceMessage', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
     channel.messages.pushObject(new Message({
@@ -251,7 +251,7 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.true(oldMessage.edited, 'marks the old message as edited');
   });
 
-  test('#replaceMessage from wrong sender', function(assert) {
+  test('#replaceMessage from wrong sender', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
     channel.messages.pushObject(new Message({
@@ -275,7 +275,7 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.false(oldMessage.edited, 'does not mark the old message as edited');
   });
 
-  test('#replaceMessage that is not the last message', function(assert) {
+  test('#replaceMessage that is not the last message', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
     channel.messages.pushObject(new Message({
@@ -332,14 +332,14 @@ module('Unit | Model | base-channel', function(hooks) {
   // addUser
   //
 
-  test('#addUser adds a user to the list', function(assert) {
+  test('#addUser adds a user to the list', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     channel.addUser('some-random-user');
 
     assert.ok(channel.userList.includes('some-random-user'));
   });
 
-  test('#addUser does not add duplicates', function(assert) {
+  test('#addUser does not add duplicates', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
     channel.addUser('some-random-user');
     channel.addUser('some-random-user');
@@ -347,7 +347,7 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.deepEqual(channel.userList, ['some-random-user']);
   });
 
-  test('#domain (XMPP)', function(assert) {
+  test('#domain (XMPP)', function (assert) {
     let channel = new BaseChannel({
       account: xmppAccount,
       name: 'kosmos-dev@kosmos.chat'
@@ -362,7 +362,7 @@ module('Unit | Model | base-channel', function(hooks) {
     assert.strictEqual(channel.domain, 'kosmos.chat', 'returns the MUC domain for direct message channels');
   });
 
-  test('#domain (IRC)', function(assert) {
+  test('#domain (IRC)', function (assert) {
     const channel = new BaseChannel({
       account: ircAccount,
       name: '#kosmos-dev'

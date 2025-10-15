@@ -5,11 +5,11 @@ import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
 import { ircAccount, xmppAccount } from '../../fixtures/accounts';
 
-module('Unit | Service | coms', function(hooks) {
+module('Unit | Service | coms', function (hooks) {
   setupTest(hooks);
 
-  test('#connectServer calls connect on the appropriate transport service', function(assert) {
-    const ircStub = { connect: function() {} };
+  test('#connectServer calls connect on the appropriate transport service', function (assert) {
+    const ircStub = { connect: function () {} };
     const connectStub = sinon.stub(ircStub, 'connect');
     const service = this.owner.factoryFor('service:coms').create({ irc: ircStub });
 
@@ -19,8 +19,8 @@ module('Unit | Service | coms', function(hooks) {
     assert.ok(connectStub.calledWith(ircAccount));
   });
 
-  test('#joinChannel calls join on the appropriate transport service', function(assert) {
-    const xmppStub = { join: function() {} };
+  test('#joinChannel calls join on the appropriate transport service', function (assert) {
+    const xmppStub = { join: function () {} };
     const joinStub = sinon.stub(xmppStub, 'join');
     const service = this.owner.factoryFor('service:coms').create({ xmpp: xmppStub });
 
@@ -35,7 +35,7 @@ module('Unit | Service | coms', function(hooks) {
     assert.ok(joinStub.calledWith(channel, 'room'));
   });
 
-  test('#transferMessage calls transferMessage on the appropriate transport service', function(assert) {
+  test('#transferMessage calls transferMessage on the appropriate transport service', function (assert) {
     assert.expect(4);
     
     const msg = new Message({
@@ -43,7 +43,7 @@ module('Unit | Service | coms', function(hooks) {
       id: 'hc-1234abcd'
     });
     const xmppStub = {
-      transferMessage: function(target, message) {
+      transferMessage: function (target, message) {
         assert.strictEqual(target.id, 'testchannel@kosmos.chat');
         assert.strictEqual(target.type, 'room');
         assert.strictEqual(target.name, 'testchannel@kosmos.chat');
@@ -60,7 +60,7 @@ module('Unit | Service | coms', function(hooks) {
     service.transferMessage(channel, msg);
   });
 
-  test('#updateChannelUserList updates the users and connects the channel', function(assert) {
+  test('#updateChannelUserList updates the users and connects the channel', function (assert) {
     const observeMessage = {
       "type": "observe",
       "actor": {
@@ -103,7 +103,7 @@ module('Unit | Service | coms', function(hooks) {
     assert.strictEqual(channel.userList.length, 5);
   });
 
-  test('#sortedChannels returns channels sorted by name', function(assert) {
+  test('#sortedChannels returns channels sorted by name', function (assert) {
     const service = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount ]
     });
@@ -116,7 +116,7 @@ module('Unit | Service | coms', function(hooks) {
                      [ 'canoa', 'dominica', 'flores', 'lamu', 'phu quoc' ]);
   });
 
-  test('#channelDomains returns unique domains of all channels', function(assert) {
+  test('#channelDomains returns unique domains of all channels', function (assert) {
     const service = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount, xmppAccount ]
     });
@@ -128,7 +128,7 @@ module('Unit | Service | coms', function(hooks) {
     assert.deepEqual(service.channelDomains, ['dino.im', 'irc.libera.chat', 'kosmos.chat']);
   });
 
-  test('#groupedChannelsByDomain returns channels grouped by domain', function(assert) {
+  test('#groupedChannelsByDomain returns channels grouped by domain', function (assert) {
     const service = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount, xmppAccount ]
     });

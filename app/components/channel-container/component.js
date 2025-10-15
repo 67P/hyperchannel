@@ -60,7 +60,7 @@ export default class ChannelContainerComponent extends Component {
     // We need to define an empty handler for swipe events on the
     // #channel-content element, so that the actual handler of the app container
     // component gets triggered
-    Hammer(document.getElementById('channel-content')).on('swipe', function(){});
+    Hammer(document.getElementById('channel-content')).on('swipe', function (){});
   }
 
   focusMessageInputField () {

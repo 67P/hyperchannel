@@ -1,7 +1,7 @@
 import { isEmpty, isPresent } from '@ember/utils';
 import Message from 'hyperchannel/models/message';
 
-export default function channelMessageFromSockethubObject(message) {
+export default function channelMessageFromSockethubObject (message) {
   const channelMessage = new Message({
     type: message.object['type'] === 'me' ? 'message-chat-me' : 'message-chat',
     date: extractDate(message.published),
@@ -29,7 +29,7 @@ function extractNickname (actor) {
   }
 }
 
-function extractDate(dateField) {
+function extractDate (dateField) {
    if (isEmpty(dateField)) {
      return new Date();
    }

@@ -2,10 +2,10 @@ import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import createComponent from 'hyperchannel/tests/helpers/create-component';
 
-module('Unit | Component | link-to-username', function(hooks) {
+module('Unit | Component | link-to-username', function (hooks) {
   setupTest(hooks);
 
-  test('role returns the IRC role of the user', function(assert) {
+  test('role returns the IRC role of the user', function (assert) {
     assert.expect(3);
 
     const component = createComponent('component:link-to-username');
@@ -20,7 +20,7 @@ module('Unit | Component | link-to-username', function(hooks) {
     assert.strictEqual(component.role, 'voice');
   });
 
-  test('usernameWithoutPrefix removes IRC role prefixes', function(assert) {
+  test('usernameWithoutPrefix removes IRC role prefixes', function (assert) {
     assert.expect(3);
 
     const component = createComponent('component:link-to-username');

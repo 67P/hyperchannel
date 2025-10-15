@@ -3,10 +3,10 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-module('Integration | Component | web-push-subscription', function(hooks) {
+module('Integration | Component | web-push-subscription', function (hooks) {
   setupRenderingTest(hooks);
 
-  test('it shows the correct button', async function(assert) {
+  test('it shows the correct button', async function (assert) {
     // TODO mock navigator.serviceWorker
     // this.subscribed = false;
     await render(hbs`<WebPushSubscription @subscribed={{this.subscribed}} />`);

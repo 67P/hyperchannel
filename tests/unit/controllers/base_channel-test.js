@@ -2,10 +2,10 @@ import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { run } from '@ember/runloop';
 
-module('Unit | Controller | base_channel', function(hooks) {
+module('Unit | Controller | base_channel', function (hooks) {
   setupTest(hooks);
 
-  test('add username mention to message, with empty message', function(assert) {
+  test('add username mention to message, with empty message', function (assert) {
     const controller = this.owner.lookup('controller:base_channel');
     controller.focusMessageInputField = function () { return true; }
     assert.strictEqual(controller.newMessage, null);
@@ -15,7 +15,7 @@ module('Unit | Controller | base_channel', function(hooks) {
     assert.strictEqual(controller.newMessage, 'toshi: ');
   });
 
-  test('add username mention to message, with existing message', function(assert) {
+  test('add username mention to message, with existing message', function (assert) {
     const controller = this.owner.lookup('controller:base_channel');
     controller.focusMessageInputField = function () { return true; }
     controller.newMessage = 'hey, wasup?';
@@ -26,7 +26,7 @@ module('Unit | Controller | base_channel', function(hooks) {
                  'adds the name in front of the message');
   });
 
-  test('add username mention to message, with existing message with username', function(assert) {
+  test('add username mention to message, with existing message with username', function (assert) {
     const controller = this.owner.lookup('controller:base_channel');
     controller.focusMessageInputField = function () { return true; }
     controller.newMessage ='toshi: hey, wasup?';

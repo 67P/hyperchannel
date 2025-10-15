@@ -4,7 +4,8 @@ import config from 'hyperchannel/config/environment';
 
 export default class ConfigureSockethubRoute extends Route {
 
-  @service sockethub;
+  @service('router') router;
+@service sockethub;
 
   model () {
     return { config };

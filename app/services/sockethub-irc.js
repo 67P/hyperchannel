@@ -11,7 +11,7 @@ import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-messag
  * @returns {Object} the activity object
  * @private
  */
-function buildActivityObject(account, details) {
+function buildActivityObject (account, details) {
   let baseObject = {
     context: 'irc',
     actor: account.sockethubPersonId
@@ -29,7 +29,7 @@ function buildActivityObject(account, details) {
  * @param type {String} can be either 'message' or 'me'
  * @returns {Object} the activity object
  */
-function buildMessageObject(account, target, content, type='message') {
+function buildMessageObject (account, target, content, type='message') {
   return buildActivityObject(account, {
     type: 'send',
     target: target,

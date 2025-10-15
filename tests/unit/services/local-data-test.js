@@ -1,8 +1,8 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 
-module('Unit | Service | local data', function(hooks) {
-  hooks.beforeEach(async function() {
+module('Unit | Service | local data', function (hooks) {
+  hooks.beforeEach(async function () {
     return new Promise((resolve/*, reject*/) => {
       function nope (e) {
         console.warn('IndexedDB deletion complaint:', e);
@@ -19,7 +19,7 @@ module('Unit | Service | local data', function(hooks) {
 
   setupTest(hooks);
 
-  test('store initialization', function(assert) {
+  test('store initialization', function (assert) {
     const service = this.owner.lookup('service:local-data');
     const userSettingsStore = service.stores.userSettings;
 
@@ -39,7 +39,7 @@ module('Unit | Service | local data', function(hooks) {
   //   assert.strictEqual(currentChannel, 'kosmos');
   // });
 
-  test('storing and retrieving values', async function(assert) {
+  test('storing and retrieving values', async function (assert) {
     const service = this.owner.lookup('service:local-data');
     await service.setDefaultValues();
     const userSettingsStore = service.stores.userSettings;

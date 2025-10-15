@@ -4,7 +4,8 @@ import { isPresent } from '@ember/utils';
 
 export default class ApplicationRoute extends Route {
 
-  @service('remotestorage') storage;
+  @service('router') router;
+@service('remotestorage') storage;
   @service sockethub;
   @service localData;
   @service logger;

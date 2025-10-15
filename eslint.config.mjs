@@ -67,6 +67,15 @@ export default [
         ...globals.browser,
       },
     },
+    rules: {
+      // Require space before function parenthesis for definitions, not for calls
+      // This makes it easy to search for definitions: "functionName (" vs calls: "functionName("
+      'space-before-function-paren': ['error', {
+        anonymous: 'always',
+        named: 'always',
+        asyncArrow: 'always',
+      }],
+    },
   },
   {
     files: ['tests/**/*-test.{js,gjs}'],

@@ -34,7 +34,7 @@ export default class JoinChannelComponent extends Component {
   }
 
   @action
-  selectAccount(event) {
+  selectAccount (event) {
     this.selectedAccountId = event.target.value;
   }
 }

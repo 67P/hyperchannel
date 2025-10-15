@@ -6,10 +6,10 @@ import Service from '@ember/service';
 
 class comsStub extends Service {}
 
-module('Integration | Component | join-channel-xmpp', function(hooks) {
+module('Integration | Component | join-channel-xmpp', function (hooks) {
   setupRenderingTest(hooks);
 
-  hooks.beforeEach(function() {
+  hooks.beforeEach(function () {
     this.owner.register('service:coms', comsStub);
 
     const coms = this.owner.lookup('service:coms');
@@ -25,7 +25,7 @@ module('Integration | Component | join-channel-xmpp', function(hooks) {
     this.set('close', function () {});
   });
 
-  test('creates a channel with the given name on the passed account', async function(assert) {
+  test('creates a channel with the given name on the passed account', async function (assert) {
     assert.expect(3);
 
     this.coms.createChannel = function (account, channelName) {
@@ -43,7 +43,7 @@ module('Integration | Component | join-channel-xmpp', function(hooks) {
     await click('input[type="submit"]');
   });
 
-  test('it sends the user to the created channel', async function(assert) {
+  test('it sends the user to the created channel', async function (assert) {
     assert.expect(2);
 
     this.coms.createChannel = function () {
@@ -61,7 +61,7 @@ module('Integration | Component | join-channel-xmpp', function(hooks) {
     await click('input[type="submit"]');
   });
 
-  test('it closes the modal when finished', async function(assert) {
+  test('it closes the modal when finished', async function (assert) {
     assert.expect(1);
 
     this.set('close', function () {
