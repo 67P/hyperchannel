@@ -40,7 +40,7 @@ module('Unit | Component | message-chat', function (hooks) {
   test('#formattedContent converts color codes', function (assert) {
     let component = createComponent('component:message-chat', { args: {
       message: { content: 'put some \u000313color\u000f and \u0002bold\u000f into your life. Or \u000305\u0002both\u000f', nickname: 'cerealkiller' }
-     });
+    }});
 
     assert.strictEqual(component.formattedContent.toString(), 'put some <span class="color-13">color</span> and <span class="bold">bold</span> into your life. Or <span class="color-05"><span class="bold">both</span>');
   });
