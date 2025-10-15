@@ -62,7 +62,7 @@ export default class ApplicationController extends Controller {
 
     // Switch to last channel if the channel parted was currently open
     if (channel.visible) {
-      let lastChannel = this.coms.sortedChannels.lastObject;
+      let lastChannel = this.coms.sortedChannels.at(-1);
       this.router.transitionTo('channel', lastChannel);
     }
   }

@@ -12,7 +12,7 @@ export default class MessageUserActionsComponent extends Component {
 
     const lastId = this.args.channel.sortedMessages
                        .filterBy('nickname', this.args.channel.account.nickname)
-                       .lastObject?.id;
+                       .at(-1)?.id;
     return isPresent(lastId) && (lastId === this.args.message.id);
   }
 
