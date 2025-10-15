@@ -1,22 +1,22 @@
-import TextField from '@ember/component/text-field';
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
 
-export default class ChannelInputFieldComponent extends TextField {
+export default class ChannelInputFieldComponent extends Component {
 
-  keyUp (ev) {
+  @action
+  handleKeyUp (ev) {
     // console.debug('keyUp', ev);
 
     if (ev.altKey) {
       switch (ev.key) {
         case 'k':
-          this._insertAtCaret('\u0003');
+          this._insertAtCaret(ev.target, '\u0003');
           break;
       }
     }
   }
 
-  _insertAtCaret (myValue) {
-    let el = this.element;
-
+  _insertAtCaret (el, myValue) {
     if (document.selection) {
       el.focus();
       el = document.selection.createRange();
