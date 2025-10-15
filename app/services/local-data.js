@@ -1,6 +1,6 @@
 import Service from '@ember/service';
 import { isEmpty } from '@ember/utils';
-import * as localforage from 'localforage';
+import localforage from 'localforage';
 // import config from 'hyperchannel/config/environment';
 
 const defaultValues = {
