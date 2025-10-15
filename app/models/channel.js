@@ -17,7 +17,7 @@ export default class Channel extends BaseChannel {
           target: '_blank'
         },
       });
-      return new htmlSafe(topic);
+      return htmlSafe(topic);
     } else {
       return '';
     }
