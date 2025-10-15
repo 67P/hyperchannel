@@ -6,12 +6,16 @@
 /release/
 
 # misc
+/config/
 /coverage/
 !.*
 .*/
 /pnpm-lock.yaml
 ember-cli-update.json
 *.html
+*.md
+*.hbs
+*.json
 
 # issue archives
 /issues/

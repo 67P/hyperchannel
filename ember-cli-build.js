@@ -6,9 +6,10 @@ const tailwind = require('tailwindcss');
 module.exports = function (defaults) {
   const app = new EmberApp(defaults, {
     fingerprint: { enabled: false },
-    sourcemaps: { // enabled sourcemaps for all environments (e.g. for sentry integration)
+    sourcemaps: {
+      // enabled sourcemaps for all environments (e.g. for sentry integration)
       enabled: true,
-      extensions: ['js']
+      extensions: ['js'],
     },
     postcssOptions: {
       compile: {
@@ -16,7 +17,10 @@ module.exports = function (defaults) {
         extension: 'scss',
         parser: require('postcss-scss'),
         cacheExclude: [],
-        cacheInclude: [/.*\.(css|scss|sass|hbs|html)$/, /tailwindcss-config\.js$/],
+        cacheInclude: [
+          /.*\.(css|scss|sass|hbs|html)$/,
+          /tailwindcss-config\.js$/,
+        ],
         plugins: [
           {
             module: require('@csstools/postcss-sass'),
@@ -29,9 +33,9 @@ module.exports = function (defaults) {
           {
             module: tailwind,
             options: {
-              config: './config/tailwindcss-config.js'
-            }
-          }
+              config: './config/tailwindcss-config.js',
+            },
+          },
         ],
       },
     },
