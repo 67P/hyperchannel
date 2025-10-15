@@ -102,7 +102,7 @@ export default class SockethubIrcService extends Service {
   }
 
   handleJoinCompleted (message) {
-    const channel = this.coms.channels.findBy('sockethubChannelId', message.target.id);
+    const channel = this.coms.channels.find(ch => ch.sockethubChannelId === message.target.id);
     if (channel) {
       this.queryAttendance(channel);
     }
@@ -110,10 +110,10 @@ export default class SockethubIrcService extends Service {
 
   handlePresenceUpdate (message) {
     const hostname = message.target.id.match(/(.+)\//)[1];
-    const account = this.coms.accounts.findBy('server.hostname', hostname);
+    const account = this.coms.accounts.find(acc => acc.server.hostname === hostname);
     if (isEmpty(account)) { console.warn('No account for presence update message found.', message); return; }
 
-    let channel = this.coms.channels.findBy('sockethubChannelId', message.target.id);
+    let channel = this.coms.channels.find(ch => ch.sockethubChannelId === message.target.id);
 
     // TODO document why there might be no channel instance, or remove
     if (isEmpty(channel)) {
@@ -193,7 +193,7 @@ export default class SockethubIrcService extends Service {
    */
   addMessageToChannel (message) {
     const hostname = message.actor.id.match(/.+@(.+)/)[1];
-    const account = this.coms.accounts.findBy('server.hostname', hostname);
+    const account = this.coms.accounts.find(acc => acc.server.hostname === hostname);
 
     if (isEmpty(account)) {
       console.warn('Could not find account for message', message);
@@ -271,16 +271,16 @@ export default class SockethubIrcService extends Service {
     if (account.nickname === message.target.name) {
       // Direct message
       targetChannelName = message.actor.name || message.actor.id;
-      channel = this.coms.channels.filterBy('account', account)
-                                  .findBy('name', targetChannelName);
+      channel = this.coms.channels.filter(ch => ch.account === account)
+                                  .find(ch => ch.name === targetChannelName);
       if (!channel) {
         channel = this.coms.createUserChannel(account, targetChannelName);
       }
     } else {
       // Channel message
       targetChannelName = message.target.name;
-      channel = this.coms.channels.filterBy('account', account)
-                                  .findBy('name', targetChannelName);
+      channel = this.coms.channels.filter(ch => ch.account === account)
+                                  .find(ch => ch.name === targetChannelName);
       if (!channel) {
         channel = this.coms.createChannel(account, targetChannelName);
       }

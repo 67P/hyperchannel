@@ -11,7 +11,7 @@ export default class JoinChannelComponent extends Component {
 
   get selectedAccount () {
     if (isPresent(this.selectedAccountId)) {
-      return this.coms.accounts.findBy('id', this.selectedAccountId);
+      return this.coms.accounts.find(acc => acc.id === this.selectedAccountId);
     } else {
       return this.preSelectedAccount;
     }
