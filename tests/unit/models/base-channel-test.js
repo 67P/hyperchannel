@@ -106,7 +106,7 @@ module('Unit | Model | base-channel', function (hooks) {
     );
 
     assert.strictEqual(channel.sortedMessages.length, 1, 'has no messages');
-    let firstMessage = channel.sortedMessages.firstObject;
+    let firstMessage = channel.sortedMessages[0];
     assert.strictEqual(firstMessage.type, 'date-headline', 'has the wrong type');
   });
 
