@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import { bindKeyboardShortcuts, unbindKeyboardShortcuts } from 'ember-keyboard-shortcuts';
 

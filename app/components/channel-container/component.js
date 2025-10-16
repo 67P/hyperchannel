@@ -1,7 +1,7 @@
 /* global Hammer */
 import Component from '@glimmer/component';
 import { later, scheduleOnce } from '@ember/runloop';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { task } from 'ember-concurrency';
 import { action } from '@ember/object';

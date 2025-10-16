@@ -1,5 +1,5 @@
 import Route from '@ember/routing/route';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import config from 'hyperchannel/config/environment';
 
 export default class ConfigureSockethubRoute extends Route {

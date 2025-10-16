@@ -1,4 +1,4 @@
-import Service, { inject as service } from '@ember/service';
+import Service, { service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
 import UserChannel from 'hyperchannel/models/user_channel';
 import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';

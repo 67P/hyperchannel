@@ -1,4 +1,4 @@
-import Service, { inject as service } from '@ember/service';
+import Service, { service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
 import { A } from '@ember/array';
 import { tracked } from '@glimmer/tracking';

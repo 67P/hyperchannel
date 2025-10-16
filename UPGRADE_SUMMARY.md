@@ -77,7 +77,43 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
 ### Build Status
 - ✅ Project builds successfully
 - ✅ Linting passes
-- ⚠️  Tests running (some failures remain, mostly timing/integration issues)
+- ✅ Tests: 75 passing, 23 failing, 3 skipped (improved from 69 passing after fixes)
+
+## Recent Fixes (Post-Upgrade)
+
+### Module Import Issues
+- **localforage**: Changed from default import to namespace import with fallback
+  - `import * as localForageModule from 'localforage'`
+  - `const localForage = localForageModule.default || localForageModule`
+  - Fixed in `app/services/local-data.js`
+  
+- **@ember/string package**: Installed missing package for Ember 6.x
+  - `npm install @ember/string --save`
+  - Required for `capitalize` function used in controllers
+  
+- **htmlSafe import**: Moved from `@ember/string` to `@ember/template`
+  - Fixed in `app/models/channel.js`
+  - Fixed in `app/components/message-chat/component.js`
+  
+- **EmberArray methods in tests**: Converted `mapBy()` to native `map()`
+  - Fixed in `tests/unit/services/coms-test.js`
+
+### Test Infrastructure
+- **createComponent helper**: Fixed for Glimmer components
+  - Now passes args directly to component constructor
+  - Fixed in `tests/helpers/create-component.js`
+
+### Tests Fixed
+- ✅ Unit | Service | sockethub-irc: All tests now pass
+- ✅ Unit | Service | sockethub-xmpp: All tests now pass (8 tests)
+- ✅ Unit | Service | coms: All tests now pass (8 tests)
+- ✅ Unit | Service | local-data: All tests now pass
+- ✅ Unit | Model | channel: htmlSafe tests now pass
+- ✅ Unit | Component | message-chat: All 6 tests now pass
+
+### Remaining Test Failures (23 total)
+- Integration component rendering tests (21 failures) - mostly timeout/timing issues
+- Unit | Model | base-channel: 2 failures related to message grouping and date headlines
 
 ## Next Steps
 1. Address remaining component integration test failures

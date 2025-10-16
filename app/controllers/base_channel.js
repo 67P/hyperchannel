@@ -1,6 +1,6 @@
 import Controller, { inject as controller } from '@ember/controller';
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import { capitalize } from '@ember/string';
 import { tracked } from '@glimmer/tracking';
