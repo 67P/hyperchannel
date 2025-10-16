@@ -1,7 +1,9 @@
 import Service from '@ember/service';
 import { isEmpty } from '@ember/utils';
-import localforage from 'localforage';
+import * as localForageModule from 'localforage';
 // import config from 'hyperchannel/config/environment';
+
+const localForage = localForageModule.default || localForageModule;
 
 const defaultValues = {
   userSettings: {
@@ -14,7 +16,7 @@ export default class LocalDataService extends Service {
   constructor () {
     super(...arguments);
     this.stores = {
-      userSettings: localforage.createInstance({
+      userSettings: localForage.createInstance({
         name: 'hyperchannel', storeName: 'userSettings'
       })
     }
