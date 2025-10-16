@@ -112,7 +112,7 @@ module('Unit | Service | coms', function (hooks) {
       service.channels.pushObject(new Channel({ account: ircAccount, name: cn }));
     })
 
-    assert.deepEqual(service.sortedChannels.mapBy('name'),
+    assert.deepEqual(service.sortedChannels.map(ch => ch.name),
                      [ 'canoa', 'dominica', 'flores', 'lamu', 'phu quoc' ]);
   });
 
