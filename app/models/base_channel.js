@@ -120,8 +120,12 @@ export default class BaseChannel {
 
     this.addDateHeadline(message);
 
-    const prevMsg = this.messages[this.messages.length - 1];
-    if ((prevMsg.nickname === message.nickname) &&
+    // Find the last non-date-headline message for grouping check
+    const chatMessages = this.messages.rejectBy('type', 'date-headline');
+    const prevMsg = chatMessages.lastObject;
+    
+    if (prevMsg && 
+        (prevMsg.nickname === message.nickname) &&
          moment(message.date).isBefore(moment(prevMsg.date).add(120, 'seconds'))) {
       message.grouped = true;
     }
