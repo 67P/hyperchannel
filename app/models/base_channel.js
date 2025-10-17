@@ -122,7 +122,7 @@ export default class BaseChannel {
 
     // Find the last non-date-headline message for grouping check
     const chatMessages = this.messages.rejectBy('type', 'date-headline');
-    const prevMsg = chatMessages.lastObject;
+    const prevMsg = chatMessages[chatMessages.length - 1];
     
     if (prevMsg && 
         (prevMsg.nickname === message.nickname) &&
