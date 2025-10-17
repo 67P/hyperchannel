@@ -20,6 +20,10 @@ export default class MessageChatComponent extends Component {
     this.userColorHex = getRGB(this.args.message.nickname).toString();
   }
 
+  get userColorStyle () {
+    return htmlSafe(`color: ${this.userColorHex}`);
+  }
+
   get datetime () {
     return moment(this.args.message.date).format('YYYY-MM-DD[T]HH:mm');
   }

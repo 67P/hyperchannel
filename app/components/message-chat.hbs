@@ -4,7 +4,7 @@
     {{#unless @message.grouped}}
       <span class="w-10 h-10 flex justify-center items-center text-center
                    text-white text-xl rounded bg-neutral-200">
-        <span class="flex-1" style={{html-safe (concat "color: " this.userColorHex)}}>
+        <span class="flex-1" style={{this.userColorStyle}}>
           {{this.avatarPlaceholderLetter}}
         </span>
       </span>

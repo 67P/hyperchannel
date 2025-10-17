@@ -77,9 +77,15 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
 ### Build Status
 - ✅ Project builds successfully
 - ✅ Linting passes
-- ✅ Tests: 75 passing, 23 failing, 3 skipped (improved from 69 passing after fixes)
+- ⚠️  Tests: Status pending (test suite currently hangs, investigating)
 
 ## Recent Fixes (Post-Upgrade)
+
+### Component Structure Migration
+- **Pod-to-Octane conversion**: Migrated all components from pod structure (component.js + template.hbs in subdirectories) to flat co-located structure (component-name.js + component-name.hbs in components/)
+  - Used `ember-codemod-pod-to-octane` codemod
+  - Fixes template resolution issues in Ember 6 integration tests
+  - Both old pod directories and new flat files currently exist
 
 ### Module Import Issues
 - **localforage**: Changed from default import to namespace import with fallback
@@ -111,9 +117,19 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
 - ✅ Unit | Model | channel: htmlSafe tests now pass
 - ✅ Unit | Component | message-chat: All 6 tests now pass
 
+### Code Quality Fixes
+- **date-headline component**: Fixed context binding in `later()` call for `scheduleUpdate` action
+  - Changed from `later(this.scheduleUpdate, ...)` to `later(this, this.scheduleUpdate, ...)`
+  - Ensures proper `this` context when callback executes
+
 ### Remaining Test Failures (23 total)
 - Integration component rendering tests (21 failures) - mostly timeout/timing issues
 - Unit | Model | base-channel: 2 failures related to message grouping and date headlines
+
+### Known Issues
+- Test suite currently hangs when running - investigating root cause
+- May be related to async operations or infinite loops in one test
+- Individual test isolation may help identify the problematic test
 
 ## Next Steps
 1. Address remaining component integration test failures
