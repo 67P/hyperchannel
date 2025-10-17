@@ -4,7 +4,7 @@ import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
-import { xmppAccount } from '../../../fixtures/accounts';
+import { xmppAccount } from '../../fixtures/accounts';
 
 module('Integration | Component | message-chat', function (hooks) {
   setupRenderingTest(hooks);

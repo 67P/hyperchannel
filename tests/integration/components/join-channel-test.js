@@ -9,7 +9,7 @@ import {
 import { hbs } from 'ember-cli-htmlbars';
 import { A } from '@ember/array';
 import Service from '@ember/service';
-import { ircAccount, xmppAccount } from '../../../fixtures/accounts';
+import { ircAccount, xmppAccount } from '../../fixtures/accounts';
 
 class comsStub extends Service {
   accounts = A();
