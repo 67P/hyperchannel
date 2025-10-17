@@ -31,7 +31,7 @@ export default class DateHeadlineComponent extends Component {
     if (config.environment === 'test') return;
 
     if (this.headline === 'Today' || this.headline === 'Yesterday') {
-      later(this.scheduleUpdate, this.updateInterval);
+      later(this, this.scheduleUpdate, this.updateInterval);
     }
   }
 
