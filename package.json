@@ -94,6 +94,7 @@
     "eslint-plugin-n": "^17.17.0",
     "eslint-plugin-qunit": "^8.1.2",
     "globals": "^15.15.0",
+    "hammerjs": "^2.0.8",
     "inobounce": "^0.2.1",
     "linkify-string": "^4.1.1",
     "linkifyjs": "^4.1.1",

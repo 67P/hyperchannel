@@ -1,8 +1,8 @@
-/* global Hammer */
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
+import Hammer from 'hammerjs';
 import isDescendantOf from 'hyperchannel/utils/dom/is-descendant-of';
 
 export default class ApplicationController extends Controller {
