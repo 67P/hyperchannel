@@ -35,12 +35,12 @@
       </label>
       <button type="submit" title="Send"
               class="btn-icon-sm btn-blue align-middle mr-0.5">
-        <IconSend />
+        <Icon::send />
       </button>
       <button {{on "click" this.cancelMessageCorrection}}
               type="reset" title="Cancel"
               class="btn-icon-sm btn-red align-middle">
-        <IconX />
+        <Icon::x />
       </button>
     </form>
     {{else}}
@@ -48,7 +48,7 @@
       {{this.formattedContent}}
       {{#if @message.edited}}
       <span title="Edited">
-        <IconEdit @class="inline w-4 h-4 text-neutral-300 group-hover:text-neutral-400" />
+        <Icon::edit @class="inline w-4 h-4 text-neutral-300 group-hover:text-neutral-400" />
       </span>
       {{/if}}
     </div>

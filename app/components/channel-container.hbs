@@ -12,16 +12,16 @@
       </p>
       <nav id="channel-nav">
         <LinkTo @route="channel.index" @model={{@channel}} {{on "click" (fn this.menu "channel" "show")}}>
-          <IconUsers />
+          <Icon::users />
         </LinkTo>
         <LinkTo @route="channel.shares" @model={{@channel}} {{on "click" (fn this.menu "channel" "show")}}>
-          <IconPaperclip />
+          <Icon::paperclip />
         </LinkTo>
         <LinkTo @route="channel.settings" @model={{@channel}} {{on "click" (fn this.menu "channel" "show")}}>
-          <IconInfo />
+          <Icon::info />
         </LinkTo>
         <a {{on "click" (fn this.leaveChannel @channel)}} title="Leave {{@channel.name}}">
-          <IconLogOut />
+          <Icon::log-out />
         </a>
       </nav>
     </header>
