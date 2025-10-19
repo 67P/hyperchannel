@@ -18,16 +18,22 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           cache: npm
       - name: Install Dependencies
         run: npm ci
-      - name: Lint
-        run: npm run lint
+      - name: Lint JavaScript
+        run: npm run lint:js
+      - name: Lint Templates
+        run: npm run lint:hbs
+      - name: Lint CSS
+        run: npm run lint:css
+      - name: Check Formatting
+        run: npm run lint:format
 
   test:
     name: "Test"
@@ -35,13 +41,30 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           cache: npm
       - name: Install Dependencies
         run: npm ci
       - name: Run Tests
-        run: npm test
+        run: npm run test:ember
+
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build Production
+        run: npm run build
