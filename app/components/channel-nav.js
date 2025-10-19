@@ -3,6 +3,7 @@ import { action } from '@ember/object';
 import { service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import { bindKeyboardShortcuts, unbindKeyboardShortcuts } from 'ember-keyboard-shortcuts';
+import JoinChannel from 'hyperchannel/components/join-channel';
 
 export default class ChannelNavComponent extends Component {
 
@@ -48,7 +49,7 @@ export default class ChannelNavComponent extends Component {
 
   @action
   joinChannel () {
-    this.modals.open('join-channel');
+    this.modals.open(JoinChannel);
   }
 
   @action
