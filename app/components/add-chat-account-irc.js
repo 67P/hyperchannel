@@ -49,7 +49,8 @@ export default class AddChatAccountIrcComponent extends Component {
   async addAccount () {
     const account = this.instantiateAccount();
     this.coms.accounts.push(account);
-    return this.storage.saveAccount(account).then(() => account);
+    await this.storage.saveAccount(account);
+    return account;
   }
 
   addDefaultChannels (account) {

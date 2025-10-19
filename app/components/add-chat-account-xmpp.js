@@ -29,7 +29,8 @@ export default class AddChatAccountXmppComponent extends Component {
     });
 
     this.coms.accounts.push(account);
-    return this.storage.saveAccount(account).then(() => account);
+    await this.storage.saveAccount(account);
+    return account;
   }
 
   addDefaultChannels (account) {
