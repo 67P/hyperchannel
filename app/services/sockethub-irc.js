@@ -78,7 +78,7 @@ export default class SockethubIrcService extends Service {
         sasl: account.server.sasl,
         nick: account.nickname,
         // username: account.username,
-        password: account.password
+        ...(account.password && { password: account.password }),
       }
     });
 
