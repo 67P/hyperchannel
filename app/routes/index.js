@@ -3,8 +3,8 @@ import { service } from '@ember/service';
 
 export default class IndexRoute extends Route {
 
-  @service('router') router;
-@service localData;
+  @service router;
+  @service localData;
   @service coms;
 
   get userSettings () {

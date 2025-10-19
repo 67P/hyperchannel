@@ -1,5 +1,37 @@
 {{page-title "Hyperchannel"}}
 
-{{outlet}}
+{{#if this.showChatInterface}}
+
+  <div class="app-container {{if this.showGlobalMenu "global-menu-open"}} {{if this.showChannelMenu "channel-menu-open"}}"
+       {{recognize-gesture "swipeleft" "swiperight" "tap" domEvents=true touchAction="auto" inputClass=this.hammerInputClass}}
+       {{on "swipeleft" this.swipeLeft}} {{on "swiperight" this.swipeRight}} {{on "tap" this.tap}}>
+    <div id="global">
+      <header id="sitename">
+        <h1>Kosmos</h1>
+      </header>
+
+      <div class="main">
+        <nav id="channels" aria-label="channel navigation">
+          <ChannelNav @onLeaveChannel={{this.leaveChannel}} />
+        </nav>
+      </div>
+
+      <footer>
+        <nav>
+          <button {{on "click" this.openSettingsModal}} type="button">
+            <Icon::settings />
+          </button>
+        </nav>
+      </footer>
+    </div>
+
+    {{outlet}}
+  </div>
+
+{{else}}
+
+  {{outlet}}
+
+{{/if}}
 
 <EpmModalContainer />
