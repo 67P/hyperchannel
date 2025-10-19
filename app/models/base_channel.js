@@ -1,6 +1,6 @@
 import { isEmpty, isPresent } from '@ember/utils';
-import { A } from '@ember/array';
 import { tracked, cached } from '@glimmer/tracking';
+import { TrackedArray } from 'tracked-built-ins';
 import Message from 'hyperchannel/models/message';
 import moment from 'moment';
 
@@ -13,8 +13,8 @@ export default class BaseChannel {
   @tracked isLogged;
   @tracked connected = false;
   @tracked topic = null;
-  userList = A([]);
-  messages = A([]);
+  @tracked userList = new TrackedArray([]);
+  @tracked messages = new TrackedArray([]);
   @tracked unreadMessages = false;
   @tracked unreadMentions = false;
   @tracked visible = false; // Current/active channel

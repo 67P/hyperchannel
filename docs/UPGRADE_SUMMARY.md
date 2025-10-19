@@ -10,8 +10,11 @@
 ## Modernization Changes
 
 ### Array Handling (40+ occurrences)
-- Removed `@tracked` decorator from EmberArray properties
-- Converted EmberArray methods to standard JavaScript:
+- **For reactive arrays**: Use `TrackedArray` from `tracked-built-ins` with `@tracked` decorator
+  - Service/model arrays that need to trigger re-renders: `@tracked arrayName = new TrackedArray([])`
+  - Example: `accounts`, `channels`, `messages`, `userList`
+- **For computed/derived arrays**: Use native JavaScript arrays with `@cached` getters
+  - Converted EmberArray methods to standard JavaScript:
   - `pushObject()` → `push()`
   - `removeObject(item)` → `splice(indexOf(item), 1)`
   - `lastObject` → `at(-1)` or `[length-1]`
@@ -126,6 +129,14 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
 - Integration component rendering tests (21 failures) - mostly timeout/timing issues
 - Unit | Model | base-channel: 2 failures related to message grouping and date headlines
 
+### Post-Upgrade Reactivity Fix
+- **Issue**: Channels, messages, and users not updating in templates after initial load
+- **Root cause**: EmberArray (`A([])`) without `@tracked` doesn't trigger reactivity in Ember 6.4
+- **Solution**: Replaced with `TrackedArray` from `tracked-built-ins` + `@tracked` decorator
+  - Fixed in `app/services/coms.js`: `accounts` and `channels` arrays
+  - Fixed in `app/models/base_channel.js`: `messages` and `userList` arrays
+- **Result**: Channel list, messages, and user lists now update reactively ✅
+
 ### Known Issues
 - Test suite currently hangs when running - investigating root cause
 - May be related to async operations or infinite loops in one test
@@ -138,6 +149,8 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
 4. Consider updating other deprecated patterns as they're discovered
 
 ## Notes
-- EmberArray methods are still supported in Ember 6.4 but avoided where conflicts with tracked properties exist
+- **Array reactivity**: Use `TrackedArray` from `tracked-built-ins` for reactive arrays that need to update templates
+- EmberArray (`A([])`) without `@tracked` does NOT trigger re-renders in modern Ember
+- `@tracked` decorator alone with native arrays doesn't track mutations (push/splice), only reassignments
 - `space.js` model intentionally kept with EmberArray as it doesn't conflict with reactivity
 - Build succeeds with only SASS deprecation warnings (not critical)

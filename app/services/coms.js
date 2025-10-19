@@ -1,7 +1,7 @@
 import Service, { service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
-import { A } from '@ember/array';
 import { tracked } from '@glimmer/tracking';
+import { TrackedArray } from 'tracked-built-ins';
 import IrcAccount from 'hyperchannel/models/account/irc';
 import XmppAccount from 'hyperchannel/models/account/xmpp';
 import Channel from 'hyperchannel/models/channel';
@@ -28,12 +28,12 @@ export default class ComsService extends Service {
    * A collection of all account model instances
    * @type {Account[]}
    */
-  accounts = A([]);
+  @tracked accounts = new TrackedArray([]);
   /**
    * A collection of all channel instances
    * @type {Channel[] | UserChannel}
    */
-  channels = A([]);
+  @tracked channels = new TrackedArray([]);
 
   get sortedChannels () {
     return [...this.channels].sort((a, b) => 
