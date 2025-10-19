@@ -113,7 +113,7 @@ module('Unit | Model | base-channel', function (hooks) {
   test('#addDateHeadline does not add a date-headline when one exists already', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
-    channel.messages.pushObject(
+    channel.messages.push(
       new Message({
         type: 'date-headline',
         date: moment().startOf('day').toDate(),
@@ -141,7 +141,7 @@ module('Unit | Model | base-channel', function (hooks) {
     const addDateHeadlineStub = sinon.stub(channel, 'addDateHeadline');
     const replaceMessage = sinon.stub(channel, 'replaceMessage');
 
-    channel.messages.pushObject(new Message({
+    channel.messages.push(new Message({
       type: 'message-chat', date: new Date(), id: '123bca',
       content: 'Once we accept our limits, we go beyond them.'
     }));
@@ -153,7 +153,7 @@ module('Unit | Model | base-channel', function (hooks) {
 
     channel.addMessage(newMessage);
 
-    assert.strictEqual(channel.messages.filterBy('type', 'message-chat').length, 2,
+    assert.strictEqual(channel.messages.filter(item => item['type'] === 'message-chat').length, 2,
                  'adds the new message');
 
     assert.ok(addDateHeadlineStub.calledOnce);
@@ -169,31 +169,31 @@ module('Unit | Model | base-channel', function (hooks) {
       type: 'message-chat', date: moment().toDate(),
       nickname: 'iceman', content: 'hi there', id: '123'
     }));
-    assert.false(channel.messages.lastObject.grouped,
+    assert.false(channel.messages.at(-1).grouped,
                  'does not mark message as grouped when there is no previous message');
 
-    date = moment(channel.messages.lastObject.date).add(3, 'seconds').toDate();
+    date = moment(channel.messages.at(-1).date).add(3, 'seconds').toDate();
     channel.addMessage(new Message({
       type: 'message-chat', date: date,
       nickname: 'cyberbob', content: 'ohai', id: '234'
     }));
-    assert.false(channel.messages.lastObject.grouped,
+    assert.false(channel.messages.at(-1).grouped,
                  'does not mark message as grouped when previous one is from different nick');
 
-    date = moment(channel.messages.lastObject.date).add(300, 'seconds').toDate();
+    date = moment(channel.messages.at(-1).date).add(300, 'seconds').toDate();
     channel.addMessage(new Message({
       type: 'message-chat', date: date,
       nickname: 'cyberbob', content: 'how is life?', id: '456'
     }));
-    assert.false(channel.messages.lastObject.grouped,
+    assert.false(channel.messages.at(-1).grouped,
                  'does not mark message as grouped when previous one is too long ago');
 
-    date = moment(channel.messages.lastObject.date).add(30, 'seconds').toDate();
+    date = moment(channel.messages.at(-1).date).add(30, 'seconds').toDate();
     channel.addMessage(new Message({
       type: 'message-chat', date: date,
       nickname: 'cyberbob', content: 'want to meet afk?', id: '567'
     }));
-    assert.true(channel.messages.lastObject.grouped,
+    assert.true(channel.messages.at(-1).grouped,
                  'marks message as grouped');
   });
 
@@ -202,7 +202,7 @@ module('Unit | Model | base-channel', function (hooks) {
     const addDateHeadlineStub = sinon.stub(channel, 'addDateHeadline');
     const replaceMessage = sinon.stub(channel, 'replaceMessage');
 
-    channel.messages.pushObject(new Message({
+    channel.messages.push(new Message({
       type: 'message-chat', date: new Date(), id: '123bca',
       content: 'Once we accept our limits, we go beyond them.'
     }));
@@ -215,7 +215,7 @@ module('Unit | Model | base-channel', function (hooks) {
 
     channel.addMessage(newMessage);
 
-    assert.strictEqual(channel.messages.filterBy('type', 'message-chat').length, 1,
+    assert.strictEqual(channel.messages.filter(item => item['type'] === 'message-chat').length, 1,
                  'does not add a new message');
 
     assert.ok(replaceMessage.calledOnce);
@@ -230,7 +230,7 @@ module('Unit | Model | base-channel', function (hooks) {
   test('#replaceMessage', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
-    channel.messages.pushObject(new Message({
+    channel.messages.push(new Message({
       date: moment().subtract(1, 'minutes'),
       type: 'message-chat', nickname: 'alice',
       id: '234abc', content: 'Merry Christmus, Mr. Klaus!'
@@ -245,7 +245,7 @@ module('Unit | Model | base-channel', function (hooks) {
 
     channel.replaceMessage(newMessage);
 
-    const oldMessage = channel.messages.findBy('id', '234abc');
+    const oldMessage = channel.messages.find(item => item['id'] === '234abc');
 
     assert.strictEqual(oldMessage.content, newMessage.content, 'replaces the message content');
     assert.true(oldMessage.edited, 'marks the old message as edited');
@@ -254,7 +254,7 @@ module('Unit | Model | base-channel', function (hooks) {
   test('#replaceMessage from wrong sender', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
-    channel.messages.pushObject(new Message({
+    channel.messages.push(new Message({
       nickname: 'mrklaus',
       type: 'message-chat', date: new Date(),
       id: '234abc', content: 'Merry Christmas, everyone!'
@@ -269,7 +269,7 @@ module('Unit | Model | base-channel', function (hooks) {
 
     channel.replaceMessage(newMessage);
 
-    const oldMessage = channel.messages.findBy('id', '234abc');
+    const oldMessage = channel.messages.find(item => item['id'] === '234abc');
 
     assert.notEqual(oldMessage.content, newMessage.content, 'does not replace the message content');
     assert.false(oldMessage.edited, 'does not mark the old message as edited');
@@ -278,13 +278,13 @@ module('Unit | Model | base-channel', function (hooks) {
   test('#replaceMessage that is not the last message', function (assert) {
     const channel = new BaseChannel({ account: xmppAccount });
 
-    channel.messages.pushObject(new Message({
+    channel.messages.push(new Message({
       date: moment().subtract(5, 'minutes').toDate(),
       nickname: 'mrklaus', type: 'message-chat',
       id: '234abc', content: 'Merry Christmus, everyone!'
     }));
 
-    channel.messages.pushObject(new Message({
+    channel.messages.push(new Message({
       date: moment().subtract(1, 'minutes').toDate(),
       nickname: 'mrklaus', type: 'message-chat',
       id: '567cde', content: 'My workshop is closed over the holidays.'
@@ -299,7 +299,7 @@ module('Unit | Model | base-channel', function (hooks) {
 
     channel.replaceMessage(newMessage);
 
-    const oldMessage = channel.messages.findBy('id', '234abc');
+    const oldMessage = channel.messages.find(item => item['id'] === '234abc');
 
     assert.notEqual(oldMessage.content, newMessage.content, 'does not replace the message content');
     assert.false(oldMessage.edited, 'does not mark the old message as edited');

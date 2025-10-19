@@ -109,7 +109,7 @@ module('Unit | Service | coms', function (hooks) {
     });
 
     ['dominica', 'phu quoc', 'lamu', 'canoa', 'flores'].forEach(cn => {
-      service.channels.pushObject(new Channel({ account: ircAccount, name: cn }));
+      service.channels.push(new Channel({ account: ircAccount, name: cn }));
     })
 
     assert.deepEqual(service.sortedChannels.map(ch => ch.name),
@@ -120,10 +120,10 @@ module('Unit | Service | coms', function (hooks) {
     const service = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount, xmppAccount ]
     });
-    service.channels.pushObject(new Channel({ account: ircAccount, name: 'kosmos' }));
-    service.channels.pushObject(new Channel({ account: ircAccount, name: 'kosmos-random' }));
-    service.channels.pushObject(new Channel({ account: xmppAccount, name: 'kosmos@kosmos.chat' }));
-    service.channels.pushObject(new Channel({ account: xmppAccount, name: 'chat@dino.im' }));
+    service.channels.push(new Channel({ account: ircAccount, name: 'kosmos' }));
+    service.channels.push(new Channel({ account: ircAccount, name: 'kosmos-random' }));
+    service.channels.push(new Channel({ account: xmppAccount, name: 'kosmos@kosmos.chat' }));
+    service.channels.push(new Channel({ account: xmppAccount, name: 'chat@dino.im' }));
 
     assert.deepEqual(service.channelDomains, ['dino.im', 'irc.libera.chat', 'kosmos.chat']);
   });
@@ -132,10 +132,10 @@ module('Unit | Service | coms', function (hooks) {
     const service = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount, xmppAccount ]
     });
-    service.channels.pushObject(new Channel({ account: ircAccount, name: 'kosmos' }));
-    service.channels.pushObject(new Channel({ account: ircAccount, name: 'kosmos-random' }));
-    service.channels.pushObject(new Channel({ account: xmppAccount, name: 'kosmos@kosmos.chat' }));
-    service.channels.pushObject(new Channel({ account: xmppAccount, name: 'chat@dino.im' }));
+    service.channels.push(new Channel({ account: ircAccount, name: 'kosmos' }));
+    service.channels.push(new Channel({ account: ircAccount, name: 'kosmos-random' }));
+    service.channels.push(new Channel({ account: xmppAccount, name: 'kosmos@kosmos.chat' }));
+    service.channels.push(new Channel({ account: xmppAccount, name: 'chat@dino.im' }));
 
     const channels = service.groupedChannelsByDomain;
 

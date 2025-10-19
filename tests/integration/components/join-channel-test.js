@@ -24,7 +24,7 @@ module('Integration | Component | join-channel', function (hooks) {
 
   test('Account menu for one account', async function (assert) {
     this.coms = this.owner.lookup('service:coms');
-    this.coms.accounts.pushObject(ircAccount);
+    this.coms.accounts.push(ircAccount);
     await render(hbs`<JoinChannel />`);
 
     assert.strictEqual(this.element.querySelectorAll('select#account option').length, 1, 'only has one option');

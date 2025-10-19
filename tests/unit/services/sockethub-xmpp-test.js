@@ -98,7 +98,7 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
 
     service.addMessageToChannel(message);
 
-    assert.strictEqual(channel.messages.lastObject.content, 'hello world');
+    assert.strictEqual(channel.messages.at(-1).content, 'hello world');
   });
 
   test('#addMessageToChannel updates pending status when receiving an outgoing message', function (assert) {
@@ -110,7 +110,7 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
       content: 'yo, gang!',
       pending: true
     });
-    channel.messages.pushObject(outgoingMessage);
+    channel.messages.push(outgoingMessage);
 
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
@@ -125,9 +125,9 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
 
     service.addMessageToChannel(message);
 
-    assert.strictEqual(channel.messages.filterBy('nickname', 'jimmy').length, 1);
-    assert.strictEqual(channel.messages.lastObject.content, 'yo, gang!');
-    assert.notOk(channel.messages.lastObject.pending);
+    assert.strictEqual(channel.messages.filter(m => m.nickname === 'jimmy').length, 1);
+    assert.strictEqual(channel.messages.at(-1).content, 'yo, gang!');
+    assert.notOk(channel.messages.at(-1).pending);
   });
 
   test('#createUserChannel', function (assert) {
