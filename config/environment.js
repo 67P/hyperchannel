@@ -20,8 +20,7 @@ module.exports = function (environment) {
       // Here you can pass flags/options to your application instance
       // when it is created
     },
-    // sockethubURL: 'http://localhost:10550',
-    sockethubURL: 'https://sockethub.kosmos.org:10550',
+    sockethubURL: 'http://localhost:10550',
     publicLogs: {
       defaultBaseUrl: 'https://storage.5apps.com/kosmos/public/chat-messages',
       knownLoggedNetworks: [
