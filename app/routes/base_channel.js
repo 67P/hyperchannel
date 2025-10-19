@@ -51,7 +51,7 @@ export default class BaseChannelRoute extends Route {
     await this.userSettings.setItem('currentChannel', channel.slug);
 
     // Mark all other channels as inactive/invisible
-    this.coms.channels.setEach('visible', false);
+    this.coms.channels.forEach(ch => ch.visible = false);
 
     // Mark channel as active/visible
     channel.visible = true;
