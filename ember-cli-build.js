@@ -28,6 +28,7 @@ module.exports = function (defaults) {
               // includePaths: [
               //   'node_modules/tachyons-sass',
               // ],
+              silenceDeprecations: ['import', 'global-builtin', 'legacy-js-api'],
             },
           },
           {
