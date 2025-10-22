@@ -16,6 +16,9 @@ ember-cli-update.json
 *.md
 *.hbs
 *.json
+*.js
+*.mjs
+*.cjs
 
 # issue archives
 /issues/
