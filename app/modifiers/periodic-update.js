@@ -1,7 +1,7 @@
 import { modifier } from 'ember-modifier';
 import config from 'hyperchannel/config/environment';
 
-export default modifier((element, _, { messageDate, onUpdate, updateInterval = 120000 }) => {
+export default modifier((element, _, { onUpdate, updateInterval = 120000 }) => {
   // Call onUpdate immediately
   onUpdate();
 

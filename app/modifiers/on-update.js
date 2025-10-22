@@ -1,7 +1,7 @@
 import { modifier } from 'ember-modifier';
 
 export default modifier((element, [callback]) => {
-  const handler = (event) => {
+  const handler = () => {
     const value = element.type === 'checkbox' ? element.checked : element.value;
     callback(value);
   };

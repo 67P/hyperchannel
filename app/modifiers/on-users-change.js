@@ -1,6 +1,6 @@
 import { modifier } from 'ember-modifier';
 
-export default modifier((element, [users, onUsersChange]) => {
+export default modifier((element, [onUsersChange]) => {
   // Call immediately on mount
   onUsersChange(element);
 
