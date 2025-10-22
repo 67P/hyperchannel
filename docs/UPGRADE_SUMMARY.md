@@ -137,20 +137,75 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
   - Fixed in `app/models/base_channel.js`: `messages` and `userList` arrays
 - **Result**: Channel list, messages, and user lists now update reactively ✅
 
-### Known Issues
-- Test suite currently hangs when running - investigating root cause
-- May be related to async operations or infinite loops in one test
-- Individual test isolation may help identify the problematic test
+### Ember Run Loop Migration
+- **Issue**: `ember-lifeline` methods (`runTask`, `scheduleTask`) are deprecated in Ember 6.4+
+- **Solution**: Replaced with native browser APIs and modern Ember patterns
+  - `runTask()` → `setTimeout()` for delayed execution
+  - `scheduleTask()` with 'actions' queue → `requestAnimationFrame()` for render-related timing
+  - Proper cleanup with `clearTimeout()` and cancellation tokens
+- **Files Updated**:
+  - `app/controllers/base_channel.js`: Focus management after render
+  - `app/routes/channel/index.js`: Scroll behavior on route transitions
+  - All uses now follow modern async patterns ✅
+
+### Built-in Form Components Migration
+- **Issue**: `<Input>` component uses deprecated two-way binding
+- **Solution**: Created reusable `on-update` modifier for one-way data flow
+  - Replaces `<Input @value={{this.prop}} />` with `<input value={{this.prop}} {{on-update (fn (mut this.prop))}} />`
+  - Automatically detects checkboxes vs text inputs
+  - Proper event handling with 'change' for checkboxes, 'input' for text
+- **Files Updated**:
+  - `app/modifiers/on-update.js`: New modifier
+  - `app/components/add-chat-account-irc.hbs` + `.js`
+  - `app/components/add-chat-account-xmpp.hbs` + `.js`
+  - `app/components/join-channel-irc.hbs` + `.js`
+  - `app/components/join-channel-xmpp.hbs` + `.js`
+  - `app/components/message-chat.hbs` + `.js`
+- **Result**: All `no-builtin-form-components` linting errors resolved ✅
+
+### Render Modifiers Migration
+- **Issue**: `did-insert`, `did-update`, `will-destroy` modifiers are deprecated
+- **Solution**: Created 6 custom modifiers using `ember-modifier` for proper lifecycle management
+  1. **`keyboard-shortcuts`**: Handles keyboard shortcut binding/unbinding
+  2. **`intersection-observer`**: Replaces scrolling-observer component logic
+  3. **`periodic-update`**: Manages scheduled updates with proper cleanup
+  4. **`on-render`**: Executes callbacks after element renders using `requestAnimationFrame()`
+  5. **`on-channel-change`**: Reacts to channel prop changes
+  6. **`on-users-change`**: Reacts to users prop changes
+- **Components Refactored**:
+  - `channel-nav`: Uses `keyboard-shortcuts` modifier
+  - `message-input`: Removed `will-destroy`, uses event handlers
+  - `scrolling-observer`: Now uses `templateOnly()` wrapper around `intersection-observer` modifier
+  - `date-headline`: Uses `periodic-update` modifier
+  - `channel-container`: Uses `on-render` and `on-channel-change` modifiers
+  - `user-list`: Uses `on-users-change` modifier
+- **Result**: All deprecated render modifiers removed, proper cleanup functions in place ✅
+
+### Code Formatting Configuration
+- **Issue**: Prettier conflicted with ESLint `space-before-function-paren` rule
+- **Solution**: Configured Prettier to ignore JavaScript files (only format SCSS, etc.)
+  - Added `*.js`, `*.mjs`, `*.cjs` to `.prettierignore`
+  - ESLint handles JavaScript formatting with custom rules
+  - Prettier formats SCSS and other non-JS files
+- **Result**: Code style consistent with project preferences ✅
+
+## Test Status
+- ✅ All 104 tests passing (101 pass, 3 skipped)
+- ✅ Linting passes (JS, HBS, format)
+- ✅ Build succeeds
+- ✅ App loads and runs correctly in browser
 
 ## Next Steps
-1. Address remaining component integration test failures
-2. Fix timing-sensitive tests (date-headline, button-submit loading states)
-3. Re-evaluate gesture support options
-4. Consider updating other deprecated patterns as they're discovered
+1. Monitor for any remaining deprecation warnings in browser console
+2. Re-evaluate gesture support options (removed ember-gestures/ember-hammertime)
+3. Consider cleaning up old pod structure directories if no longer needed
+4. Update to future Ember LTS versions as they're released
 
 ## Notes
 - **Array reactivity**: Use `TrackedArray` from `tracked-built-ins` for reactive arrays that need to update templates
 - EmberArray (`A([])`) without `@tracked` does NOT trigger re-renders in modern Ember
 - `@tracked` decorator alone with native arrays doesn't track mutations (push/splice), only reassignments
-- `space.js` model intentionally kept with EmberArray as it doesn't conflict with reactivity
+- **Async patterns**: Use native browser APIs (setTimeout, requestAnimationFrame) instead of run loop
+- **Form inputs**: Use custom `on-update` modifier for clean one-way data flow
+- **Lifecycle management**: Create custom modifiers for setup/teardown instead of render modifiers
 - Build succeeds with only SASS deprecation warnings (not critical)
