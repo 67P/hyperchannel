@@ -2,29 +2,34 @@
   <div class="grid grid-cols-1 gap-2 sm:grid-cols-10 sm:gap-4 sm:items-center mb-8">
     <label class="sm:col-span-3">Host</label>
     <div class="mb-4 sm:mb-0 sm:col-span-7 flex justify-center items-center">
-      <Input @type="text" @value={{this.hostname}} name="hostname"
+      <input type="text" value={{this.hostname}} name="hostname"
              aria-label="Hostname" placeholder="Hostname" required
-             class="grow min-w-0" />
+             class="grow min-w-0"
+             {{on-update (fn (mut this.hostname))}} />
       <span class="flex-0 mx-1 text-xl">:</span>
-      <Input @type="text" @value={{this.port}} name="port"
+      <input type="text" value={{this.port}} name="port"
              aria-label="Port number" placeholder="Port" required
-             class="shrink w-40 min-w-0" />
+             class="shrink w-40 min-w-0"
+             {{on-update (fn (mut this.port))}} />
     </div>
     <label for="nickname" class="sm:col-span-3">Nickname</label>
-    <Input id="nickname" @type="text" @value={{this.nickname}} name="nickname"
-           required class="sm:col-span-7" autocomplete="username" {{autofocus}} />
+    <input id="nickname" type="text" value={{this.nickname}} name="nickname"
+           required class="sm:col-span-7" autocomplete="username" {{autofocus}}
+           {{on-update (fn (mut this.nickname))}} />
 
     <div class="mt-4 sm:mt-2 sm:col-start-4 sm:col-span-7">
       <label>
-        <Input @type="checkbox" @checked={{this.useAuth}} class="mr-1 align-middle" />
+        <input type="checkbox" checked={{this.useAuth}} class="mr-1 align-middle"
+               {{on-update (fn (mut this.useAuth))}} />
         <span class="font-normal text-sm text-neutral-500">I have a password</span>
       </label>
     </div>
 
     {{#if this.useAuth}}
       <label for="password" class="sm:col-span-3">Password</label>
-      <Input id="password" @type="password" @value={{this.password}} name="password"
-             class="sm:col-span-7" />
+      <input id="password" type="password" value={{this.password}} name="password"
+             class="sm:col-span-7"
+             {{on-update (fn (mut this.password))}} />
     {{/if}}
   </div>
 
