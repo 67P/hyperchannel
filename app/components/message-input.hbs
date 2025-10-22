@@ -1,5 +1,4 @@
-<section id="new-message" class="py-0 px-4"
-         {{will-destroy this.unbindKeyboardShortcuts}}>
+<section id="new-message" class="py-0 px-4">
   <form {{on "submit" @sendMessage}}>
     <ChannelInputField @value={{@message}}
                        @placeholder="Type a message and hit enter"

@@ -1,5 +1,4 @@
-<ul {{did-insert this.bindKeyboardShortcuts}}
-    {{will-destroy this.unbindKeyboardShortcuts}}
+<ul {{keyboard-shortcuts this}}
     class="pt-6">
   {{#each this.coms.groupedChannelsByDomain as |subspace|}}
     <li class="block relative width-full mb-6 overflow-hidden whitespace-nowrap">

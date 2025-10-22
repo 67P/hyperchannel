@@ -48,13 +48,8 @@ export default class ChannelContainerComponent extends Component {
   }
 
   @action
-  scheduleOnAfterRender () {
-    scheduleTask(this, 'actions', this.onAfterRender);
-  }
-
-  onAfterRender () {
+  onAfterRender (element) {
     // TODO update the config when window is resized
-    const element = document.getElementById('channel');
     this.partialRenderingObserverMargin = `${element.clientHeight/3}px`;
 
     // We need to define an empty handler for swipe events on the

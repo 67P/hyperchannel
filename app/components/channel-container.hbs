@@ -1,5 +1,5 @@
-<div id="channel" {{did-insert this.scheduleOnAfterRender}}
-                  {{did-update this.channelChanged @channel}}>
+<div id="channel" {{on-render this.onAfterRender}}
+                  {{on-channel-change @channel this.channelChanged}}>
   <main>
     <header id="channel-header">
       <h2 id="channel-name"
@@ -43,7 +43,7 @@
                                  @onIntersect={{this.increaseRenderedMessagesCount}} />
             </li>
             {{#each this.renderedMessages as |message|}}
-              <li {{did-insert this.messagesUpdated}}>
+              <li {{on-render this.messagesUpdated}}>
                 {{component message.type message=message channel=@channel
                             sendMessage=@onMessage
                             onUsernameClick=this.addUsernameMentionToMessage}}

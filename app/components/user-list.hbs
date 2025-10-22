@@ -1,4 +1,4 @@
-<section id="user-list" class="main py-6" {{did-update this.usersChanged @users}}>
+<section id="user-list" class="main py-6" {{on-users-change @users this.usersChanged}}>
   {{#if @users}}
     <h2 class="px-4 mb-2 text-xs uppercase opacity-80">{{@users.length}} Online</h2>
   {{/if}}
