@@ -1,6 +1,6 @@
 /* eslint ember/no-observers: "off" */
 import Component from '@glimmer/component';
-import { scheduleOnce } from '@ember/runloop';
+import { scheduleTask } from 'ember-lifeline';
 import { action } from '@ember/object';
 
 export default class ScrollingObserverComponent extends Component {
@@ -33,7 +33,7 @@ export default class ScrollingObserverComponent extends Component {
 
   @action
   createObserver (element) {
-    scheduleOnce('afterRender', this, this.createIntersectionObserver, element);
+    scheduleTask(this, 'actions', () => this.createIntersectionObserver(element));
   }
 
   @action
@@ -67,7 +67,7 @@ export default class ScrollingObserverComponent extends Component {
             this.args.onIntersect();
           }
           if (this.enabled && this.retriggeringEnabled) {
-            scheduleOnce('afterRender', this, 'retriggerObservation', observer, entry.target);
+            scheduleTask(this, 'actions', () => this.retriggerObservation(observer, entry.target));
           }
         } else {
           if (this.args.onDiverge) {

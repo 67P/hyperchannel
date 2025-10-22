@@ -1,15 +1,6 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
-import { scheduleOnce } from '@ember/runloop';
-
-function focusMessageInput () {
-  if (window.innerWidth > 900) {
-    document.querySelector('input#message-field').focus();
-  } else {
-    // Don't auto-focus on small screens
-  }
-}
 
 export default class BaseChannelRoute extends Route {
 
@@ -38,10 +29,10 @@ export default class BaseChannelRoute extends Route {
     }
   }
 
-  setupController () {
+  setupController (controller) {
     super.setupController(...arguments);
 
-    scheduleOnce('afterRender', this, focusMessageInput);
+    controller.focusMessageInput();
   }
 
   @action

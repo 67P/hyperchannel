@@ -1,6 +1,5 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
-import { run } from '@ember/runloop';
 
 module('Unit | Controller | base_channel', function (hooks) {
   setupTest(hooks);
@@ -10,7 +9,7 @@ module('Unit | Controller | base_channel', function (hooks) {
     controller.focusMessageInputField = function () { return true; }
     assert.strictEqual(controller.newMessage, null);
 
-    run(() => controller.addUsernameMentionToMessage('toshi'));
+    controller.addUsernameMentionToMessage('toshi');
 
     assert.strictEqual(controller.newMessage, 'toshi: ');
   });
@@ -20,7 +19,7 @@ module('Unit | Controller | base_channel', function (hooks) {
     controller.focusMessageInputField = function () { return true; }
     controller.newMessage = 'hey, wasup?';
 
-    run(() => controller.addUsernameMentionToMessage('toshi'));
+    controller.addUsernameMentionToMessage('toshi');
 
     assert.strictEqual(controller.newMessage, 'toshi: hey, wasup?',
                  'adds the name in front of the message');
@@ -31,7 +30,7 @@ module('Unit | Controller | base_channel', function (hooks) {
     controller.focusMessageInputField = function () { return true; }
     controller.newMessage ='toshi: hey, wasup?';
 
-    run(() => controller.addUsernameMentionToMessage('toshi'));
+    controller.addUsernameMentionToMessage('toshi');
 
     assert.strictEqual(controller.newMessage, 'toshi: hey, wasup?',
                  'does not add the name twice');

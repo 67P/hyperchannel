@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
 import { action } from '@ember/object';
-import { scheduleOnce } from '@ember/runloop';
+import { scheduleTask } from 'ember-lifeline';
 import { bindKeyboardShortcuts, unbindKeyboardShortcuts } from 'ember-keyboard-shortcuts';
 
 export default class MessageInputComponent extends Component {
@@ -60,7 +60,7 @@ export default class MessageInputComponent extends Component {
 
     // set the cursor right behind the inserted username,
     // but we have to wait for the update of the input first
-    scheduleOnce('afterRender', this, 'setCursorPosition', input, newCursorPosition);
+    scheduleTask(this, 'actions', () => this.setCursorPosition(input, newCursorPosition));
   }
 
 }

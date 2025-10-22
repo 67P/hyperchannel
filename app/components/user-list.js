@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
-import { scheduleOnce } from '@ember/runloop';
+import { scheduleTask } from 'ember-lifeline';
 
 export default class UserListComponent extends Component {
 
@@ -27,7 +27,7 @@ export default class UserListComponent extends Component {
     this.renderedUsersCount = this.renderedUsersAddendumAmount;
     this.partialRenderingEnabled = true;
 
-    scheduleOnce('afterRender', this, this.scrollToTop, element);
+    scheduleTask(this, 'actions', () => this.scrollToTop(element));
   }
 
   @action

@@ -1,6 +1,5 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
-import { run } from '@ember/runloop';
 import Service from '@ember/service';
 import Channel from 'hyperchannel/models/channel';
 import createComponent from 'hyperchannel/tests/helpers/create-component';
@@ -30,14 +29,14 @@ module('Unit | Component | channel-nav', function (hooks) {
     component.coms = comsService;
     component.router = routerService;
 
-    run(() => component.goNextChannel());
+    component.goNextChannel();
 
     assert.strictEqual(routerService.currentRoute, 'channel');
     assert.strictEqual(routerService.currentChannel.name, channel3.name);
 
     channel2.visible = false;
     channel3.visible = true;
-    run(() => component.goNextChannel());
+    component.goNextChannel();
 
     assert.strictEqual(routerService.currentChannel.name, channel1.name);
   });
@@ -55,14 +54,14 @@ module('Unit | Component | channel-nav', function (hooks) {
     component.coms = comsService;
     component.router = routerService;
 
-    run(() => component.goPreviousChannel());
+    component.goPreviousChannel();
 
     assert.strictEqual(routerService.currentRoute, 'channel');
     assert.strictEqual(routerService.currentChannel.name, channel1.name);
 
     channel1.visible = true;
     channel2.visible = false;
-    run(() => component.goPreviousChannel());
+    component.goPreviousChannel();
 
     assert.strictEqual(routerService.currentChannel.name, channel3.name);
   });

@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { later, scheduleOnce } from '@ember/runloop';
+import { runTask, scheduleTask } from 'ember-lifeline';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import Hammer from 'hammerjs';
@@ -37,19 +37,19 @@ export default class ChannelContainerComponent extends Component {
     this.renderedMessagesCount = this.renderedMessagesAddendumAmount;
     this.partialRenderingEnabled = true;
     this.automaticScrollingEnabled = true;
-    later(this, () => this.menu('global', 'hide'), 500);
+    runTask(this, () => this.menu('global', 'hide'), 500);
   }
 
   @action
   messagesUpdated () {
     if (this.automaticScrollingEnabled) {
-      scheduleOnce('afterRender', scrollToBottom);
+      scheduleTask(this, 'actions', scrollToBottom);
     }
   }
 
   @action
   scheduleOnAfterRender () {
-    scheduleOnce('afterRender', this, this.onAfterRender);
+    scheduleTask(this, 'actions', this.onAfterRender);
   }
 
   onAfterRender () {

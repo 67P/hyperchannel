@@ -2,7 +2,7 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { htmlSafe } from '@ember/template';
 import { tracked } from '@glimmer/tracking';
-import { scheduleOnce } from '@ember/runloop';
+import { scheduleTask } from 'ember-lifeline';
 import { isEmpty } from '@ember/utils';
 import linkifyStr from 'linkify-string';
 import moment from 'moment';
@@ -60,10 +60,14 @@ export default class MessageChatComponent extends Component {
     }
 
     // Colors
+    // eslint-disable-next-line no-control-regex
     out = out.replace(/\u0003(\d+)/g, '<span class="color-$1">')
              .replace(/"color-(\d)"/g, '"color-0$1"')
+             // eslint-disable-next-line no-control-regex
              .replace(/\u0002/g, '<span class="bold">')
+             // eslint-disable-next-line no-control-regex
              .replace(/\u001D/g, '<span class="italic">')
+             // eslint-disable-next-line no-control-regex
              .replace(/\u000f/g,  '</span>')
              .replace(/(?:\r\n|\r|\n)/g, '<br>');
 
@@ -93,7 +97,7 @@ export default class MessageChatComponent extends Component {
   startMessageCorrection () {
     this.editedContent = this.args.message.content;
     this.isEditing = true;
-    scheduleOnce('afterRender', this, 'focusInputField', this.args.message.id);
+    scheduleTask(this, 'actions', () => this.focusInputField(this.args.message.id));
   }
 
   @action
