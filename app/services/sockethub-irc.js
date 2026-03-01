@@ -88,8 +88,8 @@ export default class SockethubIrcService extends Service {
 
     this.log('irc', 'connecting to IRC network...');
 
-    this.sockethubClient.socket.emit('credentials', credentialsJob, (err) => {
-      if (err) { this.log('failed to store credentials: ', err); }
+    this.sockethubClient.socket.emit('credentials', credentialsJob, (msg) => {
+      if (msg.error) { this.log('failed to store credentials: ', msg.error); }
     });
 
     this.sockethubClient.socket.emit('message', connectJob, (message) => {
