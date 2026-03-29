@@ -1,38 +1,59 @@
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
+import SockethubClient from '@sockethub/client';
+import { io } from 'socket.io-client';
 import config from 'hyperchannel/config/environment';
 
 export default class SockethubService extends Service {
   @tracked client = null;
+  _platformContextMap = new Map();
 
-  async initialize (/* baseURL */) {
-    return this.loadSockethubLibs(config.sockethubURL).then(() => {
-      this.client = new window.SockethubClient(
-        window.io(config.sockethubURL, { path: '/sockethub' })
-      );
-    });
+  async initialize () {
+    const socket = io(config.sockethubURL, { path: '/sockethub' });
+    const client = new SockethubClient(socket);
+    await client.ready();
+    this.client = client;
+    this._buildPlatformContextMap();
   }
 
-  async loadSockethubLibs (baseURL) {
-    try {
-      await this.loadExternalScript(baseURL + '/socket.io.js');
-      await this.loadExternalScript(baseURL + '/sockethub-client.js');
-    } catch(e) {
-      const msg = `Could not load Sockethub client library from ${e.target.src}`;
-      console.warn(msg);
-      throw(msg);
+  /**
+   * Returns the @context array for a given platform (e.g. 'irc', 'xmpp').
+   * Must be called after initialize() has resolved.
+   *
+   * @param {String} platform
+   * @returns {Array<String>}
+   */
+  contextFor (platform) {
+    return this.client.contextFor(platform);
+  }
+
+  /**
+   * Resolves the platform identifier from an incoming message's @context array.
+   *
+   * @param {Object} message - incoming sockethub message
+   * @returns {String|undefined} platform identifier (e.g. 'irc', 'xmpp')
+   */
+  platformForMessage (message) {
+    if (message.context) {
+      return message.context;
+    }
+    const contextArray = message['@context'];
+    if (!Array.isArray(contextArray)) return;
+    for (const url of contextArray) {
+      const platform = this._platformContextMap.get(url);
+      if (platform) return platform;
     }
   }
 
-  async loadExternalScript (url) {
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      document.body.appendChild(script);
-      script.type = "module";
-      script.onload = resolve;
-      script.onerror = reject;
-      script.async = true;
-      script.src = url;
-    });
+  /**
+   * Builds a lookup map from platform context URLs to platform IDs
+   * using the client's registered platforms.
+   * @private
+   */
+  _buildPlatformContextMap () {
+    this._platformContextMap.clear();
+    for (const platform of this.client.getRegisteredPlatforms()) {
+      this._platformContextMap.set(platform.contextUrl, platform.id);
+    }
   }
 }

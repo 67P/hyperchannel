@@ -148,12 +148,7 @@ export default class BaseChannelController extends Controller {
 
     let message = this.createMessage(newMessage, 'message-chat-me');
 
-    this.coms.transferMeMessage(
-      this.model.account,
-      this.model.sockethubChannelId,
-      message.content,
-      message.id
-    );
+    this.coms.transferMeMessage(this.model, message.content);
 
     this.model.addMessage(message);
   }

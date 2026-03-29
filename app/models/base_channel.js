@@ -49,7 +49,7 @@ export default class BaseChannel {
         id = this.name;
         break;
       case 'IRC':
-        id = `${this.account.server.hostname}/${this.name}`;
+        id = `${this.name}@${this.account.server.hostname}`;
         break;
     }
     return id;

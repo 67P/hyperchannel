@@ -5,6 +5,28 @@ import Message from 'hyperchannel/models/message';
 import { xmppAccount } from '../../fixtures/accounts';
 import sinon from 'sinon';
 
+function createMockSockethubService () {
+  const emittedEvents = [];
+
+  return {
+    contextFor () {
+      return [
+        'https://www.w3.org/ns/activitystreams',
+        'https://sockethub.org/ns/v0',
+        'https://sockethub.org/ns/context/xmpp'
+      ];
+    },
+    client: {
+      socket: {
+        emit (event, content, callback) {
+          emittedEvents.push({ event, content, callback });
+        }
+      },
+      _emittedEvents: emittedEvents
+    }
+  };
+}
+
 module('Unit | Service | sockethub xmpp', function (hooks) {
   setupTest(hooks);
 
@@ -144,25 +166,17 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
     assert.ok(channel.connected);
   });
 
-  test('#transferMessage', async function (assert) {
+  test('#transferMessage', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
     const message = new Message({ content: 'Only 4 days until 2022!', id: 'hc-123abcde'});
     const coms = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
     });
-    const sockethubService = this.owner.factoryFor('service:sockethub').create();
-    await sockethubService.initialize();
+    const mockSockethub = createMockSockethubService();
     const xmpp = this.owner.factoryFor('service:sockethub-xmpp').create({
-      sockethub: sockethubService, coms
+      sockethub: mockSockethub, coms
     });
-    const socketEmitSpy = sinon.spy(xmpp.sockethubClient.socket, 'emit');
-
-    xmpp.sockethubClient.ActivityStreams.Object.create({
-      id: xmppAccount.sockethubPersonId, type: 'person', name: xmppAccount.nickname
-    });
-    xmpp.sockethubClient.ActivityStreams.Object.create({
-      id: channel.sockethubChannelId, type: 'room', name: channel.name
-    });
+    const socketEmitSpy = sinon.spy(mockSockethub.client.socket, 'emit');
 
     const target = { id: channel.sockethubChannelId, type: "room", name: channel.name };
 
@@ -171,14 +185,14 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
     assert.ok(socketEmitSpy.calledOnce, 'emits a sockethub job message');
 
     const jobMessage = socketEmitSpy.getCall(0).args[1];
-    assert.strictEqual(jobMessage.context, 'xmpp', 'job context is correct');
     assert.strictEqual(jobMessage.type, 'send', 'job type is correct');
     assert.strictEqual(jobMessage.object.type, 'message', 'job object type is correct');
     assert.strictEqual(jobMessage.object.content, 'Only 4 days until 2022!', 'job object content is correct');
     assert.strictEqual(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
+    assert.ok(Array.isArray(jobMessage['@context']), '@context is an array');
   });
 
-  test('#transferMessage for correction', async function (assert) {
+  test('#transferMessage for correction', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
     const message = new Message({
       content: 'Only 4 days until 2022!',
@@ -187,20 +201,12 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
     });
-    const sockethubService = this.owner.factoryFor('service:sockethub').create();
-    await sockethubService.initialize();
+    const mockSockethub = createMockSockethubService();
     const xmpp = this.owner.factoryFor('service:sockethub-xmpp').create({
-      sockethub: sockethubService,
+      sockethub: mockSockethub,
       coms: comsService
     });
-    const socketEmitSpy = sinon.spy(xmpp.sockethubClient.socket, 'emit');
-
-    xmpp.sockethubClient.ActivityStreams.Object.create({
-      id: xmppAccount.sockethubPersonId, type: 'person', name: xmppAccount.nickname
-    });
-    xmpp.sockethubClient.ActivityStreams.Object.create({
-      id: channel.sockethubChannelId, type: 'room', name: channel.name
-    });
+    const socketEmitSpy = sinon.spy(mockSockethub.client.socket, 'emit');
 
     const target = { id: channel.sockethubChannelId, type: "room", name: channel.name };
 

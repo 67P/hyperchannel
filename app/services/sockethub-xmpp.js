@@ -4,51 +4,6 @@ import UserChannel from 'hyperchannel/models/user_channel';
 import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
 
 /**
- * Build an activity object for sending to Sockethub
- *
- * @param {Account} account - account model the activity belongs to
- * @param {Object} details - the activity details
- * @returns {Object} the activity object
- * @private
- */
-function buildActivityObject (account, details) {
-  let baseObject = {
-    context: 'xmpp',
-    actor: account.sockethubPersonId
-  };
-
-  return { ...baseObject, ...details };
-}
-
-/**
- * Build a message object
- *
- * @param {Account} account - Account model instance
- * @param {String} target - Where to send the message to (channelId)
- * @param {String} content - The message itself
- * @param {String} id - A locally generated message ID
- * @param {String} [type] - Can be either 'message' or 'me'
- * @returns {Object} The activity object
- */
-function buildMessageObject (account, target, message) {
-  const job = buildActivityObject(account, {
-    type: 'send',
-    target: target,
-    object: {
-      type: 'message',
-      id: message.id,
-      content: message.content
-    }
-  });
-
-  if (message.replaceId) {
-    job.object['xmpp:replace'] = { id: message.replaceId };
-  }
-
-  return job;
-}
-
-/**
  * This service provides helpers for SocketHub XMPP communications
  * @class hyperchannel/services/sockethub-xmpp
  */
@@ -62,19 +17,48 @@ export default class SockethubXmppService extends Service {
     return this.sockethub.client;
   }
 
+  /**
+   * Build an activity object for sending to Sockethub
+   * @private
+   */
+  buildActivityObject (account, details) {
+    let baseObject = {
+      '@context': this.sockethub.contextFor('xmpp'),
+      actor: { id: account.sockethubPersonId, type: 'person' }
+    };
+
+    return { ...baseObject, ...details };
+  }
+
+  /**
+   * Build a message object
+   * @private
+   */
+  buildMessageObject (account, target, message) {
+    const job = this.buildActivityObject(account, {
+      type: 'send',
+      target: target,
+      object: {
+        type: 'message',
+        id: message.id,
+        content: message.content
+      }
+    });
+
+    if (message.replaceId) {
+      job.object['xmpp:replace'] = { id: message.replaceId };
+    }
+
+    return job;
+  }
+
   connectWithCredentials (userAddress, password, callback) {
     const sockethubPersonId = `${userAddress}/hyperchannel`;
 
-    this.sockethubClient.ActivityStreams.Object.create({
-      id: sockethubPersonId,
-      type: 'person',
-      name: userAddress.split('@')[0],
-    });
-
     const credentialsJob = {
+      '@context': this.sockethub.contextFor('xmpp'),
       type: 'credentials',
-      context: 'xmpp',
-      actor: sockethubPersonId,
+      actor: { id: sockethubPersonId, type: 'person' },
       object: {
         type: 'credentials',
         userAddress,
@@ -84,14 +68,14 @@ export default class SockethubXmppService extends Service {
     };
 
     const connectJob = {
+      '@context': this.sockethub.contextFor('xmpp'),
       type: 'connect',
-      context: 'xmpp',
-      actor: sockethubPersonId
+      actor: { id: sockethubPersonId, type: 'person' }
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
     this.sockethubClient.socket.emit('credentials', credentialsJob, (err) => {
-      if (err) { this.log('failed to store credentials: ', err); }
+      if (err) { this.log('xmpp', 'failed to store credentials: ', err); }
     });
     this.sockethubClient.socket.emit('message', connectJob, callback);
   }
@@ -103,35 +87,23 @@ export default class SockethubXmppService extends Service {
    * @public
    */
   connect (account) {
-    const actor = account.sockethubPersonId;
-
-    this.sockethubClient.ActivityStreams.Object.create({
-      id: actor,
-      type: 'person',
-      name: account.nickname
-    });
-
-    const credentialsJob = {
+    const credentialsJob = this.buildActivityObject(account, {
       type: 'credentials',
-      context: 'xmpp',
-      actor: actor,
       object: {
         type: 'credentials',
         userAddress: account.username, // JID
         password: account.password,
         resource: 'hyperchannel'
       }
-    };
+    });
 
-    const connectJob = {
-      type: 'connect',
-      context: 'xmpp',
-      actor: actor
-    };
+    const connectJob = this.buildActivityObject(account, {
+      type: 'connect'
+    });
 
     this.log('xmpp', 'connecting to XMPP server...');
     this.sockethubClient.socket.emit('credentials', credentialsJob, (err) => {
-      if (err) { this.log('failed to store credentials: ', err); }
+      if (err) { this.log('xmpp', 'failed to store credentials: ', err); }
     });
     this.sockethubClient.socket.emit('message', connectJob, (message) => {
       if (message.error) { this.log('xmpp', 'failed to connect to XMPP server: ', message); }
@@ -157,20 +129,14 @@ export default class SockethubXmppService extends Service {
    * @public
    */
   join (channel, type) {
-    this.sockethubClient.ActivityStreams.Object.create({
-      type: type,
-      id: channel.sockethubChannelId,
-      name: channel.name
-    });
-
-    let joinMsg = buildActivityObject(channel.account, {
+    let joinMsg = this.buildActivityObject(channel.account, {
       type: 'join',
       actor: {
         type: 'person',
         id: channel.sockethubPersonId,
         name: channel.account.nickname
       },
-      target: channel.sockethubChannelId
+      target: { id: channel.sockethubChannelId, type: type, name: channel.name }
     });
 
     this.log('xmpp', 'joining channel', joinMsg);
@@ -186,7 +152,7 @@ export default class SockethubXmppService extends Service {
    */
   transferMessage (target, message) {
     const channel = this.coms.getChannel(target.id);
-    const messageJob = buildMessageObject(channel.account, target, message);
+    const messageJob = this.buildMessageObject(channel.account, target, message);
 
     this.log('send', 'sending message job', messageJob);
     this.sockethubClient.socket.emit('message', messageJob);
@@ -232,8 +198,6 @@ export default class SockethubXmppService extends Service {
 
     const channel = this.findOrCreateChannelForMessage(message);
 
-    // TODO implement message carbons
-    // https://xmpp.org/extensions/xep-0280.html
     if (message.actor.name &&
        (message.actor.name === channel.account.nickname)) {
       const pendingConfirmed = channel.confirmPendingMessage(message.object.content);
@@ -246,9 +210,9 @@ export default class SockethubXmppService extends Service {
 
   leave (channel) {
     if (!channel.isUserChannel) {
-      const leaveMsg = buildActivityObject(channel.account, {
+      const leaveMsg = this.buildActivityObject(channel.account, {
         type: 'leave',
-        target: channel.sockethubChannelId
+        target: { id: channel.sockethubChannelId, type: 'room' }
       });
 
       this.log('leave', 'leaving channel', leaveMsg);
@@ -269,7 +233,7 @@ export default class SockethubXmppService extends Service {
    * @public
    */
   queryAttendance (channel) {
-    let msg = buildActivityObject(channel.account, {
+    let msg = this.buildActivityObject(channel.account, {
       type: 'query',
       target: {
         id: channel.sockethubChannelId,
@@ -298,10 +262,8 @@ export default class SockethubXmppService extends Service {
     if (message.target.type === 'room') {
       channel = this.coms.channels.find(ch => ch.sockethubChannelId === targetChannelId);
 
-      // TODO Find account for new channel by sockethubPersonId
       if (!channel) {
         console.warn('Received message for unknown channel', message);
-        // channel = this.coms.createChannel(space, targetChannelId);
       }
     } else {
       channel = this.coms.channels.find(ch => ch.sockethubChannelId === message.actor.id);
@@ -320,14 +282,14 @@ export default class SockethubXmppService extends Service {
    * Create a direct-message channel
    *
    * @param {Account} account
-   * @param {String} sockethub actor ID
+   * @param {String} sockethubActorId
    * @returns {UserChannel} user channel
    * @public
    */
   createUserChannel (account, sockethubActorId) {
     const channel = new UserChannel({
       account: account,
-      name: sockethubActorId, // e.g. kosmos-dev@kosmos.chat/jimmy
+      name: sockethubActorId,
       displayName: sockethubActorId.match(/\/(.+)$/)[1],
       connected: true
     });
