@@ -74,8 +74,9 @@ export default class SockethubXmppService extends Service {
     };
 
     this.log('xmpp', 'connecting to XMPP server...');
-    this.sockethubClient.socket.emit('credentials', credentialsJob, (err) => {
-      if (err) { this.log('xmpp', 'failed to store credentials: ', err); }
+    this.sockethubClient.socket.emit('credentials', credentialsJob, (msg) => {
+      const error = (msg && typeof msg === 'object') ? msg.error : msg;
+      if (error) { this.log('xmpp', 'failed to store credentials: ', error); }
     });
     this.sockethubClient.socket.emit('message', connectJob, callback);
   }
@@ -102,8 +103,9 @@ export default class SockethubXmppService extends Service {
     });
 
     this.log('xmpp', 'connecting to XMPP server...');
-    this.sockethubClient.socket.emit('credentials', credentialsJob, (err) => {
-      if (err) { this.log('xmpp', 'failed to store credentials: ', err); }
+    this.sockethubClient.socket.emit('credentials', credentialsJob, (msg) => {
+      const error = (msg && typeof msg === 'object') ? msg.error : msg;
+      if (error) { this.log('xmpp', 'failed to store credentials: ', error); }
     });
     this.sockethubClient.socket.emit('message', connectJob, (message) => {
       if (message.error) { this.log('xmpp', 'failed to connect to XMPP server: ', message); }

@@ -470,15 +470,8 @@ export default class ComsService extends Service {
 
   handleJobCompleted (message) {
     this.log('completed', 'Job completed', message);
-    if (message.type === 'join') {
-      const platform = this.sockethub.platformForMessage(message);
-      if (!platform) {
-        console.warn('Could not determine platform for completed job', message);
-        return;
-      }
-      this.getServiceForSockethubPlatform(platform)
-          .handleJoinCompleted(message);
-    }
+    // Join completions are already handled via per-emit callbacks
+    // in sockethub-irc.join() and sockethub-xmpp.join()
   }
 
   handleJobFailed (message) {
