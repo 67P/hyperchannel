@@ -178,7 +178,7 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
     });
     const socketEmitSpy = sinon.spy(mockSockethub.client.socket, 'emit');
 
-    const target = { id: channel.sockethubChannelId, type: "room", name: channel.name };
+    const target = { id: channel.sockethubChannelId, type: 'room', name: channel.name };
 
     xmpp.transferMessage(target, message);
 
@@ -208,7 +208,7 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
     });
     const socketEmitSpy = sinon.spy(mockSockethub.client.socket, 'emit');
 
-    const target = { id: channel.sockethubChannelId, type: "room", name: channel.name };
+    const target = { id: channel.sockethubChannelId, type: 'room', name: channel.name };
 
     xmpp.transferMessage(target, message);
 

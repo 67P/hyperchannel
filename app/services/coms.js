@@ -422,6 +422,10 @@ export default class ComsService extends Service {
    */
   handleSockethubMessage (message) {
     const platform = this.sockethub.platformForMessage(message);
+    if (!platform) {
+      console.warn('Could not determine platform for message', message);
+      return;
+    }
     this.log(`${platform}_message`, 'SH message', message);
 
     if (message.actor.type === 'service') {
@@ -468,6 +472,10 @@ export default class ComsService extends Service {
     this.log('completed', 'Job completed', message);
     if (message.type === 'join') {
       const platform = this.sockethub.platformForMessage(message);
+      if (!platform) {
+        console.warn('Could not determine platform for completed job', message);
+        return;
+      }
       this.getServiceForSockethubPlatform(platform)
           .handleJoinCompleted(message);
     }
