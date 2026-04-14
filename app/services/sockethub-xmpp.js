@@ -221,8 +221,6 @@ export default class SockethubXmppService extends Service {
       this.sockethubClient.socket.emit('message', leaveMsg, (message) => {
         if (message.error) {
           this.log('leave', 'failed to leave channel: ', message);
-        } else {
-          this.coms.removeUserFromChannelUserList.bind(this.coms)
         }
       });
     }
@@ -266,13 +264,17 @@ export default class SockethubXmppService extends Service {
 
       if (!channel) {
         console.warn('Received message for unknown channel', message);
+        return;
       }
     } else {
       channel = this.coms.channels.find(ch => ch.sockethubChannelId === message.actor.id);
 
       if (!channel) {
         const account = this.coms.accounts.find(acc => acc.sockethubPersonId === message.target.id);
-        if (!account) console.warn('Received direct message for unknown account', message);
+        if (!account) {
+          console.warn('Received direct message for unknown account', message);
+          return;
+        }
         channel = this.coms.createUserChannel(account, message.actor.id);
       }
     }
