@@ -1,4 +1,4 @@
-import Service, { inject as service } from '@ember/service';
+import Service, { service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
 import UserChannel from 'hyperchannel/models/user_channel';
 import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-message-from-sockethub-object';
@@ -11,7 +11,7 @@ import channelMessageFromSockethubObject from 'hyperchannel/utils/channel-messag
  * @returns {Object} the activity object
  * @private
  */
-function buildActivityObject(account, details) {
+function buildActivityObject (account, details) {
   let baseObject = {
     context: 'xmpp',
     actor: account.sockethubPersonId
@@ -30,7 +30,7 @@ function buildActivityObject(account, details) {
  * @param {String} [type] - Can be either 'message' or 'me'
  * @returns {Object} The activity object
  */
-function buildMessageObject(account, target, message) {
+function buildMessageObject (account, target, message) {
   const job = buildActivityObject(account, {
     type: 'send',
     target: target,
@@ -141,7 +141,7 @@ export default class SockethubXmppService extends Service {
 
   handleJoinCompleted (message) {
     const channelId = message.target.id.split('/')[0];
-    const channel = this.coms.channels.findBy('sockethubChannelId', channelId);
+    const channel = this.coms.channels.find(ch => ch.sockethubChannelId === channelId);
     if (channel) {
       this.queryAttendance(channel);
     } else {
@@ -296,7 +296,7 @@ export default class SockethubXmppService extends Service {
     let channel;
 
     if (message.target.type === 'room') {
-      channel = this.coms.channels.findBy('sockethubChannelId', targetChannelId);
+      channel = this.coms.channels.find(ch => ch.sockethubChannelId === targetChannelId);
 
       // TODO Find account for new channel by sockethubPersonId
       if (!channel) {
@@ -304,10 +304,10 @@ export default class SockethubXmppService extends Service {
         // channel = this.coms.createChannel(space, targetChannelId);
       }
     } else {
-      channel = this.coms.channels.findBy('sockethubChannelId', message.actor.id);
+      channel = this.coms.channels.find(ch => ch.sockethubChannelId === message.actor.id);
 
       if (!channel) {
-        const account = this.coms.accounts.findBy('sockethubPersonId', message.target.id);
+        const account = this.coms.accounts.find(acc => acc.sockethubPersonId === message.target.id);
         if (!account) console.warn('Received direct message for unknown account', message);
         channel = this.coms.createUserChannel(account, message.actor.id);
       }

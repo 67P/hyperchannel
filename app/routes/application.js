@@ -1,10 +1,11 @@
 import Route from '@ember/routing/route';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 
 export default class ApplicationRoute extends Route {
 
-  @service('remotestorage') storage;
+  @service('router') router;
+@service('remotestorage') storage;
   @service sockethub;
   @service localData;
   @service logger;
@@ -38,10 +39,10 @@ export default class ApplicationRoute extends Route {
     }
 
     if (!this.sockethub.client) {
-      this.transitionTo('configure-sockethub');
+      this.router.transitionTo('configure-sockethub');
     }
     else if (!this.coms.onboardingComplete) {
-      this.transitionTo('welcome');
+      this.router.transitionTo('welcome');
     }
   }
 

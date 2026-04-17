@@ -2,7 +2,7 @@ import BaseChannel from 'hyperchannel/routes/base_channel';
 
 export default BaseChannel.extend({
 
-  createChannelOrUserChannel: function(account, channelId) {
+  createChannelOrUserChannel: function (account, channelId) {
     let channel;
     switch(account.protocol) {
       case 'IRC':

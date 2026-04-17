@@ -1,10 +1,11 @@
 import Route from '@ember/routing/route';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import config from 'hyperchannel/config/environment';
 
 export default class ConfigureSockethubRoute extends Route {
 
-  @service sockethub;
+  @service('router') router;
+@service sockethub;
 
   model () {
     return { config };
@@ -12,7 +13,7 @@ export default class ConfigureSockethubRoute extends Route {
 
   redirect () {
     if (this.sockethub.client) {
-      this.transitionTo('index');
+      this.router.transitionTo('index');
     }
   }
 

@@ -4,8 +4,11 @@
       @apply font-bold;
     }
 
-    input[type=text], input[type=email], input[type=password],
-    input[type=number], select {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    select {
       @apply rounded-md bg-neutral-100 text-neutral-800 border-transparent
              focus:border-blue-500 focus:ring-0;
     }

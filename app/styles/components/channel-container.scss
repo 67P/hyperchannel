@@ -1,5 +1,4 @@
 #channel {
-
   main {
     // TODO move to channel header component
     header {
@@ -20,7 +19,7 @@
         transition: color 0.2s;
 
         &.disconnected {
-          color: rgba(255,255,255,0.6);
+          color: rgba(255, 255, 255, 0.6);
         }
       }
 
@@ -34,11 +33,11 @@
         padding: 0 1rem;
         background-color: $background-color-magenta;
         font-style: italic;
-        color: rgba(255,255,255,0.6);
+        color: rgba(255, 255, 255, 0.6);
         transition: color 0.2s;
 
         a {
-          color: rgba(255,255,255,0.6);
+          color: rgba(255, 255, 255, 0.6);
         }
 
         &:hover {
@@ -57,11 +56,16 @@
       nav {
         flex: 0 0 $sidebarWidth;
 
-        a, button {
+        a,
+        button {
           @include media(">desktop") {
             background-color: $background-color-yellow;
-            &:hover  { background-color: rgba(255,255,255,0.3); }
-            &.active { background-color: $background-color-cyan; }
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.3);
+            }
+            &.active {
+              background-color: $background-color-cyan;
+            }
           }
 
           @include media("<desktop") {
@@ -151,14 +155,13 @@
         .chat-me-message {
           .username {
             &::after {
-              content: '';
+              content: "";
             }
           }
         }
       }
     }
   }
-
 }
 
 @include media("<desktop") {
@@ -167,7 +170,8 @@
       main {
         header {
           nav {
-            a, button {
+            a,
+            button {
               &.active {
                 border-bottom: none;
               }

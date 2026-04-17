@@ -1,9 +1,10 @@
-/* global Hammer */
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
+import Hammer from 'hammerjs';
 import isDescendantOf from 'hyperchannel/utils/dom/is-descendant-of';
+import SettingsContainer from 'hyperchannel/components/settings-container';
 
 export default class ApplicationController extends Controller {
 
@@ -53,7 +54,7 @@ export default class ApplicationController extends Controller {
 
   @action
   openSettingsModal () {
-    this.modals.open('settings-container');
+    this.modals.open(SettingsContainer);
   }
 
   @action
@@ -62,7 +63,7 @@ export default class ApplicationController extends Controller {
 
     // Switch to last channel if the channel parted was currently open
     if (channel.visible) {
-      let lastChannel = this.coms.sortedChannels.lastObject;
+      let lastChannel = this.coms.sortedChannels.at(-1);
       this.router.transitionTo('channel', lastChannel);
     }
   }

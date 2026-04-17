@@ -1,8 +1,8 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 
-module('Unit | Service | local data', function(hooks) {
-  hooks.beforeEach(async function() {
+module('Unit | Service | local data', function (hooks) {
+  hooks.beforeEach(async function () {
     return new Promise((resolve/*, reject*/) => {
       function nope (e) {
         console.warn('IndexedDB deletion complaint:', e);
@@ -19,7 +19,7 @@ module('Unit | Service | local data', function(hooks) {
 
   setupTest(hooks);
 
-  test('store initialization', function(assert) {
+  test('store initialization', function (assert) {
     const service = this.owner.lookup('service:local-data');
     const userSettingsStore = service.stores.userSettings;
 
@@ -28,7 +28,7 @@ module('Unit | Service | local data', function(hooks) {
   });
 
   // TODO Re-add when we add new default configs
-  // test('default values', async function(assert) {
+  // skip('default values', async function(assert) {
   //   const service = this.owner.lookup('service:local-data');
   //
   //   await service.setDefaultValues();
@@ -36,10 +36,10 @@ module('Unit | Service | local data', function(hooks) {
   //   const userSettingsStore = service.stores.userSettings;
   //   const currentChannel = await userSettingsStore.getItem('currentChannel');
   //
-  //   assert.equal(currentChannel, 'kosmos');
+  //   assert.strictEqual(currentChannel, 'kosmos');
   // });
 
-  test('storing and retrieving values', async function(assert) {
+  test('storing and retrieving values', async function (assert) {
     const service = this.owner.lookup('service:local-data');
     await service.setDefaultValues();
     const userSettingsStore = service.stores.userSettings;
@@ -47,6 +47,6 @@ module('Unit | Service | local data', function(hooks) {
     await userSettingsStore.setItem('currentChannel', 'kosmos-random');
     const currentChannel = await userSettingsStore.getItem('currentChannel');
 
-    assert.equal(currentChannel, 'kosmos-random');
+    assert.strictEqual(currentChannel, 'kosmos-random');
   });
 });

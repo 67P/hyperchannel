@@ -1,0 +1,61 @@
+<div class="chat-message group mt-1.5 px-4 py-0.5 hover:bg-neutral-100 flex space-x-3
+            {{if @message.grouped 'mt-0'}}">
+  <div class="msg-avatar w-10">
+    {{#unless @message.grouped}}
+      <span class="w-10 h-10 flex justify-center items-center text-center
+                   text-white text-xl rounded bg-neutral-200">
+        <span class="flex-1" style={{this.userColorStyle}}>
+          {{this.avatarPlaceholderLetter}}
+        </span>
+      </span>
+    {{/unless}}
+  </div>
+  <div class="flex-1 relative">
+    {{#unless @message.grouped}}
+    <div class="msg-meta text-sm">
+      <span data-username={{@message.nickname}}
+            onclick={{fn this.usernameClick @message.nickname}}
+            class="mr-1 font-bold {{this.pendingClass}}" >
+        {{@message.nickname}}
+      </span>
+      <time datetime={{this.datetime}} title={{this.dateTitle}}
+            class="text-neutral-300 group-hover:text-neutral-400" >
+        {{moment-format @message.date "HH:mm"}}
+      </time>
+    </div>
+    {{/unless}}
+
+    {{#if this.isEditing}}
+    <form {{on "submit" this.correctMessage}}>
+      <label><span class="invisible">Message</span>
+        <input type="text" value={{this.editedContent}}
+               name="message-input-{{@message.id}}"
+               autocomplete="off"
+               class="mt-2 mr-1 py-1.5 md:w-1/2 group-hover:bg-white"
+               {{on-update (fn (mut this.editedContent))}} />
+      </label>
+      <button type="submit" title="Send"
+              class="btn-icon-sm btn-blue align-middle mr-0.5">
+        <Icon::send />
+      </button>
+      <button {{on "click" this.cancelMessageCorrection}}
+              type="reset" title="Cancel"
+              class="btn-icon-sm btn-red align-middle">
+        <Icon::x />
+      </button>
+    </form>
+    {{else}}
+    <div class="msg-content break-words {{this.pendingClass}}">
+      {{this.formattedContent}}
+      {{#if @message.edited}}
+      <span title="Edited">
+        <Icon::edit @class="inline w-4 h-4 text-neutral-300 group-hover:text-neutral-400" />
+      </span>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    <MessageUserActions @message={{@message}} @channel={{@channel}}
+                        @onCorrectMessage={{this.startMessageCorrection}}/>
+  </div>
+</div>

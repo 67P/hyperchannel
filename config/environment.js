@@ -4,19 +4,16 @@
 // const networkPresetsIrc = JSON.parse(fs.readFileSync('config/network-presets-irc.json'));
 
 module.exports = function (environment) {
-  let ENV = {
+  const ENV = {
     modulePrefix: 'hyperchannel',
     environment,
     rootURL: '/',
-    locationType: 'auto',
+    locationType: 'history',
     EmberENV: {
+      EXTEND_PROTOTYPES: false,
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
         // e.g. 'with-controller': true
-      },
-      EXTEND_PROTOTYPES: {
-        // Prevent Ember Data from overriding Date.parse.
-        Date: false,
       },
     },
     APP: {
@@ -51,6 +48,8 @@ module.exports = function (environment) {
 
     ENV.APP.rootElement = '#ember-testing';
     ENV.APP.autoboot = false;
+
+    ENV.sockethubURL = 'https://sockethub.kosmos.org:10550';
   }
 
   if (environment === 'production') {

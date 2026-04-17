@@ -5,10 +5,10 @@ import Message from 'hyperchannel/models/message';
 import { xmppAccount } from '../../fixtures/accounts';
 import sinon from 'sinon';
 
-module('Unit | Service | sockethub xmpp', function(hooks) {
+module('Unit | Service | sockethub xmpp', function (hooks) {
   setupTest(hooks);
 
-  test('#handlePresenceUpdate adds new users to the channel', function(assert) {
+  test('#handlePresenceUpdate adds new users to the channel', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
@@ -26,7 +26,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.ok(channel.userList.includes('walter'));
   });
 
-  test('#handlePresenceUpdate removes offline users from the channel', function(assert) {
+  test('#handlePresenceUpdate removes offline users from the channel', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
     channel.addUser('walter');
     const comsService = this.owner.factoryFor('service:coms').create({
@@ -45,7 +45,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.notOk(channel.userList.includes('walter'));
   });
 
-  test('#findOrCreateChannelForMessage returns the channel for a given message', function(assert) {
+  test('#findOrCreateChannelForMessage returns the channel for a given message', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
@@ -69,10 +69,10 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
       }
     };
 
-    assert.equal(service.findOrCreateChannelForMessage(message), channel);
+    assert.strictEqual(service.findOrCreateChannelForMessage(message), channel);
   });
 
-  test('#addMessageToChannel adds the message to the channel', function(assert) {
+  test('#addMessageToChannel adds the message to the channel', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
@@ -98,10 +98,10 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     service.addMessageToChannel(message);
 
-    assert.equal(channel.messages.lastObject.content, 'hello world');
+    assert.strictEqual(channel.messages.at(-1).content, 'hello world');
   });
 
-  test('#addMessageToChannel updates pending status when receiving an outgoing message', function(assert) {
+  test('#addMessageToChannel updates pending status when receiving an outgoing message', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'kosmos-dev@kosmos.chat' });
     const outgoingMessage = new Message({
       type: 'message-chat',
@@ -110,7 +110,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
       content: 'yo, gang!',
       pending: true
     });
-    channel.messages.pushObject(outgoingMessage);
+    channel.messages.push(outgoingMessage);
 
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
@@ -125,12 +125,12 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     service.addMessageToChannel(message);
 
-    assert.equal(channel.messages.filterBy('nickname', 'jimmy').length, 1);
-    assert.equal(channel.messages.lastObject.content, 'yo, gang!');
-    assert.notOk(channel.messages.lastObject.pending);
+    assert.strictEqual(channel.messages.filter(m => m.nickname === 'jimmy').length, 1);
+    assert.strictEqual(channel.messages.at(-1).content, 'yo, gang!');
+    assert.notOk(channel.messages.at(-1).pending);
   });
 
-  test('#createUserChannel', function(assert) {
+  test('#createUserChannel', function (assert) {
     const comsService = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ]
     });
@@ -138,13 +138,13 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
 
     const channel = service.createUserChannel(xmppAccount, 'kosmos-dev@kosmos.chat/walter');
 
-    assert.equal(channel.name, 'kosmos-dev@kosmos.chat/walter');
-    assert.equal(channel.displayName, 'walter');
+    assert.strictEqual(channel.name, 'kosmos-dev@kosmos.chat/walter');
+    assert.strictEqual(channel.displayName, 'walter');
     assert.ok(channel.isUserChannel);
     assert.ok(channel.connected);
   });
 
-  test('#transferMessage', async function(assert) {
+  test('#transferMessage', async function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
     const message = new Message({ content: 'Only 4 days until 2022!', id: 'hc-123abcde'});
     const coms = this.owner.factoryFor('service:coms').create({
@@ -171,14 +171,14 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     assert.ok(socketEmitSpy.calledOnce, 'emits a sockethub job message');
 
     const jobMessage = socketEmitSpy.getCall(0).args[1];
-    assert.equal(jobMessage.context, 'xmpp', 'job context is correct');
-    assert.equal(jobMessage.type, 'send', 'job type is correct');
-    assert.equal(jobMessage.object.type, 'message', 'job object type is correct');
-    assert.equal(jobMessage.object.content, 'Only 4 days until 2022!', 'job object content is correct');
-    assert.equal(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
+    assert.strictEqual(jobMessage.context, 'xmpp', 'job context is correct');
+    assert.strictEqual(jobMessage.type, 'send', 'job type is correct');
+    assert.strictEqual(jobMessage.object.type, 'message', 'job object type is correct');
+    assert.strictEqual(jobMessage.object.content, 'Only 4 days until 2022!', 'job object content is correct');
+    assert.strictEqual(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
   });
 
-  test('#transferMessage for correction', async function(assert) {
+  test('#transferMessage for correction', async function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
     const message = new Message({
       content: 'Only 4 days until 2022!',
@@ -207,7 +207,7 @@ module('Unit | Service | sockethub xmpp', function(hooks) {
     xmpp.transferMessage(target, message);
 
     const jobMessage = socketEmitSpy.getCall(0).args[1];
-    assert.equal(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
+    assert.strictEqual(jobMessage.object.id, 'hc-123abcde', 'job object contains a message ID');
     assert.deepEqual(jobMessage.object['xmpp:replace'], { id: 'hc-234ghijk' }, 'job object contains the replace property');
   });
 });

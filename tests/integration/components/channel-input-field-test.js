@@ -1,15 +1,15 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 
-module('Integration | Component | channel-input-field', function(hooks) {
+module('Integration | Component | channel-input-field', function (hooks) {
   setupRenderingTest(hooks);
 
-  test('it renders', async function(assert) {
+  test('it renders', async function (assert) {
     assert.expect(1);
 
-    await render(hbs`{{channel-input-field}}`);
+    await render(hbs`<ChannelInputField />`);
 
     assert.dom(this.element).hasText('');
   });

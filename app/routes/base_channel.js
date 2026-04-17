@@ -1,15 +1,6 @@
 import Route from '@ember/routing/route';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { action } from '@ember/object';
-import { scheduleOnce } from '@ember/runloop';
-
-function focusMessageInput() {
-  if (window.innerWidth > 900) {
-    document.querySelector('input#message-field').focus();
-  } else {
-    // Don't auto-focus on small screens
-  }
-}
 
 export default class BaseChannelRoute extends Route {
 
@@ -22,12 +13,12 @@ export default class BaseChannelRoute extends Route {
   }
 
   model (params) {
-    let channel = this.coms.channels.findBy('slug', params.slug);
+    let channel = this.coms.channels.find(ch => ch.slug === params.slug);
     if (channel) return channel;
 
     const channelId = decodeURIComponent(params.slug);
     const domain = channelId.match(/@([^/]+)/)[1];
-    const randomChannelForDomain = this.coms.channels.findBy('domain', domain);
+    const randomChannelForDomain = this.coms.channels.find(ch => ch.domain === domain);
 
     if (randomChannelForDomain) {
       channel = this.createChannelOrUserChannel(randomChannelForDomain.account, channelId);
@@ -38,10 +29,10 @@ export default class BaseChannelRoute extends Route {
     }
   }
 
-  setupController () {
+  setupController (controller) {
     super.setupController(...arguments);
 
-    scheduleOnce('afterRender', this, focusMessageInput);
+    controller.focusMessageInput();
   }
 
   @action
@@ -51,7 +42,7 @@ export default class BaseChannelRoute extends Route {
     await this.userSettings.setItem('currentChannel', channel.slug);
 
     // Mark all other channels as inactive/invisible
-    this.coms.channels.setEach('visible', false);
+    this.coms.channels.forEach(ch => ch.visible = false);
 
     // Mark channel as active/visible
     channel.visible = true;

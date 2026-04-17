@@ -1,4 +1,4 @@
-import { htmlSafe } from '@ember/string';
+import { htmlSafe } from '@ember/template';
 import { isPresent } from '@ember/utils';
 import BaseChannel from 'hyperchannel/models/base_channel';
 import config from 'hyperchannel/config/environment';
@@ -17,7 +17,7 @@ export default class Channel extends BaseChannel {
           target: '_blank'
         },
       });
-      return new htmlSafe(topic);
+      return htmlSafe(topic);
     } else {
       return '';
     }

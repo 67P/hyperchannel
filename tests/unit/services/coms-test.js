@@ -5,11 +5,11 @@ import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
 import { ircAccount, xmppAccount } from '../../fixtures/accounts';
 
-module('Unit | Service | coms', function(hooks) {
+module('Unit | Service | coms', function (hooks) {
   setupTest(hooks);
 
-  test('#connectServer calls connect on the appropriate transport service', function(assert) {
-    const ircStub = { connect: function() {} };
+  test('#connectServer calls connect on the appropriate transport service', function (assert) {
+    const ircStub = { connect: function () {} };
     const connectStub = sinon.stub(ircStub, 'connect');
     const service = this.owner.factoryFor('service:coms').create({ irc: ircStub });
 
@@ -19,8 +19,8 @@ module('Unit | Service | coms', function(hooks) {
     assert.ok(connectStub.calledWith(ircAccount));
   });
 
-  test('#joinChannel calls join on the appropriate transport service', function(assert) {
-    const xmppStub = { join: function() {} };
+  test('#joinChannel calls join on the appropriate transport service', function (assert) {
+    const xmppStub = { join: function () {} };
     const joinStub = sinon.stub(xmppStub, 'join');
     const service = this.owner.factoryFor('service:coms').create({ xmpp: xmppStub });
 
@@ -35,17 +35,19 @@ module('Unit | Service | coms', function(hooks) {
     assert.ok(joinStub.calledWith(channel, 'room'));
   });
 
-  test('#transferMessage calls transferMessage on the appropriate transport service', function(assert) {
+  test('#transferMessage calls transferMessage on the appropriate transport service', function (assert) {
+    assert.expect(4);
+    
     const msg = new Message({
       content: 'hello world',
       id: 'hc-1234abcd'
     });
     const xmppStub = {
-      transferMessage: function(target, message) {
-        assert.equal(target.id, 'testchannel@kosmos.chat');
-        assert.equal(target.type, 'room');
-        assert.equal(target.name, 'testchannel@kosmos.chat');
-        assert.equal(message, msg);
+      transferMessage: function (target, message) {
+        assert.strictEqual(target.id, 'testchannel@kosmos.chat');
+        assert.strictEqual(target.type, 'room');
+        assert.strictEqual(target.name, 'testchannel@kosmos.chat');
+        assert.strictEqual(message, msg);
       }
     };
     const service = this.owner.factoryFor('service:coms').create({ xmpp: xmppStub });
@@ -58,7 +60,7 @@ module('Unit | Service | coms', function(hooks) {
     service.transferMessage(channel, msg);
   });
 
-  test('#updateChannelUserList updates the users and connects the channel', function(assert) {
+  test('#updateChannelUserList updates the users and connects the channel', function (assert) {
     const observeMessage = {
       "type": "observe",
       "actor": {
@@ -98,42 +100,42 @@ module('Unit | Service | coms', function(hooks) {
     service.updateChannelUserList(observeMessage);
 
     assert.ok(channel.connected);
-    assert.equal(channel.userList.length, 5);
+    assert.strictEqual(channel.userList.length, 5);
   });
 
-  test('#sortedChannels returns channels sorted by name', function(assert) {
+  test('#sortedChannels returns channels sorted by name', function (assert) {
     const service = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount ]
     });
 
     ['dominica', 'phu quoc', 'lamu', 'canoa', 'flores'].forEach(cn => {
-      service.channels.pushObject(new Channel({ account: ircAccount, name: cn }));
+      service.channels.push(new Channel({ account: ircAccount, name: cn }));
     })
 
-    assert.deepEqual(service.sortedChannels.mapBy('name'),
+    assert.deepEqual(service.sortedChannels.map(ch => ch.name),
                      [ 'canoa', 'dominica', 'flores', 'lamu', 'phu quoc' ]);
   });
 
-  test('#channelDomains returns unique domains of all channels', function(assert) {
+  test('#channelDomains returns unique domains of all channels', function (assert) {
     const service = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount, xmppAccount ]
     });
-    service.channels.pushObject(new Channel({ account: ircAccount, name: 'kosmos' }));
-    service.channels.pushObject(new Channel({ account: ircAccount, name: 'kosmos-random' }));
-    service.channels.pushObject(new Channel({ account: xmppAccount, name: 'kosmos@kosmos.chat' }));
-    service.channels.pushObject(new Channel({ account: xmppAccount, name: 'chat@dino.im' }));
+    service.channels.push(new Channel({ account: ircAccount, name: 'kosmos' }));
+    service.channels.push(new Channel({ account: ircAccount, name: 'kosmos-random' }));
+    service.channels.push(new Channel({ account: xmppAccount, name: 'kosmos@kosmos.chat' }));
+    service.channels.push(new Channel({ account: xmppAccount, name: 'chat@dino.im' }));
 
     assert.deepEqual(service.channelDomains, ['dino.im', 'irc.libera.chat', 'kosmos.chat']);
   });
 
-  test('#groupedChannelsByDomain returns channels grouped by domain', function(assert) {
+  test('#groupedChannelsByDomain returns channels grouped by domain', function (assert) {
     const service = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount, xmppAccount ]
     });
-    service.channels.pushObject(new Channel({ account: ircAccount, name: 'kosmos' }));
-    service.channels.pushObject(new Channel({ account: ircAccount, name: 'kosmos-random' }));
-    service.channels.pushObject(new Channel({ account: xmppAccount, name: 'kosmos@kosmos.chat' }));
-    service.channels.pushObject(new Channel({ account: xmppAccount, name: 'chat@dino.im' }));
+    service.channels.push(new Channel({ account: ircAccount, name: 'kosmos' }));
+    service.channels.push(new Channel({ account: ircAccount, name: 'kosmos-random' }));
+    service.channels.push(new Channel({ account: xmppAccount, name: 'kosmos@kosmos.chat' }));
+    service.channels.push(new Channel({ account: xmppAccount, name: 'chat@dino.im' }));
 
     const channels = service.groupedChannelsByDomain;
 
@@ -154,6 +156,6 @@ module('Unit | Service | coms', function(hooks) {
       channels: [ channel1, channel2 ]
     });
 
-    assert.equal(service.activeChannel, channel2);
+    assert.strictEqual(service.activeChannel, channel2);
   });
 });

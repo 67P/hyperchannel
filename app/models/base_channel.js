@@ -1,6 +1,6 @@
 import { isEmpty, isPresent } from '@ember/utils';
-import { A } from '@ember/array';
 import { tracked, cached } from '@glimmer/tracking';
+import { TrackedArray } from 'tracked-built-ins';
 import Message from 'hyperchannel/models/message';
 import moment from 'moment';
 
@@ -13,8 +13,8 @@ export default class BaseChannel {
   @tracked isLogged;
   @tracked connected = false;
   @tracked topic = null;
-  @tracked userList = A([]);
-  @tracked messages = A([]);
+  @tracked userList = new TrackedArray([]);
+  @tracked messages = new TrackedArray([]);
   @tracked unreadMessages = false;
   @tracked unreadMentions = false;
   @tracked visible = false; // Current/active channel
@@ -86,12 +86,14 @@ export default class BaseChannel {
 
   @cached
   get sortedMessages () {
-    return this.messages.sortBy('date');
+    return [...this.messages].sort((a, b) => {
+      return new Date(a.date) - new Date(b.date);
+    });
   }
 
   @cached
   get sortedUserList () {
-    return this.userList.sort(function (a, b) {
+    return [...this.userList].sort(function (a, b) {
       return a.toLowerCase().localeCompare(b.toLowerCase());
     });
   }
@@ -107,7 +109,7 @@ export default class BaseChannel {
     if (existingDateHeadline) { return; }
 
     let dateMessage = new Message({ type: 'date-headline', date: headlineDate });
-    this.messages.pushObject(dateMessage);
+    this.messages.push(dateMessage);
   }
 
   addMessage (message) {
@@ -118,13 +120,17 @@ export default class BaseChannel {
 
     this.addDateHeadline(message);
 
-    const prevMsg = this.messages.lastObject;
-    if ((prevMsg.nickname === message.nickname) &&
+    // Find the last non-date-headline message for grouping check
+    const chatMessages = this.messages.filter(m => m.type !== 'date-headline');
+    const prevMsg = chatMessages[chatMessages.length - 1];
+    
+    if (prevMsg && 
+        (prevMsg.nickname === message.nickname) &&
          moment(message.date).isBefore(moment(prevMsg.date).add(120, 'seconds'))) {
       message.grouped = true;
     }
 
-    this.messages.pushObject(message);
+    this.messages.push(message);
 
     if (!this.visible) {
       this.unreadMessages = true;
@@ -135,9 +141,9 @@ export default class BaseChannel {
   }
 
   replaceMessage (newMessage) {
-    const lastMessage = this.sortedMessages
-                            .filterBy('nickname', newMessage.nickname)
-                            .lastObject
+    const messagesFromNick = this.sortedMessages
+                                .filter(msg => msg.nickname === newMessage.nickname);
+    const lastMessage = messagesFromNick[messagesFromNick.length - 1];
 
     if (lastMessage &&
        (lastMessage.id === newMessage.replaceId)) {
@@ -148,8 +154,8 @@ export default class BaseChannel {
   }
 
   confirmPendingMessage (content) {
-    const message = this.messages.filterBy('pending')
-                                 .findBy('content', content);
+    const message = this.messages.filter(msg => msg.pending)
+                                 .find(msg => msg.content === content);
 
     if (isPresent(message)) {
       message.pending = false;
@@ -159,14 +165,17 @@ export default class BaseChannel {
     }
   }
 
-  addUser(username) {
+  addUser (username) {
     if (!this.userList.includes(username)) {
-      this.userList.pushObject(username);
+      this.userList.push(username);
     }
   }
 
-  removeUser(username) {
-    this.userList.removeObject(username);
+  removeUser (username) {
+    const index = this.userList.indexOf(username);
+    if (index > -1) {
+      this.userList.splice(index, 1);
+    }
   }
 
   serialize () {

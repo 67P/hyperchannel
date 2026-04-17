@@ -1,8 +1,9 @@
-/* global Hammer */
+import Hammer from 'hammerjs';
+
 export default {
   name: 'hammer',
 
-  initialize: function() {
+  initialize: function () {
     // Enable text selection.
     // It's disabled by default to improve UX on desktop, so text wouldn't
     // be selected when panning.

@@ -1,9 +1,10 @@
 import Controller, { inject as controller } from '@ember/controller';
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import { capitalize } from '@ember/string';
 import { tracked } from '@glimmer/tracking';
+import { runTask } from 'ember-lifeline';
 import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
 import generateMessageId from 'hyperchannel/utils/generate-message-id';
@@ -15,6 +16,15 @@ export default class BaseChannelController extends Controller {
   @service coms;
   @service router;
   @service('remotestorage') storage;
+
+  focusMessageInput () {
+    if (window.innerWidth > 900) {
+      runTask(this, () => {
+        const input = document.querySelector('input#message-field');
+        if (input) input.focus();
+      }, 0);
+    }
+  }
 
   get showChannelMenu () {
     return this.application.showChannelMenu;
@@ -107,19 +117,19 @@ export default class BaseChannelController extends Controller {
   joinCommand (args) {
     const channel = this.coms.createChannel(this.model.account, args[0]);
     // TODO this.storage.saveChannel(channel);
-    this.transitionToRoute('channel', channel);
+    this.router.transitionTo('channel', channel);
   }
 
   @action
   partCommand () {
     this.coms.removeChannel(this.model);
-    const lastChannel = this.coms.channels.lastObject;
+    const lastChannel = this.coms.channels[this.coms.channels.length - 1];
     if (isPresent(lastChannel)) {
-      this.transitionToRoute('channel', lastChannel);
+      this.router.transitionTo('channel', lastChannel);
     } else {
       // TODO handle zero channels left
       console.warn('No channels left to transition to');
-      this.transitionToRoute('index');
+      this.router.transitionTo('index');
     }
   }
 

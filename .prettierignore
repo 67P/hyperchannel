@@ -1,0 +1,28 @@
+# unconventional js
+/blueprints/*/files/
+
+# compiled output
+/dist/
+/release/
+
+# misc
+/config/
+/coverage/
+!.*
+.*/
+/pnpm-lock.yaml
+ember-cli-update.json
+*.html
+*.md
+*.hbs
+*.json
+*.js
+*.mjs
+*.cjs
+
+# issue archives
+/issues/
+/github-issues/
+
+# Other ignored files
+/gitno/

@@ -1,0 +1,11 @@
+<input
+  type="text"
+  value={{@value}}
+  placeholder={{@placeholder}}
+  name={{@name}}
+  id={{@id}}
+  autocomplete={{@autocomplete}}
+  class={{@class}}
+  {{on "keyup" this.handleKeyUp}}
+  ...attributes
+/>

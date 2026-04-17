@@ -175,7 +175,8 @@ div#channel {
   }
 }
 
-section#settings, section#space {
+section#settings,
+section#space {
   flex: 1;
   overflow: auto;
 }
@@ -191,14 +192,16 @@ section#settings, section#space {
   }
 }
 
-header, footer {
+header,
+footer {
   nav {
     button {
       border: none;
       color: #fff;
     }
 
-    a, button {
+    a,
+    button {
       display: flex;
       float: left;
       align-items: center;
@@ -209,7 +212,7 @@ header, footer {
       text-decoration: none;
 
       &:hover {
-        background-color: rgba(255,255,255,0.2);
+        background-color: rgba(255, 255, 255, 0.2);
       }
 
       svg {

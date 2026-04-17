@@ -1,7 +1,7 @@
-import Service, { inject as service } from '@ember/service';
+import Service, { service } from '@ember/service';
 import { isPresent, isEmpty } from '@ember/utils';
-import { A } from '@ember/array';
 import { tracked } from '@glimmer/tracking';
+import { TrackedArray } from 'tracked-built-ins';
 import IrcAccount from 'hyperchannel/models/account/irc';
 import XmppAccount from 'hyperchannel/models/account/xmpp';
 import Channel from 'hyperchannel/models/channel';
@@ -28,35 +28,39 @@ export default class ComsService extends Service {
    * A collection of all account model instances
    * @type {Account[]}
    */
-  @tracked accounts = A([]);
+  @tracked accounts = new TrackedArray([]);
   /**
    * A collection of all channel instances
    * @type {Channel[] | UserChannel}
    */
-  @tracked channels = A([]);
+  @tracked channels = new TrackedArray([]);
 
   get sortedChannels () {
-    return this.channels.sortBy('name');
+    return [...this.channels].sort((a, b) => 
+      a.name.localeCompare(b.name)
+    );
   }
 
   get channelDomains () {
-    return this.channels.mapBy('domain').uniq().sort();
+    const domains = this.channels.map(ch => ch.domain);
+    return [...new Set(domains)].sort();
   }
 
   get groupedChannelsByDomain () {
     return this.channelDomains.map(domain => {
+      const domainChannels = this.channels.filter(ch => ch.domain === domain);
       return {
         domain: domain,
-        channels: this.channels.filterBy('domain', domain).sortBy('name')
+        channels: [...domainChannels].sort((a, b) => a.name.localeCompare(b.name))
       };
     });
   }
 
   get activeChannel () {
-    return this.channels.findBy('visible');
+    return this.channels.find(ch => ch.visible);
   }
 
-  get onboardingComplete() {
+  get onboardingComplete () {
     return isPresent(this.accounts);
   }
 
@@ -107,7 +111,7 @@ export default class ComsService extends Service {
 
           this.connectServer(account);
 
-          this.accounts.pushObject(account);
+          this.accounts.push(account);
 
           // TODO wait for successful server connection before joining
           return this.instantiateChannels(account);
@@ -221,7 +225,7 @@ export default class ComsService extends Service {
    * @param {String} channelId - a Sockethub channel ID
    */
   getChannel (channelId) {
-    const channel = this.channels.findBy('sockethubChannelId', channelId);
+    const channel = this.channels.find(ch => ch.sockethubChannelId === channelId);
 
     if (isEmpty(channel)) {
       console.warn('Could not find channel by sockethubChannelId', channelId);
@@ -234,7 +238,7 @@ export default class ComsService extends Service {
   updateUsername (message) {
     if (typeof message.actor === 'object') {
       const actorId = message.actor.id;
-      const account = this.accounts.findBy('sockethubPersonId', actorId);
+      const account = this.accounts.find(acc => acc.sockethubPersonId === actorId);
       if (isPresent(account)) {
         account.updateUsername(message.target.name);
       }
@@ -256,7 +260,7 @@ export default class ComsService extends Service {
     channel.topic = newTopic;
 
     if (isPresent(currentTopic) && (newTopic !== currentTopic) && !channel.visible) {
-      Notification.requestPermission(function() {
+      Notification.requestPermission(function () {
         new Notification(channel.name, {
           body: `New Topic: ${newTopic}`
         });
@@ -290,7 +294,7 @@ export default class ComsService extends Service {
       displayName: channelName,
       isLogged: options.isLogged
     });
-    this.channels.pushObject(channel);
+    this.channels.push(channel);
     this.joinChannel(channel, 'room');
 
     if (options.saveConfig) {
@@ -362,13 +366,16 @@ export default class ComsService extends Service {
     const channel = this.getServiceForSockethubPlatform(account.protocol)
                         .createUserChannel(account, name);
 
-    this.channels.pushObject(channel);
+    this.channels.push(channel);
     return channel;
   }
 
   async removeChannel (channel) {
     this.leaveChannel(channel);
-    this.channels.removeObject(channel);
+    const channelIndex = this.channels.indexOf(channel);
+    if (channelIndex > -1) {
+      this.channels.splice(channelIndex, 1);
+    }
     if (!channel.isUserChannel) {
       await this.storage.removeChannel(channel);
     }
@@ -376,13 +383,16 @@ export default class ComsService extends Service {
   }
 
   async removeAccount (account) {
-    const channels = this.channels.filterBy('account', account);
+    const channels = this.channels.filter(ch => ch.account === account);
     console.debug(`Removing ${channels.length} channels before removing account:`, channels);
     for (const channel of channels) {
       await this.removeChannel(channel);
     }
 
-    this.accounts.removeObject(account);
+    const accountIndex = this.accounts.indexOf(account);
+    if (accountIndex > -1) {
+      this.accounts.splice(accountIndex, 1);
+    }
     await this.storage.removeAccount(account);
     return;
   }

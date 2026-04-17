@@ -3,10 +3,10 @@ import { setupTest } from 'ember-qunit';
 import Channel from 'hyperchannel/models/channel';
 import { ircAccount } from '../../fixtures/accounts';
 
-module('Unit | Service | sockethub irc', function(hooks) {
+module('Unit | Service | sockethub irc', function (hooks) {
   setupTest(hooks);
 
-  test('#join directly connects a person channel', function(assert) {
+  test('#join directly connects a person channel', function (assert) {
     const service = this.owner.lookup('service:sockethub-irc');
     const channel = new Channel({ account: ircAccount, isUserChannel: true });
 
@@ -16,7 +16,7 @@ module('Unit | Service | sockethub irc', function(hooks) {
   });
 
   // FIXME this test randomly fails with error "Assertion occured after test had finished."
-  // test('#join sends the join activity to Sockethub for a room channel', function(assert) {
+  // skip('#join sends the join activity to Sockethub for a room channel', function(assert) {
   //   const done = assert.async();
   //
   //   const sockethubStub = {
@@ -25,9 +25,9 @@ module('Unit | Service | sockethub irc', function(hooks) {
   //     },
   //     socket: {
   //       emit: function(type, event) {
-  //         assert.equal(type, 'message');
-  //         assert.equal(event['@type'], 'join');
-  //         assert.equal(event.target, 'testchannel');
+  //         assert.strictEqual(type, 'message');
+  //         assert.strictEqual(event['@type'], 'join');
+  //         assert.strictEqual(event.target, 'testchannel');
   //         done();
   //       }
   //     }

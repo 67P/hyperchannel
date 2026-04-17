@@ -18,10 +18,10 @@ checks:
 #       - TODO
 #       - FIXME
 exclude_patterns:
-- ".eslintrc.js"
-- ".template-lintrc.js"
-- "config/tailwindcss-config.js"
-- "release/"
-- "scripts/"
-- "tests/"
-- "node_modules/"
+  - ".eslintrc.js"
+  - ".template-lintrc.js"
+  - "config/tailwindcss-config.js"
+  - "release/"
+  - "scripts/"
+  - "tests/"
+  - "node_modules/"

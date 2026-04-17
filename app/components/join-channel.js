@@ -1,0 +1,44 @@
+import Component from '@glimmer/component';
+import { service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
+import { isPresent } from '@ember/utils';
+import { action } from '@ember/object';
+
+export default class JoinChannelComponent extends Component {
+  @service coms;
+
+  @tracked selectedAccountId;
+
+  get selectedAccount () {
+    if (isPresent(this.selectedAccountId)) {
+      return this.coms.accounts.find(acc => acc.id === this.selectedAccountId);
+    } else {
+      return this.preSelectedAccount;
+    }
+  }
+
+  get preSelectedAccount () {
+    if (isPresent(this.coms.activeChannel)) {
+      return this.coms.activeChannel.account;
+    } else {
+      return this.coms.accounts.firstObject;
+    }
+  }
+
+  get accountSelectionDisabled () {
+    return this.coms.accounts.length < 2;
+  }
+
+  get componentNameForProtocol () {
+    const account = this.selectedAccount;
+    if (!account) {
+      return null;
+    }
+    return 'join-channel-' + account.protocol.toLowerCase();
+  }
+
+  @action
+  selectAccount (event) {
+    this.selectedAccountId = event.target.value;
+  }
+}
