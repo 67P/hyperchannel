@@ -28,7 +28,8 @@ export default class SockethubService extends Service {
   }
 
   /**
-   * Resolves the platform identifier from an incoming message's @context array.
+   * Resolves the platform identifier from an incoming message's @context array
+   * or platform property.
    *
    * @param {Object} message - incoming sockethub message
    * @returns {String|undefined} platform identifier (e.g. 'irc', 'xmpp')
@@ -36,6 +37,9 @@ export default class SockethubService extends Service {
   platformForMessage (message) {
     if (message.context) {
       return message.context;
+    }
+    if (message.platform) {
+      return message.platform;
     }
     const contextArray = message['@context'];
     if (!Array.isArray(contextArray)) return;

@@ -437,6 +437,12 @@ export default class ComsService extends Service {
           this.updateChannelUserList(message);
         }
         break;
+      case 'join':
+        this.addUserToChannelUserList(message);
+        break;
+      case 'leave':
+        this.removeUserFromChannelUserList(message);
+        break;
       case 'send':
         switch (message.object.type) {
           case 'message':

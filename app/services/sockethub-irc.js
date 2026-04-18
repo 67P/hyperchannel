@@ -93,19 +93,24 @@ export default class SockethubIrcService extends Service {
   handlePresenceUpdate (message) {
     const match = message.target.id.match(/(.+)\//);
     if (!match) { console.warn('Could not parse hostname from presence message', message); return; }
-    const hostname = match[1];
-    const account = this.coms.accounts.find(acc => acc?.server?.hostname === hostname);
-    if (isEmpty(account)) { console.warn('No account for presence update message found.', message); return; }
 
     let channel = this.coms.channels.find(ch => ch.sockethubChannelId === message.target.id);
 
     if (isEmpty(channel)) {
-      console.debug('No channel for presence update message found. Creating it.', message);
-      channel = this.coms.createChannel(account, message.target.name, message.target.id);
+      // Ignore presence updates for channels we haven't explicitly joined.
+      // Auto-creating channels here would cause a cascade: each new channel
+      // triggers a JOIN, which returns NAMES, which generates more presence
+      // events for more channels, eventually joining every channel on the server.
+      //
+      // TODO In the future, we could collect these channel names to build an
+      // available-channels list for the user when they want to join a new channel.
+      return;
     }
 
-    // If we receive presence updates from other users, we should be in the
-    // channel too.
+    const hostname = match[1];
+    const account = this.coms.accounts.find(acc => acc?.server?.hostname === hostname);
+    if (isEmpty(account)) { console.warn('No account for presence update message found.', message); return; }
+
     channel.addUser(account.nickname);
     channel.connected = true;
 
