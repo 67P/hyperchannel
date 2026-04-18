@@ -71,8 +71,6 @@ export default class ComsService extends Service {
    */
   setupListeners () {
     this.sockethub.client.socket.on('message', this.handleSockethubMessage.bind(this));
-    this.sockethub.client.socket.on('completed', this.handleJobCompleted.bind(this));
-    this.sockethub.client.socket.on('failed', this.handleJobFailed.bind(this));
     this.sockethub.client.socket.on('client_error', (err) => {
       console.error('Sockethub client error:', err);
     });
@@ -466,24 +464,6 @@ export default class ComsService extends Service {
         }
         break;
     }
-  }
-
-  handleJobCompleted (message) {
-    this.log('completed', 'Job completed', message);
-    if (message.type === 'join') {
-      const platform = this.sockethub.platformForMessage(message);
-      if (!platform) {
-        console.warn('Could not determine platform for completed job', message);
-        return;
-      }
-      this.getServiceForSockethubPlatform(platform)
-          .handleJoinCompleted(message);
-    }
-  }
-
-  handleJobFailed (message) {
-    this.log('failed', 'Job failed', message);
-    console.warn('Sockethub job failed:', message);
   }
 
   /**
