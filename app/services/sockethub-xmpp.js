@@ -186,7 +186,7 @@ export default class SockethubXmppService extends Service {
         }
       }
     } else {
-      this.log('xmpp', 'presence update from contact:', message.actor.id, message.object.presence, message.object.status);
+      this.log('xmpp', 'Presence update:', message.actor.id, message.object.presence, message.object.status);
     }
   }
 
