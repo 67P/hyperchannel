@@ -18,8 +18,8 @@ export default class ApplicationRoute extends Route {
     await this.localData.setDefaultValues();
 
     await this.sockethub.initialize().then(async () => {
-      await this.coms.instantiateAccountsAndChannels();
       this.coms.setupListeners();
+      await this.coms.instantiateAccountsAndChannels();
     }).catch(error => {
       console.warn('Failed to load Sockethub libs:', error);
     });

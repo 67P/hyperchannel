@@ -71,6 +71,9 @@ export default class ComsService extends Service {
    */
   setupListeners () {
     this.sockethub.client.socket.on('message', this.handleSockethubMessage.bind(this));
+    this.sockethub.client.socket.on('client_error', (err) => {
+      console.error('Sockethub client error:', err);
+    });
   }
 
   /**
@@ -166,8 +169,13 @@ export default class ComsService extends Service {
    * Invokes the send-action-message function on the appropriate transport service
    * @public
    */
-  transferMeMessage (account, target, content) {
-    switch (account.protocol) {
+  transferMeMessage (channel, content) {
+    const target = {
+      id: channel.sockethubChannelId,
+      type: channel.isUserChannel ? 'person' : 'room',
+      name: channel.name
+    };
+    switch (channel.protocol) {
       case 'XMPP':
         // TODO implement
         break;
@@ -411,10 +419,15 @@ export default class ComsService extends Service {
    * @private
    */
   handleSockethubMessage (message) {
-    this.log(`${message.context}_message`, 'SH message', message);
+    const platform = this.sockethub.platformForMessage(message);
+    if (!platform) {
+      console.warn('Could not determine platform for message', message);
+      return;
+    }
+    this.log(`${platform}_message`, 'SH message', message);
 
     if (message.actor.type === 'service') {
-      this.log(`${message.context}_message`, 'skipping service message');
+      this.log(`${platform}_message`, 'skipping service message');
       return;
     }
 
@@ -424,17 +437,17 @@ export default class ComsService extends Service {
           this.updateChannelUserList(message);
         }
         break;
-      // TODO remove deprecated term in favor of query
-      case 'observe':
-        if (message.object['type'] === 'attendance') {
-          this.updateChannelUserList(message);
-        }
+      case 'join':
+        this.addUserToChannelUserList(message);
+        break;
+      case 'leave':
+        this.removeUserFromChannelUserList(message);
         break;
       case 'send':
         switch (message.object.type) {
           case 'message':
           case 'me':
-            this.getServiceForSockethubPlatform(message.context)
+            this.getServiceForSockethubPlatform(platform)
                 .addMessageToChannel(message);
             break;
         }
@@ -448,7 +461,7 @@ export default class ComsService extends Service {
             this.updateUsername(message);
             break;
           case 'presence':
-            this.getServiceForSockethubPlatform(message.context)
+            this.getServiceForSockethubPlatform(platform)
                 .handlePresenceUpdate(message)
             break;
           case 'error':
