@@ -217,6 +217,7 @@ module('Unit | Service | coms', function (hooks) {
     service.updateChannelRoomInfo(roomInfoMessage);
 
     assert.ok(channel.connected);
+    assert.ok(channel.roomInfoLoaded);
     assert.strictEqual(channel.displayName, 'Kosmos Development Room');
     assert.strictEqual(channel.description, 'The main development room.');
     assert.deepEqual([...channel.roomFeatures], ['http://jabber.org/protocol/muc', 'muc_persistent']);

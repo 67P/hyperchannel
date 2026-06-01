@@ -218,6 +218,7 @@ export default class ComsService extends Service {
 
     if (channel) {
       channel.connected = true;
+      channel.roomInfoLoaded = true;
       if (message.error) {
         console.warn('Error querying room info:', message.error);
         return;

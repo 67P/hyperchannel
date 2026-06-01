@@ -1,0 +1,60 @@
+{{#if @channel.roomInfoLoaded}}
+  <div class="bg-white bg-opacity-90 p-4 rounded border border-white/20 text-neutral-800 shadow-sm">
+    <h3 class="text-lg font-bold mb-1 text-neutral-900">{{@channel.displayName}}</h3>
+    <p class="text-sm text-neutral-500 mb-4">{{@channel.name}}</p>
+
+    {{#if @channel.description}}
+      <div class="mb-4">
+        <h4 class="text-xs uppercase font-semibold text-neutral-400 tracking-wider mb-1">Description</h4>
+        <p class="text-neutral-800">{{@channel.description}}</p>
+      </div>
+    {{/if}}
+
+    {{#if @channel.roomInfoData.lang.value}}
+      <div class="mb-4">
+        <h4 class="text-xs uppercase font-semibold text-neutral-400 tracking-wider mb-1">Language</h4>
+        <p class="text-neutral-800">{{@channel.roomInfoData.lang.value}}</p>
+      </div>
+    {{/if}}
+  </div>
+
+  {{! Room Configurations Card }}
+  {{#if this.filteredRoomConfigData}}
+    <div class="bg-white bg-opacity-90 p-4 rounded border border-white/20 text-neutral-800 shadow-sm">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-3">Room Configurations</h3>
+      <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+        {{#each-in this.filteredRoomConfigData as |key field|}}
+          {{#if field.label}}
+            <div>
+              <dt class="text-xs font-medium text-neutral-500">{{field.label}}</dt>
+              <dd class="mt-1 text-neutral-900 font-semibold">
+                {{#if (eq field.type "boolean")}}
+                  {{if field.value "Yes" "No"}}
+                {{else}}
+                  {{field.value}}
+                {{/if}}
+              </dd>
+            </div>
+          {{/if}}
+        {{/each-in}}
+      </dl>
+    </div>
+  {{/if}}
+
+  {{! Supported Features Card }}
+  {{#if @channel.roomFeatures}}
+    <div class="bg-white bg-opacity-90 p-4 rounded border border-white/20 text-neutral-800 shadow-sm">
+      <h3 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-3">Supported Features</h3>
+      <ul class="list-disc pl-5 text-sm text-neutral-800 space-y-1">
+        {{#each @channel.roomFeatures as |feature|}}
+          <li><code>{{feature}}</code></li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+{{else}}
+  <div class="flex flex-col items-center justify-center p-12 bg-white bg-opacity-90 rounded border border-white/20 text-neutral-800 shadow-sm space-y-3">
+    <LoadingSpinner @size="large" @position="none" class="text-cyan-500" />
+    <p class="text-sm font-medium text-neutral-600">Loading room details...</p>
+  </div>
+{{/if}}
