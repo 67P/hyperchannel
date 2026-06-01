@@ -158,4 +158,69 @@ module('Unit | Service | coms', function (hooks) {
 
     assert.strictEqual(service.activeChannel, channel2);
   });
+
+  test('#updateChannelRoomInfo updates all standard and extended room info on the channel', function (assert) {
+    const channel = new Channel({
+      account: xmppAccount,
+      name: 'kosmos@kosmos.chat',
+      displayName: 'kosmos@kosmos.chat',
+      connected: false
+    });
+
+    const service = this.owner.factoryFor('service:coms').create({
+      accounts: [ xmppAccount ],
+      channels: [ channel ]
+    });
+
+    const roomInfoMessage = {
+      type: 'room-info',
+      actor: {
+        id: 'kosmos@kosmos.chat',
+        type: 'room',
+        name: 'Kosmos Development Room'
+      },
+      object: {
+        type: 'room-info',
+        features: [
+          'http://jabber.org/protocol/muc',
+          'muc_persistent'
+        ],
+        identities: [
+          {
+            category: 'conference',
+            type: 'text',
+            name: 'Kosmos Development Room'
+          }
+        ],
+        roominfo: {
+          description: {
+            type: 'text-single',
+            label: 'Room description',
+            value: 'The main development room.'
+          },
+          occupants: {
+            type: 'text-single',
+            label: 'Number of occupants',
+            value: 12
+          }
+        },
+        roomconfig: {
+          changesubject: {
+            type: 'boolean',
+            label: 'Occupants May Change the Subject',
+            value: true
+          }
+        }
+      }
+    };
+
+    service.updateChannelRoomInfo(roomInfoMessage);
+
+    assert.ok(channel.connected);
+    assert.strictEqual(channel.displayName, 'Kosmos Development Room');
+    assert.strictEqual(channel.description, 'The main development room.');
+    assert.deepEqual([...channel.roomFeatures], ['http://jabber.org/protocol/muc', 'muc_persistent']);
+    assert.strictEqual(channel.roomInfoData.occupants.value, 12);
+    assert.strictEqual(channel.roomConfigData.changesubject.value, true);
+  });
 });

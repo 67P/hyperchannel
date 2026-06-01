@@ -212,6 +212,42 @@ export default class ComsService extends Service {
     }
   }
 
+  updateChannelRoomInfo (message) {
+    this.log('xmpp', 'Room info update:', message.actor?.id, message.object);
+    const channel = this.getChannel(message.actor.id);
+
+    if (channel) {
+      channel.connected = true;
+      if (message.error) {
+        console.warn('Error querying room info:', message.error);
+        return;
+      }
+      if (message.actor && message.actor.name) {
+        channel.displayName = message.actor.name;
+      }
+      if (message.object) {
+        if (Array.isArray(message.object.features)) {
+          channel.roomFeatures = message.object.features;
+        }
+        if (Array.isArray(message.object.identities)) {
+          channel.roomIdentities = message.object.identities;
+        }
+        if (message.object.roominfo) {
+          channel.roomInfoData = message.object.roominfo;
+          if (message.object.roominfo.description && message.object.roominfo.description.value) {
+            channel.description = message.object.roominfo.description.value;
+          }
+        }
+        if (message.object.roomconfig) {
+          channel.roomConfigData = message.object.roomconfig;
+        }
+        if (message.object.custom) {
+          channel.roomCustomData = message.object.custom;
+        }
+      }
+    }
+  }
+
   addUserToChannelUserList (message) {
     const channel = this.getChannel(message.target.id);
     if (channel) {
@@ -426,7 +462,7 @@ export default class ComsService extends Service {
     }
     this.log(`${platform}_message`, 'SH message', message);
 
-    if (message.actor.type === 'service') {
+    if (message.actor.type === 'service' && message.type !== 'room-info') {
       this.log(`${platform}_message`, 'skipping service message');
       return;
     }
@@ -436,6 +472,9 @@ export default class ComsService extends Service {
         if (message.object['type'] === 'attendance') {
           this.updateChannelUserList(message);
         }
+        break;
+      case 'room-info':
+        this.updateChannelRoomInfo(message);
         break;
       case 'join':
         this.addUserToChannelUserList(message);
