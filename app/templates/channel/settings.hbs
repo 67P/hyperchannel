@@ -28,11 +28,11 @@
     </div>
 
     {{! Room Configurations Card }}
-    {{#if this.channel.model.roomConfigData}}
+    {{#if this.filteredRoomConfigData}}
       <div class="bg-white bg-opacity-90 p-4 rounded border border-white/20 text-neutral-800 shadow-sm">
         <h3 class="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-3">Room Configurations</h3>
         <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
-          {{#each-in this.channel.model.roomConfigData as |key field|}}
+          {{#each-in this.filteredRoomConfigData as |key field|}}
             {{#if field.label}}
               <div>
                 <dt class="text-xs font-medium text-neutral-500">{{field.label}}</dt>
