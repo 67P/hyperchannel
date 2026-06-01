@@ -5,7 +5,7 @@
       <h2 id="channel-name"
           class={{if @channel.connected "connected" "disconnected"}}
           {{on "click" (fn this.menu "global" "toggle")}}>
-        {{@channel.name}}
+        {{@channel.displayName}}
       </h2>
       <p id="channel-title">
         {{@channel.formattedTopic}}
@@ -20,7 +20,7 @@
         <LinkTo @route="channel.settings" @model={{@channel}} {{on "click" (fn this.menu "channel" "show")}}>
           <Icon::info />
         </LinkTo>
-        <a {{on "click" (fn this.leaveChannel @channel)}} title="Leave {{@channel.name}}">
+        <a {{on "click" (fn this.leaveChannel @channel)}} title="Leave {{@channel.displayName}}">
           <Icon::log-out />
         </a>
       </nav>
