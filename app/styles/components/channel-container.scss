@@ -95,6 +95,14 @@
           margin-bottom: 1.5rem;
         }
 
+        &#channel-settings {
+          @include media(">desktop") {
+            .header {
+              display: none;
+            }
+          }
+        }
+
         @include media(">desktop") {
           .header {
             button.back {
