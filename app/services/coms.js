@@ -36,7 +36,7 @@ export default class ComsService extends Service {
   @tracked channels = new TrackedArray([]);
 
   get sortedChannels () {
-    return [...this.channels].sort((a, b) => 
+    return [...this.channels].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
   }
@@ -462,7 +462,7 @@ export default class ComsService extends Service {
     }
     this.log(`${platform}_message`, 'SH message', message);
 
-    if (message.actor.type === 'service' && message.type !== 'room-info') {
+    if (message.actor.type === 'service') {
       this.log(`${platform}_message`, 'skipping service message');
       return;
     }
