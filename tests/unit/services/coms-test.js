@@ -173,7 +173,7 @@ module('Unit | Service | coms', function (hooks) {
     });
 
     const roomInfoMessage = {
-      type: 'room-info',
+      type: 'query',
       actor: {
         id: 'kosmos@kosmos.chat',
         type: 'room',

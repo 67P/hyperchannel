@@ -217,7 +217,7 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
     assert.deepEqual(jobMessage.object['xmpp:replace'], { id: 'hc-234ghijk' }, 'job object contains the replace property');
   });
 
-  test('#queryRoomInfo emits a room-info message', function (assert) {
+  test('#queryRoomInfo emits a query message with object type room-info', function (assert) {
     const channel = new Channel({ account: xmppAccount, name: 'elsalvador@chat.hackerbeach.org' });
     const coms = this.owner.factoryFor('service:coms').create({
       accounts: [ xmppAccount ], channels: [ channel ]
@@ -233,7 +233,8 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
     assert.ok(socketEmitSpy.calledOnce, 'emits a sockethub job message');
 
     const jobMessage = socketEmitSpy.getCall(0).args[1];
-    assert.strictEqual(jobMessage.type, 'room-info', 'job type is correct');
+    assert.strictEqual(jobMessage.type, 'query', 'job type is query');
+    assert.strictEqual(jobMessage.object.type, 'room-info', 'job object type is room-info');
     assert.strictEqual(jobMessage.target.id, 'elsalvador@chat.hackerbeach.org', 'job target JID is correct');
     assert.strictEqual(jobMessage.target.type, 'room', 'job target type is correct');
   });

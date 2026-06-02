@@ -470,8 +470,13 @@ export default class ComsService extends Service {
 
     switch (message.type) {
       case 'query':
-        if (message.object['type'] === 'attendance') {
-          this.updateChannelUserList(message);
+        switch (message.object?.type) {
+          case 'attendance':
+            this.updateChannelUserList(message);
+            break;
+          case 'room-info':
+            this.updateChannelRoomInfo(message);
+            break;
         }
         break;
       case 'room-info':

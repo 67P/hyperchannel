@@ -257,19 +257,22 @@ export default class SockethubXmppService extends Service {
    */
   queryRoomInfo (channel) {
     let msg = this.buildActivityObject(channel.account, {
-      type: 'room-info',
+      type: 'query',
       target: {
         id: channel.sockethubChannelId,
         type: 'room'
+      },
+      object: {
+        type: 'room-info'
       }
     });
 
     this.log('xmpp', 'asking for room info', msg);
     this.sockethubClient.socket.emit('message', msg, (response) => {
       if (response && response.error) {
-        console.error('[xmpp] room-info query rejected by Sockethub:', response.error);
+        console.error('[xmpp] query (room-info) rejected by Sockethub:', response.error);
       } else {
-        console.log('[xmpp] room-info query accepted by Sockethub:', response);
+        console.log('[xmpp] query (room-info) accepted by Sockethub:', response);
       }
     });
   }
