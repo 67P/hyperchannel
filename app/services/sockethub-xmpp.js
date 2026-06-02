@@ -270,9 +270,7 @@ export default class SockethubXmppService extends Service {
     this.log('xmpp', 'asking for room info', msg);
     this.sockethubClient.socket.emit('message', msg, (response) => {
       if (response && response.error) {
-        console.error('[xmpp] query (room-info) rejected by Sockethub:', response.error);
-      } else {
-        console.log('[xmpp] query (room-info) accepted by Sockethub:', response);
+        console.warn('[xmpp] query (room-info) rejected by Sockethub:', response.error);
       }
     });
   }
