@@ -1,13 +1,16 @@
 <section id="channel-settings" class="main py-6">
-  <div class="header">
+  <div class="header mb-6">
     <button type="button" class="back"
             {{on "click" (fn this.channel.menu "channel" "hide")}}>
       <Icon::arrow-left />
     </button>
-    <h2 class="px-4">Channel Settings</h2>
   </div>
 
-  <div class="item">setting</div>
-  <div class="item">setting</div>
-  <div class="item">setting</div>
+  <div class="px-4 space-y-4">
+    {{#if (eq this.channel.model.protocol "XMPP")}}
+      <ChannelSettingsXmpp @channel={{this.channel.model}} />
+    {{else if (eq this.channel.model.protocol "IRC")}}
+      <ChannelSettingsIrc @channel={{this.channel.model}} />
+    {{/if}}
+  </div>
 </section>

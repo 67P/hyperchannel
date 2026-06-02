@@ -21,7 +21,7 @@
                 #&thinsp;{{channel.shortName}}
               </LinkTo>
             {{/if}}
-            <a {{on "click" (fn @onLeaveChannel channel)}} title="Leave {{channel.name}}"
+            <a {{on "click" (fn @onLeaveChannel channel)}} title="Leave {{channel.displayName}}"
                class="leave-channel hidden absolute w-7 h-7 leading-7
                       top-0 right-0 text-center text-white
                       group-hover:inline-block hover:bg-red-800">x</a>

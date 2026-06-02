@@ -18,6 +18,13 @@ export default class BaseChannel {
   @tracked unreadMessages = false;
   @tracked unreadMentions = false;
   @tracked visible = false; // Current/active channel
+  @tracked roomInfoLoaded = false;
+  @tracked description = null;
+  @tracked roomFeatures = new TrackedArray([]);
+  @tracked roomIdentities = new TrackedArray([]);
+  @tracked roomInfoData = null;
+  @tracked roomConfigData = null;
+  @tracked roomCustomData = null;
 
   constructor (props) {
     Object.assign(this, props);

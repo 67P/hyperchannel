@@ -118,6 +118,7 @@ export default class SockethubXmppService extends Service {
     const channel = this.coms.channels.find(ch => ch.sockethubChannelId === channelId);
     if (channel) {
       this.queryAttendance(channel);
+      this.queryRoomInfo(channel);
     } else {
       console.warn('Could not find channel for join message', message);
     }
@@ -246,6 +247,32 @@ export default class SockethubXmppService extends Service {
 
     this.log('xmpp', 'asking for attendance list', msg);
     this.sockethubClient.socket.emit('message', msg);
+  }
+
+  /**
+   * Ask for a channel's room info using service discovery
+   *
+   * @param {Channel} channel
+   * @public
+   */
+  queryRoomInfo (channel) {
+    let msg = this.buildActivityObject(channel.account, {
+      type: 'query',
+      target: {
+        id: channel.sockethubChannelId,
+        type: 'room'
+      },
+      object: {
+        type: 'room-info'
+      }
+    });
+
+    this.log('xmpp', 'asking for room info', msg);
+    this.sockethubClient.socket.emit('message', msg, (response) => {
+      if (response && response.error) {
+        console.warn('[xmpp] query (room-info) rejected by Sockethub:', response.error);
+      }
+    });
   }
 
   /**

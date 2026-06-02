@@ -36,7 +36,7 @@ export default class ComsService extends Service {
   @tracked channels = new TrackedArray([]);
 
   get sortedChannels () {
-    return [...this.channels].sort((a, b) => 
+    return [...this.channels].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
   }
@@ -208,6 +208,48 @@ export default class ComsService extends Service {
       channel.connected = true;
       if (Array.isArray(message.object.members)) {
         channel.userList = message.object.members;
+      }
+    }
+  }
+
+  updateChannelRoomInfo (message) {
+    this.log('xmpp', 'Room info update:', message.actor?.id, message.object);
+    const channel = this.getChannel(message.actor.id);
+    if (!channel) return;
+    if (message.error) {
+      console.warn('Error querying room info:', message.error);
+      return;
+    }
+
+    channel.connected = true;
+    channel.roomInfoLoaded = true;
+
+    if (message.actor && message.actor.name) {
+      channel.displayName = message.actor.name;
+    }
+
+    if (message.object) {
+      if (Array.isArray(message.object.features)) {
+        channel.roomFeatures = message.object.features;
+      }
+
+      if (Array.isArray(message.object.identities)) {
+        channel.roomIdentities = message.object.identities;
+      }
+
+      if (message.object.roominfo) {
+        channel.roomInfoData = message.object.roominfo;
+        if (message.object.roominfo.description && message.object.roominfo.description.value) {
+          channel.description = message.object.roominfo.description.value;
+        }
+      }
+
+      if (message.object.roomconfig) {
+        channel.roomConfigData = message.object.roomconfig;
+      }
+
+      if (message.object.custom) {
+        channel.roomCustomData = message.object.custom;
       }
     }
   }
@@ -433,9 +475,17 @@ export default class ComsService extends Service {
 
     switch (message.type) {
       case 'query':
-        if (message.object['type'] === 'attendance') {
-          this.updateChannelUserList(message);
+        switch (message.object?.type) {
+          case 'attendance':
+            this.updateChannelUserList(message);
+            break;
+          case 'room-info':
+            this.updateChannelRoomInfo(message);
+            break;
         }
+        break;
+      case 'room-info':
+        this.updateChannelRoomInfo(message);
         break;
       case 'join':
         this.addUserToChannelUserList(message);
