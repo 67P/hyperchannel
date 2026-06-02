@@ -1,7 +1,5 @@
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import SockethubClient from '@sockethub/client';
-import { io } from 'socket.io-client';
 import config from 'hyperchannel/config/environment';
 
 export default class SockethubService extends Service {
@@ -9,22 +7,30 @@ export default class SockethubService extends Service {
   _platformContextMap = new Map();
 
   async initialize () {
-    const socket = io(config.sockethubURL, { path: '/sockethub' });
-    const client = new SockethubClient(socket);
+    return this.loadSockethubLibs(config.sockethubURL).then(async () => {
+      const socket = window.io(config.sockethubURL, { path: '/sockethub' });
+      const client = new window.SockethubClient(socket);
+      await client.ready();
+      this.client = client;
+      this._buildPlatformContextMap();
+    });
+  }
 
-    // Downgrade client-side validation errors to warnings to facilitate live testing of unreleased/custom schemas
-    const originalValidate = client.validateActivity.bind(client);
-    client.validateActivity = function (activity) {
-      const error = originalValidate(activity);
-      if (error) {
-        console.warn('[sockethub-client] Bypassing schema validation error:', error, activity);
-      }
-      return '';
-    };
+  async loadSockethubLibs (baseURL) {
+    await this.loadExternalScript(baseURL + '/socket.io.js');
+    await this.loadExternalScript(baseURL + '/sockethub-client.js');
+  }
 
-    await client.ready();
-    this.client = client;
-    this._buildPlatformContextMap();
+  async loadExternalScript (url) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      document.body.appendChild(script);
+      script.type = 'module';
+      script.onload = resolve;
+      script.onerror = reject;
+      script.async = true;
+      script.src = url;
+    });
   }
 
   /**
