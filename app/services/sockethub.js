@@ -7,26 +7,27 @@ export default class SockethubService extends Service {
   _platformContextMap = new Map();
 
   async initialize () {
-    await this._loadSockethubLibs();
-    const socket = window.io(config.sockethubURL, { path: '/sockethub' });
-    const client = new window.SockethubClient(socket);
-    await client.ready();
-    this.client = client;
-    this._buildPlatformContextMap();
+    return this.loadSockethubLibs(config.sockethubURL).then(async () => {
+      const socket = window.io(config.sockethubURL, { path: '/sockethub' });
+      const client = new window.SockethubClient(socket);
+      await client.ready();
+      this.client = client;
+      this._buildPlatformContextMap();
+    });
   }
 
-  async _loadSockethubLibs () {
-    await this._loadExternalScript(`${config.sockethubURL}/socket.io.js`);
-    await this._loadExternalScript(`${config.sockethubURL}/sockethub-client.js`);
+  async loadSockethubLibs (baseURL) {
+    await this.loadExternalScript(baseURL + '/socket.io.js');
+    await this.loadExternalScript(baseURL + '/sockethub-client.js');
   }
 
-  _loadExternalScript (url) {
+  async loadExternalScript (url) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
       document.body.appendChild(script);
       script.type = 'module';
       script.onload = resolve;
-      script.onerror = () => reject(new Error(`Failed to load script from ${url}`));
+      script.onerror = reject;
       script.async = true;
       script.src = url;
     });
