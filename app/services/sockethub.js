@@ -1,6 +1,5 @@
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import { io } from 'socket.io-client';
 import config from 'hyperchannel/config/environment';
 
 export default class SockethubService extends Service {
@@ -8,21 +7,28 @@ export default class SockethubService extends Service {
   _platformContextMap = new Map();
 
   async initialize () {
-    await this._loadClientScript();
-    const socket = io(config.sockethubURL, { path: '/sockethub' });
+    await this._loadSockethubLibs();
+    const socket = window.io(config.sockethubURL, { path: '/sockethub' });
     const client = new window.SockethubClient(socket);
     await client.ready();
     this.client = client;
     this._buildPlatformContextMap();
   }
 
-  _loadClientScript () {
+  async _loadSockethubLibs () {
+    await this._loadExternalScript(`${config.sockethubURL}/socket.io.js`);
+    await this._loadExternalScript(`${config.sockethubURL}/sockethub-client.js`);
+  }
+
+  _loadExternalScript (url) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = `${config.sockethubURL}/sockethub-client.js`;
+      document.body.appendChild(script);
+      script.type = 'module';
       script.onload = resolve;
-      script.onerror = () => reject(new Error(`Failed to load sockethub client from ${script.src}`));
-      document.head.appendChild(script);
+      script.onerror = () => reject(new Error(`Failed to load script from ${url}`));
+      script.async = true;
+      script.src = url;
     });
   }
 
