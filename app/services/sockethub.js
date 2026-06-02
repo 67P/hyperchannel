@@ -1,6 +1,5 @@
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import SockethubClient from '@sockethub/client';
 import { io } from 'socket.io-client';
 import config from 'hyperchannel/config/environment';
 
@@ -9,22 +8,22 @@ export default class SockethubService extends Service {
   _platformContextMap = new Map();
 
   async initialize () {
+    await this._loadClientScript();
     const socket = io(config.sockethubURL, { path: '/sockethub' });
-    const client = new SockethubClient(socket);
-
-    // Downgrade client-side validation errors to warnings to facilitate live testing of unreleased/custom schemas
-    const originalValidate = client.validateActivity.bind(client);
-    client.validateActivity = function (activity) {
-      const error = originalValidate(activity);
-      if (error) {
-        console.warn('[sockethub-client] Bypassing schema validation error:', error, activity);
-      }
-      return '';
-    };
-
+    const client = new window.SockethubClient(socket);
     await client.ready();
     this.client = client;
     this._buildPlatformContextMap();
+  }
+
+  _loadClientScript () {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = `${config.sockethubURL}/sockethub-client.js`;
+      script.onload = resolve;
+      script.onerror = () => reject(new Error(`Failed to load sockethub client from ${script.src}`));
+      document.head.appendChild(script);
+    });
   }
 
   /**
