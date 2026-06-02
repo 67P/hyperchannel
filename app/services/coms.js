@@ -215,36 +215,41 @@ export default class ComsService extends Service {
   updateChannelRoomInfo (message) {
     this.log('xmpp', 'Room info update:', message.actor?.id, message.object);
     const channel = this.getChannel(message.actor.id);
+    if (!channel) return;
+    if (message.error) {
+      console.warn('Error querying room info:', message.error);
+      return;
+    }
 
-    if (channel) {
-      channel.connected = true;
-      channel.roomInfoLoaded = true;
-      if (message.error) {
-        console.warn('Error querying room info:', message.error);
-        return;
+    channel.connected = true;
+    channel.roomInfoLoaded = true;
+
+    if (message.actor && message.actor.name) {
+      channel.displayName = message.actor.name;
+    }
+
+    if (message.object) {
+      if (Array.isArray(message.object.features)) {
+        channel.roomFeatures = message.object.features;
       }
-      if (message.actor && message.actor.name) {
-        channel.displayName = message.actor.name;
+
+      if (Array.isArray(message.object.identities)) {
+        channel.roomIdentities = message.object.identities;
       }
-      if (message.object) {
-        if (Array.isArray(message.object.features)) {
-          channel.roomFeatures = message.object.features;
+
+      if (message.object.roominfo) {
+        channel.roomInfoData = message.object.roominfo;
+        if (message.object.roominfo.description && message.object.roominfo.description.value) {
+          channel.description = message.object.roominfo.description.value;
         }
-        if (Array.isArray(message.object.identities)) {
-          channel.roomIdentities = message.object.identities;
-        }
-        if (message.object.roominfo) {
-          channel.roomInfoData = message.object.roominfo;
-          if (message.object.roominfo.description && message.object.roominfo.description.value) {
-            channel.description = message.object.roominfo.description.value;
-          }
-        }
-        if (message.object.roomconfig) {
-          channel.roomConfigData = message.object.roomconfig;
-        }
-        if (message.object.custom) {
-          channel.roomCustomData = message.object.custom;
-        }
+      }
+
+      if (message.object.roomconfig) {
+        channel.roomConfigData = message.object.roomconfig;
+      }
+
+      if (message.object.custom) {
+        channel.roomCustomData = message.object.custom;
       }
     }
   }
