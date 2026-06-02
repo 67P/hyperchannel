@@ -11,6 +11,17 @@ export default class SockethubService extends Service {
   async initialize () {
     const socket = io(config.sockethubURL, { path: '/sockethub' });
     const client = new SockethubClient(socket);
+
+    // Downgrade client-side validation errors to warnings to facilitate live testing of unreleased/custom schemas
+    const originalValidate = client.validateActivity.bind(client);
+    client.validateActivity = function (activity) {
+      const error = originalValidate(activity);
+      if (error) {
+        console.warn('[sockethub-client] Bypassing schema validation error:', error, activity);
+      }
+      return '';
+    };
+
     await client.ready();
     this.client = client;
     this._buildPlatformContextMap();
