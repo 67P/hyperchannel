@@ -228,7 +228,7 @@ export default class SockethubIrcService extends Service {
   queryAttendance (channel) {
     let msg = this.buildActivityObject(channel.account, {
       type: 'query',
-      target: { id: channel.sockethubChannelId, type: 'room' },
+      target: { id: channel.sockethubChannelId, type: 'room', name: channel.name },
       object: {
         type: 'attendance'
       }
