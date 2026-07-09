@@ -185,7 +185,6 @@ export default class SockethubXmppService extends Service {
           channel.addUser(username);
         }
       }
-    } else {
     }
     this.log('xmpp', 'Presence update:', message.actor.id, message.object.presence, message.object.status);
   }
