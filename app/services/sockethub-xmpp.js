@@ -117,7 +117,6 @@ export default class SockethubXmppService extends Service {
     const channelId = message.target.id.split('/')[0];
     const channel = this.coms.channels.find(ch => ch.sockethubChannelId === channelId);
     if (channel) {
-      this.queryAttendance(channel);
       this.queryRoomInfo(channel);
     } else {
       console.warn('Could not find channel for join message', message);
@@ -186,9 +185,8 @@ export default class SockethubXmppService extends Service {
           channel.addUser(username);
         }
       }
-    } else {
-      this.log('xmpp', 'Presence update:', message.actor.id, message.object.presence, message.object.status);
     }
+    this.log('xmpp', 'Presence update:', message.actor.id, message.object.presence, message.object.status);
   }
 
   /**
@@ -225,28 +223,6 @@ export default class SockethubXmppService extends Service {
         }
       });
     }
-  }
-
-  /**
-   * Ask for a channel's attendance list (users currently joined)
-   *
-   * @param {Channel} channel
-   * @public
-   */
-  queryAttendance (channel) {
-    let msg = this.buildActivityObject(channel.account, {
-      type: 'query',
-      target: {
-        id: channel.sockethubChannelId,
-        type: 'room'
-      },
-      object: {
-        type: 'attendance'
-      }
-    });
-
-    this.log('xmpp', 'asking for attendance list', msg);
-    this.sockethubClient.socket.emit('message', msg);
   }
 
   /**
