@@ -56,22 +56,30 @@ export default class BaseChannel {
         id = this.name;
         break;
       case 'IRC':
-        id = `${this.account.server.hostname}/${this.name}`;
+        // Use the same value as the internal `id` (name@host), so the
+        // Sockethub channel ID and the internal channel ID never diverge.
+        id = this.id;
         break;
     }
     return id;
   }
 
   get slug () {
-    // This could be based on server type in the future. E.g. IRC would be
-    // server URL, while Campfire would be another id.
-    return this.id.replace(/#/g,'');
+    // Strip a single leading '#' only for single-hash IRC channels, so they
+    // keep clean URLs (e.g. #kosmos-dev -> kosmos-dev@server). Multi-hash
+    // channels preserve all '#' characters (e.g. ##kosmos-dev ->
+    // ##kosmos-dev@server, URL-encoded as %23%23kosmos-dev@server).
+    return this.id.replace(/^#(?=[^#])/, '');
   }
 
-  get shortName () {
+  get sidebarName () {
     switch (this.protocol) {
       case 'IRC':
-        return this.name.replace(/#/g,'');
+        // Strip a single leading '#' so the sidebar (which already renders a
+        // leading '#') shows all hashes of the channel name, e.g.
+        // #kosmos-dev -> kosmos-dev (renders as "# kosmos-dev"),
+        // ##kosmos-dev -> #kosmos-dev (renders as "# #kosmos-dev").
+        return this.name.replace(/^#/, '');
       case 'XMPP':
         return this.name.match(/^(.+)@/)[1];
       default:

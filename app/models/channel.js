@@ -24,8 +24,13 @@ export default class Channel extends BaseChannel {
   }
 
   get publicLogsBaseUrl () {
-    // TODO needs to get hostname from channel meta info for federated protocols
-    return `${config.publicLogs.defaultBaseUrl}/${this.account.server.hostname.toLowerCase()}/channels/${this.shortName}`;
+    // Mirror the slug's leading-# rule: strip a single leading '#' only for
+    // single-# channels (keeps existing log URLs working); preserve all '#' for
+    // multi-# channels and percent-encode them so they don't become URL fragments.
+    const channelName = this.name
+      .replace(/^#(?=[^#])/, '')
+      .replace(/#/g, '%23');
+    return `${config.publicLogs.defaultBaseUrl}/${this.account.server.hostname.toLowerCase()}/channels/${channelName}`;
   }
 
 }

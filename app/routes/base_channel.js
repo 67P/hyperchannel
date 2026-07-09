@@ -13,15 +13,15 @@ export default class BaseChannelRoute extends Route {
   }
 
   model (params) {
-    let channel = this.coms.channels.find(ch => ch.slug === params.slug);
+    const slug = decodeURIComponent(params.slug);
+    let channel = this.coms.channels.find(ch => ch.slug === slug);
     if (channel) return channel;
 
-    const channelId = decodeURIComponent(params.slug);
-    const domain = channelId.match(/@([^/]+)/)[1];
+    const domain = slug.match(/@([^/]+)/)[1];
     const randomChannelForDomain = this.coms.channels.find(ch => ch.domain === domain);
 
     if (randomChannelForDomain) {
-      channel = this.createChannelOrUserChannel(randomChannelForDomain.account, channelId);
+      channel = this.createChannelOrUserChannel(randomChannelForDomain.account, slug);
       return channel;
     } else {
       const firstChannel = this.coms.channels.firstObject;

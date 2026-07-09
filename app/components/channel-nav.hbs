@@ -18,7 +18,7 @@
               {{/if}}
             {{else}}
               <LinkTo @route="channel" @model={{channel}} class="hc-sidebar-item">
-                #&thinsp;{{channel.shortName}}
+                #&thinsp;{{channel.sidebarName}}
               </LinkTo>
             {{/if}}
             <a {{on "click" (fn @onLeaveChannel channel)}} title="Leave {{channel.displayName}}"
