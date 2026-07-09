@@ -26,17 +26,21 @@ module('Unit | Model | channel', function (hooks) {
     assert.strictEqual(channel.formattedTopic.toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
   });
 
-  test('#shortName', function (assert) {
-    let channel = new Channel({
+  test('#publicLogsBaseUrl keeps single-hash channels unencoded', function (assert) {
+    const channel = new Channel({
       account: ircAccount,
       name: '#kosmos-dev'
     });
-    assert.strictEqual(channel.shortName, 'kosmos-dev', 'returns name without hash for IRC');
+    assert.strictEqual(channel.publicLogsBaseUrl, 'https://storage.5apps.com/kosmos/public/chat-messages/irc.libera.chat/channels/kosmos-dev');
+  });
 
-    channel = new Channel({
-      account: xmppAccount,
-      name: 'kosmos-dev@kosmos.chat'
+  test('#publicLogsBaseUrl percent-encodes all hashes for multi-hash channels', function (assert) {
+    const channel = new Channel({
+      account: ircAccount,
+      name: '##kosmos-dev'
     });
-    assert.strictEqual(channel.shortName, 'kosmos-dev', 'returns name without MUC domain for XMPP');
+    const baseUrl = channel.publicLogsBaseUrl;
+    assert.ok(!baseUrl.includes('#'), 'logs URL has no fragment');
+    assert.strictEqual(baseUrl, 'https://storage.5apps.com/kosmos/public/chat-messages/irc.libera.chat/channels/%23%23kosmos-dev');
   });
 });

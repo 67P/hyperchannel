@@ -91,7 +91,7 @@ export default class SockethubIrcService extends Service {
   }
 
   handlePresenceUpdate (message) {
-    const match = message.target.id.match(/(.+)\//);
+    const match = message.target.id.match(/@(.+)$/);
     if (!match) { console.warn('Could not parse hostname from presence message', message); return; }
 
     let channel = this.coms.channels.find(ch => ch.sockethubChannelId === message.target.id);

@@ -18,6 +18,53 @@ module('Unit | Model | base-channel', function (hooks) {
     assert.strictEqual(model.slug, 'kosmos-dev@irc.libera.chat');
   });
 
+  test('#slug strips only one leading hash for multi-hash channels', function (assert) {
+    const model = new BaseChannel({
+      account: ircAccount,
+      name: '##kosmos-dev'
+    });
+
+    assert.strictEqual(model.slug, '##kosmos-dev@irc.libera.chat');
+  });
+
+  test('#id and #sockethubChannelId preserve all hashes for IRC channels', function (assert) {
+    let model = new BaseChannel({
+      account: ircAccount,
+      name: '#kosmos-dev'
+    });
+    assert.strictEqual(model.id, '#kosmos-dev@irc.libera.chat', 'id preserves single hash');
+    assert.strictEqual(model.sockethubChannelId, '#kosmos-dev@irc.libera.chat', 'sockethubChannelId matches id');
+
+    model = new BaseChannel({
+      account: ircAccount,
+      name: '##kosmos-dev'
+    });
+    assert.strictEqual(model.id, '##kosmos-dev@irc.libera.chat', 'id preserves all hashes');
+    assert.strictEqual(model.sockethubChannelId, '##kosmos-dev@irc.libera.chat', 'sockethubChannelId matches id');
+  });
+
+  test('#sidebarName (IRC) strips a single leading hash', function (assert) {
+    let model = new BaseChannel({
+      account: ircAccount,
+      name: '#kosmos-dev'
+    });
+    assert.strictEqual(model.sidebarName, 'kosmos-dev', 'strips the single leading hash');
+
+    model = new BaseChannel({
+      account: ircAccount,
+      name: '##kosmos-dev'
+    });
+    assert.strictEqual(model.sidebarName, '#kosmos-dev', 'preserves remaining hashes');
+  });
+
+  test('#sidebarName (XMPP) returns the local part', function (assert) {
+    const model = new BaseChannel({
+      account: xmppAccount,
+      name: 'kosmos-dev@kosmos.chat'
+    });
+    assert.strictEqual(model.sidebarName, 'kosmos-dev');
+  });
+
   //
   // unreadMessagesClass
   //
