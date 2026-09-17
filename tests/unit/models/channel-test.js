@@ -1,7 +1,14 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import Channel from 'hyperchannel/models/channel';
+import XmppAccount from 'hyperchannel/models/account/xmpp';
 import { ircAccount, xmppAccount } from '../../fixtures/accounts';
+
+const xmppAccountWithServer = new XmppAccount({
+  nickname: xmppAccount.nickname,
+  username: xmppAccount.username,
+  server: { hostname: 'kosmos.chat' }
+});
 
 module('Unit | Model | channel', function (hooks) {
   setupTest(hooks);
@@ -42,5 +49,13 @@ module('Unit | Model | channel', function (hooks) {
     const baseUrl = channel.publicLogsBaseUrl;
     assert.ok(!baseUrl.includes('#'), 'logs URL has no fragment');
     assert.strictEqual(baseUrl, 'https://storage.5apps.com/kosmos/public/chat-messages/irc.libera.chat/channels/%23%23kosmos-dev');
+  });
+
+  test('#publicLogsBaseUrl uses the local part for XMPP channels', function (assert) {
+    const channel = new Channel({
+      account: xmppAccountWithServer,
+      name: 'kosmos-dev@kosmos.chat'
+    });
+    assert.strictEqual(channel.publicLogsBaseUrl, 'https://storage.5apps.com/kosmos/public/chat-messages/kosmos.chat/channels/kosmos-dev');
   });
 });
