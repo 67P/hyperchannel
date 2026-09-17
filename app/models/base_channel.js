@@ -2,6 +2,7 @@ import { isEmpty, isPresent } from '@ember/utils';
 import { tracked, cached } from '@glimmer/tracking';
 import { TrackedArray } from 'tracked-built-ins';
 import Message from 'hyperchannel/models/message';
+import domainFromId from 'hyperchannel/utils/domain-from-id';
 import moment from 'moment';
 
 export default class BaseChannel {
@@ -88,8 +89,7 @@ export default class BaseChannel {
   }
 
   get domain () {
-    const match = this.id.match(/@([^/]+)/);
-    return match[1];
+    return domainFromId(this.id);
   }
 
   get unreadMessagesClass () {

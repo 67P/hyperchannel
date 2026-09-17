@@ -91,7 +91,7 @@ export default class SockethubIrcService extends Service {
   }
 
   handlePresenceUpdate (message) {
-    const match = message.target.id.match(/@(.+)$/);
+    const match = message.target.id.match(/@([^@]+)$/);
     if (!match) { console.warn('Could not parse hostname from presence message', message); return; }
 
     let channel = this.coms.channels.find(ch => ch.sockethubChannelId === message.target.id);
@@ -171,7 +171,7 @@ export default class SockethubIrcService extends Service {
    * @public
    */
   addMessageToChannel (message) {
-    const match = message.actor.id.match(/.+@(.+)/);
+    const match = message.actor.id.match(/@([^@]+)$/);
     if (!match) { console.warn('Could not parse hostname from message', message); return; }
     const hostname = match[1];
     const account = this.coms.accounts.find(acc => acc.server.hostname === hostname);

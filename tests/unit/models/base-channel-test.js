@@ -416,4 +416,18 @@ module('Unit | Model | base-channel', function (hooks) {
     });
     assert.strictEqual(channel.domain, 'irc.libera.chat', 'returns the network/account domain');
   });
+
+  test('#domain (IRC) preserves @ characters in the channel name', function (assert) {
+    let channel = new BaseChannel({
+      account: ircAccount,
+      name: '##kosmos-dev'
+    });
+    assert.strictEqual(channel.domain, 'irc.libera.chat', 'returns the network/account domain for multi-hash channels');
+
+    channel = new BaseChannel({
+      account: ircAccount,
+      name: '#foo@bar'
+    });
+    assert.strictEqual(channel.domain, 'irc.libera.chat', 'splits on the final @');
+  });
 });

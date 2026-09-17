@@ -1,6 +1,7 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
+import domainFromId from 'hyperchannel/utils/domain-from-id';
 
 export default class BaseChannelRoute extends Route {
 
@@ -17,8 +18,8 @@ export default class BaseChannelRoute extends Route {
     let channel = this.coms.channels.find(ch => ch.slug === slug);
     if (channel) return channel;
 
-    const domain = slug.match(/@([^/]+)/)[1];
-    const randomChannelForDomain = this.coms.channels.find(ch => ch.domain === domain);
+    const domain = domainFromId(slug);
+    const randomChannelForDomain = domain && this.coms.channels.find(ch => ch.domain === domain);
 
     if (randomChannelForDomain) {
       channel = this.createChannelOrUserChannel(randomChannelForDomain.account, slug);

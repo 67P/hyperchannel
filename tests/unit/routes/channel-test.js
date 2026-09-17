@@ -1,5 +1,6 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
+import { A } from '@ember/array';
 import Service from '@ember/service';
 import ChannelRoute from 'hyperchannel/routes/channel';
 import Channel from 'hyperchannel/models/channel';
@@ -49,5 +50,33 @@ module('Unit | Route | channel', function (hooks) {
     assert.strictEqual(channel.name, '##kosmos-dev');
     assert.strictEqual(channel.id, '##kosmos-dev@irc.libera.chat');
     assert.strictEqual(channel.sockethubChannelId, '##kosmos-dev@irc.libera.chat');
+  });
+
+  test('model resolves the domain from the final @ in a multi-@ slug', function (assert) {
+    const route = new ChannelRoute();
+    route.coms = this.owner.lookup('service:coms');
+    route.coms.channels = [ new Channel({ account: ircAccount, name: '#other' }) ];
+
+    // Slug for #foo@bar -> foo@bar@irc.libera.chat
+    const channel = route.model({ slug: 'foo@bar@irc.libera.chat' });
+
+    assert.strictEqual(route.coms.createChannelCalls[0].channelName, '#foo@bar');
+    assert.strictEqual(channel.id, '#foo@bar@irc.libera.chat');
+  });
+
+  test('model falls back to the first channel when the slug has no domain', function (assert) {
+    const route = new ChannelRoute();
+    route.coms = this.owner.lookup('service:coms');
+    const firstChannel = new Channel({ account: ircAccount, name: '#first' });
+    route.coms.channels = A([ firstChannel ]);
+
+    let transitionedTo;
+    route.router = {
+      transitionTo (routeName, channel) { transitionedTo = { routeName, channel }; }
+    };
+
+    route.model({ slug: 'nodomain' });
+
+    assert.strictEqual(transitionedTo.channel, firstChannel, 'transitions to the first channel');
   });
 });
