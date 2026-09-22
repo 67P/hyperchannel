@@ -102,4 +102,22 @@ module('Unit | Route | channel', function (hooks) {
     assert.strictEqual(resolved, channel, 'reuses the existing channel');
     assert.strictEqual(resolved.name, '#foo%23bar', 'does not join #foo#bar instead');
   });
+
+  test('model opens an unloaded IRC channel containing a slash', function (assert) {
+    const route = new ChannelRoute();
+    route.coms = this.owner.lookup('service:coms');
+    const existing = new Channel({ account: ircAccount, name: '#general' });
+    route.coms.channels = A([ existing ]);
+
+    const redirects = [];
+    route.router = {
+      transitionTo (...args) { redirects.push(args); }
+    };
+
+    const channel = route.model({ slug: 'foo/bar@irc.libera.chat' });
+
+    assert.deepEqual(redirects, [], 'does not redirect to the first channel');
+    assert.strictEqual(channel.name, '#foo/bar', 'opens the requested channel');
+    assert.strictEqual(channel.account, ircAccount, 'uses the matching IRC account');
+  });
 });

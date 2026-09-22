@@ -430,4 +430,13 @@ module('Unit | Model | base-channel', function (hooks) {
     });
     assert.strictEqual(channel.domain, 'irc.libera.chat', 'splits on the final @');
   });
+
+  test('#domain (IRC) handles channel names containing a slash', function (assert) {
+    const channel = new BaseChannel({
+      account: ircAccount,
+      name: '#foo/bar'
+    });
+    assert.strictEqual(channel.id, '#foo/bar@irc.libera.chat', 'the slash belongs to the IRC name');
+    assert.strictEqual(channel.domain, 'irc.libera.chat', 'a slash belongs to the IRC name, not an XMPP resource');
+  });
 });

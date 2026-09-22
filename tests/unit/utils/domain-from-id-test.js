@@ -14,6 +14,11 @@ module('Unit | Utility | domain from id', function () {
     assert.strictEqual(domainFromId('foo@bar@irc.libera.chat'), 'irc.libera.chat', 'IRC person with @');
   });
 
+  test('it treats slashes before the final @ as part of the name', function (assert) {
+    assert.strictEqual(domainFromId('#foo/bar@irc.libera.chat'), 'irc.libera.chat', 'IRC channel with slash');
+    assert.strictEqual(domainFromId('#foo@bar/baz@irc.libera.chat'), 'irc.libera.chat', 'IRC channel with @ and slash');
+  });
+
   test('it ignores an XMPP resource suffix', function (assert) {
     assert.strictEqual(domainFromId('kosmos-dev@kosmos.chat/jimmy'), 'kosmos.chat', 'XMPP user channel');
   });
