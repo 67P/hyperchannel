@@ -24,8 +24,25 @@ export default class Channel extends BaseChannel {
   }
 
   get publicLogsBaseUrl () {
-    // TODO needs to get hostname from channel meta info for federated protocols
-    return `${config.publicLogs.defaultBaseUrl}/${this.account.server.hostname.toLowerCase()}/channels/${this.shortName}`;
+    // Mirror the slug's leading-# rule for IRC: strip a single leading '#' only
+    // for single-# channels (keeps existing log URLs working); preserve all '#'
+    // for multi-# channels and percent-encode them so they don't become URL
+    // fragments. XMPP logs use the local part of the MUC JID, and other
+    // protocols use the full channel name.
+    let channelName;
+    switch (this.protocol) {
+      case 'IRC':
+        channelName = this.name
+          .replace(/^#(?=[^#])/, '')
+          .replace(/#/g, '%23');
+        break;
+      case 'XMPP':
+        channelName = this.name.match(/^(.+)@/)[1];
+        break;
+      default:
+        channelName = this.name;
+    }
+    return `${config.publicLogs.defaultBaseUrl}/${this.account.server.hostname.toLowerCase()}/channels/${channelName}`;
   }
 
 }

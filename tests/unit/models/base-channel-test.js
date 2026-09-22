@@ -18,6 +18,53 @@ module('Unit | Model | base-channel', function (hooks) {
     assert.strictEqual(model.slug, 'kosmos-dev@irc.libera.chat');
   });
 
+  test('#slug strips only one leading hash for multi-hash channels', function (assert) {
+    const model = new BaseChannel({
+      account: ircAccount,
+      name: '##kosmos-dev'
+    });
+
+    assert.strictEqual(model.slug, '##kosmos-dev@irc.libera.chat');
+  });
+
+  test('#id and #sockethubChannelId preserve all hashes for IRC channels', function (assert) {
+    let model = new BaseChannel({
+      account: ircAccount,
+      name: '#kosmos-dev'
+    });
+    assert.strictEqual(model.id, '#kosmos-dev@irc.libera.chat', 'id preserves single hash');
+    assert.strictEqual(model.sockethubChannelId, '#kosmos-dev@irc.libera.chat', 'sockethubChannelId matches id');
+
+    model = new BaseChannel({
+      account: ircAccount,
+      name: '##kosmos-dev'
+    });
+    assert.strictEqual(model.id, '##kosmos-dev@irc.libera.chat', 'id preserves all hashes');
+    assert.strictEqual(model.sockethubChannelId, '##kosmos-dev@irc.libera.chat', 'sockethubChannelId matches id');
+  });
+
+  test('#sidebarName (IRC) strips a single leading hash', function (assert) {
+    let model = new BaseChannel({
+      account: ircAccount,
+      name: '#kosmos-dev'
+    });
+    assert.strictEqual(model.sidebarName, 'kosmos-dev', 'strips the single leading hash');
+
+    model = new BaseChannel({
+      account: ircAccount,
+      name: '##kosmos-dev'
+    });
+    assert.strictEqual(model.sidebarName, '#kosmos-dev', 'preserves remaining hashes');
+  });
+
+  test('#sidebarName (XMPP) returns the local part', function (assert) {
+    const model = new BaseChannel({
+      account: xmppAccount,
+      name: 'kosmos-dev@kosmos.chat'
+    });
+    assert.strictEqual(model.sidebarName, 'kosmos-dev');
+  });
+
   //
   // unreadMessagesClass
   //
@@ -368,5 +415,28 @@ module('Unit | Model | base-channel', function (hooks) {
       name: '#kosmos-dev'
     });
     assert.strictEqual(channel.domain, 'irc.libera.chat', 'returns the network/account domain');
+  });
+
+  test('#domain (IRC) preserves @ characters in the channel name', function (assert) {
+    let channel = new BaseChannel({
+      account: ircAccount,
+      name: '##kosmos-dev'
+    });
+    assert.strictEqual(channel.domain, 'irc.libera.chat', 'returns the network/account domain for multi-hash channels');
+
+    channel = new BaseChannel({
+      account: ircAccount,
+      name: '#foo@bar'
+    });
+    assert.strictEqual(channel.domain, 'irc.libera.chat', 'splits on the final @');
+  });
+
+  test('#domain (IRC) handles channel names containing a slash', function (assert) {
+    const channel = new BaseChannel({
+      account: ircAccount,
+      name: '#foo/bar'
+    });
+    assert.strictEqual(channel.id, '#foo/bar@irc.libera.chat', 'the slash belongs to the IRC name');
+    assert.strictEqual(channel.domain, 'irc.libera.chat', 'a slash belongs to the IRC name, not an XMPP resource');
   });
 });

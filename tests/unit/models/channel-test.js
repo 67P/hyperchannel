@@ -1,7 +1,14 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import Channel from 'hyperchannel/models/channel';
+import XmppAccount from 'hyperchannel/models/account/xmpp';
 import { ircAccount, xmppAccount } from '../../fixtures/accounts';
+
+const xmppAccountWithServer = new XmppAccount({
+  nickname: xmppAccount.nickname,
+  username: xmppAccount.username,
+  server: { hostname: 'kosmos.chat' }
+});
 
 module('Unit | Model | channel', function (hooks) {
   setupTest(hooks);
@@ -26,17 +33,29 @@ module('Unit | Model | channel', function (hooks) {
     assert.strictEqual(channel.formattedTopic.toString(), 'never gonna &lt;marquee&gt;give you up&lt;/marquee&gt;');
   });
 
-  test('#shortName', function (assert) {
-    let channel = new Channel({
+  test('#publicLogsBaseUrl keeps single-hash channels unencoded', function (assert) {
+    const channel = new Channel({
       account: ircAccount,
       name: '#kosmos-dev'
     });
-    assert.strictEqual(channel.shortName, 'kosmos-dev', 'returns name without hash for IRC');
+    assert.strictEqual(channel.publicLogsBaseUrl, 'https://storage.5apps.com/kosmos/public/chat-messages/irc.libera.chat/channels/kosmos-dev');
+  });
 
-    channel = new Channel({
-      account: xmppAccount,
+  test('#publicLogsBaseUrl percent-encodes all hashes for multi-hash channels', function (assert) {
+    const channel = new Channel({
+      account: ircAccount,
+      name: '##kosmos-dev'
+    });
+    const baseUrl = channel.publicLogsBaseUrl;
+    assert.ok(!baseUrl.includes('#'), 'logs URL has no fragment');
+    assert.strictEqual(baseUrl, 'https://storage.5apps.com/kosmos/public/chat-messages/irc.libera.chat/channels/%23%23kosmos-dev');
+  });
+
+  test('#publicLogsBaseUrl uses the local part for XMPP channels', function (assert) {
+    const channel = new Channel({
+      account: xmppAccountWithServer,
       name: 'kosmos-dev@kosmos.chat'
     });
-    assert.strictEqual(channel.shortName, 'kosmos-dev', 'returns name without MUC domain for XMPP');
+    assert.strictEqual(channel.publicLogsBaseUrl, 'https://storage.5apps.com/kosmos/public/chat-messages/kosmos.chat/channels/kosmos-dev');
   });
 });

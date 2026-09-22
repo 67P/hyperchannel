@@ -2,6 +2,7 @@ import { isEmpty, isPresent } from '@ember/utils';
 import { tracked, cached } from '@glimmer/tracking';
 import { TrackedArray } from 'tracked-built-ins';
 import Message from 'hyperchannel/models/message';
+import domainFromId from 'hyperchannel/utils/domain-from-id';
 import moment from 'moment';
 
 export default class BaseChannel {
@@ -56,22 +57,30 @@ export default class BaseChannel {
         id = this.name;
         break;
       case 'IRC':
-        id = `${this.account.server.hostname}/${this.name}`;
+        // Use the same value as the internal `id` (name@host), so the
+        // Sockethub channel ID and the internal channel ID never diverge.
+        id = this.id;
         break;
     }
     return id;
   }
 
   get slug () {
-    // This could be based on server type in the future. E.g. IRC would be
-    // server URL, while Campfire would be another id.
-    return this.id.replace(/#/g,'');
+    // Strip a single leading '#' only for single-hash IRC channels, so they
+    // keep clean URLs (e.g. #kosmos-dev -> kosmos-dev@server). Multi-hash
+    // channels preserve all '#' characters (e.g. ##kosmos-dev ->
+    // ##kosmos-dev@server, URL-encoded as %23%23kosmos-dev@server).
+    return this.id.replace(/^#(?=[^#])/, '');
   }
 
-  get shortName () {
+  get sidebarName () {
     switch (this.protocol) {
       case 'IRC':
-        return this.name.replace(/#/g,'');
+        // Strip a single leading '#' so the sidebar (which already renders a
+        // leading '#') shows all hashes of the channel name, e.g.
+        // #kosmos-dev -> kosmos-dev (renders as "# kosmos-dev"),
+        // ##kosmos-dev -> #kosmos-dev (renders as "# #kosmos-dev").
+        return this.name.replace(/^#/, '');
       case 'XMPP':
         return this.name.match(/^(.+)@/)[1];
       default:
@@ -80,8 +89,7 @@ export default class BaseChannel {
   }
 
   get domain () {
-    const match = this.id.match(/@([^/]+)/);
-    return match[1];
+    return domainFromId(this.id);
   }
 
   get unreadMessagesClass () {
