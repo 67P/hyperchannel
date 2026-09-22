@@ -79,4 +79,27 @@ module('Unit | Route | channel', function (hooks) {
 
     assert.strictEqual(transitionedTo.channel, firstChannel, 'transitions to the first channel');
   });
+
+  test('model reopens an existing channel whose name contains a literal percent', function (assert) {
+    const route = new ChannelRoute();
+    route.coms = this.owner.lookup('service:coms');
+    const channel = new Channel({ account: ircAccount, name: '#100%' });
+    route.coms.channels = A([ channel ]);
+
+    // Ember has already decoded the URL, so params.slug arrives decoded. The
+    // route must not decode it a second time, which would throw.
+    assert.strictEqual(route.model({ slug: channel.slug }), channel);
+  });
+
+  test('model does not decode a channel name a second time', function (assert) {
+    const route = new ChannelRoute();
+    route.coms = this.owner.lookup('service:coms');
+    const channel = new Channel({ account: ircAccount, name: '#foo%23bar' });
+    route.coms.channels = A([ channel ]);
+
+    const resolved = route.model({ slug: channel.slug });
+
+    assert.strictEqual(resolved, channel, 'reuses the existing channel');
+    assert.strictEqual(resolved.name, '#foo%23bar', 'does not join #foo#bar instead');
+  });
 });

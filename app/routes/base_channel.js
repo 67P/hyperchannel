@@ -14,7 +14,7 @@ export default class BaseChannelRoute extends Route {
   }
 
   model (params) {
-    const slug = decodeURIComponent(params.slug);
+    const slug = params.slug;
     let channel = this.coms.channels.find(ch => ch.slug === slug);
     if (channel) return channel;
 
