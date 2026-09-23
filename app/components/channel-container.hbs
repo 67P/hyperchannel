@@ -48,6 +48,8 @@
                   <MessageChatMe @message={{message}} @channel={{@channel}}
                                  @sendMessage={{@onMessage}}
                                  @onUsernameClick={{this.addUsernameMentionToMessage}} />
+                {{else if (eq message.type "date-headline")}}
+                  <DateHeadline @message={{message}} />
                 {{else}}
                   <MessageChat @message={{message}} @channel={{@channel}}
                                @sendMessage={{@onMessage}}

@@ -16,4 +16,9 @@ module('Unit | Utility | user color', function () {
   test('generates a color for an empty identifier', function (assert) {
     assert.strictEqual(userColor(''), 'rgb(128, 122, 0)');
   });
+
+  test('falls back to the empty identifier for null/undefined', function (assert) {
+    assert.strictEqual(userColor(null), 'rgb(128, 122, 0)');
+    assert.strictEqual(userColor(undefined), 'rgb(128, 122, 0)');
+  });
 });

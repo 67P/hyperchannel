@@ -278,7 +278,12 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
 ### Embroider Compatibility Fixes
 - Replaced dynamic `{{component ...}}` invocations with static components in
   `add-chat-account.hbs`, `channel-container.hbs` and `join-channel.hbs`
-  (Embroider requires statically analyzable components).
+  (Embroider requires statically analyzable components). The static rewrite in
+  `channel-container.hbs` keeps branches for all message types
+  (`message-chat-me`, `date-headline`, `message-chat`), so date headlines still
+  render via `DateHeadline`.
+- `app/utils/user-color.js` tolerates missing (`null`/`undefined`) identifiers,
+  so a malformed message nickname can no longer abort the whole render.
 - Fixed the `message-chat-me` import path and switched its template to `@message`.
 
 ### Tests
@@ -300,7 +305,7 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
   and commits it when a version is tagged. `public/sw.js` is unchanged (no-op).
 
 ### Test Status
-- ✅ 136 tests: 133 pass, 3 skip, 0 fail
+- ✅ 138 tests: 135 pass, 3 skip, 0 fail
 - ✅ Linting passes (JS, HBS, format)
 - ✅ `pnpm build`, `pnpm build-prod` and `pnpm start` all succeed
 

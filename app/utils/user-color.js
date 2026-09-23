@@ -13,7 +13,7 @@ const { hsluvToRgb } = hsluv;
  * @returns {string} CSS `rgb()` color
  */
 export default function userColor (identifier) {
-  const hash = bytesToHex(sha1(utf8ToBytes(identifier)));
+  const hash = bytesToHex(sha1(utf8ToBytes(String(identifier ?? ''))));
   const first16Bits = hash.slice(0, 4);
   const littleEndian = first16Bits.slice(2) + first16Bits.slice(0, 2);
   const angle = parseInt(littleEndian, 16) / 65536 * 360;
