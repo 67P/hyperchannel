@@ -12,6 +12,10 @@ export default class ModalsService extends Service {
   @tracked settingsOpen = false;
   @tracked joinChannelOpen = false;
 
+  get anyOpen () {
+    return this.settingsOpen || this.joinChannelOpen;
+  }
+
   @action
   openSettings () {
     this.settingsOpen = true;

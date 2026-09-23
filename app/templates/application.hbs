@@ -3,6 +3,7 @@
 {{#if this.showChatInterface}}
 
   <div class="app-container {{if this.showGlobalMenu "global-menu-open"}} {{if this.showChannelMenu "channel-menu-open"}}"
+       inert={{if this.modals.anyOpen "true" null}}
        {{recognize-gesture "swipeleft" "swiperight" "tap" domEvents=true touchAction="auto" inputClass=this.hammerInputClass}}
        {{on "swipeleft" this.swipeLeft}} {{on "swiperight" this.swipeRight}} {{on "tap" this.tap}}>
     <div id="global">
@@ -35,13 +36,13 @@
 {{/if}}
 
 {{#if this.modals.settingsOpen}}
-  <ModalOverlay @onClose={{this.modals.closeSettings}}>
+  <ModalOverlay @onClose={{this.modals.closeSettings}} @label="Accounts">
     <SettingsContainer @close={{this.modals.closeSettings}} />
   </ModalOverlay>
 {{/if}}
 
 {{#if this.modals.joinChannelOpen}}
-  <ModalOverlay @onClose={{this.modals.closeJoinChannel}}>
+  <ModalOverlay @onClose={{this.modals.closeJoinChannel}} @label="Join Channel">
     <JoinChannel @close={{this.modals.closeJoinChannel}} />
   </ModalOverlay>
 {{/if}}
