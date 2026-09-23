@@ -21,7 +21,7 @@ If you have any questions, please feel free to ask
 You will need the following things properly installed on your computer.
 
 * [Git](https://git-scm.com/)
-* [Node.js](https://nodejs.org/) (with npm)
+* [Node.js](https://nodejs.org/) (>= 20.19, with pnpm via `corepack enable`)
 * [Ember CLI](https://cli.emberjs.com/release/)
 * [Sockethub](http://sockethub.org/)
 * [Google Chrome](https://google.com/chrome/)
@@ -30,44 +30,43 @@ You will need the following things properly installed on your computer.
 
 * `git clone git@github.com:67P/hyperchannel.git` this repository
 * change into the new directory
-* `npm install`
+* `corepack enable` (once, to provide the pinned pnpm version)
+* `pnpm install`
 * https://github.com/sockethub/sockethub/wiki/Installing-Sockethub
 
 ## Running / Development
 
-* `npm start`
+* `pnpm start`
 * Visit the app at [http://localhost:4200](http://localhost:4200).
 * Visit your tests at [http://localhost:4200/tests](http://localhost:4200/tests).
 
 ### Code Generators
 
-Make use of the many generators for code, try `ember help generate` for more details
+Make use of the many generators for code, try `pnpm exec ember help generate` for more details
 
 Caveat: when running the model generator, make sure to adjust the unit test to
 not use moduleForModel, as we're not using Ember Data. See existing tests.
 
 ### Running Tests
 
-* `npm test`
-* `npm test -- --server` (will re-run on saving files)
+* `pnpm test`
+* `pnpm test:ember` (single test run)
 
 ### Linting
 
-* `npm run lint`
-* `npm run lint:fix`
+* `pnpm lint`
+* `pnpm lint:fix`
 
 ### Building
 
-(Not yet used.)
-
-* `npm build` (development)
-* `npm build --environment production` (production)
+* `pnpm build` (development)
+* `pnpm build-prod` (production, into `release/`)
 
 ### Deploying
 
 With push permission for the production Git repo:
 
-* `npm run deploy`
+* `pnpm run deploy`
 
 ## Further Reading / Useful Links
 
