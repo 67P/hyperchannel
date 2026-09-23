@@ -195,12 +195,15 @@ export default class SockethubIrcService extends Service {
     if (!channel.isUserChannel) {
       let leaveMsg = this.buildActivityObject(channel.account, {
         type: 'leave',
-        target: { id: channel.sockethubChannelId, type: 'room' },
-        object: {}
+        target: { id: channel.sockethubChannelId, type: 'room' }
       });
 
       this.log('leave', 'leaving channel', leaveMsg);
-      this.sockethubClient.socket.emit('message', leaveMsg);
+      this.sockethubClient.socket.emit('message', leaveMsg, (message) => {
+        if (message.error) {
+          this.log('leave', 'failed to leave channel: ', message);
+        }
+      });
     }
   }
 

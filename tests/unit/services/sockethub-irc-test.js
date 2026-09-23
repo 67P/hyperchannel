@@ -79,6 +79,24 @@ module('Unit | Service | sockethub irc', function (hooks) {
     assert.strictEqual(messages[0].nickname, 'raucao');
   });
 
+  test('#leave sends a leave activity without an empty object', function (assert) {
+    const service = this.owner.lookup('service:sockethub-irc');
+    let emitted;
+    service.sockethub = {
+      contextFor: () => ['context'],
+      client: { socket: { emit (event, message) { emitted = { event, message }; } } }
+    };
+
+    const channel = new Channel({ account: ircAccount, name: '#kosmos' });
+    service.leave(channel);
+
+    assert.strictEqual(emitted.event, 'message');
+    assert.strictEqual(emitted.message.type, 'leave');
+    assert.strictEqual(emitted.message.target.id, channel.sockethubChannelId);
+    assert.strictEqual(emitted.message.target.type, 'room');
+    assert.notOk('object' in emitted.message, 'omits the invalid empty object');
+  });
+
   // FIXME this test randomly fails with error "Assertion occured after test had finished."
   // skip('#join sends the join activity to Sockethub for a room channel', function(assert) {
   //   const done = assert.async();
