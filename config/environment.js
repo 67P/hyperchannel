@@ -54,7 +54,7 @@ module.exports = function (environment) {
 
   if (environment === 'production') {
     // TODO make configurable
-    ENV.sockethubURL = 'https://sockethub.kosmos.org:10550';
+    ENV.sockethubURL = 'https://sockethub.kosmos.org';
   }
 
   return ENV;
