@@ -16,8 +16,10 @@ export default class IndexRoute extends Route {
 
     if (currentChannel) {
       this.router.transitionTo('channel', currentChannel);
+    } else if (this.coms.channels.length) {
+      this.router.transitionTo('channel', this.coms.channels[0]);
     } else {
-      this.router.transitionTo('channel', this.coms.channels.firstObject);
+      this.router.transitionTo('welcome');
     }
   }
 

@@ -22,6 +22,9 @@ recent last.
   - `pushObject()` → `push()`
   - `removeObject(item)` → `splice(indexOf(item), 1)`
   - `lastObject` → `at(-1)` or `[length-1]`
+  - `firstObject` → `[0]` (TrackedArray no longer provides the EmberArray
+    helpers; leaving `firstObject` yielded `undefined` and broke route
+    fallbacks, e.g. opening an XMPP DM from the user list)
   - `filterBy('prop', val)` → `filter(item => item.prop === val)`
   - `findBy('prop', val)` → `find(item => item.prop === val)`
   - `sortBy('prop')` → `sort((a,b) => ...)`
@@ -305,7 +308,7 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
   and commits it when a version is tagged. `public/sw.js` is unchanged (no-op).
 
 ### Test Status
-- ✅ 138 tests: 135 pass, 3 skip, 0 fail
+- ✅ 144 tests: 141 pass, 3 skip, 0 fail
 - ✅ Linting passes (JS, HBS, format)
 - ✅ `pnpm build`, `pnpm build-prod` and `pnpm start` all succeed
 

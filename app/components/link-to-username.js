@@ -1,5 +1,6 @@
 import Component from '@glimmer/component';
 import { ircRole, stripIrcRolePrefix } from 'hyperchannel/utils/irc-username';
+import buildUserChannelId from 'hyperchannel/utils/user-channel-id';
 
 export default class LinkToUsernameComponent extends Component {
 
@@ -12,16 +13,7 @@ export default class LinkToUsernameComponent extends Component {
   }
 
   get userChannelId () {
-    let id;
-    switch (this.args.channel.protocol) {
-      case 'IRC':
-        id = `${this.usernameWithoutPrefix}@${this.args.channel.domain}`;
-        break;
-      case 'XMPP':
-        id = `${this.args.channel.id}${encodeURIComponent('/')}${this.usernameWithoutPrefix}`;
-        break;
-    }
-    return id;
+    return buildUserChannelId(this.args.channel, this.usernameWithoutPrefix);
   }
 
 }
