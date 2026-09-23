@@ -5,7 +5,7 @@ import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
 import formatMessageContent from 'hyperchannel/utils/format-message-content';
 import moment from 'moment';
-import getRGB from 'consistent-color-generation';
+import userColor from 'hyperchannel/utils/user-color';
 
 export default class MessageChatComponent extends Component {
 
@@ -16,7 +16,7 @@ export default class MessageChatComponent extends Component {
     super(...arguments);
     // TODO move to user object when implemented
     // https://github.com/67P/hyperchannel/issues/180
-    this.userColorHex = getRGB(this.args.message.nickname).toString();
+    this.userColorHex = userColor(this.args.message.nickname);
   }
 
   get userColorStyle () {

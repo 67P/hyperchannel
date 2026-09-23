@@ -10,7 +10,7 @@ export default defineConfig({
       'localforage',
       '@kosmos/remotestorage-module-kosmos',
       '@sockethub/client',
-      'consistent-color-generation',
+      'hsluv',
       'linkify-string',
     ],
   },

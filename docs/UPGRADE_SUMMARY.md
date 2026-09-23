@@ -261,6 +261,10 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
   guards (the run-loop helpers are deprecated).
 - `ember-keyboard-shortcuts` (mousetrap fork) → `app/utils/shortcut-matches.js`
   plus a rewritten `keyboard-shortcuts` modifier.
+- `consistent-color-generation` (which pulled in `js-sha1`, whose
+  `eval("require('crypto')")` tripped Rolldown's `[EVAL]` warning) →
+  `app/utils/user-color.js`, implementing XEP-0392 with `@noble/hashes` SHA-1
+  and `hsluv`. Output is unchanged.
 - Removed unused deps: `ember-cached-decorator-polyfill`, `ember-body-class`,
   `ember-fetch`, `ember-sinon`, `@ember/render-modifiers`,
   `ember-cli-inline-content`, `inobounce`, `ember-cli-app-version`.
@@ -296,7 +300,7 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
   and commits it when a version is tagged. `public/sw.js` is unchanged (no-op).
 
 ### Test Status
-- ✅ 133 tests: 130 pass, 3 skip, 0 fail
+- ✅ 136 tests: 133 pass, 3 skip, 0 fail
 - ✅ Linting passes (JS, HBS, format)
 - ✅ `pnpm build`, `pnpm build-prod` and `pnpm start` all succeed
 
