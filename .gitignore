@@ -13,6 +13,7 @@
 /.eslintcache
 /coverage/
 /npm-debug.log*
+/.pnpm-debug.log*
 /testem.log
 /yarn-error.log
 
