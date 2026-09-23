@@ -308,7 +308,7 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
   and commits it when a version is tagged. `public/sw.js` is unchanged (no-op).
 
 ### Test Status
-- ✅ 144 tests: 141 pass, 3 skip, 0 fail
+- ✅ 145 tests: 142 pass, 3 skip, 0 fail
 - ✅ Linting passes (JS, HBS, format)
 - ✅ `pnpm build`, `pnpm build-prod` and `pnpm start` all succeed
 

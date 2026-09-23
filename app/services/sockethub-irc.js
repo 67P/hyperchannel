@@ -174,7 +174,7 @@ export default class SockethubIrcService extends Service {
     const match = message.actor.id.match(/@([^@]+)$/);
     if (!match) { console.warn('Could not parse hostname from message', message); return; }
     const hostname = match[1];
-    const account = this.coms.accounts.find(acc => acc.server.hostname === hostname);
+    const account = this.coms.accounts.find(acc => acc?.server?.hostname === hostname);
 
     if (isEmpty(account)) {
       console.warn('Could not find account for message', message);
