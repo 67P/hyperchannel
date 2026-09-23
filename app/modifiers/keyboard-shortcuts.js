@@ -1,10 +1,30 @@
 import { modifier } from 'ember-modifier';
-import { bindKeyboardShortcuts, unbindKeyboardShortcuts } from 'ember-keyboard-shortcuts';
+import shortcutMatches from 'hyperchannel/utils/shortcut-matches';
 
 export default modifier((element, [component]) => {
-  bindKeyboardShortcuts(component, element);
+  const shortcuts = component.keyboardShortcuts;
+
+  if (!shortcuts) {
+    return;
+  }
+
+  const entries = Object.entries(shortcuts);
+
+  function onKeydown (event) {
+    for (const [shortcut, methodName] of entries) {
+      if (shortcutMatches(event, shortcut)) {
+        event.preventDefault();
+        const method = component[methodName];
+        if (typeof method === 'function') {
+          method.call(component, event);
+        }
+      }
+    }
+  }
+
+  document.addEventListener('keydown', onKeydown);
 
   return () => {
-    unbindKeyboardShortcuts(component, element);
+    document.removeEventListener('keydown', onKeydown);
   };
 });

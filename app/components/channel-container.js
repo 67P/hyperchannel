@@ -1,14 +1,14 @@
 import Component from '@glimmer/component';
-import { runTask, scheduleTask } from 'ember-lifeline';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import Hammer from 'hammerjs';
-import { task } from 'ember-concurrency';
 import { action } from '@ember/object';
 
 function scrollToBottom () {
   let elem = document.getElementById('channel-content');
-  elem.scrollTop = elem.scrollHeight;
+  if (elem) {
+    elem.scrollTop = elem.scrollHeight;
+  }
 }
 
 export default class ChannelContainerComponent extends Component {
@@ -37,13 +37,19 @@ export default class ChannelContainerComponent extends Component {
     this.renderedMessagesCount = this.renderedMessagesAddendumAmount;
     this.partialRenderingEnabled = true;
     this.automaticScrollingEnabled = true;
-    runTask(this, () => this.menu('global', 'hide'), 500);
+    setTimeout(() => {
+      if (this.isDestroyed || this.isDestroying) return;
+      this.menu('global', 'hide');
+    }, 500);
   }
 
   @action
   messagesUpdated () {
     if (this.automaticScrollingEnabled) {
-      scheduleTask(this, 'actions', scrollToBottom);
+      requestAnimationFrame(() => {
+        if (this.isDestroyed || this.isDestroying) return;
+        scrollToBottom();
+      });
     }
   }
 
@@ -63,14 +69,23 @@ export default class ChannelContainerComponent extends Component {
     inputEl.focus();
   }
 
-  @(task(function * () {
+  @tracked loadingPreviousMessages = false;
+
+  @action
+  async loadPreviousMessages () {
+    if (this.loadingPreviousMessages) return;
+    this.loadingPreviousMessages = true;
     this.automaticScrollingEnabled = false;
-    yield this.coms.loadArchiveMessages(
-      this.args.channel,
-      this.args.channel.searchedPreviousLogsUntilDate,
-      { minMessages: 1, maxDays: 1 }
-    );
-  }).drop()) loadPreviousMessages;
+    try {
+      await this.coms.loadArchiveMessages(
+        this.args.channel,
+        this.args.channel.searchedPreviousLogsUntilDate,
+        { minMessages: 1, maxDays: 1 }
+      );
+    } finally {
+      this.loadingPreviousMessages = false;
+    }
+  }
 
   // TODO make dynamic based on active sidebar content
   get headerNavButtonUsersActive () {

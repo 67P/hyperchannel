@@ -17,7 +17,13 @@
 </div>
 
 <div class="w-full px-6 py-8">
-  {{component this.componentNameForProtocol
-              account=this.selectedAccount
-              closeModal=@close}}
+  {{#if this.selectedAccount}}
+    {{#if (eq this.selectedAccount.protocol "XMPP")}}
+      <JoinChannelXmpp @account={{this.selectedAccount}}
+                       @closeModal={{@close}} />
+    {{else}}
+      <JoinChannelIrc @account={{this.selectedAccount}}
+                      @closeModal={{@close}} />
+    {{/if}}
+  {{/if}}
 </div>

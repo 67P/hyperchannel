@@ -4,7 +4,6 @@ import { service } from '@ember/service';
 import { isPresent } from '@ember/utils';
 import { capitalize } from '@ember/string';
 import { tracked } from '@glimmer/tracking';
-import { runTask } from 'ember-lifeline';
 import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
 import generateMessageId from 'hyperchannel/utils/generate-message-id';
@@ -19,7 +18,8 @@ export default class BaseChannelController extends Controller {
 
   focusMessageInput () {
     if (window.innerWidth > 900) {
-      runTask(this, () => {
+      setTimeout(() => {
+        if (this.isDestroyed || this.isDestroying) return;
         const input = document.querySelector('input#message-field');
         if (input) input.focus();
       }, 0);

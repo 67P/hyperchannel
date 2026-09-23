@@ -34,4 +34,14 @@
 
 {{/if}}
 
-<EpmModalContainer />
+{{#if this.modals.settingsOpen}}
+  <ModalOverlay @onClose={{this.modals.closeSettings}}>
+    <SettingsContainer @close={{this.modals.closeSettings}} />
+  </ModalOverlay>
+{{/if}}
+
+{{#if this.modals.joinChannelOpen}}
+  <ModalOverlay @onClose={{this.modals.closeJoinChannel}}>
+    <JoinChannel @close={{this.modals.closeJoinChannel}} />
+  </ModalOverlay>
+{{/if}}
