@@ -38,8 +38,8 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
     const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
 
     const presenceUpdate = {
-      actor: { id: 'walter@kosmos.org', name: 'walter' },
-      target: { id: 'some-channel@kosmos.chat', type: 'room' },
+      actor: { id: 'some-channel@kosmos.chat/walter', type: 'room' },
+      target: { id: 'jimmy@kosmos.org/hyperchannel', type: 'person' },
       object: { presence: 'online' }
     };
 
@@ -57,9 +57,27 @@ module('Unit | Service | sockethub xmpp', function (hooks) {
     const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
 
     const presenceUpdate = {
-      actor: { id: 'walter@kosmos.org', name: 'walter' },
-      target: { id: 'some-channel@kosmos.chat', type: 'room' },
+      actor: { id: 'some-channel@kosmos.chat/walter', type: 'room' },
+      target: { id: 'jimmy@kosmos.org/hyperchannel', type: 'person' },
       object: { presence: 'offline' }
+    };
+
+    service.handlePresenceUpdate(presenceUpdate);
+
+    assert.notOk(channel.userList.includes('walter'));
+  });
+
+  test('#handlePresenceUpdate ignores non-room presence updates', function (assert) {
+    const channel = new Channel({ account: xmppAccount, name: 'some-channel@kosmos.chat' });
+    const comsService = this.owner.factoryFor('service:coms').create({
+      accounts: [ xmppAccount ], channels: [ channel ]
+    });
+    const service = this.owner.factoryFor('service:sockethub-xmpp').create({ coms: comsService });
+
+    const presenceUpdate = {
+      actor: { id: 'walter@kosmos.org/hyperchannel', type: 'person' },
+      target: { id: 'jimmy@kosmos.org/hyperchannel', type: 'person' },
+      object: { presence: 'online' }
     };
 
     service.handlePresenceUpdate(presenceUpdate);

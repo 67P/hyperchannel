@@ -161,32 +161,33 @@ export default class SockethubXmppService extends Service {
   }
 
   handlePresenceUpdate (message) {
-    if (message.target.type === 'room') {
-      const targetChannelId = message.target.id;
-      const channel = this.coms.getChannel(targetChannelId);
-
-      if (channel) {
-        if (message.object.presence === 'offline') {
-          channel.removeUser(message.actor.name);
-        } else {
-          channel.addUser(message.actor.name);
-        }
-      }
-    } else if (message.actor.type === 'person' && message.actor.id.match(/\/(.+)$/)) {
-      const sockethubActorId = message.actor.id;
-      const targetChannelId = sockethubActorId.match(/^(.+)\//)[1];
-      const channel = this.coms.getChannel(targetChannelId);
-      const username = sockethubActorId.match(/\/(.+)$/)[1];
-
-      if (channel) {
-        if (message.object.presence === 'unavailable') {
-          channel.removeUser(username);
-        } else {
-          channel.addUser(username);
-        }
-      }
+    if (message.actor.type !== 'room') {
+      this.log('xmpp', 'Ignoring non-room presence update:', message.actor.id);
+      return;
     }
-    this.log('xmpp', 'Presence update:', message.actor.id, message.object.presence, message.object.status);
+
+    const match = message.actor.id.match(/^(.+)\/(.+)$/);
+
+    if (!match) {
+      this.log('xmpp', 'Could not parse channel and username from presence update:', message.actor.id);
+      return;
+    }
+
+    const [, channelId, username] = match;
+    const channel = this.coms.getChannel(channelId);
+
+    if (!channel) {
+      this.log('xmpp', 'Presence update for unknown channel:', channelId);
+      return;
+    }
+
+    if (message.object.presence === 'offline') {
+      channel.removeUser(username);
+    } else {
+      channel.addUser(username);
+    }
+
+    this.log('xmpp', 'Presence update:', message.actor.id, message.object.presence);
   }
 
   /**
