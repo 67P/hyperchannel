@@ -36,6 +36,9 @@
   "engines": {
     "node": ">= 20.19.0"
   },
+  "pnpm": {
+    "ignoredBuiltDependencies": ["@parcel/watcher"]
+  },
   "ember": {
     "edition": "octane"
   },
