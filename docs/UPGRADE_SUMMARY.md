@@ -1,11 +1,15 @@
-# Ember 6.4 LTS Upgrade Summary
+# Ember Upgrade Summary
+
+This document tracks the major Ember upgrade milestones for Hyperchannel, most
+recent last.
 
 ## Upgrade Path Completed
 - Ember 3.24 → 3.28 (last 3.x LTS) ✅
 - Ember 3.28 → 4.4 (first 4.x LTS) ✅
 - Ember 4.4 → 4.12 (last 4.x LTS) ✅
 - Ember 4.12 → 5.4 (5.x LTS) ✅
-- Ember 5.4 → 6.4 (current LTS) ✅
+- Ember 5.4 → 6.4 (LTS) ✅
+- Ember 6.4 → 7.3 (with Vite/Embroider) ✅
 
 ## Modernization Changes
 
@@ -190,7 +194,7 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
 - **Result**: Code style consistent with project preferences ✅
 
 ## Test Status
-- ✅ All 104 tests passing (101 pass, 3 skipped)
+- ✅ All 133 tests passing (130 pass, 3 skipped)
 - ✅ Linting passes (JS, HBS, format)
 - ✅ Build succeeds
 - ✅ App loads and runs correctly in browser
@@ -208,3 +212,82 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
 - **Form inputs**: Use custom `on-update` modifier for clean one-way data flow
 - **Lifecycle management**: Create custom modifiers for setup/teardown instead of render modifiers
 - Build succeeds with only SASS deprecation warnings (not critical)
+
+## Ember 7.3 + Vite/Embroider Migration (2026)
+
+### Upgrade Path
+- Ember 6.4 (classic Broccoli build) → Ember 7.3 with Vite + Embroider ✅
+
+### Build Pipeline
+- Replaced `ember-cli-build.js` with `ember-cli-build.mjs`, using
+  `@embroider/compat`'s `compatBuild` and `@embroider/vite`'s `buildOnce`.
+- Added `vite.config.mjs`, `babel.config.mjs`, `postcss.config.mjs`, root
+  `index.html` (moved from `app/index.html`) and `testem.cjs` (from `testem.js`).
+- Added `app/config/environment.js`, which reads the build config via
+  `@embroider/config-meta-loader`; deleted `jsconfig.json`.
+- `app/app.js` now uses `Resolver.withModules(compatModules)` and the legacy
+  inspector; `app/router.js` uses `@embroider/router`.
+- `index.html` references absolute asset paths and `/@embroider/virtual/*`.
+- Node requirement raised to `>= 20.19.0`.
+
+### Styling
+- SCSS kept: `app/styles/app.scss` is imported from `app/app.js`, so Vite
+  compiles it with `sass` and then runs PostCSS.
+- Tailwind v3 and autoprefixer run via `postcss.config.mjs`; removed
+  `ember-cli-postcss`, `@csstools/postcss-sass` and `postcss-scss`.
+- `app/styles/app.css` is an empty placeholder for Embroider's virtual app.css.
+
+### Dependencies Replaced
+- `ember-promise-modals` → local `modals` service + `ModalOverlay` component
+  (the latest addon imported the `inject` export removed in Ember 7).
+- `ember-concurrency` → guarded async action (v5 dropped the classic
+  `task(function* () {})` syntax; there was a single usage).
+- `ember-lifeline` → native `setTimeout`/`requestAnimationFrame` with destroy
+  guards (the run-loop helpers are deprecated).
+- `ember-keyboard-shortcuts` (mousetrap fork) → `app/utils/shortcut-matches.js`
+  plus a rewritten `keyboard-shortcuts` modifier.
+- Removed unused deps: `ember-cached-decorator-polyfill`, `ember-body-class`,
+  `ember-fetch`, `ember-sinon`, `@ember/render-modifiers`,
+  `ember-cli-inline-content`, `inobounce`, `ember-cli-app-version`.
+- Removed build-only deps: `ember-auto-import`, `loader.js`,
+  `broccoli-asset-rev`, `ember-cli-sri`, `ember-cli-terser`,
+  `ember-cli-inject-live-reload`, `ember-cli-clean-css`, `webpack`, stylelint.
+- Upgraded across majors: `ember-autofocus-modifier` 3→8,
+  `ember-truth-helpers` 3→5, `tracked-built-ins` 3→4, `ember-moment` 10→11,
+  `@ember/test-waiters` 3→4, `ember-sinon-qunit` 6→7, `sinon` 21→22.
+
+### Embroider Compatibility Fixes
+- Replaced dynamic `{{component ...}}` invocations with static components in
+  `add-chat-account.hbs`, `channel-container.hbs` and `join-channel.hbs`
+  (Embroider requires statically analyzable components).
+- Fixed the `message-chat-me` import path and switched its template to `@message`.
+
+### Tests
+- `tests/index.html` and `tests/test-helper.js` updated to the new blueprint:
+  tests are loaded via `import.meta.glob` and the helper exports `start()`.
+- testem now runs against `dist` after `vite build --mode development`.
+- `owner.factoryFor('component:...')` no longer resolves under Embroider, so the
+  pure logic behind four component test files was extracted into utilities and
+  tested directly: `format-message-content`, `irc-username`,
+  `filter-room-config-data` and `relative-channel`. Removed
+  `tests/helpers/create-component.js`.
+- The QUnit recommended rules `require-expect`, `no-negated-ok` and
+  `no-assert-equal-boolean` are intentionally left disabled to match previous
+  behavior.
+
+### Deploy
+- `build-prod` now runs `rm -rf release/* && vite build --outDir release`.
+- `release/` is not committed on feature branches; the `version` script rebuilds
+  and commits it when a version is tagged. `public/sw.js` is unchanged (no-op).
+
+### Test Status
+- ✅ 133 tests: 130 pass, 3 skip, 0 fail
+- ✅ Linting passes (JS, HBS, format)
+- ✅ `npm run build`, `npm run build-prod` and `npm start` all succeed
+
+### Notes / Follow-ups
+- TypeScript not adopted (per project convention).
+- Tailwind kept on v3; the v4 migration is a separate task.
+- `ember-cli-htmlbars`' `hbs` is provided virtually by Embroider in the
+  integration tests (it is not a direct dependency).
+- `Dockerfile` still references an old Node image and `ember serve`.
