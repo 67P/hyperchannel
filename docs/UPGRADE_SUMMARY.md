@@ -101,7 +101,7 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
   - Fixed in `app/services/local-data.js`
   
 - **@ember/string package**: Installed missing package for Ember 6.x
-  - `npm install @ember/string --save`
+  - `pnpm add @ember/string`
   - Required for `capitalize` function used in controllers
   
 - **htmlSafe import**: Moved from `@ember/string` to `@ember/template`
@@ -230,6 +230,21 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
 - `index.html` references absolute asset paths and `/@embroider/virtual/*`.
 - Node requirement raised to `>= 20.19.0`.
 
+### Package Manager: npm → pnpm
+- Switched from npm to pnpm 10, pinned via `"packageManager": "pnpm@10.32.1"`
+  in `package.json` so Corepack resolves the same version everywhere.
+- Removed `package-lock.json`; added `pnpm-lock.yaml`.
+- Scripts that shell out to other scripts now invoke `pnpm run` (`lint`,
+  `lint:fix`, `test`, `preversion`, `version`).
+- `.gitignore` ignores `/.pnpm-debug.log*`; `.prettierignore` already skipped
+  `pnpm-lock.yaml`.
+- `"pnpm": { "ignoredBuiltDependencies": ["@parcel/watcher"] }` documents that the
+  transitive `@parcel/watcher` install script is intentionally skipped — its
+  prebuilt platform binary is used instead, so no build is required.
+- CI installs via `pnpm/action-setup@v4` (v10) with `actions/setup-node`'s
+  `cache: pnpm` and `pnpm install --frozen-lockfile`.
+- `README.md` and `AGENTS.md` commands were updated to pnpm.
+
 ### Styling
 - SCSS kept: `app/styles/app.scss` is imported from `app/app.js`, so Vite
   compiles it with `sass` and then runs PostCSS.
@@ -283,11 +298,11 @@ Added explicit `templateOnlyComponent()` exports for Ember 6 compatibility:
 ### Test Status
 - ✅ 133 tests: 130 pass, 3 skip, 0 fail
 - ✅ Linting passes (JS, HBS, format)
-- ✅ `npm run build`, `npm run build-prod` and `npm start` all succeed
+- ✅ `pnpm build`, `pnpm build-prod` and `pnpm start` all succeed
 
 ### Notes / Follow-ups
 - TypeScript not adopted (per project convention).
 - Tailwind kept on v3; the v4 migration is a separate task.
 - `ember-cli-htmlbars`' `hbs` is provided virtually by Embroider in the
   integration tests (it is not a direct dependency).
-- `Dockerfile` still references an old Node image and `ember serve`.
+- The stale `Dockerfile` was removed rather than updated for the new build.
