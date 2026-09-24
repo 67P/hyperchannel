@@ -1,3 +1,3 @@
-self.addEventListener("fetch",(function(){}))
-
-//# sourceMappingURL=sw.map
+self.addEventListener('fetch', function () {
+  return;
+});

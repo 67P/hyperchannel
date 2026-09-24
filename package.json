@@ -1,6 +1,6 @@
 {
   "name": "hyperchannel",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "packageManager": "pnpm@10.32.1",
   "description": "Kosmos Web Client",
   "repository": "https://github.com/67P/hyperchannel",
@@ -37,7 +37,9 @@
     "node": ">= 20.19.0"
   },
   "pnpm": {
-    "ignoredBuiltDependencies": ["@parcel/watcher"]
+    "ignoredBuiltDependencies": [
+      "@parcel/watcher"
+    ]
   },
   "ember": {
     "edition": "octane"
