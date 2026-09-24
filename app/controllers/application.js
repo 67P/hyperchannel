@@ -4,7 +4,6 @@ import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import Hammer from 'hammerjs';
 import isDescendantOf from 'hyperchannel/utils/dom/is-descendant-of';
-import SettingsContainer from 'hyperchannel/components/settings-container';
 
 export default class ApplicationController extends Controller {
 
@@ -54,7 +53,7 @@ export default class ApplicationController extends Controller {
 
   @action
   openSettingsModal () {
-    this.modals.open(SettingsContainer);
+    this.modals.openSettings();
   }
 
   @action

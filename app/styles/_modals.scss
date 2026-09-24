@@ -1,25 +1,34 @@
 :root {
-  --epm-animation-backdrop-in-duration: 0.1s;
-  --epm-animation-backdrop-out-duration: 0.1s;
-  --epm-animation-modal-in-duration: 0.15s;
-  --epm-animation-modal-out-duration: 0.15s;
-  --epm-backdrop-background: #2d37488c;
+  --hc-modal-animation-in-duration: 0.15s;
+  --hc-modal-backdrop-background: #2d37488c;
 }
 
-.epm-backdrop {
+.hc-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--hc-modal-backdrop-background);
   @apply z-30;
 }
 
-.epm-modal-container {
+.hc-modal-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 12vh;
+  pointer-events: none;
   @apply z-40;
 }
 
-.epm-modal {
+.hc-modal {
+  pointer-events: auto;
+  animation: hc-modal-in var(--hc-modal-animation-in-duration) ease-out;
   @apply z-50 my-0 mx-auto rounded-md
          bg-white text-neutral-800 shadow-2xl;
 }
 
-@keyframes epm-modal-in {
+@keyframes hc-modal-in {
   0% {
     transform: translate(0, -10vh) scale(2);
     opacity: 0;
@@ -27,16 +36,5 @@
   100% {
     transform: translate(0, 0) scale(1);
     opacity: 1;
-  }
-}
-
-@keyframes epm-modal-out {
-  0% {
-    transform: translate(0, 0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(0, -10vh) scale(0);
-    opacity: 0;
   }
 }

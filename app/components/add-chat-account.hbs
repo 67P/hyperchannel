@@ -11,5 +11,8 @@
   </nav>
 </div>
 
-{{component (concat "add-chat-account-" this.accountType)
-            showCancelButton=this.showCancelButton}}
+{{#if (eq this.accountType "xmpp")}}
+  <AddChatAccountXmpp @showCancelButton={{this.showCancelButton}} />
+{{else}}
+  <AddChatAccountIrc @showCancelButton={{this.showCancelButton}} />
+{{/if}}

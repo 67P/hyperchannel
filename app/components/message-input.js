@@ -2,8 +2,7 @@ import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
 import { action } from '@ember/object';
-import { scheduleTask } from 'ember-lifeline';
-import { bindKeyboardShortcuts, unbindKeyboardShortcuts } from 'ember-keyboard-shortcuts';
+import shortcutMatches from 'hyperchannel/utils/shortcut-matches';
 
 export default class MessageInputComponent extends Component {
 
@@ -18,14 +17,23 @@ export default class MessageInputComponent extends Component {
     input.setSelectionRange(newCursorPosition, newCursorPosition);
   }
 
+  handleKeydown = (event) => {
+    for (const [shortcut, methodName] of Object.entries(this.keyboardShortcuts)) {
+      if (shortcutMatches(event, shortcut)) {
+        event.preventDefault();
+        this[methodName](event);
+      }
+    }
+  };
+
   @action
-  bindKeyboardShortcuts (element) {
-    bindKeyboardShortcuts(this, element);
+  bindKeyboardShortcuts (event) {
+    event.currentTarget.addEventListener('keydown', this.handleKeydown);
   }
 
   @action
-  unbindKeyboardShortcuts (element) {
-    unbindKeyboardShortcuts(this, element);
+  unbindKeyboardShortcuts (event) {
+    event.currentTarget.removeEventListener('keydown', this.handleKeydown);
   }
 
   @action
@@ -60,7 +68,10 @@ export default class MessageInputComponent extends Component {
 
     // set the cursor right behind the inserted username,
     // but we have to wait for the update of the input first
-    scheduleTask(this, 'actions', () => this.setCursorPosition(input, newCursorPosition));
+    requestAnimationFrame(() => {
+      if (this.isDestroyed || this.isDestroying) return;
+      this.setCursorPosition(input, newCursorPosition);
+    });
   }
 
 }

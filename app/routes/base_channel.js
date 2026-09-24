@@ -25,8 +25,12 @@ export default class BaseChannelRoute extends Route {
       channel = this.createChannelOrUserChannel(randomChannelForDomain.account, slug);
       return channel;
     } else {
-      const firstChannel = this.coms.channels.firstObject;
-      this.router.transitionTo('channel', firstChannel);
+      const firstChannel = this.coms.channels[0];
+      if (firstChannel) {
+        this.router.transitionTo('channel', firstChannel);
+      } else {
+        this.router.transitionTo('welcome');
+      }
     }
   }
 

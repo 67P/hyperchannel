@@ -1,0 +1,5 @@
+/*
+ * Hyperchannel's real styles are authored in SCSS (app/styles/app.scss) and
+ * imported from app/app.js so that Vite compiles them (including Tailwind).
+ * This file only exists because Embroider always links a virtual app.css.
+ */

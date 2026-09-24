@@ -21,7 +21,7 @@ export default class JoinChannelComponent extends Component {
     if (isPresent(this.coms.activeChannel)) {
       return this.coms.activeChannel.account;
     } else {
-      return this.coms.accounts.firstObject;
+      return this.coms.accounts[0];
     }
   }
 

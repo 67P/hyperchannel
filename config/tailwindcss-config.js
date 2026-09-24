@@ -1,12 +1,8 @@
 module.exports = {
-  content: [
-    './app/**/*.{html,hbs,js}'
-  ],
+  content: ['./index.html', './app/**/*.{html,hbs,js,gjs}'],
   darkMode: 'class', // or 'media' or 'class'
   theme: {
-    extend: {}
+    extend: {},
   },
-  plugins: [
-    require('@tailwindcss/forms')
-  ]
-}
+  plugins: [require('@tailwindcss/forms')],
+};

@@ -1,7 +1,6 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
-import { scheduleTask } from 'ember-lifeline';
 
 export default class UserListComponent extends Component {
 
@@ -27,7 +26,10 @@ export default class UserListComponent extends Component {
     this.renderedUsersCount = this.renderedUsersAddendumAmount;
     this.partialRenderingEnabled = true;
 
-    scheduleTask(this, 'actions', () => this.scrollToTop(element));
+    requestAnimationFrame(() => {
+      if (this.isDestroyed || this.isDestroying) return;
+      this.scrollToTop(element);
+    });
   }
 
   @action

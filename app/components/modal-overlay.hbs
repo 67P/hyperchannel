@@ -1,0 +1,10 @@
+<div class="hc-modal-backdrop" aria-hidden="true" {{on "click" @onClose}}></div>
+<div class="hc-modal-container">
+  <div class="hc-modal"
+       role="dialog"
+       aria-modal="true"
+       aria-label={{@label}}
+       {{focus-trap @onClose}}>
+    {{yield}}
+  </div>
+</div>

@@ -1,7 +1,7 @@
-'use strict';
-
-module.exports = {
+export default {
   extends: 'recommended',
+
+  ignore: ['dist/**', 'release/**'],
 
   rules: {
     'no-invalid-interactive': false,

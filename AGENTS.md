@@ -17,20 +17,20 @@ Welcome, AI Agent! This document provides essential context and rules for workin
   - Do not try to inject or use the `store` service.
 
 ## 3. Workflow & Commands
-When operating on this codebase, utilize the following `npm` scripts:
-- **Install dependencies**: `npm install`
-- **Serve**: `npm start` (Runs development server on port 4200)
-- **Test**: `npm test` (Runs tests in the terminal via QUnit). For TDD, use `npm test -- --server`.
+When operating on this codebase, utilize the following `pnpm` scripts:
+- **Install dependencies**: `pnpm install`
+- **Serve**: `pnpm start` (Runs development server on port 4200)
+- **Test**: `pnpm test` (Runs tests in the terminal via QUnit). For a single run, use `pnpm test:ember`.
 - **Linting & Formatting**: 
-  - `npm run lint` (Checks JS, HBS, and Formatting via Prettier/ESLint/Template Lint)
-  - `npm run lint:fix` (Fixes auto-fixable issues)
-- **Building**: `npm run build` (development) or `npm run build-prod` (production)
+  - `pnpm lint` (Checks JS, HBS, and Formatting via Prettier/ESLint/Template Lint)
+  - `pnpm lint:fix` (Fixes auto-fixable issues)
+- **Building**: `pnpm build` (development) or `pnpm build-prod` (production)
 
 ## 4. Guidelines for Making Changes
 - **Search First**: Before implementing features, always `glob` and `grep` to understand existing utilities, services (like `coms`), and patterns. 
 - **Mimic Existing Style**: Look closely at how similar components, routes, or services are implemented and match their architectural and formatting choices.
-- **Verify with Tests**: Always ensure the test suite (`npm test`) passes before considering a task complete. When adding new functionality, add unit or acceptance tests that align with existing patterns.
-- **Linting Rules**: Before concluding your task, run `npm run lint:fix` to ensure your code matches the project's rigorous style guidelines and passes automated CI checks.
+- **Verify with Tests**: Always ensure the test suite (`pnpm test`) passes before considering a task complete. When adding new functionality, add unit or acceptance tests that align with existing patterns.
+- **Linting Rules**: Before concluding your task, run `pnpm lint:fix` to ensure your code matches the project's rigorous style guidelines and passes automated CI checks.
 
 ## 5. Helpful Locations
 - `app/components/`: Colocated Glimmer components (UI building blocks).

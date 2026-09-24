@@ -25,8 +25,12 @@ export default class AccountListComponent extends Component {
       this.args.closeModal();
       this.router.transitionTo('add-account');
     } else {
-      const firstChannel = this.coms.channels.firstObject;
-      this.router.transitionTo('channel', firstChannel);
+      const firstChannel = this.coms.channels[0];
+      if (firstChannel) {
+        this.router.transitionTo('channel', firstChannel);
+      } else {
+        this.router.transitionTo('welcome');
+      }
     }
   }
 

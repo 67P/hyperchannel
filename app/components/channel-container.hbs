@@ -30,7 +30,7 @@
       <div class="content">
         <section id="channel-content" class="main pt-4 pb-8 bg-white text-neutral-800">
           {{#if @channel.isLogged}}
-            <a onclick={{perform this.loadPreviousMessages}} class="block px-4 text-sm" role="button">
+            <a {{on "click" this.loadPreviousMessages}} class="block px-4 text-sm" role="button">
               Load previous messages
             </a>
           {{/if}}
@@ -44,9 +44,17 @@
             </li>
             {{#each this.renderedMessages as |message|}}
               <li {{on-render this.messagesUpdated}}>
-                {{component message.type message=message channel=@channel
-                            sendMessage=@onMessage
-                            onUsernameClick=this.addUsernameMentionToMessage}}
+                {{#if (eq message.type "message-chat-me")}}
+                  <MessageChatMe @message={{message}} @channel={{@channel}}
+                                 @sendMessage={{@onMessage}}
+                                 @onUsernameClick={{this.addUsernameMentionToMessage}} />
+                {{else if (eq message.type "date-headline")}}
+                  <DateHeadline @message={{message}} />
+                {{else}}
+                  <MessageChat @message={{message}} @channel={{@channel}}
+                               @sendMessage={{@onMessage}}
+                               @onUsernameClick={{this.addUsernameMentionToMessage}} />
+                {{/if}}
               </li>
             {{else}}
               <li class="px-4 text-neutral-400">
