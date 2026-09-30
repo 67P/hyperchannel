@@ -103,6 +103,28 @@ module('Unit | Service | coms', function (hooks) {
     assert.strictEqual(channel.userList.length, 5);
   });
 
+  test('#updateChannelTopic sets the channel topic from the object content', function (assert) {
+    const channel = new Channel({
+      account: ircAccount,
+      name: '#kosmos'
+    });
+
+    const service = this.owner.factoryFor('service:coms').create({
+      accounts: [ ircAccount ],
+      channels: [ channel ]
+    });
+
+    service.updateChannelTopic({
+      type: 'update',
+      actor: { type: 'person', id: 'raucao@irc.libera.chat', name: 'raucao' },
+      target: { type: 'room', id: '#kosmos@irc.libera.chat', name: '#kosmos' },
+      object: { type: 'topic', content: 'Fixing IRC topics' }
+    });
+
+    assert.strictEqual(channel.topic, 'Fixing IRC topics');
+    assert.strictEqual(channel.formattedTopic.toString(), 'Fixing IRC topics');
+  });
+
   test('#sortedChannels returns channels sorted by name', function (assert) {
     const service = this.owner.factoryFor('service:coms').create({
       accounts: [ ircAccount ]
