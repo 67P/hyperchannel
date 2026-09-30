@@ -305,7 +305,7 @@ export default class ComsService extends Service {
     }
 
     const currentTopic = channel.topic;
-    const newTopic = message.object.topic;
+    const newTopic = message.object.content;
 
     channel.topic = newTopic;
 
@@ -322,7 +322,7 @@ export default class ComsService extends Service {
     //   type: 'notification-topic-change',
     //   date: new Date(message.published),
     //   nickname: message.actor.name,
-    //   content: message.object.topic
+    //   content: message.object.content
     // });
     // channel.messages.pushObject(notification);
   }

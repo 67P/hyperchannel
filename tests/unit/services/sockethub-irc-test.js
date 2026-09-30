@@ -97,6 +97,25 @@ module('Unit | Service | sockethub irc', function (hooks) {
     assert.notOk('object' in emitted.message, 'omits the invalid empty object');
   });
 
+  test('#changeTopic sends the topic as object content', function (assert) {
+    const service = this.owner.lookup('service:sockethub-irc');
+    let emitted;
+    service.sockethub = {
+      contextFor: () => ['context'],
+      client: { socket: { emit (event, message) { emitted = { event, message }; } } }
+    };
+
+    const channel = new Channel({ account: ircAccount, name: '#kosmos' });
+    service.changeTopic(channel, 'Fixing IRC topics');
+
+    assert.strictEqual(emitted.event, 'message');
+    assert.strictEqual(emitted.message.type, 'update');
+    assert.strictEqual(emitted.message.target.id, channel.sockethubChannelId);
+    assert.strictEqual(emitted.message.object.type, 'topic');
+    assert.strictEqual(emitted.message.object.content, 'Fixing IRC topics');
+    assert.notOk('topic' in emitted.message.object, 'does not use the legacy topic field');
+  });
+
   // FIXME this test randomly fails with error "Assertion occured after test had finished."
   // skip('#join sends the join activity to Sockethub for a room channel', function(assert) {
   //   const done = assert.async();

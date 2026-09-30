@@ -217,7 +217,7 @@ export default class SockethubIrcService extends Service {
       target: { id: channel.sockethubChannelId, type: 'room' },
       object: {
         type: 'topic',
-        topic: topic
+        content: topic
       }
     });
 
