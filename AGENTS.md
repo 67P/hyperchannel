@@ -21,6 +21,7 @@ When operating on this codebase, utilize the following `pnpm` scripts:
 - **Install dependencies**: `pnpm install`
 - **Serve**: `pnpm start` (Runs development server on port 4200)
 - **Test**: `pnpm test` (Runs tests in the terminal via QUnit). For a single run, use `pnpm test:ember`.
+  If Chromium hangs when running the test suite, try `env -u DBUS_SESSION_BUS_ADDRESS pnpm test:ember`
 - **Linting & Formatting**: 
   - `pnpm lint` (Checks JS, HBS, and Formatting via Prettier/ESLint/Template Lint)
   - `pnpm lint:fix` (Fixes auto-fixable issues)
