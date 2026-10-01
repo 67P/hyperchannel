@@ -21,6 +21,7 @@ export default class ChannelContainerComponent extends Component {
   // message volumes are currently small enough that this is not yet needed.
   @tracked renderedStartIndex = 0;
   @tracked historyLoaded = false;
+  @tracked historyLoadFailed = false;
 
   @cached
   get renderedMessages () {
@@ -32,9 +33,12 @@ export default class ChannelContainerComponent extends Component {
   }
 
   // Whether there is anything older to reveal or fetch: either older messages
-  // already in memory (window not at the start) or more archive pages.
+  // already in memory (window not at the start) or more archive pages. A failed
+  // page stops auto-loading (see `historyLoadFailed`) so we don't retry the same
+  // failing request in a loop; the user can retry explicitly.
   get canLoadOlderMessages () {
-    return this.renderedStartIndex > 0 || this.args.channel.hasOlderMessages;
+    return !this.historyLoadFailed &&
+      (this.renderedStartIndex > 0 || this.args.channel.hasOlderMessages);
   }
 
   get isLoadingOlderMessages () {
@@ -44,7 +48,7 @@ export default class ChannelContainerComponent extends Component {
   // Only show the "beginning of history" marker once older history has
   // actually been loaded/revealed for this channel.
   get showHistoryStart () {
-    return this.historyLoaded && !this.canLoadOlderMessages;
+    return this.historyLoaded && !this.historyLoadFailed && !this.canLoadOlderMessages;
   }
 
   @action
@@ -52,6 +56,7 @@ export default class ChannelContainerComponent extends Component {
     const messageCount = this.args.channel.sortedMessages.length;
     this.renderedStartIndex = Math.max(0, messageCount - INITIAL_RENDERED_MESSAGES);
     this.historyLoaded = false;
+    this.historyLoadFailed = false;
 
     setTimeout(() => {
       if (this.isDestroyed || this.isDestroying) return;
@@ -91,6 +96,12 @@ export default class ChannelContainerComponent extends Component {
     this.historyLoaded = true;
     try {
       await this.coms.loadOlderMessages(channel);
+    } catch (error) {
+      // Stop auto-loading so we don't retry the same failing page in a loop or
+      // leave an unhandled rejection; the user can retry explicitly.
+      this.historyLoadFailed = true;
+      console.error('[channel] Failed to load older messages', error);
+      return;
     } finally {
       channel.loadingOlderMessages = false;
     }
@@ -103,6 +114,12 @@ export default class ChannelContainerComponent extends Component {
     if (added > 0) {
       this.renderedStartIndex = Math.max(0, added - RENDERED_MESSAGES_INCREMENT);
     }
+  }
+
+  @action
+  retryLoadOlderMessages () {
+    this.historyLoadFailed = false;
+    this.loadOlderMessages();
   }
 
   focusMessageInputField () {

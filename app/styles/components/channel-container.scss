@@ -177,6 +177,22 @@
       }
     }
 
+    .history-load-error {
+      button.retry {
+        padding: 0;
+        border: none;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-decoration: underline;
+        cursor: pointer;
+
+        &:hover {
+          color: #333;
+        }
+      }
+    }
+
     .jump-to-latest {
       position: sticky;
       bottom: 0;

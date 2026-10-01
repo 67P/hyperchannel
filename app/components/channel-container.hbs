@@ -36,7 +36,12 @@
                       @isLoadingOlder={{this.isLoadingOlderMessages}}
                       @onLoadOlder={{this.loadOlderMessages}}
                       as |scroll|>
-          {{#if this.showHistoryStart}}
+          {{#if this.historyLoadFailed}}
+            <div class="history-load-error pt-4 text-center text-sm text-neutral-400">
+              Couldn’t load older messages.
+              <button type="button" class="retry" {{on "click" this.retryLoadOlderMessages}}>Retry</button>
+            </div>
+          {{else if this.showHistoryStart}}
             <div class="history-start pt-4 text-center text-sm text-neutral-400">
               Beginning of history
             </div>
