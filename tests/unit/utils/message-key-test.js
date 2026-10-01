@@ -13,10 +13,23 @@ function chatMessage (props) {
 }
 
 module('Unit | Utility | message key', function () {
-  test('uses the id when the message has one', function (assert) {
+  test('scopes a transport id by author', function (assert) {
     const message = chatMessage({ id: 'abc123' });
 
-    assert.strictEqual(messageKey(message), 'abc123');
+    assert.strictEqual(messageKey(message), 'alice\u0000abc123');
+  });
+
+  test('uses a server stanza id as-is', function (assert) {
+    const message = chatMessage({ id: 'abc123', sid: 'stanza-9' });
+
+    assert.strictEqual(messageKey(message), 'sid:stanza-9');
+  });
+
+  test('does not collapse the same id sent by different authors', function (assert) {
+    const alice = chatMessage({ id: 'shared' });
+    const bob = chatMessage({ nickname: 'bob', id: 'shared' });
+
+    assert.notStrictEqual(messageKey(alice), messageKey(bob));
   });
 
   test('derives a key from the timestamp and content when there is no id', function (assert) {

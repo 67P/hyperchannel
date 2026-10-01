@@ -1,6 +1,8 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
+import { registerDestructor } from '@ember/destroyable';
+import { buildWaiter } from '@ember/test-waiters';
 import {
   ScrollAction,
   createScrollState,
@@ -11,6 +13,10 @@ import {
 const MAINTENANCE_TIMEOUT = 150; // ms
 const SMOOTH_SCROLL_TIMEOUT = 1000; // ms; upper bound for a smooth scroll
 const FILL_MAX_NO_PROGRESS = 2;
+
+// Tracks the component's deferred async work (maintenance timer, frame
+// callbacks) so `settled()` can synchronize deterministically in tests.
+const scrollerWaiter = buildWaiter('chat-scroller');
 
 function itemKey (item) {
   if (!item) return '';
@@ -58,6 +64,7 @@ export default class ChatScrollerComponent extends Component {
   maintenanceTimer = null;
   maintenanceTarget = null;
   maintenanceObservedTop = 0;
+  maintenanceWaiterToken = null;
   smoothScrollRequested = false;
 
   // Auto-load bookkeeping.
@@ -65,6 +72,37 @@ export default class ChatScrollerComponent extends Component {
   fillNoProgress = 0;
   lastFillHeight = 0;
   resizeScheduled = false;
+
+  constructor () {
+    super(...arguments);
+    registerDestructor(this, () => {
+      if (this.maintenanceTimer) {
+        clearTimeout(this.maintenanceTimer);
+        this.maintenanceTimer = null;
+      }
+      this.endMaintenanceWaiter();
+    });
+  }
+
+  // Runs `callback` on the next frame, tracked by a test waiter so `settled()`
+  // can synchronize deterministically instead of tests relying on sleeps.
+  runInFrame (callback) {
+    const token = scrollerWaiter.beginAsync();
+    requestAnimationFrame(() => {
+      try {
+        callback();
+      } finally {
+        scrollerWaiter.endAsync(token);
+      }
+    });
+  }
+
+  endMaintenanceWaiter () {
+    if (this.maintenanceWaiterToken) {
+      scrollerWaiter.endAsync(this.maintenanceWaiterToken);
+      this.maintenanceWaiterToken = null;
+    }
+  }
 
   get scrollApi () {
     return {
@@ -107,7 +145,7 @@ export default class ChatScrollerComponent extends Component {
   // defer state changes and DOM effects to the next frame. Setting tracked
   // state during render would invalidate and re-run the modifier recursively.
   scheduleReduce (event) {
-    requestAnimationFrame(() => {
+    this.runInFrame(() => {
       if (this.isDestroyed || this.isDestroying) return;
       this.reduceAndApply(event);
     });
@@ -145,10 +183,13 @@ export default class ChatScrollerComponent extends Component {
     if (this.maintenanceTimer) {
       clearTimeout(this.maintenanceTimer);
     }
+    this.endMaintenanceWaiter();
+    this.maintenanceWaiterToken = scrollerWaiter.beginAsync();
     this.maintainingScroll = true;
     this.maintenanceObservedTop = this.scrollElement?.scrollTop ?? 0;
     this.maintenanceTimer = setTimeout(() => {
       this.maintenanceTimer = null;
+      if (this.isDestroyed || this.isDestroying) return;
       this.endMaintenance();
     }, timeout);
   }
@@ -158,6 +199,7 @@ export default class ChatScrollerComponent extends Component {
       clearTimeout(this.maintenanceTimer);
       this.maintenanceTimer = null;
     }
+    this.endMaintenanceWaiter();
     const wasMaintaining = this.maintainingScroll;
     this.maintainingScroll = false;
     this.maintenanceTarget = null;
@@ -421,7 +463,7 @@ export default class ChatScrollerComponent extends Component {
     if (this.resizeScheduled) return;
     this.resizeScheduled = true;
 
-    requestAnimationFrame(() => {
+    this.runInFrame(() => {
       this.resizeScheduled = false;
       if (this.isDestroyed || this.isDestroying) return;
       this.requestOlderIfNeeded();
@@ -435,7 +477,7 @@ export default class ChatScrollerComponent extends Component {
     // The in-flight page finished; allow requesting the next one if we are
     // still near the top (e.g. the user reached the top while it was loading).
     this.olderRequestPending = false;
-    requestAnimationFrame(() => {
+    this.runInFrame(() => {
       if (this.isDestroyed || this.isDestroying) return;
       this.requestOlderIfNeeded();
     });

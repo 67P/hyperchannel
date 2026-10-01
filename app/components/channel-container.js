@@ -16,16 +16,27 @@ export default class ChannelContainerComponent extends Component {
   // We render from here to the end, so appending new messages at the bottom
   // never shifts the content the user is looking at.
   //
+  // `null` means "auto": render the latest `INITIAL_RENDERED_MESSAGES`. This is
+  // the initial state and is important because the IRC archive is loaded
+  // asynchronously after the component mounts; deriving the window from the live
+  // message list (rather than sizing it once at mount) means the initial batch
+  // is windowed correctly. It becomes a fixed index once the user starts reading
+  // older history.
+  //
   // TODO: bound the window size while detached and shed older DOM nodes
   // (Element-style, with height reservation) for very deep history. Session
   // message volumes are currently small enough that this is not yet needed.
-  @tracked renderedStartIndex = 0;
+  @tracked renderedStartIndex = null;
   @tracked historyLoaded = false;
   @tracked historyLoadFailed = false;
 
   @cached
   get renderedMessages () {
-    return this.args.channel.sortedMessages.slice(this.renderedStartIndex);
+    const all = this.args.channel.sortedMessages;
+    if (this.renderedStartIndex === null) {
+      return all.slice(Math.max(0, all.length - INITIAL_RENDERED_MESSAGES));
+    }
+    return all.slice(this.renderedStartIndex);
   }
 
   get hasOlderMessages () {
@@ -37,8 +48,12 @@ export default class ChannelContainerComponent extends Component {
   // page stops auto-loading (see `historyLoadFailed`) so we don't retry the same
   // failing request in a loop; the user can retry explicitly.
   get canLoadOlderMessages () {
-    return !this.historyLoadFailed &&
-      (this.renderedStartIndex > 0 || this.args.channel.hasOlderMessages);
+    if (this.historyLoadFailed) return false;
+    const channel = this.args.channel;
+    if (this.renderedStartIndex === null) {
+      return channel.hasOlderMessages || channel.sortedMessages.length > INITIAL_RENDERED_MESSAGES;
+    }
+    return this.renderedStartIndex > 0 || channel.hasOlderMessages;
   }
 
   get isLoadingOlderMessages () {
@@ -53,8 +68,8 @@ export default class ChannelContainerComponent extends Component {
 
   @action
   channelChanged () {
-    const messageCount = this.args.channel.sortedMessages.length;
-    this.renderedStartIndex = Math.max(0, messageCount - INITIAL_RENDERED_MESSAGES);
+    // `null` = auto-window the latest messages (see `renderedStartIndex`).
+    this.renderedStartIndex = null;
     this.historyLoaded = false;
     this.historyLoadFailed = false;
 
@@ -81,6 +96,17 @@ export default class ChannelContainerComponent extends Component {
   async loadOlderMessages () {
     const channel = this.args.channel;
     if (channel.loadingOlderMessages) return;
+
+    if (this.renderedStartIndex === null) {
+      // Materialize the auto-window and reveal one increment of older messages.
+      const length = channel.sortedMessages.length;
+      this.renderedStartIndex = Math.max(
+        0,
+        length - INITIAL_RENDERED_MESSAGES - RENDERED_MESSAGES_INCREMENT
+      );
+      this.historyLoaded = true;
+      return;
+    }
 
     if (this.renderedStartIndex > 0) {
       this.renderedStartIndex = Math.max(0, this.renderedStartIndex - RENDERED_MESSAGES_INCREMENT);

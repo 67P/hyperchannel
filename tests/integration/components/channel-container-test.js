@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, waitUntil, click } from '@ember/test-helpers';
+import { render, settled, waitUntil, click } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import Service from '@ember/service';
 import Channel from 'hyperchannel/models/channel';
@@ -19,10 +19,6 @@ const TEMPLATE = hbs`
                     @onLeaveChannel={{this.noop}}
                     @addUsernameMentionToMessage={{this.noop}} />
 `;
-
-function wait (ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 module('Integration | Component | channel-container', function (hooks) {
   setupRenderingTest(hooks);
@@ -86,7 +82,7 @@ module('Integration | Component | channel-container', function (hooks) {
     window.dispatchEvent(new Event('resize'));
 
     await waitUntil(() => calls >= 1, { timeout: 2000 });
-    await wait(300);
+    await settled();
 
     assert.strictEqual(calls, 1, 'does not retry the failing request in a loop');
     assert.dom('.history-load-error').exists('shows a retry affordance');
@@ -96,6 +92,39 @@ module('Integration | Component | channel-container', function (hooks) {
     await waitUntil(() => calls >= 2, { timeout: 2000 });
 
     assert.strictEqual(calls, 2, 'retry calls the loader again');
+  });
+
+  test('applies the initial render window when the async archive batch arrives', async function (assert) {
+    // A freshly joined channel has no messages yet; the archive is loaded
+    // asynchronously after the component has sized its window.
+    this.channel = new Channel({ account: ircAccount, name: '#big', displayName: '#big' });
+
+    await render(TEMPLATE);
+
+    // Constrain the scroller so the fill path doesn't reveal the whole batch.
+    const scroller = document.getElementById('channel-content');
+    scroller.style.flex = '0 0 400px';
+    scroller.style.height = '400px';
+    scroller.style.overflowY = 'auto';
+    scroller.style.overflowAnchor = 'none';
+    await settled();
+
+    for (let i = 0; i < 120; i++) {
+      this.channel.addMessage(new Message({
+        type: 'message-chat',
+        id: `m${i}`,
+        date: new Date(Date.now() + i * 1000),
+        nickname: 'alice',
+        content: `message ${i}`
+      }));
+    }
+    await settled();
+
+    assert.strictEqual(
+      this.element.querySelectorAll('#channel-content .msg-content').length,
+      50,
+      'renders the initial window of 50 messages, not the whole batch'
+    );
   });
 });
 

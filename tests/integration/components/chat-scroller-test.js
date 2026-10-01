@@ -23,10 +23,6 @@ function offsetWithin (scroller, node) {
   return node.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
 }
 
-function wait (ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 const TEMPLATE = hbs`
   {{! template-lint-disable no-inline-styles }}
   <ChatScroller id="scroller"
@@ -173,7 +169,6 @@ module('Integration | Component | chat-scroller', function (hooks) {
     const callsWhenFilled = calls;
     window.dispatchEvent(new Event('resize'));
     await settled();
-    await wait(200);
 
     assert.strictEqual(calls, callsWhenFilled, 'does not keep loading once the viewport is filled');
   });
@@ -201,7 +196,6 @@ module('Integration | Component | chat-scroller', function (hooks) {
       scroller.dispatchEvent(new Event('scroll'));
       await settled();
     }
-    await wait(100);
 
     assert.strictEqual(calls, 1, 'only requests history once while within the top zone');
   });
@@ -222,7 +216,6 @@ module('Integration | Component | chat-scroller', function (hooks) {
     scroller.scrollTop = 100;
     scroller.dispatchEvent(new Event('scroll'));
     await settled();
-    await wait(100);
 
     assert.strictEqual(calls, 0, 'does not request a new page while loading');
   });
@@ -236,8 +229,7 @@ module('Integration | Component | chat-scroller', function (hooks) {
     };
 
     const scroller = await renderScroller();
-    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 });
-    await wait(200); // let the initial programmatic scroll release its lock
+    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 }); // let the initial programmatic scroll release its lock
 
     this.set('hasOlder', true);
     this.set('isLoadingOlder', true);
@@ -246,8 +238,7 @@ module('Integration | Component | chat-scroller', function (hooks) {
     // Reach the top while a page is still loading; the request is deferred.
     scroller.scrollTop = 100;
     scroller.dispatchEvent(new Event('scroll'));
-    await settled();
-    await wait(200); // let native scroll/scrollend events fully settle
+    await settled(); // let native scroll/scrollend events fully settle
     assert.strictEqual(calls, 0, 'does not start a concurrent load');
 
     // When the in-flight load finishes, the next page is requested automatically
@@ -264,12 +255,10 @@ module('Integration | Component | chat-scroller', function (hooks) {
 
     const scroller = await renderScroller();
     await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 });
-    await wait(200);
 
     scroller.scrollTop = 120;
     scroller.dispatchEvent(new Event('scroll'));
     await settled();
-    await wait(50);
 
     const before = anchoredNode(scroller);
     assert.ok(before, 'has an anchored message');
@@ -279,7 +268,6 @@ module('Integration | Component | chat-scroller', function (hooks) {
     const older = [{ id: 'old1' }, { id: 'old2' }, { id: 'old3' }];
     this.set('items', [...older, ...this.items]);
     await settled();
-    await wait(100);
 
     const after = scroller.querySelector(`[data-message-key="${beforeKey}"]`);
     assert.ok(after, 'the anchored message is still rendered');
@@ -294,12 +282,10 @@ module('Integration | Component | chat-scroller', function (hooks) {
 
     const scroller = await renderScroller();
     await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 });
-    await wait(200);
 
     scroller.scrollTop = 120;
     scroller.dispatchEvent(new Event('scroll'));
     await settled();
-    await wait(50);
 
     const before = anchoredNode(scroller);
     assert.ok(before, 'has an anchored message');
@@ -309,7 +295,6 @@ module('Integration | Component | chat-scroller', function (hooks) {
     const older = [{ id: 'old1' }, { id: 'old2' }, { id: 'old3' }];
     this.set('items', [...older, ...this.items, { id: 'new1' }]);
     await settled();
-    await wait(100);
 
     const after = scroller.querySelector(`[data-message-key="${beforeKey}"]`);
     assert.ok(after, 'the anchored message is still rendered');

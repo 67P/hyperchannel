@@ -279,9 +279,40 @@ module('Unit | Model | base-channel', function (hooks) {
 
     channel.addMessage(message);
 
-    assert.strictEqual(message.key, 'key-1', 'message gets the transport id as key');
+    assert.strictEqual(message.key, 'alice\u0000key-1', 'keys the transport id by author');
     const stored = channel.messages.find(item => item.type === 'message-chat');
-    assert.strictEqual(stored.key, 'key-1');
+    assert.strictEqual(stored.key, 'alice\u0000key-1');
+  });
+
+  test('#addMessage uses a server stanza id as the key', function (assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+    const message = new Message({
+      type: 'message-chat', date: new Date(), nickname: 'alice',
+      content: 'hello', id: 'client-id', sid: 'stanza-42'
+    });
+
+    channel.addMessage(message);
+
+    assert.strictEqual(message.key, 'sid:stanza-42');
+  });
+
+  test('#addMessage keeps the same transport id from different authors', function (assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+
+    channel.addMessage(new Message({
+      type: 'message-chat', date: new Date(), nickname: 'alice',
+      content: 'from alice', id: 'shared'
+    }));
+    channel.addMessage(new Message({
+      type: 'message-chat', date: new Date(), nickname: 'bob',
+      content: 'from bob', id: 'shared'
+    }));
+
+    assert.strictEqual(
+      channel.messages.filter(item => item.type === 'message-chat').length,
+      2,
+      'keeps both messages despite the shared id'
+    );
   });
 
   test('#addMessage derives a key for id-less messages', function (assert) {
