@@ -185,6 +185,10 @@ export default class ChatScrollerComponent extends Component {
       this.beginMaintenance();
       element.scrollTop = element.scrollHeight;
       this.maintenanceTarget = element.scrollTop;
+      // For an instant scroll the position is already at the target, so any
+      // deviating scroll event means the user interrupted: treat it as such
+      // immediately instead of waiting for the maintenance timeout.
+      this.maintenanceObservedTop = element.scrollTop;
     }
   }
 
@@ -231,6 +235,8 @@ export default class ChatScrollerComponent extends Component {
     this.beginMaintenance();
     element.scrollTop += delta;
     this.maintenanceTarget = element.scrollTop;
+    // Instant scroll: see applyScrollToBottom.
+    this.maintenanceObservedTop = element.scrollTop;
   }
 
   // --- Auto-loading ---------------------------------------------------------

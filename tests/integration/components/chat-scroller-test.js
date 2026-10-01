@@ -236,6 +236,9 @@ module('Integration | Component | chat-scroller', function (hooks) {
     };
 
     const scroller = await renderScroller();
+    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 });
+    await wait(200); // let the initial programmatic scroll release its lock
+
     this.set('hasOlder', true);
     this.set('isLoadingOlder', true);
     await settled();
