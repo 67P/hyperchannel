@@ -337,7 +337,7 @@ export default class ChatScrollerComponent extends Component {
     if (appended) {
       let count = 0;
       for (let i = keys.length - 1; i >= 0 && !previousSet.has(keys[i]); i--) {
-        count += 1;
+        if (items?.[i]?.type !== 'date-headline') count += 1;
       }
       if (this.scrollState.stickToBottom) {
         // The sticky branch only scrolls to the bottom (no tracked writes).
