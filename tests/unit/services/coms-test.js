@@ -5,8 +5,24 @@ import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
 import { ircAccount, xmppAccount } from '../../fixtures/accounts';
 
+function jsonResponse (body) {
+  return Promise.resolve({ json: () => Promise.resolve(body) });
+}
+
+function archivePage (messages, previous) {
+  return { today: { messages, previous } };
+}
+
+function archiveMessage (id, from = 'alice', text = `message ${id}`) {
+  return { id, from, text, timestamp: '2024-01-05T00:00:00.000Z' };
+}
+
 module('Unit | Service | coms', function (hooks) {
   setupTest(hooks);
+
+  hooks.afterEach(function () {
+    sinon.restore();
+  });
 
   test('#connectServer calls connect on the appropriate transport service', function (assert) {
     const ircStub = { connect: function () {} };
@@ -245,5 +261,67 @@ module('Unit | Service | coms', function (hooks) {
     assert.deepEqual([...channel.roomFeatures], ['http://jabber.org/protocol/muc', 'muc_persistent']);
     assert.strictEqual(channel.roomInfoData.occupants.value, 12);
     assert.strictEqual(channel.roomConfigData.changesubject.value, true);
+  });
+
+  test('#loadOlderMessages returns an empty result when there is no cursor', async function (assert) {
+    const channel = new Channel({ account: ircAccount, name: '#kosmos' });
+    const service = this.owner.factoryFor('service:coms').create();
+
+    const result = await service.loadOlderMessages(channel);
+
+    assert.deepEqual(result, { added: 0, hasMore: false }, 'reports nothing to add');
+    assert.false(channel.hasOlderMessages, 'leaves hasOlderMessages false');
+  });
+
+  test('#loadOlderMessages loads a page, filters duplicates, and advances the cursor', async function (assert) {
+    const channel = new Channel({ account: ircAccount, name: '#kosmos' });
+    channel.searchedPreviousLogsUntilDate = '2024-01-05';
+
+    // Pre-existing message that the archive page will deliver again.
+    channel.addMessage(new Message({
+      type: 'message-chat', date: new Date(), nickname: 'alice',
+      content: 'message dup', id: 'dup'
+    }));
+
+    const messages = [
+      archiveMessage('dup', 'alice', 'message dup'),
+      ...Array.from({ length: 30 }, (_, i) => archiveMessage(`m${i}`))
+    ];
+
+    const fetchStub = sinon.stub(globalThis, 'fetch').callsFake(url => {
+      assert.true(url.endsWith('/2024-01-05'), `requests the cursor date (${url})`);
+      return jsonResponse(archivePage(messages, '2024-01-04'));
+    });
+
+    const service = this.owner.factoryFor('service:coms').create();
+    const result = await service.loadOlderMessages(channel);
+
+    assert.true(fetchStub.calledOnce, 'fetches a single page once it has enough messages');
+    assert.strictEqual(result.added, 30, 'counts only the newly added messages');
+    assert.true(result.hasMore, 'reports that more history is available');
+    assert.strictEqual(channel.searchedPreviousLogsUntilDate, '2024-01-04', 'advances the cursor');
+    assert.true(channel.hasOlderMessages, 'updates hasOlderMessages');
+  });
+
+  test('#loadOlderMessages follows the cursor across pages until history is exhausted', async function (assert) {
+    const channel = new Channel({ account: ircAccount, name: '#kosmos' });
+    channel.searchedPreviousLogsUntilDate = '2024-01-05';
+
+    const firstPage = Array.from({ length: 2 }, (_, i) => archiveMessage(`first${i}`));
+    const secondPage = Array.from({ length: 30 }, (_, i) => archiveMessage(`second${i}`));
+
+    const fetchStub = sinon.stub(globalThis, 'fetch').callsFake(url => {
+      if (url.endsWith('/2024-01-05')) return jsonResponse(archivePage(firstPage, '2024-01-04'));
+      if (url.endsWith('/2024-01-04')) return jsonResponse(archivePage(secondPage, null));
+      throw new Error(`unexpected URL ${url}`);
+    });
+
+    const service = this.owner.factoryFor('service:coms').create();
+    const result = await service.loadOlderMessages(channel);
+
+    assert.strictEqual(fetchStub.callCount, 2, 'fetches the next page using the previous cursor');
+    assert.strictEqual(result.added, 32, 'adds messages from both pages');
+    assert.false(result.hasMore, 'reports exhaustion once there is no previous cursor');
+    assert.false(channel.hasOlderMessages, 'clears hasOlderMessages at the end of history');
   });
 });

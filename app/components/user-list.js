@@ -22,13 +22,14 @@ export default class UserListComponent extends Component {
 
   // called when changing list of users (i.e. when switching channels)
   @action
-  usersChanged (element) {
+  usersChanged () {
     this.renderedUsersCount = this.renderedUsersAddendumAmount;
     this.partialRenderingEnabled = true;
 
     requestAnimationFrame(() => {
       if (this.isDestroyed || this.isDestroying) return;
-      this.scrollToTop(element);
+      const element = document.getElementById('user-list');
+      if (element) this.scrollToTop(element);
     });
   }
 

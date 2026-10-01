@@ -1,0 +1,15 @@
+<div
+  ...attributes
+  {{chat-scroll
+    onReady=this.handleReady
+    onScroll=this.handleScroll
+    onScrollEnd=this.handleScrollEnd
+    onContentResize=this.handleContentResize}}
+  {{on-change @items this.handleItemsChanged}}
+  {{on-change @resetKey this.handleReset}}
+  {{on-change @isLoadingOlder this.handleLoadingOlderChanged}}
+>
+  <div class="channel-scroll-content">
+    {{yield this.scrollApi}}
+  </div>
+</div>

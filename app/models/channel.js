@@ -1,4 +1,5 @@
 import { htmlSafe } from '@ember/template';
+import { tracked } from '@glimmer/tracking';
 import { isPresent } from '@ember/utils';
 import BaseChannel from 'hyperchannel/models/base_channel';
 import config from 'hyperchannel/config/environment';
@@ -6,7 +7,9 @@ import linkifyStr from 'linkify-string';
 
 export default class Channel extends BaseChannel {
 
-  searchedPreviousLogsUntilDate = null;
+  // Archive cursor: the `previous` date of the last fetched page. Tracked so the
+  // scroller observes cursor progress (see ChatScrollerComponent#requestOlderIfNeeded).
+  @tracked searchedPreviousLogsUntilDate = null;
 
   get formattedTopic () {
     if (isPresent(this.topic)) {

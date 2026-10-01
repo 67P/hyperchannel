@@ -1,5 +1,5 @@
 <div id="channel" {{on-render this.onAfterRender}}
-                  {{on-channel-change this.channelChanged}}>
+                  {{on-change @channel this.channelChanged}}>
   <main>
     <header id="channel-header">
       <h2 id="channel-name"
@@ -28,22 +28,30 @@
 
     <div class="content-container {{@sidebarClass}} {{if @showChannelMenu "channel-menu-open"}}">
       <div class="content">
-        <section id="channel-content" class="main pt-4 pb-8 bg-white text-neutral-800">
-          {{#if @channel.isLogged}}
-            <a {{on "click" this.loadPreviousMessages}} class="block px-4 text-sm" role="button">
-              Load previous messages
-            </a>
+        <ChatScroller id="channel-content"
+                      class="main pt-4 pb-8 bg-white text-neutral-800"
+                      tabindex="-1"
+                      @items={{this.renderedMessages}}
+                      @resetKey={{@channel}}
+                      @hasOlder={{this.canLoadOlderMessages}}
+                      @isLoadingOlder={{this.isLoadingOlderMessages}}
+                      @historyCursor={{@channel.searchedPreviousLogsUntilDate}}
+                      @onLoadOlder={{this.loadOlderMessages}}
+                      as |scroll|>
+          {{#if this.historyLoadFailed}}
+            <div class="history-load-error pt-4 text-center text-sm text-neutral-600" role="alert">
+              Couldn’t load older messages.
+              <button type="button" class="retry" {{on "click" this.retryLoadOlderMessages}}>Retry</button>
+            </div>
+          {{else if this.showHistoryStart}}
+            <div class="history-start pt-4 text-center text-sm text-neutral-600">
+              Beginning of history
+            </div>
           {{/if}}
 
           <ul class="list-none">
-            <li>
-              <ScrollingObserver @rootElement="#channel-content"
-                                 @rootMargin={{this.partialRenderingObserverMargin}}
-                                 @enabled={{this.partialRenderingEnabled}}
-                                 @onIntersect={{this.increaseRenderedMessagesCount}} />
-            </li>
-            {{#each this.renderedMessages as |message|}}
-              <li {{on-render this.messagesUpdated}}>
+            {{#each this.renderedMessages key="key" as |message|}}
+              <li data-message-key={{message.key}}>
                 {{#if (eq message.type "message-chat-me")}}
                   <MessageChatMe @message={{message}} @channel={{@channel}}
                                  @sendMessage={{@onMessage}}
@@ -69,16 +77,30 @@
               {{/if}}
               </li>
             {{/each}}
-            <li>
-            <ScrollingObserver @rootElement="#channel"
-                               @rootMargin="0px"
-                               @threshold={{1}}
-                               @retriggeringEnabled={{false}}
-                               @onIntersect={{fn this.setAutomaticScrolling true}}
-                               @onDiverge={{fn this.setAutomaticScrolling false}} />
-            </li>
           </ul>
-        </section>
+
+          {{! Zero-height sticky zone so the button is pinned to the viewport edge
+              without ever contributing to the scroll content's height. If the
+              button were in flow, adding/removing it would change scrollHeight
+              and shift the view by the button's height. }}
+          <div class="jump-to-latest-zone">
+            {{#unless scroll.isAtBottom}}
+              <button type="button"
+                      class="jump-to-latest {{if scroll.showJumpToLatest "has-new-messages"}}"
+                      title="Scroll to latest messages"
+                      {{on "click" scroll.scrollToBottom}}>
+                <span aria-hidden="true"><Icon::chevron-down /></span>
+                <span class="sr-only">Scroll to latest messages</span>
+                {{#if scroll.newMessageCount}}
+                  <span>
+                    {{scroll.newMessageCount}}
+                    {{if (eq scroll.newMessageCount 1) "new message" "new messages"}}
+                  </span>
+                {{/if}}
+              </button>
+            {{/unless}}
+          </div>
+        </ChatScroller>
 
         <footer>
           <MessageInput @message={{@newMessage}}

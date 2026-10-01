@@ -386,6 +386,7 @@ export default class ComsService extends Service {
 
     let messagesCount = 0;
     let archivesCount = 0;
+    let added = 0;
 
     while ((messagesCount < options.minMessages) &&
            (archivesCount < options.maxDays)) {
@@ -401,15 +402,39 @@ export default class ComsService extends Service {
         });
 
         channel.addMessage(channelMessage);
+        if (channel.messages.includes(channelMessage)) added += 1;
       });
 
       messagesCount += archive.today?.messages?.length || 0;
       archivesCount += 1;
 
       dateStr = archive.today?.previous;
-      channel.searchedPreviousLogsUntilDate = dateStr;
       if (isEmpty(dateStr)) break;
     }
+
+    channel.searchedPreviousLogsUntilDate = dateStr;
+    channel.hasOlderMessages = !isEmpty(dateStr);
+
+    return { added, hasMore: channel.hasOlderMessages };
+  }
+
+  /**
+   * Fetches an additional page of older messages into the channel.
+   *
+   * Returns `{ added, hasMore }` so the caller can reveal them and know whether
+   * more history is available.
+   */
+  async loadOlderMessages (channel, options = {}) {
+    if (isEmpty(channel.searchedPreviousLogsUntilDate)) {
+      channel.hasOlderMessages = false;
+      return { added: 0, hasMore: false };
+    }
+
+    return this.loadArchiveMessages(channel, channel.searchedPreviousLogsUntilDate, {
+      minMessages: 30,
+      maxDays: 3,
+      ...options
+    });
   }
 
   createUserChannel (account, name) {
