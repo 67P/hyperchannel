@@ -154,6 +154,14 @@
     // reflow the message list (which fed the resize/scroll feedback loop).
     scrollbar-gutter: stable;
 
+    // Focused programmatically when the jump-to-latest button is activated (see
+    // ChatScrollerComponent#scrollToBottom), so the button can be removed
+    // without dropping keyboard focus to <body>. It is not a tab stop, so the
+    // outline is suppressed.
+    &:focus {
+      outline: none;
+    }
+
     a {
       color: #aaa;
       text-decoration: underline;

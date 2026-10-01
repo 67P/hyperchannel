@@ -594,6 +594,11 @@ export default class ChatScrollerComponent extends Component {
 
   @action
   scrollToBottom () {
+    // Once we settle at the bottom the jump button is removed from the DOM, so
+    // move focus into the message list first, otherwise keyboard/screen-reader
+    // focus would be dropped to <body>. `preventScroll` keeps this from
+    // fighting the animation that follows.
+    this.scrollElement?.focus({ preventScroll: true });
     // Request a smooth scroll only for this explicit, user-initiated action.
     this.smoothScrollRequested = true;
     this.reduceAndApply({ type: 'scroll-to-bottom' });

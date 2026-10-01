@@ -30,6 +30,7 @@
       <div class="content">
         <ChatScroller id="channel-content"
                       class="main pt-4 pb-8 bg-white text-neutral-800"
+                      tabindex="-1"
                       @items={{this.renderedMessages}}
                       @resetKey={{@channel}}
                       @hasOlder={{this.canLoadOlderMessages}}
