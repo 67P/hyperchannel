@@ -281,6 +281,11 @@ export default class ChatScrollerComponent extends Component {
   // monotonic ease-out (a symmetric ease-in-out compresses the deceleration
   // into the end of its timeline and lands abruptly).
   startSmoothScrollToBottom (element) {
+    // Idempotent: the jump button stays rendered until the scroll settles, so a
+    // rapid second activation could otherwise start a second, parallel
+    // requestAnimationFrame loop. That doubles the movement and overwrites the
+    // tracked frame id, leaving the first loop uncancellable.
+    if (this.smoothScrollAnimating) return;
     this.smoothScrollAnimating = true;
     this.animateScrollToBottom(element);
   }

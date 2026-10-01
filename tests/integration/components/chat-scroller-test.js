@@ -2,6 +2,7 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, settled, waitUntil } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
+import sinon from 'sinon';
 
 function items (count, startAt = 0) {
   return Array.from({ length: count }, (_, index) => ({ id: `m${startAt + index}` }));
@@ -229,6 +230,35 @@ module('Integration | Component | chat-scroller', function (hooks) {
       tailMs >= 150,
       `the last 40px is eased out over time (${Math.round(tailMs)}ms)`
     );
+  });
+
+  test('does not start a second scroll animation when activated twice', async function (assert) {
+    this.items = items(60);
+
+    const scroller = await renderScroller();
+    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 });
+
+    // Detach so the scroll-to-bottom button appears.
+    scroller.scrollTop = 0;
+    scroller.dispatchEvent(new Event('scroll'));
+    await settled();
+    await waitUntil(() => document.querySelector('.jump-to-latest'), { timeout: 2000 });
+
+    const button = document.querySelector('.jump-to-latest');
+    const raf = sinon.spy(window, 'requestAnimationFrame');
+    try {
+      // Two synchronous activations, before any frame runs.
+      button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+      assert.strictEqual(raf.callCount, 1, 'only one animation loop is started');
+    } finally {
+      raf.restore();
+    }
+
+    await settled();
+    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 3000 });
+    assert.true(isScrolledToBottom(scroller), 'still reaches the bottom');
   });
 
   test('loads older history until the viewport is filled', async function (assert) {
