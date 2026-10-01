@@ -97,6 +97,8 @@ export default class ChannelContainerComponent extends Component {
 
     // Keep the currently rendered messages visible and reveal a page of the
     // newly loaded ones. `ChatScroller` restores the scroll position around it.
+    if (this.args.channel !== channel || this.isDestroyed || this.isDestroying) return;
+
     const added = channel.sortedMessages.length - lengthBefore;
     if (added > 0) {
       this.renderedStartIndex = Math.max(0, added - RENDERED_MESSAGES_INCREMENT);
