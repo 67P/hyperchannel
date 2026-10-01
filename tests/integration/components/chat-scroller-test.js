@@ -249,7 +249,15 @@ module('Integration | Component | chat-scroller', function (hooks) {
     await settled();
     window.dispatchEvent(new Event('resize'));
 
-    await waitUntil(() => scroller.scrollHeight > scroller.clientHeight, { timeout: 3000 });
+    // Auto-loading continues until the list is long enough that the bottom is
+    // no longer within the top zone (AT_TOP_THRESHOLD), not merely until it
+    // starts to overflow: a small overflow still reads as "at bottom" at every
+    // position, so stopping at the first pixel of overflow would strand history.
+    await waitUntil(
+      () => scroller.scrollHeight - scroller.clientHeight > 200,
+      { timeout: 3000 }
+    );
+    await settled();
 
     assert.true(scroller.scrollHeight > scroller.clientHeight, 'viewport is filled');
     assert.ok(calls >= 2, `loaded multiple pages to fill the viewport (${calls})`);

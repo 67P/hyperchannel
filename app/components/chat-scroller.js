@@ -445,10 +445,12 @@ export default class ChatScrollerComponent extends Component {
         this.lastFillCursor = cursor;
       }
       if (this.fillNoProgress > FILL_MAX_NO_PROGRESS) return;
-    } else if (this.scrollState.stickToBottom) {
-      // Pinned to the bottom of a long list: this is not history reading.
-      return;
     }
+    // The `!nearTop && !fits` check above already excludes the bottom of a
+    // genuinely long list, so there is no separate "we are sticking to the
+    // bottom" guard here: with a small overflow (<= AT_BOTTOM_THRESHOLD) every
+    // scroll position reads as "at bottom", and blocking on `stickToBottom`
+    // would make older history unreachable.
 
     this.olderRequestPending = true;
     this.reduceAndApply({ type: 'reached-top', hasOlder: true, isLoadingOlder: false });
