@@ -60,6 +60,41 @@ module('Unit | Utility | chat scroll state', function () {
       assert.deepEqual(effects, [ScrollAction.ScrollToBottom]);
     });
 
+    test('scroll-to-bottom keeps the detached state until the scroll settles', function (assert) {
+      const detached = {
+        ...createScrollState(),
+        atBottom: false,
+        stickToBottom: false,
+        newMessageCount: 2,
+        showJumpToLatest: true,
+      };
+
+      const { state, effects } = reduceScrollState(detached, { type: 'scroll-to-bottom' });
+
+      assert.true(state.stickToBottom);
+      assert.false(state.atBottom, 'stays detached until the scroll finishes');
+      assert.strictEqual(state.newMessageCount, 0);
+      assert.strictEqual(state.showJumpToLatest, false);
+      assert.deepEqual(effects, [ScrollAction.ScrollToBottom]);
+    });
+
+    test('scroll-settled marks the list at the bottom while sticking', function (assert) {
+      const detached = { ...createScrollState(), atBottom: false, stickToBottom: true };
+
+      const { state, effects } = reduceScrollState(detached, { type: 'scroll-settled' });
+
+      assert.true(state.atBottom);
+      assert.deepEqual(effects, []);
+    });
+
+    test('scroll-settled does nothing when not sticking to the bottom', function (assert) {
+      const detached = { ...createScrollState(), atBottom: false, stickToBottom: false };
+
+      const { state } = reduceScrollState(detached, { type: 'scroll-settled' });
+
+      assert.false(state.atBottom);
+    });
+
     test('a user scroll to the bottom re-enables stickiness and clears the pill', function (assert) {
       const detached = {
         ...createScrollState(),

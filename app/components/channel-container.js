@@ -97,6 +97,10 @@ export default class ChannelContainerComponent extends Component {
     try {
       await this.coms.loadOlderMessages(channel);
     } catch (error) {
+      // Guard against the channel having changed or the component being torn
+      // down while the request was in flight, so we don't show the new
+      // channel's retry error or hide its history loading.
+      if (this.args.channel !== channel || this.isDestroyed || this.isDestroying) return;
       // Stop auto-loading so we don't retry the same failing page in a loop or
       // leave an unhandled rejection; the user can retry explicitly.
       this.historyLoadFailed = true;

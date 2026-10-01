@@ -158,8 +158,17 @@ export default class ChatScrollerComponent extends Component {
       clearTimeout(this.maintenanceTimer);
       this.maintenanceTimer = null;
     }
+    const wasMaintaining = this.maintainingScroll;
     this.maintainingScroll = false;
     this.maintenanceTarget = null;
+
+    // Transition to "at bottom" only once a programmatic scroll has finished.
+    // Doing it earlier removes the jump button mid-animation, and its removal
+    // resizes the observed content wrapper, whose correction would turn a smooth
+    // scroll into an instant jump.
+    if (wasMaintaining && this.scrollState.stickToBottom) {
+      this.reduceAndApply({ type: 'scroll-settled' });
+    }
   }
 
   prefersReducedMotion () {

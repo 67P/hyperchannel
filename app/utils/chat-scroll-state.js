@@ -53,6 +53,7 @@ export function createScrollState () {
  * @param {object} event one of:
  *   { type: 'reset' }
  *   { type: 'scroll-to-bottom' }
+ *   { type: 'scroll-settled' }
  *   { type: 'programmatic-scroll-started' }
  *   { type: 'programmatic-scroll-ended' }
  *   { type: 'user-scroll', metrics }
@@ -73,16 +74,25 @@ export function reduceScrollState (state, event) {
       };
 
     case 'scroll-to-bottom':
+      // Don't mark `atBottom` yet: the jump button lives inside the observed
+      // content wrapper, so removing it immediately would resize the wrapper and
+      // trigger a non-smooth correction that cancels a smooth scroll. Settle it
+      // in `scroll-settled` once the scroll has finished.
       return {
         state: {
           ...state,
-          atBottom: true,
           stickToBottom: true,
           newMessageCount: 0,
           showJumpToLatest: false,
         },
         effects: [ScrollAction.ScrollToBottom],
       };
+
+    case 'scroll-settled':
+      if (!state.stickToBottom) {
+        return { state, effects: [] };
+      }
+      return { state: { ...state, atBottom: true }, effects: [] };
 
     case 'programmatic-scroll-started':
       return { state: { ...state, programmaticScroll: true }, effects: [] };
