@@ -31,6 +31,10 @@ module.exports = function (environment) {
   };
 
   if (environment === 'development') {
+    // Resolve the Sockethub URL from the host serving the app at runtime, so
+    // the same checkout works whether the dev server is opened via localhost
+    // or from another machine (LAN/VPN). See app/config/environment.js.
+    ENV.sockethubURL = 'auto';
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
