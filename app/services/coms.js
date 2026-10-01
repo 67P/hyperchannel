@@ -402,7 +402,7 @@ export default class ComsService extends Service {
         });
 
         channel.addMessage(channelMessage);
-        added += 1;
+        if (channel.messages.includes(channelMessage)) added += 1;
       });
 
       messagesCount += archive.today?.messages?.length || 0;
