@@ -19,6 +19,8 @@ export default class BaseChannel {
   @tracked messages = new TrackedArray([]);
   @tracked unreadMessages = false;
   @tracked unreadMentions = false;
+  @tracked hasOlderMessages = false;
+  @tracked loadingOlderMessages = false;
   @tracked visible = false; // Current/active channel
   @tracked roomInfoLoaded = false;
   @tracked description = null;
