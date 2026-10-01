@@ -158,7 +158,7 @@
     // ChatScrollerComponent#scrollToBottom), so the button can be removed
     // without dropping keyboard focus to <body>. It is not a tab stop, so the
     // outline is suppressed.
-    &:focus {
+    &:focus:not(:focus-visible) {
       outline: none;
     }
 
