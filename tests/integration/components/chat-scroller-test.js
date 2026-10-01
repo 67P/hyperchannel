@@ -143,6 +143,92 @@ module('Integration | Component | chat-scroller', function (hooks) {
     assert.dom('.jump-to-latest').doesNotExist('hides the button after jumping');
   });
 
+  test('reaches the bottom when items are appended during the scroll animation', async function (assert) {
+    this.items = items(20);
+
+    const scroller = await renderScroller();
+    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 });
+
+    // Detach so the scroll-to-bottom button appears.
+    scroller.scrollTop = 0;
+    scroller.dispatchEvent(new Event('scroll'));
+    await settled();
+    await waitUntil(() => document.querySelector('.jump-to-latest'), { timeout: 2000 });
+
+    // Start the animation, then grow the content while it is running.
+    document.querySelector('.jump-to-latest').click();
+    this.set('items', items(30));
+
+    await settled();
+    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 });
+
+    assert.true(isScrolledToBottom(scroller), 'reaches the bottom despite content growth');
+  });
+
+  test('starts the scroll-to-bottom animation gently from far away', async function (assert) {
+    // A long list so a first-frame "jump" (e.g. a fixed fraction of the
+    // remaining distance) would be large and obvious.
+    this.items = items(60); // 2400px in a 200px window
+
+    const scroller = await renderScroller();
+    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 });
+
+    scroller.scrollTop = 0;
+    scroller.dispatchEvent(new Event('scroll'));
+    await settled();
+    await waitUntil(() => document.querySelector('.jump-to-latest'), { timeout: 2000 });
+
+    const before = scroller.scrollTop;
+    document.querySelector('.jump-to-latest').click();
+
+    const afterFirstFrame = await new Promise((resolve) => {
+      requestAnimationFrame(() => resolve(scroller.scrollTop));
+    });
+    const firstStep = afterFirstFrame - before;
+
+    assert.true(
+      firstStep < 150,
+      `first animation step is small (${Math.round(firstStep)}px of 2400px)`
+    );
+
+    await settled();
+    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 });
+    assert.true(isScrolledToBottom(scroller), 'still reaches the bottom');
+  });
+
+  test('eases out gently into the bottom (long tail)', async function (assert) {
+    this.items = items(60); // 2400px in a 200px window
+
+    const scroller = await renderScroller();
+    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 2000 });
+
+    scroller.scrollTop = 0;
+    scroller.dispatchEvent(new Event('scroll'));
+    await settled();
+    await waitUntil(() => document.querySelector('.jump-to-latest'), { timeout: 2000 });
+
+    const end = scroller.scrollHeight - scroller.clientHeight;
+    let enteredTailAt = null;
+    const onScroll = () => {
+      if (enteredTailAt === null && end - scroller.scrollTop <= 40) {
+        enteredTailAt = performance.now();
+      }
+    };
+    scroller.addEventListener('scroll', onScroll);
+
+    document.querySelector('.jump-to-latest').click();
+    await settled();
+    await waitUntil(() => isScrolledToBottom(scroller), { timeout: 3000 });
+    scroller.removeEventListener('scroll', onScroll);
+
+    assert.ok(enteredTailAt !== null, 'reached the last 40px during the animation');
+    const tailMs = performance.now() - enteredTailAt;
+    assert.true(
+      tailMs >= 150,
+      `the last 40px is eased out over time (${Math.round(tailMs)}ms)`
+    );
+  });
+
   test('loads older history until the viewport is filled', async function (assert) {
     this.items = items(2); // 80px in a 200px window
 

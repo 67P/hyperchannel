@@ -77,21 +77,27 @@
             {{/each}}
           </ul>
 
-          {{#unless scroll.isAtBottom}}
-            <button type="button"
-                    class="jump-to-latest {{if scroll.showJumpToLatest "has-new-messages"}}"
-                    title="Scroll to latest messages"
-                    {{on "click" scroll.scrollToBottom}}>
-              <span aria-hidden="true"><Icon::chevron-down /></span>
-              <span class="sr-only">Scroll to latest messages</span>
-              {{#if scroll.newMessageCount}}
-                <span>
-                  {{scroll.newMessageCount}}
-                  {{if (eq scroll.newMessageCount 1) "new message" "new messages"}}
-                </span>
-              {{/if}}
-            </button>
-          {{/unless}}
+          {{! Zero-height sticky zone so the button is pinned to the viewport edge
+              without ever contributing to the scroll content's height. If the
+              button were in flow, adding/removing it would change scrollHeight
+              and shift the view by the button's height. }}
+          <div class="jump-to-latest-zone">
+            {{#unless scroll.isAtBottom}}
+              <button type="button"
+                      class="jump-to-latest {{if scroll.showJumpToLatest "has-new-messages"}}"
+                      title="Scroll to latest messages"
+                      {{on "click" scroll.scrollToBottom}}>
+                <span aria-hidden="true"><Icon::chevron-down /></span>
+                <span class="sr-only">Scroll to latest messages</span>
+                {{#if scroll.newMessageCount}}
+                  <span>
+                    {{scroll.newMessageCount}}
+                    {{if (eq scroll.newMessageCount 1) "new message" "new messages"}}
+                  </span>
+                {{/if}}
+              </button>
+            {{/unless}}
+          </div>
         </ChatScroller>
 
         <footer>

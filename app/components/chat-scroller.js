@@ -11,9 +11,15 @@ import {
 } from 'hyperchannel/utils/chat-scroll-state';
 
 const MAINTENANCE_TIMEOUT = 150; // ms
-// Duration bounds for the user-initiated smooth scroll to the bottom.
-const SMOOTH_SCROLL_MIN_DURATION = 200; // ms
-const SMOOTH_SCROLL_MAX_DURATION = 600; // ms
+// Safety net for the user-initiated smooth scroll to the bottom: it keeps the
+// maintenance lock while animating, so this only fires if frames stop (e.g. a
+// backgrounded tab) or the animation makes no progress.
+const SMOOTH_SCROLL_TIMEOUT = 4000; // ms
+// Reference frame length and per-frame remainder fraction for the
+// scroll-to-bottom animation. The fraction is normalized by the actual frame
+// time, so the motion feels the same on 60Hz and 120Hz displays.
+const SMOOTH_SCROLL_FRAME_MS = 1000 / 60;
+const SMOOTH_SCROLL_DECAY_PER_FRAME = 0.78;
 const FILL_MAX_NO_PROGRESS = 2;
 
 // Tracks the component's deferred async work (maintenance timer, frame
@@ -68,6 +74,7 @@ export default class ChatScrollerComponent extends Component {
   maintenanceObservedTop = 0;
   maintenanceWaiterToken = null;
   smoothAnimationFrame = null;
+  smoothScrollAnimating = false;
   smoothScrollRequested = false;
 
   // Auto-load bookkeeping.
@@ -214,6 +221,7 @@ export default class ChatScrollerComponent extends Component {
     const wasMaintaining = this.maintainingScroll;
     this.maintainingScroll = false;
     this.maintenanceTarget = null;
+    this.smoothScrollAnimating = false;
 
     // Transition to "at bottom" only once a programmatic scroll has finished.
     // Doing it earlier removes the jump button mid-animation, and its removal
@@ -237,64 +245,101 @@ export default class ChatScrollerComponent extends Component {
     const smooth = this.smoothScrollRequested && !this.prefersReducedMotion();
     this.smoothScrollRequested = false;
 
-    const maxTop = element.scrollHeight - element.clientHeight;
-
     if (smooth) {
-      this.startSmoothScrollToBottom(element, maxTop);
-    } else {
-      this.beginMaintenance();
-      element.scrollTop = element.scrollHeight;
-      this.maintenanceTarget = element.scrollTop;
-      // For an instant scroll the position is already at the target, so any
-      // deviating scroll event means the user interrupted: treat it as such
-      // immediately instead of waiting for the maintenance timeout.
-      this.maintenanceObservedTop = element.scrollTop;
+      this.startSmoothScrollToBottom(element);
+      return;
     }
+
+    // A smooth scroll is already heading to the bottom; don't override it.
+    if (this.smoothScrollAnimating) return;
+
+    this.beginMaintenance();
+    // Clamp to the real maximum: assigning past it can itself trigger an
+    // overscroll on some engines.
+    element.scrollTop = element.scrollHeight - element.clientHeight;
+    this.maintenanceTarget = element.scrollTop;
+    // For an instant scroll the position is already at the target, so any
+    // deviating scroll event means the user interrupted: treat it as such
+    // immediately instead of waiting for the maintenance timeout.
+    this.maintenanceObservedTop = element.scrollTop;
   }
 
   // Drives the user-initiated scroll-to-bottom ourselves rather than using the
-  // browser's `scrollTo({ behavior: 'smooth' })`. A native smooth scroll to the
-  // container edge engages the browser's overscroll/chaining animation (which
-  // pulls the content and then settles) and looks janky. Setting `scrollTop`
-  // directly each frame never overshoots and leaves native overscroll for user
-  // scrolls untouched.
-  startSmoothScrollToBottom (element, end) {
+  // browser's `scrollTo({ behavior: 'smooth' })`. Setting `scrollTop` directly
+  // each frame never overshoots and leaves native overscroll for user scrolls
+  // untouched.
+  //
+  // The motion is a time-normalized exponential decay: the first frame(s) are
+  // capped so starting from far away doesn't lurch, then it decays as a long,
+  // monotonic ease-out (a symmetric ease-in-out compresses the deceleration
+  // into the end of its timeline and lands abruptly).
+  startSmoothScrollToBottom (element) {
+    this.smoothScrollAnimating = true;
+    this.animateScrollToBottom(element);
+  }
+
+  animateScrollToBottom (element) {
     const start = element.scrollTop;
+    const end = element.scrollHeight - element.clientHeight;
     const distance = end - start;
 
     if (distance <= 1) {
+      // Already there: settle immediately.
       this.beginMaintenance();
       element.scrollTop = end;
       this.maintenanceTarget = element.scrollTop;
       this.maintenanceObservedTop = element.scrollTop;
+      this.endMaintenance();
       return;
     }
 
-    const duration = Math.min(
-      SMOOTH_SCROLL_MAX_DURATION,
-      Math.max(SMOOTH_SCROLL_MIN_DURATION, distance * 0.5)
-    );
+    // Maximum distance moved in a single reference frame, scaled with the
+    // distance but bounded so the start never reads as a jump.
+    const stepCap = Math.max(24, Math.min(96, distance * 0.05));
 
-    this.beginMaintenance(duration + 100);
+    // Safety net in case animation frames stop (e.g. a backgrounded tab).
+    this.beginMaintenance(SMOOTH_SCROLL_TIMEOUT);
+    // Seed the target synchronously: a scroll event queued from a previous
+    // programmatic scroll can arrive before the first animation frame, and
+    // `handleScroll` ends maintenance immediately when the target is null.
     this.maintenanceTarget = end;
     this.maintenanceObservedTop = start;
 
-    const startTime = performance.now();
+    let lastTime = performance.now();
 
     const step = (now) => {
       this.smoothAnimationFrame = null;
       if (this.isDestroyed || this.isDestroying || !this.maintainingScroll) return;
 
-      const progress = Math.min(1, (now - startTime) / duration);
-      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-      element.scrollTop = start + distance * eased;
+      // If content changed mid-animation (a history page landed), restart from
+      // the current position so the moving target can't jump or land short.
+      if (Math.abs((element.scrollHeight - element.clientHeight) - end) > 1) {
+        this.animateScrollToBottom(element);
+        return;
+      }
 
-      if (progress < 1) {
-        this.smoothAnimationFrame = requestAnimationFrame(step);
-      } else {
+      const dt = Math.min(100, now - lastTime);
+      lastTime = now;
+
+      const remaining = end - element.scrollTop;
+      if (remaining <= 1) {
         element.scrollTop = end;
         this.endMaintenance();
+        return;
       }
+
+      // Fraction of the remaining distance per reference frame, normalized by
+      // the actual frame time so the feel is display-refresh independent. The
+      // absolute cap keeps a delayed frame from jumping.
+      const frameScale = dt / SMOOTH_SCROLL_FRAME_MS;
+      const decay = 1 - Math.pow(SMOOTH_SCROLL_DECAY_PER_FRAME, frameScale);
+      const delta = Math.min(remaining * decay, stepCap);
+      // Always advance by at least one device pixel: the exponential would
+      // otherwise asymptote a couple of pixels short and never finish.
+      element.scrollTop += Math.max(1, Math.min(delta, remaining));
+      this.maintenanceObservedTop = element.scrollTop;
+
+      this.smoothAnimationFrame = requestAnimationFrame(step);
     };
 
     this.smoothAnimationFrame = requestAnimationFrame(step);
@@ -325,6 +370,9 @@ export default class ChatScrollerComponent extends Component {
   }
 
   restoreAnchor () {
+    // A smooth scroll to the bottom is in progress; don't fight it.
+    if (this.smoothScrollAnimating) return;
+
     const anchor = this.scrollState.anchor;
     const element = this.scrollElement;
     const content = this.getContentElement();
@@ -341,7 +389,8 @@ export default class ChatScrollerComponent extends Component {
     if (Math.abs(delta) <= 1) return; // tolerate sub-pixel/fractional scroll values
 
     this.beginMaintenance();
-    element.scrollTop += delta;
+    const maxTop = element.scrollHeight - element.clientHeight;
+    element.scrollTop = Math.min(maxTop, element.scrollTop + delta);
     this.maintenanceTarget = element.scrollTop;
     // Instant scroll: see applyScrollToBottom.
     this.maintenanceObservedTop = element.scrollTop;
@@ -497,6 +546,9 @@ export default class ChatScrollerComponent extends Component {
 
   @action
   handleScrollEnd () {
+    // Our own animation sets `scrollTop` each frame, so the browser fires
+    // `scrollend` between frames. Ignore those; the animation ends itself.
+    if (this.smoothScrollAnimating) return;
     // Do not re-apply scroll here: re-correcting from scrollend caused runaway
     // feedback loops. Layout corrections are driven by ResizeObserver instead.
     this.endMaintenance();

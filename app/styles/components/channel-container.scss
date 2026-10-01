@@ -193,17 +193,29 @@
       }
     }
 
-    .jump-to-latest {
+    // Sticky, zero-height positioning context. It stays pinned to the viewport
+    // bottom while the list is scrolled up, but contributes no height to the
+    // scroll content, so the absolutely-positioned button can appear/disappear
+    // without changing `scrollHeight` (which would shift the view by the
+    // button's height).
+    .jump-to-latest-zone {
       position: sticky;
       bottom: 0;
       z-index: 10;
+      height: 0;
+    }
+
+    .jump-to-latest {
+      position: absolute;
+      bottom: 0;
+      // Pin to the bottom-right corner. The content already has bottom padding,
+      // so no extra offset is needed.
+      right: 1rem;
       display: flex;
       align-items: center;
       gap: 0.35rem;
       width: fit-content;
-      // Pin to the bottom-right corner. The content already has bottom padding,
-      // so no extra offset is needed.
-      margin: 0 1rem 0 auto;
+      margin: 0;
       padding: 0.5rem;
       border: none;
       border-radius: 9999px;
