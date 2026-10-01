@@ -105,7 +105,12 @@ export default class ChannelContainerComponent extends Component {
         length - INITIAL_RENDERED_MESSAGES - RENDERED_MESSAGES_INCREMENT
       );
       this.historyLoaded = true;
-      return;
+      // Only stop here when the auto-window was actually hiding older in-memory
+      // messages (`length > INITIAL_RENDERED_MESSAGES`). For a short channel the
+      // window already showed everything, so this revealed nothing and the DOM
+      // won't resize to re-trigger auto-loading — fall through and fetch an
+      // archive page instead of returning without making progress.
+      if (length > INITIAL_RENDERED_MESSAGES) return;
     }
 
     if (this.renderedStartIndex > 0) {

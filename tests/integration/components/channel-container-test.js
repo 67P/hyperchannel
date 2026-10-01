@@ -126,5 +126,31 @@ module('Integration | Component | channel-container', function (hooks) {
       'renders the initial window of 50 messages, not the whole batch'
     );
   });
+
+  test('fetches older history when the in-memory batch is within the render window', async function (assert) {
+    let calls = 0;
+    class LoadingComs extends Service {
+      async loadOlderMessages () {
+        calls += 1;
+      }
+    }
+    this.owner.register('service:coms', LoadingComs);
+
+    // A short channel: fewer in-memory messages than the render window, but the
+    // archive has older pages.
+    this.channel.hasOlderMessages = true;
+
+    await render(TEMPLATE);
+
+    // Constrain the scroller so the "fill the viewport" auto-load path runs.
+    const scroller = document.getElementById('channel-content');
+    scroller.style.height = '400px';
+    scroller.style.overflowY = 'auto';
+    window.dispatchEvent(new Event('resize'));
+
+    await waitUntil(() => calls >= 1, { timeout: 2000 });
+
+    assert.ok(calls >= 1, 'fetches an archive page instead of returning without progress');
+  });
 });
 
