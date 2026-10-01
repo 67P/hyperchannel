@@ -220,16 +220,22 @@ export default class ChatScrollerComponent extends Component {
     }
     this.endMaintenanceWaiter();
     const wasMaintaining = this.maintainingScroll;
+    const target = this.maintenanceTarget;
     this.maintainingScroll = false;
     this.maintenanceTarget = null;
     this.smoothScrollAnimating = false;
 
-    // Transition to "at bottom" only once a programmatic scroll has finished.
-    // Doing it earlier removes the jump button mid-animation, and its removal
-    // resizes the observed content wrapper, whose correction would turn a smooth
-    // scroll into an instant jump.
-    if (wasMaintaining && this.scrollState.stickToBottom) {
-      this.reduceAndApply({ type: 'scroll-settled' });
+    // Transition to "at bottom" only once a programmatic scroll has finished
+    // *and reached its target*. Doing it earlier removes the jump button
+    // mid-animation, and its removal resizes the observed content wrapper, whose
+    // correction would turn a smooth scroll into an instant jump. If the safety
+    // timeout cut the scroll short, `reached` is false and the settled state is
+    // skipped, leaving the button available to retry.
+    if (wasMaintaining) {
+      const element = this.scrollElement;
+      const reached =
+        target === null || !element || Math.abs(element.scrollTop - target) <= 1;
+      this.reduceAndApply({ type: 'scroll-settled', reached });
     }
   }
 

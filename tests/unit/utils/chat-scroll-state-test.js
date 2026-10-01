@@ -95,6 +95,19 @@ module('Unit | Utility | chat scroll state', function () {
       assert.false(state.atBottom);
     });
 
+    test('scroll-settled stays detached when the target was not reached', function (assert) {
+      const detached = { ...createScrollState(), atBottom: false, stickToBottom: true };
+
+      const { state, effects } = reduceScrollState(detached, {
+        type: 'scroll-settled',
+        reached: false,
+      });
+
+      assert.false(state.atBottom, 'does not claim to be at the bottom');
+      assert.true(state.stickToBottom, 'keeps the stickiness intent');
+      assert.deepEqual(effects, []);
+    });
+
     test('a user scroll to the bottom re-enables stickiness and clears the pill', function (assert) {
       const detached = {
         ...createScrollState(),

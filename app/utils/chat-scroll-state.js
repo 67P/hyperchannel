@@ -53,7 +53,7 @@ export function createScrollState () {
  * @param {object} event one of:
  *   { type: 'reset' }
  *   { type: 'scroll-to-bottom' }
- *   { type: 'scroll-settled' }
+ *   { type: 'scroll-settled', reached }
  *   { type: 'programmatic-scroll-started' }
  *   { type: 'programmatic-scroll-ended' }
  *   { type: 'user-scroll', metrics }
@@ -89,7 +89,11 @@ export function reduceScrollState (state, event) {
       };
 
     case 'scroll-settled':
-      if (!state.stickToBottom) {
+      // Only claim "at bottom" when the programmatic scroll actually reached its
+      // target (`reached`). If it was cut short (e.g. the safety timeout fired
+      // on a backgrounded tab, or a very long scroll), stay detached so the jump
+      // button remains and the user can retry.
+      if (!state.stickToBottom || event.reached === false) {
         return { state, effects: [] };
       }
       return { state: { ...state, atBottom: true }, effects: [] };
