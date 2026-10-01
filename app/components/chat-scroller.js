@@ -11,7 +11,9 @@ import {
 } from 'hyperchannel/utils/chat-scroll-state';
 
 const MAINTENANCE_TIMEOUT = 150; // ms
-const SMOOTH_SCROLL_TIMEOUT = 1000; // ms; upper bound for a smooth scroll
+// Duration bounds for the user-initiated smooth scroll to the bottom.
+const SMOOTH_SCROLL_MIN_DURATION = 200; // ms
+const SMOOTH_SCROLL_MAX_DURATION = 600; // ms
 const FILL_MAX_NO_PROGRESS = 2;
 
 // Tracks the component's deferred async work (maintenance timer, frame
@@ -65,6 +67,7 @@ export default class ChatScrollerComponent extends Component {
   maintenanceTarget = null;
   maintenanceObservedTop = 0;
   maintenanceWaiterToken = null;
+  smoothAnimationFrame = null;
   smoothScrollRequested = false;
 
   // Auto-load bookkeeping.
@@ -79,6 +82,10 @@ export default class ChatScrollerComponent extends Component {
       if (this.maintenanceTimer) {
         clearTimeout(this.maintenanceTimer);
         this.maintenanceTimer = null;
+      }
+      if (this.smoothAnimationFrame) {
+        cancelAnimationFrame(this.smoothAnimationFrame);
+        this.smoothAnimationFrame = null;
       }
       this.endMaintenanceWaiter();
     });
@@ -199,6 +206,10 @@ export default class ChatScrollerComponent extends Component {
       clearTimeout(this.maintenanceTimer);
       this.maintenanceTimer = null;
     }
+    if (this.smoothAnimationFrame) {
+      cancelAnimationFrame(this.smoothAnimationFrame);
+      this.smoothAnimationFrame = null;
+    }
     this.endMaintenanceWaiter();
     const wasMaintaining = this.maintainingScroll;
     this.maintainingScroll = false;
@@ -229,9 +240,7 @@ export default class ChatScrollerComponent extends Component {
     const maxTop = element.scrollHeight - element.clientHeight;
 
     if (smooth) {
-      this.beginMaintenance(SMOOTH_SCROLL_TIMEOUT);
-      element.scrollTo({ top: maxTop, behavior: 'smooth' });
-      this.maintenanceTarget = maxTop;
+      this.startSmoothScrollToBottom(element, maxTop);
     } else {
       this.beginMaintenance();
       element.scrollTop = element.scrollHeight;
@@ -241,6 +250,54 @@ export default class ChatScrollerComponent extends Component {
       // immediately instead of waiting for the maintenance timeout.
       this.maintenanceObservedTop = element.scrollTop;
     }
+  }
+
+  // Drives the user-initiated scroll-to-bottom ourselves rather than using the
+  // browser's `scrollTo({ behavior: 'smooth' })`. A native smooth scroll to the
+  // container edge engages the browser's overscroll/chaining animation (which
+  // pulls the content and then settles) and looks janky. Setting `scrollTop`
+  // directly each frame never overshoots and leaves native overscroll for user
+  // scrolls untouched.
+  startSmoothScrollToBottom (element, end) {
+    const start = element.scrollTop;
+    const distance = end - start;
+
+    if (distance <= 1) {
+      this.beginMaintenance();
+      element.scrollTop = end;
+      this.maintenanceTarget = element.scrollTop;
+      this.maintenanceObservedTop = element.scrollTop;
+      return;
+    }
+
+    const duration = Math.min(
+      SMOOTH_SCROLL_MAX_DURATION,
+      Math.max(SMOOTH_SCROLL_MIN_DURATION, distance * 0.5)
+    );
+
+    this.beginMaintenance(duration + 100);
+    this.maintenanceTarget = end;
+    this.maintenanceObservedTop = start;
+
+    const startTime = performance.now();
+
+    const step = (now) => {
+      this.smoothAnimationFrame = null;
+      if (this.isDestroyed || this.isDestroying || !this.maintainingScroll) return;
+
+      const progress = Math.min(1, (now - startTime) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+      element.scrollTop = start + distance * eased;
+
+      if (progress < 1) {
+        this.smoothAnimationFrame = requestAnimationFrame(step);
+      } else {
+        element.scrollTop = end;
+        this.endMaintenance();
+      }
+    };
+
+    this.smoothAnimationFrame = requestAnimationFrame(step);
   }
 
   // --- Anchoring ------------------------------------------------------------
