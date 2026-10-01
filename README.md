@@ -40,6 +40,20 @@ You will need the following things properly installed on your computer.
 * Visit the app at [http://localhost:4200](http://localhost:4200).
 * Visit your tests at [http://localhost:4200/tests](http://localhost:4200/tests).
 
+### Accessing the dev server from another machine
+
+The dev server listens on all interfaces, so it can be reached over a LAN or
+VPN (e.g. Tailscale/ZeroTier) at `http://<dev-machine-address>:4200`.
+
+Sockethub is used directly by the browser, so it must also be reachable from
+the machine running the browser. Bind it to all interfaces by setting
+`sockethub.host` to `0.0.0.0` in Sockethub's `sockethub.config.json` (and set
+`public.host` to the address clients use), then start it as usual.
+
+In development, Hyperchannel derives the Sockethub URL from the host serving
+the app (`http://<same-host>:10550`), so no URL needs to be hardcoded for
+remote access.
+
 ### Code Generators
 
 Make use of the many generators for code, try `pnpm exec ember help generate` for more details
