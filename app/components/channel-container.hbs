@@ -75,10 +75,10 @@
           {{#unless scroll.isAtBottom}}
             <button type="button"
                     class="jump-to-latest {{if scroll.showJumpToLatest "has-new-messages"}}"
-                    aria-label="Scroll to latest messages"
                     title="Scroll to latest messages"
                     {{on "click" scroll.scrollToBottom}}>
-              <Icon::chevron-down />
+              <span aria-hidden="true"><Icon::chevron-down /></span>
+              <span class="sr-only">Scroll to latest messages</span>
               {{#if scroll.newMessageCount}}
                 <span>
                   {{scroll.newMessageCount}}
