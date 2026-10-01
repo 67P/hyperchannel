@@ -270,6 +270,87 @@ module('Unit | Model | base-channel', function (hooks) {
     assert.notOk(addDateHeadlineStub.calledOnce);
   });
 
+  test('#addMessage assigns a stable key', function (assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+    const message = new Message({
+      type: 'message-chat', date: new Date(), nickname: 'alice',
+      content: 'hello', id: 'key-1'
+    });
+
+    channel.addMessage(message);
+
+    assert.strictEqual(message.key, 'key-1', 'message gets the transport id as key');
+    const stored = channel.messages.find(item => item.type === 'message-chat');
+    assert.strictEqual(stored.key, 'key-1');
+  });
+
+  test('#addMessage derives a key for id-less messages', function (assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+    const message = new Message({
+      type: 'message-chat', date: new Date('2024-01-02T03:04:05.678Z'),
+      nickname: 'alice', content: 'hello'
+    });
+
+    channel.addMessage(message);
+
+    assert.ok(message.key.startsWith('1704164645678-'), `derives a composite key (${message.key})`);
+  });
+
+  test('#addMessage ignores duplicates with the same id', function (assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+    const date = new Date();
+
+    channel.addMessage(new Message({
+      type: 'message-chat', date, nickname: 'alice', content: 'hello', id: 'dup-1'
+    }));
+    channel.addMessage(new Message({
+      type: 'message-chat', date, nickname: 'alice', content: 'hello', id: 'dup-1'
+    }));
+
+    assert.strictEqual(
+      channel.messages.filter(item => item.type === 'message-chat').length,
+      1,
+      'only adds the message once'
+    );
+  });
+
+  test('#addMessage dedupes id-less messages with identical timestamp and content', function (assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+    const date = new Date('2024-01-02T03:04:05.678Z');
+
+    channel.addMessage(new Message({
+      type: 'message-chat', date, nickname: 'alice', content: 'hello'
+    }));
+    channel.addMessage(new Message({
+      type: 'message-chat', date, nickname: 'alice', content: 'hello'
+    }));
+
+    assert.strictEqual(
+      channel.messages.filter(item => item.type === 'message-chat').length,
+      1,
+      'only adds the message once'
+    );
+  });
+
+  test('#addMessage keeps id-less messages with the same content at different times', function (assert) {
+    const channel = new BaseChannel({ account: xmppAccount });
+
+    channel.addMessage(new Message({
+      type: 'message-chat', date: new Date('2024-01-02T03:04:05.678Z'),
+      nickname: 'alice', content: 'hello'
+    }));
+    channel.addMessage(new Message({
+      type: 'message-chat', date: new Date('2024-01-02T03:04:06.678Z'),
+      nickname: 'alice', content: 'hello'
+    }));
+
+    assert.strictEqual(
+      channel.messages.filter(item => item.type === 'message-chat').length,
+      2,
+      'keeps both messages'
+    );
+  });
+
   //
   // replaceMessage
   //

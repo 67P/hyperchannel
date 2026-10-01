@@ -3,6 +3,7 @@ import { tracked, cached } from '@glimmer/tracking';
 import { TrackedArray } from 'tracked-built-ins';
 import Message from 'hyperchannel/models/message';
 import domainFromId from 'hyperchannel/utils/domain-from-id';
+import { messageKey, dateHeadlineKey } from 'hyperchannel/utils/message-key';
 import moment from 'moment';
 
 export default class BaseChannel {
@@ -124,12 +125,23 @@ export default class BaseChannel {
     if (existingDateHeadline) { return; }
 
     let dateMessage = new Message({ type: 'date-headline', date: headlineDate });
+    dateMessage.key = dateHeadlineKey(headlineDate);
     this.messages.push(dateMessage);
   }
 
   addMessage (message) {
     if (message.replaceId) {
       this.replaceMessage(message);
+      return;
+    }
+
+    if (!message.key) {
+      message.key = messageKey(message);
+    }
+
+    // Ignore duplicates: the same transport message delivered twice, or an
+    // id-less archive message whose derived key matches an existing one.
+    if (this.messages.some(m => m.key === message.key)) {
       return;
     }
 
