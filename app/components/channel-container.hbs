@@ -31,7 +31,7 @@
         <ChatScroller id="channel-content"
                       class="main pt-4 pb-8 bg-white text-neutral-800"
                       @items={{this.renderedMessages}}
-                      @resetKey={{@channel.id}}
+                      @resetKey={{@channel}}
                       @hasOlder={{this.canLoadOlderMessages}}
                       @isLoadingOlder={{this.isLoadingOlderMessages}}
                       @onLoadOlder={{this.loadOlderMessages}}
