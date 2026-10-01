@@ -279,9 +279,9 @@ module('Unit | Model | base-channel', function (hooks) {
 
     channel.addMessage(message);
 
-    assert.strictEqual(message.key, 'alice\u0000key-1', 'keys the transport id by author');
+    assert.strictEqual(message.key, JSON.stringify(['alice', 'key-1']), 'keys the transport id by author');
     const stored = channel.messages.find(item => item.type === 'message-chat');
-    assert.strictEqual(stored.key, 'alice\u0000key-1');
+    assert.strictEqual(stored.key, JSON.stringify(['alice', 'key-1']));
   });
 
   test('#addMessage uses a server stanza id as the key', function (assert) {

@@ -16,7 +16,24 @@ module('Unit | Utility | message key', function () {
   test('scopes a transport id by author', function (assert) {
     const message = chatMessage({ id: 'abc123' });
 
-    assert.strictEqual(messageKey(message), 'alice\u0000abc123');
+    assert.strictEqual(messageKey(message), JSON.stringify(['alice', 'abc123']));
+  });
+
+  test('produces CSS-selector-safe keys', function (assert) {
+    // Keys are used as `data-message-key` values and matched with a selector
+    // built via `CSS.escape`, which rewrites U+0000 to U+FFFD. A key containing
+    // NUL would therefore never be found, silently breaking anchor restoration.
+    const messages = [
+      chatMessage({ id: 'abc123' }),
+      chatMessage({ id: 'has "quote" and \\backslash' }),
+      chatMessage(),
+      chatMessage({ id: 'abc123', sid: 'stanza-9' }),
+    ];
+
+    for (const message of messages) {
+      const key = messageKey(message);
+      assert.notOk(key.includes('\u0000'), `"${key}" contains no NUL`);
+    }
   });
 
   test('uses a server stanza id as-is', function (assert) {
