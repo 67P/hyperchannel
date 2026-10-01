@@ -175,6 +175,22 @@ module('Unit | Utility | chat scroll state', function () {
       assert.deepEqual(effects, [ScrollAction.RestoreAnchor]);
     });
 
+    test('prepended older messages stay at the bottom while sticking', function (assert) {
+      // A stale anchor from earlier history reading must not yank the viewport
+      // back up once the user has returned to the bottom.
+      const sticky = {
+        ...createScrollState(),
+        atBottom: true,
+        stickToBottom: true,
+        anchor: { key: 'old', offset: 0 },
+      };
+
+      const { state, effects } = reduceScrollState(sticky, { type: 'older-prepended' });
+
+      assert.deepEqual(effects, [ScrollAction.ScrollToBottom]);
+      assert.true(state.stickToBottom);
+    });
+
     test('reaching the top loads older messages without anchoring while stuck to the bottom', function (assert) {
       const { effects } = reduceScrollState(createScrollState(), {
         type: 'reached-top',

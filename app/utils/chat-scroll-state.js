@@ -142,6 +142,14 @@ export function reduceScrollState (state, event) {
     }
 
     case 'older-prepended':
+      // While sticking to the bottom, keep the view there: a completed history
+      // load must not restore an anchor captured before the user returned to the
+      // bottom (e.g. a request that started while reading history but finished
+      // after they clicked "scroll to latest"). Only anchored reading restores
+      // the position.
+      if (state.stickToBottom) {
+        return { state, effects: [ScrollAction.ScrollToBottom] };
+      }
       return { state, effects: [ScrollAction.RestoreAnchor] };
 
     case 'reached-top': {
