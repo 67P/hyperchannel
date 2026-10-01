@@ -81,6 +81,7 @@ export default class ChatScrollerComponent extends Component {
   olderRequestPending = false;
   fillNoProgress = 0;
   lastFillHeight = 0;
+  lastFillCursor = null;
   resizeScheduled = false;
 
   constructor () {
@@ -430,12 +431,18 @@ export default class ChatScrollerComponent extends Component {
 
     if (fits) {
       // Fill the viewport: keep loading while the content is shorter than the
-      // window, but stop if loading makes no progress.
-      if (metrics.scrollHeight === this.lastFillHeight) {
+      // window, but stop once loading stops making progress. Progress is either
+      // the content growing *or* the archive cursor advancing — sparse archives
+      // legitimately return empty/duplicate pages that don't change the height
+      // while still moving through history. Only a few consecutive attempts
+      // with neither signal stop the automatic burst.
+      const cursor = this.args.historyCursor ?? null;
+      if (metrics.scrollHeight === this.lastFillHeight && cursor === this.lastFillCursor) {
         this.fillNoProgress += 1;
       } else {
         this.fillNoProgress = 0;
         this.lastFillHeight = metrics.scrollHeight;
+        this.lastFillCursor = cursor;
       }
       if (this.fillNoProgress > FILL_MAX_NO_PROGRESS) return;
     } else if (this.scrollState.stickToBottom) {
@@ -460,6 +467,7 @@ export default class ChatScrollerComponent extends Component {
     this.olderRequestPending = false;
     this.fillNoProgress = 0;
     this.lastFillHeight = 0;
+    this.lastFillCursor = null;
     this.scheduleReduce({ type: 'reset' });
   }
 

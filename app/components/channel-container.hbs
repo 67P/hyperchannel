@@ -35,6 +35,7 @@
                       @resetKey={{@channel}}
                       @hasOlder={{this.canLoadOlderMessages}}
                       @isLoadingOlder={{this.isLoadingOlderMessages}}
+                      @historyCursor={{@channel.searchedPreviousLogsUntilDate}}
                       @onLoadOlder={{this.loadOlderMessages}}
                       as |scroll|>
           {{#if this.historyLoadFailed}}

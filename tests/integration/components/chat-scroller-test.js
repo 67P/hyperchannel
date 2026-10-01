@@ -30,6 +30,7 @@ const TEMPLATE = hbs`
                 @resetKey={{this.resetKey}}
                 @hasOlder={{this.hasOlder}}
                 @isLoadingOlder={{this.isLoadingOlder}}
+                @historyCursor={{this.historyCursor}}
                 @onLoadOlder={{this.onLoadOlder}}
                 as |scroll|>
     {{#unless scroll.isAtBottom}}
@@ -55,6 +56,7 @@ module('Integration | Component | chat-scroller', function (hooks) {
     this.resetKey = 'channel-a';
     this.hasOlder = false;
     this.isLoadingOlder = false;
+    this.historyCursor = null;
     this.onLoadOlder = () => {};
   });
 
@@ -257,6 +259,37 @@ module('Integration | Component | chat-scroller', function (hooks) {
     await settled();
 
     assert.strictEqual(calls, callsWhenFilled, 'does not keep loading once the viewport is filled');
+  });
+
+  test('keeps filling through sparse archive pages that only advance the cursor', async function (assert) {
+    this.items = items(2); // content fits the 200px window
+
+    let calls = 0;
+    this.onLoadOlder = () => {
+      calls += 1;
+      // A sparse page: no new messages, but the archive cursor still advances.
+      this.set('historyCursor', `cursor-${calls}`);
+    };
+
+    await renderScroller();
+
+    this.set('hasOlder', true);
+    await settled();
+    window.dispatchEvent(new Event('resize'));
+    await waitUntil(() => calls >= 1, { timeout: 2000 });
+
+    // Simulate each in-flight load completing, which releases the single-flight
+    // lock and lets the scroller request the next page.
+    for (let i = 0; i < 5; i++) {
+      this.set('isLoadingOlder', true);
+      await settled();
+      this.set('isLoadingOlder', false);
+      await settled();
+    }
+
+    // The previous height-only guard stopped after three attempts without
+    // growth; cursor progress must keep the automatic fill going.
+    assert.ok(calls >= 4, `kept loading past the height-only limit (${calls})`);
   });
 
   test('requests older history once when entering the top zone', async function (assert) {
