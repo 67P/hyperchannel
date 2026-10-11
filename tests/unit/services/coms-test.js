@@ -3,6 +3,7 @@ import { setupTest } from 'ember-qunit';
 import sinon from 'sinon';
 import Channel from 'hyperchannel/models/channel';
 import Message from 'hyperchannel/models/message';
+import { TrackedArray } from 'tracked-built-ins';
 import { ircAccount, xmppAccount } from '../../fixtures/accounts';
 
 function jsonResponse (body) {
@@ -117,6 +118,34 @@ module('Unit | Service | coms', function (hooks) {
 
     assert.ok(channel.connected);
     assert.strictEqual(channel.userList.length, 5);
+    assert.ok(channel.userList instanceof TrackedArray, 'user list stays tracked');
+  });
+
+  test('#updateChannelUserList accepts the IRC attendance response', function (assert) {
+    const channel = new Channel({
+      account: ircAccount,
+      name: '#kosmos',
+      connected: false
+    });
+
+    const service = this.owner.factoryFor('service:coms').create({
+      accounts: [ ircAccount ],
+      channels: [ channel ]
+    });
+
+    service.updateChannelUserList({
+      type: 'query',
+      actor: { id: '#kosmos@irc.libera.chat', type: 'room', name: '#kosmos' },
+      target: { id: 'jimmy@irc.libera.chat', type: 'person', name: 'jimmy' },
+      object: {
+        type: 'attendance',
+        members: [ 'raucao', 'galfert', 'jimmy' ],
+        roles: { raucao: 'owner' }
+      }
+    });
+
+    assert.ok(channel.connected);
+    assert.deepEqual([...channel.userList], [ 'raucao', 'galfert', 'jimmy' ]);
   });
 
   test('#updateChannelTopic sets the channel topic from the object content', function (assert) {
