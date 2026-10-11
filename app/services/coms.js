@@ -207,7 +207,8 @@ export default class ComsService extends Service {
     if (channel) {
       channel.connected = true;
       if (Array.isArray(message.object.members)) {
-        channel.userList = message.object.members;
+        // Keep the list tracked, so later join/leave updates re-render.
+        channel.userList = new TrackedArray(message.object.members);
       }
     }
   }
